@@ -15,7 +15,9 @@ export default function FormLogin() {
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96 text-center">
         <div className="flex items-center justify-center gap-5 mb-4">
           <img src="/img/logo_uika.png" alt="Logo" className="w-8 md:w-9" />
-          <h2 className="text-2xl md:text-3xl font-bold text-[#198754]">S I A K A D</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#198754]">
+            S I A K A D
+          </h2>
         </div>
 
         <p className="text-[11px] md:text-sm text-[#198754] mb-3 font-semibold">
@@ -24,7 +26,7 @@ export default function FormLogin() {
         <p className="text-[11px] md:text-sm text-gray-800 mb-3">
           Untuk mengakses, dipersilahkan untuk login terlebih dahulu.
         </p>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <input
             type="text"
             placeholder="NPM"

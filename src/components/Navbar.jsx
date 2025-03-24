@@ -1,6 +1,6 @@
 import React from "react";
-import Logo from "../assets/logo_uika.png";
-import ProfileLogo from "../assets/profile_logo.png";
+import Logo from "../../public/img/logo_uika.png";
+import ProfileLogo from "../../public/img/profile_logo.png";
 
 const Navbar = () => {
   return (

@@ -1,5 +1,6 @@
 import React from "react";
 import FormLogin from "../components/FormLogin";
+import Navbar from "../components/Navbar";
 
 export default function LoginPage() {
   return (
@@ -11,7 +12,8 @@ export default function LoginPage() {
         className="absolute w-full h-full -z-10 filter brightness-50 object-cover"
       />
 
-      <div className="px-7">
+      <div className="">
+        <Navbar />
         <FormLogin />
       </div>
     </div>
