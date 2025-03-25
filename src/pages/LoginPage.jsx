@@ -13,7 +13,6 @@ export default function LoginPage() {
       />
 
       <div className="">
-        <Navbar />
         <FormLogin />
       </div>
     </div>

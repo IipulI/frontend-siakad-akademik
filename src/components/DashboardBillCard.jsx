@@ -6,7 +6,7 @@ export default function DashboardBillCard({ title, price, pay = false }) {
         Rp. {price.toLocaleString("en-US")}
       </h1>
       {pay && (
-        <button className="bg-primary-green w-full rounded-md text-md font-semibold text-white py-2 px-4">
+        <button className="bg-primary-green w-full cursor-pointer rounded-md text-md font-semibold text-white py-2 px-4">
           Bayar Sekarang
         </button>
       )}
