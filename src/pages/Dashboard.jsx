@@ -9,9 +9,9 @@ import MainLayout from "../components/layouts/MainLayout";
 const Dashboard = () => {
   return (
     <MainLayout isGreeting={true}>
-      <div className="space-y-4 w-full">
-        <div className="w-full flex space-x-4">
-          <div className="w-3/5 space-y-4">
+      <div className="w-full">
+        <div className="w-full grid grid-cols-5 gap-8">
+          <div className="col-span-3 space-y-4">
             <h1 className="font-semibold">Jadwal</h1>
             <div className="p-8 bg-white shadow-xl rounded-xl">
               <div className="flex justify-between space-y-4">
@@ -58,7 +58,7 @@ const Dashboard = () => {
               />
             </div>
           </div>
-          <div className="w-2/5 space-y-4">
+          <div className="col-span-2 space-y-4">
             <div>
               <h1 className="font-semibold">Grafik Akademik</h1>
             </div>
