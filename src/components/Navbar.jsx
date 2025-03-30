@@ -22,13 +22,18 @@ const Navbar = () => {
                 </h1>
               </div>
             </div>
-            <div className="flex space-x-4 items-center">
-              <h1>Bel</h1>
-              <img className="rounded-full" width={30} src={ProfileLogo} />
+            <div className="">
+              <div className="hidden md:flex space-x-4 items-center">
+                <h1>Bel</h1>
+                <img className="rounded-full" width={30} src={ProfileLogo} />
+              </div>
+              <div className="md:hidden block">
+                <button onClick={() => alert("Clicked")}>Hamburger</button>
+              </div>
             </div>
           </div>
         </div>
-        <ul className="flex space-x-12 text-white">
+        <ul className="md:flex hidden space-x-12 text-white">
           <li>Beranda</li>
           <li>Jadwal</li>
           <li>Akademik</li>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Navbar from "../components/Navbar";
 import DashboardSubjectCard from "../components/DashboardSubjectCard";
 import DashboardBillCard from "../components/DashboardBillCard";
@@ -10,10 +10,12 @@ const Dashboard = () => {
   return (
     <MainLayout isGreeting={true}>
       <div className="w-full">
-        <div className="w-full grid grid-cols-5 gap-8">
-          <div className="col-span-3 space-y-4">
-            <h1 className="font-semibold">Jadwal</h1>
-            <div className="p-8 bg-white shadow-xl rounded-xl">
+        <div className="w-full grid md:grid-cols-5 grid-cols-1 gap-8">
+          <div className="md:col-span-3 space-y-4">
+            <h1 className="font-semibold md:text-start text-center md:text-base text-2xl">
+              Jadwal
+            </h1>
+            <div className="md:p-8 p-12 bg-white shadow-xl rounded-xl">
               <div className="flex justify-between space-y-4">
                 <h1 className="font-semibold text-primary-blue">
                   Jadwal Kuliah
@@ -58,7 +60,7 @@ const Dashboard = () => {
               />
             </div>
           </div>
-          <div className="col-span-2 space-y-4">
+          <div className="md:col-span-2 space-y-4">
             <div>
               <h1 className="font-semibold">Grafik Akademik</h1>
             </div>
