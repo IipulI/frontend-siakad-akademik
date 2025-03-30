@@ -1,13 +1,14 @@
 import { useState } from "react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function FormLogin() {
   const [npm, setNPM] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const submitHandler = () => {
-    console.log("NPM : ", npm);
-    console.log("Password : ", password);
+    navigate("/dashboard");
   };
 
   return (
@@ -53,7 +54,7 @@ export default function FormLogin() {
         </div>
         <button
           onClick={submitHandler}
-          className="w-full bg-green-700 text-white p-2 text-sm rounded-lg hover:bg-green-800 transition"
+          className="w-full cursor-pointer bg-green-700 text-white p-2 text-sm rounded-lg hover:bg-green-800 transition"
         >
           Login
         </button>

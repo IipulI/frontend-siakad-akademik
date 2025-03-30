@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../Navbar";
+import Breadcrumb from "../Breadcrumb";
 
 export default function MainLayout({ children, isGreeting = false }) {
   const [greeting, setGreeting] = useState("");
@@ -23,12 +24,20 @@ export default function MainLayout({ children, isGreeting = false }) {
   return (
     <div className="bg-primary-white min-h-screen">
       <Navbar />
-
       <div className="container mx-auto max-w-6xl">
-        {isGreeting && (
+        {isGreeting ? (
           <div className="text-2xl flex py-4">
             <h1>{greeting},&nbsp;</h1>
-            <h1 className="text-gray-text font-semibold">Maulana Ikhsan</h1>
+            <h1 className="text-gray-text font-semibold">Someone</h1>
+          </div>
+        ) : (
+          <div className="py-4">
+            <Breadcrumb />
+            <div className="text-2xl flex">
+              <h1 className="text-gray-text font-semibold">
+                Kalender Akademik
+              </h1>
+            </div>
           </div>
         )}
         {children}
