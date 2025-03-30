@@ -22,7 +22,7 @@ export default function MainLayout({ children, isGreeting = false }) {
     setGreeting(message);
   }, []);
   return (
-    <div className="bg-primary-white min-h-screen">
+    <div className="bg-primary-white pt-30 min-h-screen">
       <Navbar />
       <div className="container mx-auto max-w-6xl">
         {isGreeting ? (
