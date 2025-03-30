@@ -18,7 +18,6 @@ const Header = () => {
             <div className="flex gap-4 items-center">
               {/* menu hamburger */}
               <HamburgerMenu />
-
               {/* logo */}
               <img
                 className="bg-white p-1 rounded-lg hidden md:block"

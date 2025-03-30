@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import DashboardSubjectCard from "../components/DashboardSubjectCard";
 import DashboardBillCard from "../components/DashboardBillCard";
@@ -7,6 +7,17 @@ import DashboardAnnouncementCard from "../components/DashboardAnnouncementCard";
 import MainLayout from "../components/layouts/MainLayout";
 
 const Dashboard = () => {
+  const [currentDate, setCurrentDate] = useState();
+  useEffect(() => {
+    const options = {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    const today = new Date().toLocaleDateString("id-ID", options);
+    setCurrentDate(today);
+  }, []);
   return (
     <>
       <Header />
@@ -23,7 +34,7 @@ const Dashboard = () => {
                     Jadwal Kuliah
                   </h1>
                   <h1 className="font-semibold text-primary-blue">
-                    Jumat, 21 Maret 2025
+                    {currentDate}
                   </h1>
                 </div>
                 <div className="space-y-4">

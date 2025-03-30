@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import Breadcrumb from "../Breadcrumb";
+import Header from "../Header";
 
 export default function MainLayout({ children, isGreeting = false }) {
   const [greeting, setGreeting] = useState("");
@@ -18,12 +19,11 @@ export default function MainLayout({ children, isGreeting = false }) {
     } else {
       message = "Selamat Malam";
     }
-
     setGreeting(message);
   }, []);
   return (
     <div className="bg-primary-white pt-30 min-h-screen">
-      <Navbar />
+      <Header />
       <div className="container mx-auto max-w-6xl">
         {isGreeting ? (
           <div className="text-2xl flex py-4">
