@@ -20,7 +20,7 @@ const CalendarAcademic = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage={"Kalender Akademik"}>
-      <div className="grid grid-cols-6 gap-8">
+      <div className="grid md:grid-cols-6 grid-flow-dense gap-8">
         <div className="col-span-2">
           <div className="bg-white p-4 shadow-md rounded-md text-sm space-y-6">
             <h1 className="font-semibold">Periode Akademik</h1>
