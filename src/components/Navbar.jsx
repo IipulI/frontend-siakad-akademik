@@ -79,7 +79,7 @@ const Navbar = () => {
             </a>
             {/* menu kalender akademik */}
             <a
-              href="#"
+              href="/schedule/calendar"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
