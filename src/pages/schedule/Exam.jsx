@@ -8,7 +8,7 @@ import DashboardBillCard from "../../components/DashboardBillCard";
 const Exam = () => {
   const [examType, setExamType] = useState("UTS"); // Default UTS
   return (
-    <MainLayout isGreeting={false}>
+    <MainLayout isGreeting={true}>
       <div className="w-full">
         <div className="w-full grid grid-cols-5 gap-4">
           <div className="col-span-3 space-y-4">

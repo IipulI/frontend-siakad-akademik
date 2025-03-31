@@ -3,7 +3,11 @@ import Navbar from "../Navbar";
 import Breadcrumb from "../Breadcrumb";
 import Header from "../Header";
 
-export default function MainLayout({ children, isGreeting = false }) {
+export default function MainLayout({
+  children,
+  isGreeting = false,
+  titlePage,
+}) {
   const [greeting, setGreeting] = useState("");
 
   useEffect(() => {
@@ -34,9 +38,7 @@ export default function MainLayout({ children, isGreeting = false }) {
           <div className="py-4">
             <Breadcrumb />
             <div className="text-2xl flex">
-              <h1 className="text-gray-text font-semibold">
-                Kalender Akademik
-              </h1>
+              <h1 className="text-gray-text font-semibold">{titlePage}</h1>
             </div>
           </div>
         )}
