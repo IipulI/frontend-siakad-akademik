@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const HamburgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -97,13 +98,13 @@ const HamburgerMenu = () => {
           <ul className="w-full text-gray-800">
             {/* Beranda - No dropdown */}
             <li className="py-4 border-b border-gray-200 ">
-              <a
-                href="/dashboard"
+              <Link
+                to="/dashboard"
                 className="flex justify-between items-center"
                 onClick={() => toggleMenu()}
               >
                 <span className="font-medium">Beranda</span>
-              </a>
+              </Link>
             </li>
 
             {/* Jadwal - With dropdown */}
@@ -132,8 +133,8 @@ const HamburgerMenu = () => {
                 <ul className="ml-4 mb-3 space-y-2 text-gray-600">
                   {/* menu pengumuman */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -149,12 +150,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu kalender akademik */}
                   <li>
-                    <a
-                      href="/schedule/calendar"
+                    <Link
+                      to="/schedule/calendar"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -170,12 +171,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu jadwal minggu ini */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -191,12 +192,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu jadwal semester */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -212,7 +213,7 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
@@ -244,8 +245,8 @@ const HamburgerMenu = () => {
                 <ul className="ml-4 mb-3 space-y-2 text-gray-600">
                   {/* menu pengisian krs */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -261,12 +262,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu riwayat krs */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -282,12 +283,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu mengulang */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -303,12 +304,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu nilai mahasiswa */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -324,7 +325,7 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
@@ -356,8 +357,8 @@ const HamburgerMenu = () => {
                 <ul className="ml-4 mb-3 space-y-2 text-gray-600">
                   {/* menu konsultasi */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -373,12 +374,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu kegiatan pendukung */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -394,12 +395,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu daftar proposal */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -415,12 +416,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu daftar tugas akhir */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -436,12 +437,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu pengajuan yudisium */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -457,12 +458,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu pengajuan wisuda */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -478,7 +479,7 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
@@ -510,8 +511,8 @@ const HamburgerMenu = () => {
                 <ul className="ml-4 mb-3 space-y-2 text-gray-600">
                   {/* menu kartu hasil studi */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -527,12 +528,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu transkip */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -548,7 +549,7 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
@@ -580,8 +581,8 @@ const HamburgerMenu = () => {
                 <ul className="ml-4 mb-3 space-y-2 text-gray-600">
                   {/* menu tagihan mahasiswa */}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -597,12 +598,12 @@ const HamburgerMenu = () => {
                           </p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                   {/* menu riwayat keuangan*/}
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">
@@ -616,7 +617,7 @@ const HamburgerMenu = () => {
                           <p className="text-xs font-extralight">Riwayat BOP</p>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
