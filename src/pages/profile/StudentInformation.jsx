@@ -18,8 +18,8 @@ const StudentInformation = () => {
     <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"}>
       <div className="h-px border border-primary-green"></div>
 
-      <div className="grid grid-cols-6 gap-6 p-4">
-        <div className="col-span-2">
+      <div className="grid sm:grid-cols-2 md:grid-cols-6 gap-6 p-4">
+        <div className="md:col-span-2">
           <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
             <img width={150} src={profile_logo} alt="" />
             <h1 className="uppercase text-primary-brown">
@@ -42,7 +42,7 @@ const StudentInformation = () => {
             </ProfileRedirectButton>
           </div>
         </div>
-        <div className="col-span-4 space-y-4">
+        <div className="md:col-span-4 space-y-4">
           <div className="p-1 bg-[#dddddd] rounded-xl flex w-full justify-between">
             <TabNavigationButton
               isActive={activeTab === "data-diri"}
@@ -74,9 +74,7 @@ const StudentInformation = () => {
 
 const Domicile = () => {
   return (
-    <RoundedBorderLayout
-      className={"grid grid-cols-2 items-start gap-4 text-[#617182]"}
-    >
+    <RoundedBorderLayout className={" items-start gap-4 text-[#617182]"}>
       <div className="flex flex-col space-y-4 ">
         <h1 className="text-primary-green text-sm font-semibold">KTP</h1>
         <div className="h-px border-2 border-primary-green"></div>
@@ -113,9 +111,7 @@ const Domicile = () => {
 
 const Contact = () => {
   return (
-    <RoundedBorderLayout
-      className={"grid grid-cols-2 items-start gap-4 text-[#617182]"}
-    >
+    <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
       <div className="flex flex-col space-y-4 ">
         <InputField title={"No.Telepon"} />
         <InputField title={"No. HP"} />
@@ -131,9 +127,7 @@ const Contact = () => {
 
 const PersonalProfile = () => {
   return (
-    <RoundedBorderLayout
-      className={"grid grid-cols-2 items-start gap-4 text-[#617182]"}
-    >
+    <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
       <div className="flex flex-col space-y-4 ">
         <InputField title={"NIM"} />
         <InputField title={"Nama Mahasiswa"} />
