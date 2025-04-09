@@ -5,6 +5,7 @@ import Exam from "./pages/schedule/Exam";
 import CalendarAcademic from "./pages/schedule/CalendarAcademic";
 import "./App.css";
 import StudentInformation from "./pages/profile/StudentInformation";
+import ParentInformation from "./pages/profile/ParentInformation";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
 
       {/* Route Profile */}
       <Route path="/profile" element={<StudentInformation />} />
+      <Route path="/profile/parent" element={<ParentInformation />} />
     </Routes>
   );
 }
