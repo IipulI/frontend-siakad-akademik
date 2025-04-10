@@ -6,6 +6,7 @@ import CalendarAcademic from "./pages/schedule/CalendarAcademic";
 import "./App.css";
 import StudentInformation from "./pages/profile/StudentInformation";
 import ParentInformation from "./pages/profile/ParentInformation";
+import StudentPayment from "./pages/payment/StudentPayment";
 
 export default function App() {
   return (
@@ -23,6 +24,9 @@ export default function App() {
       {/* Route Profile */}
       <Route path="/profile" element={<StudentInformation />} />
       <Route path="/profile/parent" element={<ParentInformation />} />
+
+      {/* route payment */}
+      <Route path="/payment" element={<StudentPayment />} />
     </Routes>
   );
 }

@@ -582,7 +582,7 @@ const HamburgerMenu = () => {
                   {/* menu tagihan mahasiswa */}
                   <li>
                     <Link
-                      to="#"
+                      to="/payment"
                       className="px-3 py-3 text-sm flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-5">

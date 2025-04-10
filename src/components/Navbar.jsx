@@ -642,7 +642,7 @@ const Navbar = () => {
             <h1 className="px-3 py-3">Keuangan</h1>
             {/* menu tagihan mahasiswa */}
             <Link
-              to="#"
+              to="/payment"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
             >
               <div className="flex items-center gap-5">
