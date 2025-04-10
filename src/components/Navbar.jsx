@@ -80,7 +80,7 @@ const Navbar = () => {
             </Link>
             {/* menu kalender akademik */}
             <Link
-              to={"/schedule/calendar"}
+              to="/schedule/calendar"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -198,8 +198,8 @@ const Navbar = () => {
           <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
             <h1 className="px-3 py-3">Akademik</h1>
             {/* menu Pengisian Kartu Rencana Studi */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
             >
               <div className="flex items-center gap-5">
@@ -225,7 +225,7 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu Riwayat KRS */}
             <Link
               to={"/academic/history"}
@@ -285,8 +285,8 @@ const Navbar = () => {
               </svg>
             </Link>
             {/* menu Nilai Mahasiswa */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -312,7 +312,7 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
           </div>
         )}
       </li>
@@ -346,8 +346,8 @@ const Navbar = () => {
           <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
             <h1 className="px-3 py-3">Tingkat Akhir</h1>
             {/* menu konsultasi */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
             >
               <div className="flex items-center gap-5">
@@ -373,10 +373,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu kegiatan pendukung */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -402,10 +402,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu daftar proposal */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -431,10 +431,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu daftar tugas akhir */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -460,10 +460,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu pengajuan yudisium */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -489,10 +489,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu pengajuan wisuda */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -518,7 +518,7 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
           </div>
         )}
       </li>
@@ -551,8 +551,8 @@ const Navbar = () => {
         {openDropdown === "hasilStudi" && (
           <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
             <h1 className="px-3 py-3">Hasil Studi</h1>
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
             >
               <div className="flex items-center gap-5">
@@ -578,10 +578,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* menu transkip */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3  text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -607,7 +607,7 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
           </div>
         )}
       </li>
@@ -641,8 +641,8 @@ const Navbar = () => {
           <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
             <h1 className="px-3 py-3">Keuangan</h1>
             {/* menu tagihan mahasiswa */}
-            <a
-              href="#"
+            <Link
+              to="/payment"
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
             >
               <div className="flex items-center gap-5">
@@ -668,10 +668,10 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
             {/* riwayat keuangan */}
-            <a
-              href="#"
+            <Link
+              to="#"
               className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -697,7 +697,7 @@ const Navbar = () => {
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>
-            </a>
+            </Link>
           </div>
         )}
       </li>
