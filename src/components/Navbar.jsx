@@ -51,7 +51,7 @@ const Navbar = () => {
             <h1 className="px-3 py-3">Jadwal</h1>
             {/* menu pengumuman */}
             <Link
-              to="#"
+              to={"/schedule/announcement"}
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
             >
               <div className="flex items-center gap-5">
@@ -109,7 +109,7 @@ const Navbar = () => {
             </Link>
             {/* menu jadwal minggu ini */}
             <Link
-              to="#"
+              to={"/schedule/this-week"}
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -138,7 +138,7 @@ const Navbar = () => {
             </Link>
             {/* menu jadwal semester */}
             <Link
-              to="#"
+              to={"/schedule/semester"}
               className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -228,7 +228,7 @@ const Navbar = () => {
             </Link>
             {/* menu Riwayat KRS */}
             <Link
-              to="#"
+              to={"/academic/history"}
               className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
@@ -257,7 +257,7 @@ const Navbar = () => {
             </Link>
             {/* menu Mengulang */}
             <Link
-              to="#"
+              to={"/academic/retake"}
               className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
             >
               <div className="flex items-center gap-5">
