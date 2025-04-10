@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import ProfileRedirectButton from "../../components/profile/ProfileRedirectButton";
 import TabNavigationButton from "../../components/profile/TabNavigationButton";
 import RoundedBorderLayout from "../../components/profile/RoundedBorderLayout";
-import InputField from "../../components/profile/ProfileInputField";
+import InputField from "../../components/profile/InputBoxField";
+import { MapPin, Phone, User } from "lucide-react";
 
 const StudentInformation = () => {
   const [activeTab, setActiveTab] = useState("data-diri");
@@ -45,18 +46,21 @@ const StudentInformation = () => {
         <div className="md:col-span-4 space-y-4">
           <div className="p-1 bg-[#dddddd] rounded-xl flex w-full justify-between">
             <TabNavigationButton
+              icon={<User size={18} />}
               isActive={activeTab === "data-diri"}
               onClick={() => handleTabClick("data-diri")}
             >
               Data Diri
             </TabNavigationButton>
             <TabNavigationButton
+              icon={<MapPin size={18} />}
               isActive={activeTab === "domisili"}
               onClick={() => handleTabClick("domisili")}
             >
               Domisili
             </TabNavigationButton>
             <TabNavigationButton
+              icon={<Phone size={18} />}
               isActive={activeTab === "kontak"}
               onClick={() => handleTabClick("kontak")}
             >

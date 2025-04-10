@@ -6,6 +6,7 @@ import {
   endOfMonth,
   eachDayOfInterval,
   getDay,
+  isSameDay,
 } from "date-fns";
 import { id } from "date-fns/locale";
 
@@ -22,25 +23,25 @@ const CalendarAcademic = () => {
     <MainLayout isGreeting={false} titlePage={"Kalender Akademik"}>
       <div className="grid md:grid-cols-6 grid-flow-dense gap-8">
         <div className="col-span-2">
-          <div className="bg-white p-4 shadow-md rounded-md text-sm space-y-6">
+          <div className="bg-white p-4 shadow-md rounded-md text-sm space-y-3.5">
             <h1 className="font-semibold">Periode Akademik</h1>
-            <select className="rounded-md border-primary-brown border w-full p-1">
+            <select className="rounded-md border-[#969696] border w-full text-[#969696] p-1">
               <option value="">2024 Genap</option>
             </select>
             <h1 className="font-semibold">Kegiatan Akademik</h1>
-            <span className="text-primary-brown">Tidak ada kegiatan</span>
+            <h1 className="text-[#969696] p-2">Tidak ada kegiatan</h1>
             <h1 className="font-semibold">Informasi Lainnya</h1>
             <div className="space-y-2">
-              <div className="flex-items-center space-x-2 text-primary-brown">
+              <div className="flex-items-center space-x-2 text-[#969696]">
                 <input
-                  className="rounded-xl border border-primary-brown w-1/4 shadow-md"
+                  className="rounded-xl border border-[#969696] w-1/4 shadow-md"
                   type="text"
                 />
                 <span>Hari Kuliah</span>
               </div>
-              <div className="flex-items-center space-x-2 text-primary-brown">
+              <div className="flex-items-center space-x-2 text-[#969696]">
                 <input
-                  className="rounded-xl border border-primary-brown bg-red-400 w-1/4 shadow-md"
+                  className="rounded-xl border border-[#969696] bg-red-400 w-1/4 shadow-md"
                   type="text"
                 />
                 <span>Hari Libur</span>
@@ -48,6 +49,7 @@ const CalendarAcademic = () => {
             </div>
           </div>
         </div>
+
         <div className="col-span-4">
           <div className="p-4 bg-white shadow-md rounded-lg">
             <div className="flex justify-between items-center mb-4">
@@ -61,7 +63,7 @@ const CalendarAcademic = () => {
               >
                 {"<"}
               </button>
-              <h2 className="text-lg font-bold">{monthYear}</h2>
+              <h2 className="text-[#9c9c9c] font-bold">{monthYear}</h2>
               <button
                 onClick={() =>
                   setCurrentDate(
@@ -74,14 +76,14 @@ const CalendarAcademic = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 text-center font-semibold">
+            <div className="grid grid-cols-7 text-center font-semibold">
               {["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"].map((day) => (
                 <div
                   key={day}
                   className={
                     day === "Min"
-                      ? "py-2 bg-gray-100 text-red-400 rounded-md"
-                      : "py-2 bg-gray-100 rounded-md"
+                      ? "py-2  text-[#db2d2f] rounded-md"
+                      : "py-2 text-[#212121] rounded-md"
                   }
                 >
                   {day}
@@ -92,14 +94,26 @@ const CalendarAcademic = () => {
                 <div key={`empty-${index}`} className="text-gray-400"></div>
               ))}
 
-              {daysInMonth.map((day) => (
-                <div
-                  key={day}
-                  className="border shadow py-6 rounded-md hover:bg-blue-200 cursor-pointer"
-                >
-                  {format(day, "d")}
-                </div>
-              ))}
+              {daysInMonth.map((day) => {
+                const isToday = isSameDay(day, new Date());
+                const isSunday = getDay(day) === 0;
+
+                return (
+                  <div
+                    key={day}
+                    className={`border shadow py-6 rounded-md cursor-pointer
+        ${isToday ? "bg-primary-green text-white font-bold" : ""}`}
+                  >
+                    <span
+                      className={`${
+                        isSunday && !isToday ? "text-[#ed9697]" : ""
+                      }`}
+                    >
+                      {format(day, "d")}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

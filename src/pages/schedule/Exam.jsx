@@ -4,6 +4,7 @@ import ExamToggleButton from "../../components/ExamToggleButton";
 import ExamScheduleCard from "../../components/ExamScheduleCard";
 import DashboardCardAcademic from "../../components/DashboardCardAcademic";
 import DashboardBillCard from "../../components/DashboardBillCard";
+import IPSChart from "../../components/chart/IPSChart";
 
 const Exam = () => {
   const [examType, setExamType] = useState("UTS"); // Default UTS
@@ -94,8 +95,7 @@ const Exam = () => {
             <div>
               <h1 className="font-semibold">Grafik Akademik</h1>
             </div>
-            <DashboardBillCard title={"Total Lunas"} price={45450000} />
-            <DashboardBillCard title={"Total Lunas"} price={45450000} />
+            <IPSChart />
             <div className="space-y-4">
               <h1 className="font-semibold">Akademik</h1>
               <div className="grid grid-cols-2 gap-4">
