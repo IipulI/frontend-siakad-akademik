@@ -5,6 +5,8 @@ import DashboardBillCard from "../components/DashboardBillCard";
 import DashboardCardAcademic from "../components/DashboardCardAcademic";
 import DashboardAnnouncementCard from "../components/DashboardAnnouncementCard";
 import MainLayout from "../components/layouts/MainLayout";
+import IPSChart from "../components/chart/IPSChart";
+import { CalendarDays, ChevronDown } from "lucide-react";
 
 const Dashboard = () => {
   const [currentDate, setCurrentDate] = useState();
@@ -28,14 +30,20 @@ const Dashboard = () => {
               <h1 className="font-semibold md:text-start text-center md:text-base text-2xl">
                 Jadwal
               </h1>
-              <div className="md:p-8 p-12 bg-white shadow-xl rounded-xl">
-                <div className="flex justify-between space-y-4">
-                  <h1 className="font-semibold text-primary-blue">
-                    Jadwal Kuliah
-                  </h1>
-                  <h1 className="font-semibold text-primary-blue">
-                    {currentDate}
-                  </h1>
+              <div className="md:p-8 p-12 bg-white shadow-xl rounded-xl ">
+                <div className="flex md:flex-row flex-col justify-between items-center p-2">
+                  <div className="flex space-x-2 items-center">
+                    <h1 className="font-semibold text-primary-blue">
+                      Jadwal Kuliah
+                    </h1>
+                    <ChevronDown color="#001b36" size={18} />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CalendarDays color="#001b36" size={18} />
+                    <h1 className="font-semibold text-primary-blue">
+                      {currentDate}
+                    </h1>
+                  </div>
                 </div>
                 <div className="space-y-4">
                   <DashboardSubjectCard
@@ -60,7 +68,7 @@ const Dashboard = () => {
                   />
                 </div>
               </div>
-              <h1 className="font-semibold">Status Keuangan</h1>
+              <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
               <div className="w-full flex gap-4">
                 <DashboardBillCard title={"Total Tagihan"} price={46750000} />
                 <DashboardBillCard title={"Total Lunas"} price={45450000} />
@@ -75,12 +83,13 @@ const Dashboard = () => {
             </div>
             <div className="md:col-span-2 space-y-4">
               <div>
-                <h1 className="font-semibold">Grafik Akademik</h1>
+                <h1 className="font-semibold md:p-0 p-2 md:p-0 p-2">
+                  Grafik Akademik
+                </h1>
               </div>
-              <DashboardBillCard title={"Total Lunas"} price={45450000} />
-              <DashboardBillCard title={"Total Lunas"} price={45450000} />
+              <IPSChart />
               <div className="space-y-4">
-                <h1 className="font-semibold">Akademik</h1>
+                <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
                 <div className="grid grid-cols-2 gap-4">
                   <DashboardCardAcademic
                     title={"Jumlah IPS"}
@@ -99,7 +108,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                <h1 className="font-semibold">Pengumuman</h1>
+                <h1 className="font-semibold md:p-0 p-2">Pengumuman</h1>
                 <div className="p-8 bg-white shadow-md rounded-md space-y-6">
                   <DashboardAnnouncementCard
                     title={"Cara Bayar Kuliah Melalui Shopee"}

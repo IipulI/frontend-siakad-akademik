@@ -1,8 +1,8 @@
 export default function DashboardBillCard({ title, price, pay = false }) {
   return (
-    <div className="p-4 shadow-md bg-white w-full rounded-xl space-y-2">
+    <div className="p-4 shadow-md bg-white w-full rounded-xl space-y-2 border">
       <h1 className="text-primary-blue font-semibold text-sm">{title}</h1>
-      <h1 className="text-primary-brown text-2xl font-semibold">
+      <h1 className="text-[#4f4f4f] text-2xl font-semibold">
         Rp. {price.toLocaleString("en-US")}
       </h1>
       {pay && (

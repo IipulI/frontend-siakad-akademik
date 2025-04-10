@@ -30,7 +30,7 @@ export default function MainLayout({
       <Header />
       <div className="container mx-auto max-w-6xl">
         {isGreeting ? (
-          <div className="text-2xl flex py-4">
+          <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
             <h1>{greeting},&nbsp;</h1>
             <h1 className="text-gray-text font-semibold">Someone</h1>
           </div>
