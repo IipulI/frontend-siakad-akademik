@@ -22,7 +22,6 @@ const Dashboard = () => {
   }, []);
   return (
     <>
-      <Header />
       <MainLayout isGreeting={true}>
         <div className="w-full">
           <div className="w-full grid md:grid-cols-5 grid-cols-1 gap-8">
@@ -83,9 +82,7 @@ const Dashboard = () => {
             </div>
             <div className="md:col-span-2 space-y-4">
               <div>
-                <h1 className="font-semibold md:p-0 p-2 md:p-0 p-2">
-                  Grafik Akademik
-                </h1>
+                <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
               </div>
               <IPSChart />
               <div className="space-y-4">

@@ -6,52 +6,45 @@ import { Bell } from "lucide-react";
 
 const Header = () => {
   return (
-    <div className="bg-primary-green text-white py-4 w-full absolute top-0 z-40 xl:h-30 items-center px-5 md:px-10">
-      {/* aksesoris navbar */}
-      <img
-        src="/img/aksesoris_navbar.png"
-        alt=""
-        className="h-full absolute right-0 top-0 bottom-0"
-      />
-
-      <div className="container mx-auto max-w-6xl">
-        <div className="w-full py-2">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-4 items-center">
-              {/* menu hamburger */}
-              <HamburgerMenu />
-              {/* logo */}
-              <Link to={"/dashboard"}>
-                <img
-                  className="bg-white p-1 rounded-lg hidden md:block"
-                  width={50}
-                  src="/img/logo_uika.png"
-                  alt=""
-                />
-              </Link>
+    <div className="w-full flex flex-col space-y-4">
+      <div className="flex">
+        <div className="flex bg-primary-green w-full rounded-tr-full py-4 px-5 md:px-10 xl:px-40">
+          <div>
+            <div>
               <div>
-                <div>
-                  <h1 className="text-xs sm:text-sm">SIM Akademik</h1>
-                  <h1 className="font-semibold text-sm sm:text-md">
-                    Universitan Ibn Khaldun
-                  </h1>
+                <div className="flex items-center gap-4">
+                  {/* menu hamburger */}
+                  <HamburgerMenu />
+                  {/* logo */}
+                  <Link
+                    to={"/dashboard"}
+                    className="hidden sm:block sm:w-12 xl:w-15"
+                  >
+                    <img width={60} src="/img/logo_uika.png" alt="" />
+                  </Link>
+                  <div>
+                    <div className="text-white">
+                      <h1 className="text-xs">SIM Akademik</h1>
+                      <h1 className="text-sm xl:text-base font-semibold">Universitan Ibn Khaldun</h1>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="flex space-x-4 items-center">
-              <Bell
-                className="md:block hidden cursor-pointer"
-                size={30}
-                color="#fff"
-              />
-              <Link to={"/profile"}>
-                <img className="rounded-full" width={30} src={ProfileLogo} />
-              </Link>
-            </div>
           </div>
         </div>
-        <Navbar />
+        <div className=" bg-primary-yellow w-1/2 rounded-bl-full flex justify-center items-center relative">
+          {/* aksesoris navbar */}
+          <img src="/img/aksesoris_navbar.png" alt="" className="absolute h-full right-0"/>
+          <div className="flex space-x-5 items-center">
+            <Bell size={30} color="#fff" />
+            <Link to={"/profile"}>
+              <img width={30} src={ProfileLogo} className="rounded-full" />
+            </Link>
+          </div>
+        </div>
       </div>
+      <Navbar />
     </div>
   );
 };

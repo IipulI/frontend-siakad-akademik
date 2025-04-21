@@ -3,7 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 @theme {
-  --color-primary-green: #198754;
+  --color-primary-green: #116E63;
+  --color-primary-yellow: #FDA31B;
   --color-gray-text: #4d5a68;
   --color-primary-white: #f5f7ff;
   --color-primary-blue: #001b36;

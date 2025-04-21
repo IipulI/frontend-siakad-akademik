@@ -26,9 +26,9 @@ export default function MainLayout({
     setGreeting(message);
   }, []);
   return (
-    <div className="bg-primary-white pt-30 min-h-screen">
+    <div className="bg-primary-white min-h-screen">
       <Header />
-      <div className="container mx-auto max-w-6xl">
+      <div className="px-5 md:px-10 xl:px-40">
         {isGreeting ? (
           <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
             <h1>{greeting},&nbsp;</h1>
