@@ -1,707 +1,257 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
-  // State untuk mengontrol dropdown mana yang sedang terbuka
-  const [openDropdown, setOpenDropdown] = useState(null);
+// Create separate component for dropdown menu items
+const DropdownMenuItem = ({ icon, title, description, to }) => (
+  <Link
+    to={to}
+    className="px-3 py-3 border-b-1 border-primary-yellow text-sm hover:bg-primary-yellow hover:rounded-sm flex items-center justify-between group mt-3 first:mt-0"
+  >
+    <div className="flex items-center gap-5">
+      <img src={`/img/${icon}`} alt="" className="w-6" />
+      <div>
+        <p className="font-semibold">{title}</p>
+        <p className="text-xs font-extralight text-gray-300">{description}</p>
+      </div>
+    </div>
+    <svg
+      className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M19 9l-7 7-7-7"
+      ></path>
+    </svg>
+  </Link>
+);
 
-  // Fungsi untuk toggle dropdown tertentu
-  const toggleDropdown = (dropdownName) => {
-    if (openDropdown === dropdownName) {
-      setOpenDropdown(null); // Tutup dropdown jika sudah terbuka
-    } else {
-      setOpenDropdown(dropdownName); // Buka dropdown yang diklik
-    }
-  };
+// Create separate component for dropdown menus
+const DropdownMenu = ({ isOpen, title, items }) => {
+  if (!isOpen) return null;
 
   return (
-    <ul className="xl:flex space-x-12 text-white hidden">
-      {/* menu beranda - tanpa dropdown */}
-      <li>
-        <Link to={"/dashboard"}>Beranda</Link>
-      </li>
+    <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
+      <h1 className="px-3 py-3">{title}</h1>
+      {items.map((item, index) => (
+        <DropdownMenuItem
+          key={index}
+          icon={item.icon}
+          title={item.title}
+          description={item.description}
+          to={item.to}
+        />
+      ))}
+    </div>
+  );
+};
 
-      {/* menu jadwal dropdown */}
-      <li className="relative">
-        <button
-          className="flex items-center focus:outline-none cursor-pointer"
-          onClick={() => toggleDropdown("jadwal")}
-        >
-          Jadwal
-          <svg
-            className={`w-4 h-4 ml-1 transition-transform duration-200 ${
-              openDropdown === "jadwal" ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
+// Define dropdown arrow component
+const DropdownArrow = ({ isOpen }) => (
+  <svg
+    className={`w-4 h-4 ml-1 transition-transform duration-200 ${
+      isOpen ? "rotate-180" : ""
+    }`}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M19 9l-7 7-7-7"
+    ></path>
+  </svg>
+);
 
-        {openDropdown === "jadwal" && (
-          <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-            <h1 className="px-3 py-3">Jadwal</h1>
-            {/* menu pengumuman */}
-            <Link
-              to={"/schedule/announcement"}
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_annon.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Pengumuman</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Informasi Kegiatan Kampus
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu kalender akademik */}
-            <Link
-              to="/schedule/calendar"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_calendar.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Kalender Akademik</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Periksa Kegiatan Perkuliahan
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu jadwal minggu ini */}
-            <Link
-              to={"/schedule/this-week"}
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_week.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Jadwal Minggu Ini</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Aktivitas Seminggu Ke Depan
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu jadwal semester */}
-            <Link
-              to={"/schedule/semester"}
-              className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_timetable.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Jadwal Semester</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Kegiatan Anda Satu Semester
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-          </div>
-        )}
-      </li>
+const Navbar = () => {
+  const [openDropdown, setOpenDropdown] = useState(null);
 
-      {/* menu akademik dropdown */}
-      <li className="relative">
-        <button
-          className="flex items-center focus:outline-none cursor-pointer"
-          onClick={() => toggleDropdown("akademik")}
-        >
-          Akademik
-          <svg
-            className={`w-4 h-4 ml-1 transition-transform duration-200 ${
-              openDropdown === "akademik" ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
+  const toggleDropdown = (dropdownName) => {
+    setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
+  };
 
-        {openDropdown === "akademik" && (
-          <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-            <h1 className="px-3 py-3">Akademik</h1>
-            {/* menu Pengisian Kartu Rencana Studi */}
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_annon.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Pengisian Kartu Rencana Studi</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Tentukan Rencana Kuliah
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu Riwayat KRS */}
-            <Link
-              to={"/academic/history"}
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_calendar.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Riwayat KRS</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Rekap rencana kuliah Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu Mengulang */}
-            <Link
-              to={"/academic/retake"}
-              className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_week.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Mengulang</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    History Perbaikan Mata Kuliah
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu Nilai Mahasiswa */}
-            <Link
-              to="#"
-              className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_timetable.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Nilai Mahasiswa</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Kualitas perkuliaha Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-          </div>
-        )}
-      </li>
+  // Define menu data
+  const dropdownMenus = {
+    jadwal: {
+      title: "Jadwal",
+      items: [
+        {
+          icon: "icon_annon.png",
+          title: "Pengumuman",
+          description: "Informasi Kegiatan Kampus",
+          to: "/schedule/announcement",
+        },
+        {
+          icon: "icon_calendar.png",
+          title: "Kalender Akademik",
+          description: "Periksa Kegiatan Perkuliahan",
+          to: "/schedule/calendar",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Jadwal Minggu Ini",
+          description: "Aktivitas Seminggu Ke Depan",
+          to: "/schedule/this-week",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Jadwal Semester",
+          description: "Kegiatan Anda Satu Semester",
+          to: "/schedule/semester",
+        },
+      ],
+    },
+    akademik: {
+      title: "Akademik",
+      items: [
+        {
+          icon: "icon_annon.png",
+          title: "Pengisian Kartu Rencana Studi",
+          description: "Tentukan Rencana Kuliah",
+          to: "#",
+        },
+        {
+          icon: "icon_calendar.png",
+          title: "Riwayat KRS",
+          description: "Rekap rencana kuliah Anda",
+          to: "/academic/history",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Mengulang",
+          description: "History Perbaikan Mata Kuliah",
+          to: "/academic/retake",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Nilai Mahasiswa",
+          description: "Kualitas perkuliaha Anda",
+          to: "#",
+        },
+      ],
+    },
+    tingkatAkhir: {
+      title: "Tingkat Akhir",
+      items: [
+        {
+          icon: "icon_annon.png",
+          title: "Konsultasi",
+          description: "Temukan solusi masalah Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_calendar.png",
+          title: "Kegiatan Pendukung",
+          description: "Salurkan bakat Anda disini",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Daftar Proposal",
+          description: "Buat karya Anda sekarang juga",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Daftar Tugas Akhir",
+          description: "Selesaikan karya Anda saat ini",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Pengajuan Yudisium",
+          description: "Konfirmasi hasil studi Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Pengajuan Wisuda",
+          description: "Konfirmasi kehadiran Anda",
+          to: "#",
+        },
+      ],
+    },
+    hasilStudi: {
+      title: "Hasil Studi",
+      items: [
+        {
+          icon: "icon_annon.png",
+          title: "Kartu Hasil Studi",
+          description: "Laporan Priode Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Transkrip",
+          description: "Hasil Perkuliahan Anda",
+          to: "#",
+        },
+      ],
+    },
+    keuangan: {
+      title: "Keuangan",
+      items: [
+        {
+          icon: "icon_annon.png",
+          title: "Tagihan Mahasiswa",
+          description: "Biaya Operasional Pendidikan",
+          to: "/payment",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Riwayat Keuangan",
+          description: "Riwayat BOP",
+          to: "#",
+        },
+      ],
+    },
+  };
 
-      {/* menu tingkat akhir dropdown */}
-      <li className="relative">
-        <button
-          className="flex items-center focus:outline-none cursor-pointer"
-          onClick={() => toggleDropdown("tingkatAkhir")}
-        >
-          Tingkat Akhir
-          <svg
-            className={`w-4 h-4 ml-1 transition-transform duration-200 ${
-              openDropdown === "tingkatAkhir" ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
+  // Define navigation items
+  const navItems = [
+    { name: "Beranda", path: "/dashboard", hasDropdown: false },
+    { name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
+    { name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
+    { name: "Tingkat Akhir", dropdownKey: "tingkatAkhir", hasDropdown: true },
+    { name: "Hasil Studi", dropdownKey: "hasilStudi", hasDropdown: true },
+    { name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
+  ];
 
-        {openDropdown === "tingkatAkhir" && (
-          <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-            <h1 className="px-3 py-3">Tingkat Akhir</h1>
-            {/* menu konsultasi */}
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_annon.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Konsultasi</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Temukan solusi masalah Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu kegiatan pendukung */}
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_calendar.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Kegiatan Pendukung</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Salurkan bakat Anda disini
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu daftar proposal */}
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_week.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Daftar Proposal</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Buat karya Anda sekarang juga
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu daftar tugas akhir */}
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_week.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Daftar Tugas Akhir</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Selesaikan karya Anda saat ini
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu pengajuan yudisium */}
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_week.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Pengajuan Yudisium</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Konfirmasi hasil studi Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu pengajuan wisuda */}
-            <Link
-              to="#"
-              className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_timetable.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Pengajuan Wisuda</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Konfirmasi kehadiran Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-          </div>
-        )}
-      </li>
-
-      {/* menu hasil studi dropdown */}
-      <li className="relative">
-        <button
-          className="flex items-center focus:outline-none cursor-pointer"
-          onClick={() => toggleDropdown("hasilStudi")}
-        >
-          Hasil Studi
-          <svg
-            className={`w-4 h-4 ml-1 transition-transform duration-200 ${
-              openDropdown === "hasilStudi" ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-
-        {openDropdown === "hasilStudi" && (
-          <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-            <h1 className="px-3 py-3">Hasil Studi</h1>
-            <Link
-              to="#"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_annon.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Kartu Hasil Studi</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Laporan Priode Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* menu transkip */}
-            <Link
-              to="#"
-              className="px-3 py-3  text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_timetable.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Transkrip</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Hasil Perkuliahan Anda
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-          </div>
-        )}
-      </li>
-
-      {/* menu keuangan dropdown */}
-      <li className="relative">
-        <button
-          className="flex items-center focus:outline-none cursor-pointer"
-          onClick={() => toggleDropdown("keuangan")}
-        >
-          Keuangan
-          <svg
-            className={`w-4 h-4 ml-1 transition-transform duration-200 ${
-              openDropdown === "keuangan" ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </button>
-
-        {openDropdown === "keuangan" && (
-          <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-            <h1 className="px-3 py-3">Keuangan</h1>
-            {/* menu tagihan mahasiswa */}
-            <Link
-              to="/payment"
-              className="px-3 py-3 border-b-1 border-[#6FCF97C9] text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_annon.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Tagihan Mahasiswa</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Biaya Operasional Pendidikan
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-            {/* riwayat keuangan */}
-            <Link
-              to="#"
-              className="px-3 py-3 text-sm hover:bg-[#6FCF97C9] hover:rounded-sm flex items-center justify-between group mt-3"
-            >
-              <div className="flex items-center gap-5">
-                <img src="/img/icon_timetable.png" alt="" className="w-6" />
-                <div>
-                  <p className="font-semibold">Riwayat Keuangan</p>
-                  <p className="text-xs font-extralight text-gray-300">
-                    Riwayat BOP
-                  </p>
-                </div>
-              </div>
-              <svg
-                className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </Link>
-          </div>
-        )}
-      </li>
-    </ul>
+  return (
+    <div className="px-40">
+      <ul className="xl:flex space-x-12 text-white hidden bg-primary-green w-fit text-sm p-2.5 rounded-full">
+        {navItems.map((item) => (
+          <li key={item.name} className="relative">
+            {item.hasDropdown ? (
+              <>
+                <button
+                  className="flex items-center focus:outline-none cursor-pointer"
+                  onClick={() => toggleDropdown(item.dropdownKey)}
+                >
+                  {item.name}
+                  <DropdownArrow isOpen={openDropdown === item.dropdownKey} />
+                </button>
+                <DropdownMenu
+                  isOpen={openDropdown === item.dropdownKey}
+                  title={dropdownMenus[item.dropdownKey].title}
+                  items={dropdownMenus[item.dropdownKey].items}
+                />
+              </>
+            ) : (
+              <Link to={item.path}>{item.name}</Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

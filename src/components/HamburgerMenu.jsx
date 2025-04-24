@@ -1,58 +1,258 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+// Component for rendering submenu items
+const SubMenuItem = ({ icon, title, description, to, onClick }) => (
+  <li>
+    <Link
+      to={to}
+      className="px-3 py-3 text-sm flex items-center justify-between group"
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-5">
+        <img src={`/img/${icon}`} alt="" className="w-6 invert" />
+        <div>
+          <p>{title}</p>
+          <p className="text-xs font-extralight">{description}</p>
+        </div>
+      </div>
+    </Link>
+  </li>
+);
+
+// Component for dropdown toggle button
+const DropdownToggle = ({ title, isOpen, onClick }) => (
+  <div
+    className="py-4 flex justify-between items-center cursor-pointer"
+    onClick={onClick}
+  >
+    <span className="font-medium">{title}</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={`h-5 w-5 transition-transform duration-300 ${
+        isOpen ? "transform rotate-180" : ""
+      }`}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clipRule="evenodd"
+      />
+    </svg>
+  </div>
+);
+
+// Component for hamburger icon
+const HamburgerIcon = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex flex-col justify-center items-center cursor-pointer w-10 h-10 xl:hidden focus:outline-none transition-all duration-300 border-1 shadow-sm"
+    aria-label="Menu"
+  >
+    <span className="block w-6 h-0.5 bg-white transition-transform mb-1.5"></span>
+    <span className="block w-6 h-0.5 bg-white transition-opacity mb-1.5"></span>
+    <span className="block w-6 h-0.5 bg-white transition-transform"></span>
+  </button>
+);
+
+// Component for close button
+const CloseButton = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex flex-col justify-center cursor-pointer items-center w-10 h-10 xl:hidden focus:outline-none transition-all duration-300"
+    aria-label="Menu"
+  >
+    <span className="block w-6 h-0.5 bg-black transition-transform transform rotate-45 translate-y-1"></span>
+    <span className="block w-6 h-0.5 bg-black opacity-0 mb-1"></span>
+    <span className="block w-6 h-0.5 bg-black transition-transform transform -rotate-45 -translate-y-1"></span>
+  </button>
+);
+
 const HamburgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openDropdowns, setOpenDropdowns] = useState({
-    jadwal: false,
-    akademik: false,
-    tingkatAkhir: false,
-    hasilStudi: false,
-    keuangan: false,
-  });
+  const [openDropdowns, setOpenDropdowns] = useState({});
+
+  // Define all menu data
+  const menuItems = [
+    {
+      id: "beranda",
+      title: "Beranda",
+      to: "/dashboard",
+      hasDropdown: false,
+    },
+    {
+      id: "jadwal",
+      title: "Jadwal",
+      hasDropdown: true,
+      submenu: [
+        {
+          icon: "icon_annon.png",
+          title: "Pengumuman",
+          description: "Informasi Kegiatan Kampus",
+          to: "#",
+        },
+        {
+          icon: "icon_calendar.png",
+          title: "Kalender Akademik",
+          description: "Periksa Kegiatan Perkuliahan",
+          to: "/schedule/calendar",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Jadwal Minggu Ini",
+          description: "Aktifitas Seminggu Ke Depan",
+          to: "#",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Jadwal Semester",
+          description: "Kegiatan Anda Satu Semester",
+          to: "#",
+        },
+      ],
+    },
+    {
+      id: "akademik",
+      title: "Akademik",
+      hasDropdown: true,
+      submenu: [
+        {
+          icon: "icon_annon.png",
+          title: "Pengisisan Kartu Rencana Studi",
+          description: "Tentukan Rencana Kuliah",
+          to: "#",
+        },
+        {
+          icon: "icon_calendar.png",
+          title: "Riwayat KRS",
+          description: "Rekap Rencana Kuliah Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Mengulang",
+          description: "History Perbaikan Mata Kuliah",
+          to: "#",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Nilai Mahasiswa",
+          description: "Kualitas Perkuliahan Anda",
+          to: "#",
+        },
+      ],
+    },
+    {
+      id: "tingkatAkhir",
+      title: "Tingkat Akhir",
+      hasDropdown: true,
+      submenu: [
+        {
+          icon: "icon_annon.png",
+          title: "Konsultasi",
+          description: "Temukan Solusi Masalah Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_calendar.png",
+          title: "Kegiatan Pendukung",
+          description: "Salurkan Bakat Anda Disini",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Daftar proposal",
+          description: "Buat Karya Anda Sekarang Juga",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Daftar Tugas Akhir",
+          description: "Selesaikan Karya Anda Saat Ini",
+          to: "#",
+        },
+        {
+          icon: "icon_week.png",
+          title: "Pengajuan Yudisium",
+          description: "Konfirmasi Hasil Studi Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Pengajuan Wisuda",
+          description: "Konfirmasi Kehadiran Anda",
+          to: "#",
+        },
+      ],
+    },
+    {
+      id: "hasilStudi",
+      title: "Hasil Studi",
+      hasDropdown: true,
+      submenu: [
+        {
+          icon: "icon_annon.png",
+          title: "Kartu Hasil Studi",
+          description: "Laporan Priode Anda",
+          to: "#",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Transkip",
+          description: "Hasil Perkuliahan Anda",
+          to: "#",
+        },
+      ],
+    },
+    {
+      id: "keuangan",
+      title: "Keuangan",
+      hasDropdown: true,
+      submenu: [
+        {
+          icon: "icon_annon.png",
+          title: "Tagihan Mahasiswa",
+          description: "Biaya Operasional Pendidikan",
+          to: "/payment",
+        },
+        {
+          icon: "icon_timetable.png",
+          title: "Riwayat Keuangan",
+          description: "Riwayat BOP",
+          to: "#",
+        },
+      ],
+    },
+  ];
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
     // Reset all dropdowns when closing the menu
     if (isOpen) {
-      setOpenDropdowns({
-        jadwal: false,
-        akademik: false,
-        tingkatAkhir: false,
-        hasilStudi: false,
-        keuangan: false,
-      });
+      setOpenDropdowns({});
     }
     // Prevent scrolling on body when menu is open
     document.body.style.overflow = isOpen ? "auto" : "hidden";
   };
 
-  const toggleDropdown = (dropdown) => {
+  const toggleDropdown = (id) => {
     setOpenDropdowns((prev) => ({
       ...prev,
-      [dropdown]: !prev[dropdown],
+      [id]: !prev[id],
     }));
+  };
+
+  // Handle menu item click
+  const handleMenuItemClick = () => {
+    toggleMenu();
   };
 
   return (
     <>
       {/* Hamburger Button */}
-      <button
-        onClick={toggleMenu}
-        className="flex flex-col justify-center items-center cursor-pointer w-10 h-10 xl:hidden focus:outline-none transition-all duration-300 border-1 shadow-sm
-          "
-        aria-label="Menu"
-      >
-        <span
-          className={`block w-6 h-0.5 bg-white transition-transform mb-1.5`}
-        ></span>
-        <span
-          className={`block w-6 h-0.5 bg-white transition-opacity mb-1.5`}
-        ></span>
-        <span
-          className={`block w-6 h-0.5 bg-white transition-transform`}
-        ></span>
-      </button>
+      <HamburgerIcon onClick={toggleMenu} />
 
       {/* Fullscreen Menu */}
       <div
@@ -62,22 +262,8 @@ const HamburgerMenu = () => {
             : "opacity-0 invisible pointer-events-none -translate-y-50"
         }`}
       >
-        {/* close button */}
-        <button
-          onClick={toggleMenu}
-          className="flex flex-col justify-center cursor-pointer items-center w-10 h-10 xl:hidden focus:outline-none transition-all duration-300
-          "
-          aria-label="Menu"
-        >
-          <span
-            className={`block w-6 h-0.5 bg-black transition-transform transform rotate-45 translate-y-1`}
-          ></span>
-          <span className={`block w-6 h-0.5 bg-black opacity-0 mb-1`}></span>
-          <span
-            className={`block w-6 h-0.5 bg-black transition-transform transform -rotate-45 -translate-y-1
-            `}
-          ></span>
-        </button>
+        {/* Close button */}
+        <CloseButton onClick={toggleMenu} />
 
         {/* University Logo and Title */}
         <div className="flex items-center mb-8 mt-10">
@@ -96,532 +282,42 @@ const HamburgerMenu = () => {
 
         <nav className="w-full border-t border-gray-200">
           <ul className="w-full text-gray-800">
-            {/* Beranda - No dropdown */}
-            <li className="py-4 border-b border-gray-200 ">
-              <Link
-                to="/dashboard"
-                className="flex justify-between items-center"
-                onClick={() => toggleMenu()}
-              >
-                <span className="font-medium">Beranda</span>
-              </Link>
-            </li>
+            {menuItems.map((item) => (
+              <li key={item.id} className="border-b border-gray-200">
+                {item.hasDropdown ? (
+                  <>
+                    <DropdownToggle
+                      title={item.title}
+                      isOpen={openDropdowns[item.id]}
+                      onClick={() => toggleDropdown(item.id)}
+                    />
 
-            {/* Jadwal - With dropdown */}
-            <li className="border-b border-gray-200">
-              <div
-                className="py-4 flex justify-between items-center cursor-pointer"
-                onClick={() => toggleDropdown("jadwal")}
-              >
-                <span className="font-medium">Jadwal</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-5 w-5 transition-transform duration-300 ${
-                    openDropdowns.jadwal ? "transform rotate-180" : ""
-                  }`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              {openDropdowns.jadwal && (
-                <ul className="ml-4 mb-3 space-y-2 text-gray-600">
-                  {/* menu pengumuman */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_annon.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Pengumuman</p>
-                          <p className="text-xs font-extralight">
-                            Informasi Kegiatan Kampus
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu kalender akademik */}
-                  <li>
-                    <Link
-                      to="/schedule/calendar"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_calendar.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Kalender Akademik</p>
-                          <p className="text-xs font-extralight">
-                            Periksa Kegiatan Perkuliahan
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu jadwal minggu ini */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_week.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Jadwal Minggu Ini</p>
-                          <p className="text-xs font-extralight">
-                            Aktifitas Seminggu Ke Depan
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu jadwal semester */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_timetable.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Jadwal Semester</p>
-                          <p className="text-xs font-extralight">
-                            Kegiatan Anda Satu Semester
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-
-            {/* Akademik - With dropdown */}
-            <li className="border-b border-gray-200">
-              <div
-                className="py-4 flex justify-between items-center cursor-pointer"
-                onClick={() => toggleDropdown("akademik")}
-              >
-                <span className="font-medium">Akademik</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-5 w-5 transition-transform duration-300 ${
-                    openDropdowns.akademik ? "transform rotate-180" : ""
-                  }`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              {openDropdowns.akademik && (
-                <ul className="ml-4 mb-3 space-y-2 text-gray-600">
-                  {/* menu pengisian krs */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_annon.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Pengisisan Kartu Rencana Studi</p>
-                          <p className="text-xs font-extralight">
-                            Tentukan Rencana Kuliah
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu riwayat krs */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_calendar.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Riwayat KRS</p>
-                          <p className="text-xs font-extralight">
-                            Rekap Rencana Kuliah Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu mengulang */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_week.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Mengulang</p>
-                          <p className="text-xs font-extralight">
-                            History Perbaikan Mata Kuliah
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu nilai mahasiswa */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_timetable.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Nilai Mahasiswa</p>
-                          <p className="text-xs font-extralight">
-                            Kualitas Perkuliahan Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-
-            {/* Tingkat Akhir - With dropdown */}
-            <li className="border-b border-gray-200">
-              <div
-                className="py-4 flex justify-between items-center cursor-pointer"
-                onClick={() => toggleDropdown("tingkatAkhir")}
-              >
-                <span className="font-medium">Tingkat Akhir</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-5 w-5 transition-transform duration-300 ${
-                    openDropdowns.tingkatAkhir ? "transform rotate-180" : ""
-                  }`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              {openDropdowns.tingkatAkhir && (
-                <ul className="ml-4 mb-3 space-y-2 text-gray-600">
-                  {/* menu konsultasi */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_annon.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Konsultasi</p>
-                          <p className="text-xs font-extralight">
-                            Temukan Solusi Masalah Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu kegiatan pendukung */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_calendar.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Kegiatan Pendukung</p>
-                          <p className="text-xs font-extralight">
-                            Salurkan Bakat Anda Disini
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu daftar proposal */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_week.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Daftar proposal</p>
-                          <p className="text-xs font-extralight">
-                            Buat Karya Anda Sekarang Juga
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu daftar tugas akhir */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_week.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Daftar Tugas Akhir</p>
-                          <p className="text-xs font-extralight">
-                            Selesaikan Karya Anda Saat Ini
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu pengajuan yudisium */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_week.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Pengajuan Yudisium</p>
-                          <p className="text-xs font-extralight">
-                            Konfirmasi Hasil Studi Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu pengajuan wisuda */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_timetable.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Pengajuan Wisuda</p>
-                          <p className="text-xs font-extralight">
-                            Konfirmasi Kehadiran Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-
-            {/* Hasil Studi - With dropdown */}
-            <li className="border-b border-gray-200">
-              <div
-                className="py-4 flex justify-between items-center cursor-pointer"
-                onClick={() => toggleDropdown("hasilStudi")}
-              >
-                <span className="font-medium">Hasil Studi</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-5 w-5 transition-transform duration-300 ${
-                    openDropdowns.hasilStudi ? "transform rotate-180" : ""
-                  }`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              {openDropdowns.hasilStudi && (
-                <ul className="ml-4 mb-3 space-y-2 text-gray-600">
-                  {/* menu kartu hasil studi */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_annon.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Kartu Hasil Studi</p>
-                          <p className="text-xs font-extralight">
-                            Laporan Priode Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu transkip */}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_timetable.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Transkip</p>
-                          <p className="text-xs font-extralight">
-                            Hasil Perkuliahan Anda
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-
-            {/* Keuangan - With dropdown */}
-            <li className="border-b border-gray-200">
-              <div
-                className="py-4 flex justify-between items-center cursor-pointer"
-                onClick={() => toggleDropdown("keuangan")}
-              >
-                <span className="font-medium">Keuangan</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-5 w-5 transition-transform duration-300 ${
-                    openDropdowns.keuangan ? "transform rotate-180" : ""
-                  }`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              {openDropdowns.keuangan && (
-                <ul className="ml-4 mb-3 space-y-2 text-gray-600">
-                  {/* menu tagihan mahasiswa */}
-                  <li>
-                    <Link
-                      to="/payment"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_annon.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Tagihan Mahasiswa</p>
-                          <p className="text-xs font-extralight">
-                            Biaya Operasional Pendidikan
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                  {/* menu riwayat keuangan*/}
-                  <li>
-                    <Link
-                      to="#"
-                      className="px-3 py-3 text-sm flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <img
-                          src="/img/icon_timetable.png"
-                          alt=""
-                          className="w-6 invert"
-                        />
-                        <div>
-                          <p>Riwayat Keuangan</p>
-                          <p className="text-xs font-extralight">Riwayat BOP</p>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
+                    {openDropdowns[item.id] && (
+                      <ul className="ml-4 mb-3 space-y-2 text-gray-600">
+                        {item.submenu.map((subItem, idx) => (
+                          <SubMenuItem
+                            key={idx}
+                            icon={subItem.icon}
+                            title={subItem.title}
+                            description={subItem.description}
+                            to={subItem.to}
+                            onClick={handleMenuItemClick}
+                          />
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    to={item.to}
+                    className="py-4 flex justify-between items-center"
+                    onClick={handleMenuItemClick}
+                  >
+                    <span className="font-medium">{item.title}</span>
+                  </Link>
+                )}
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
