@@ -12,8 +12,8 @@ import Retake from "./pages/academic/Retake";
 import Announcement from "./pages/schedule/Announcement";
 import ParentInformation from "./pages/profile/ParentInformation";
 import StudentPayment from "./pages/payment/StudentPayment";
-
-
+import ProgramStudy from "./pages/profile/ProgramStudy";
+import EducationHistory from "./pages/profile/EducationHistory";
 
 export default function App() {
   return (
@@ -34,6 +34,8 @@ export default function App() {
       {/* Route Profile */}
       <Route path="/profile" element={<StudentInformation />} />
       <Route path="/profile/parent" element={<ParentInformation />} />
+      <Route path="/profile/program-study" element={<ProgramStudy />} />
+      <Route path="/profile/education-history" element={<EducationHistory />} />
 
       {/* route payment */}
       <Route path="/payment" element={<StudentPayment />} />
@@ -41,7 +43,6 @@ export default function App() {
       {/* Route Akademik */}
       <Route path="/academic/history" element={<History />} />
       <Route path="/academic/retake" element={<Retake />} />
-
     </Routes>
   );
 }

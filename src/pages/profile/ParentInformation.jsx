@@ -7,6 +7,7 @@ import TabNavigationButton from "../../components/profile/TabNavigationButton";
 import RoundedBorderLayout from "../../components/profile/RoundedBorderLayout";
 import InputField from "../../components/profile/InputBoxField";
 import { User, Users } from "lucide-react";
+import HorizontalLine from "../../components/profile/HorizontalLine";
 
 const ParentInformation = () => {
   const [activeTab, setActiveTab] = useState("orang-tua");
@@ -17,8 +18,7 @@ const ParentInformation = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"}>
-      <div className="h-px border border-primary-green"></div>
-
+      <HorizontalLine />
       <div className="grid grid-cols-6 gap-6 p-4">
         <div className="col-span-2">
           <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
