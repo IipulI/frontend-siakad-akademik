@@ -3,8 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 @theme {
-  --color-primary-green: #116E63;
-  --color-primary-yellow: #FDA31B;
+  --color-primary-green: #116e63;
+  --color-primary-yellow: #fda31b;
   --color-gray-text: #4d5a68;
   --color-primary-white: #f5f7ff;
   --color-primary-blue: #001b36;
@@ -46,6 +46,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .dark {
