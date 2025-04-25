@@ -95,6 +95,7 @@ export default function SupportingActivities() {
             label="Cetak"
             onClick={handlePrint}
             bgColor={"bg-blue-400"}
+            hoverColor={"hover:bg-blue-500"}
           />
         </FilterSection>
 

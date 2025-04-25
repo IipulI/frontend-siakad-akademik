@@ -3,12 +3,12 @@ export default function ActionButton({
   label,
   onClick,
   bgColor,
-  hoverColor = "hover:bg-blue-500",
+  hoverColor,
 }) {
   return (
     <button
       onClick={onClick}
-      className={`${bgColor} ${hoverColor} text-white px-4 py-1.5 rounded-md flex items-center justify-center text-sm xl:text-base cursor-pointer`}
+      className={`${bgColor} ${hoverColor} text-white px-4 py-1.5 rounded-md flex items-center justify-center text-xs sm:text-sm xl:text-base cursor-pointer`}
     >
       {icon}
       {label && <p className="ml-3">{label}</p>}

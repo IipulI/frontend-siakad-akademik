@@ -13,6 +13,7 @@ import Announcement from "./pages/schedule/Announcement";
 import ParentInformation from "./pages/profile/ParentInformation";
 import StudentPayment from "./pages/payment/StudentPayment";
 import Consultation from "./pages/final level/Consultation";
+import CreateConsultation from "./pages/final level/CreateConsultation";
 import SupportingActivities from "./pages/final level/SupportingActivities";
 
 export default function App() {
@@ -44,6 +45,10 @@ export default function App() {
 
       {/* Route Tingkat akhir */}
       <Route path="/final level/consultation" element={<Consultation />} />
+      <Route
+        path="/final level/consultation/detail consultation"
+        element={<CreateConsultation />}
+      />
       <Route
         path="/final level/supporting activities"
         element={<SupportingActivities />}

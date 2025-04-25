@@ -13,7 +13,7 @@ export default function Pagination({
   infoComponent = null,
 }) {
   return (
-    <div className="flex justify-between items-center mt-4 border-t-3 pt-2 border-gray-400 space-x-30">
+    <div className="flex flex-col gap-3 lg:flex-row justify-between mt-4 border-t-3 pt-2 border-gray-400 space-x-5 lg:space-x-30">
       <div className="border-l-4 border-primary-yellow pl-1">
         <span className="text-xs xl:text-sm text-gray-600">
           {infoComponent ||

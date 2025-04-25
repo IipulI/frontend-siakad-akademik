@@ -10,7 +10,7 @@ import ActionButton from "../../components/final level/ActionButton";
 import DataTable from "../../components/final level/DataTable";
 import Pagination from "../../components/final level/Pagination";
 
-export default function KonsultasiPembimbing() {
+export default function Consultation() {
   // State
   const [periodeAkademik, setPeriodeAkademik] = useState("2024 Genap");
   const [filterValue, setFilterValue] = useState("");
@@ -60,7 +60,7 @@ export default function KonsultasiPembimbing() {
   };
 
   const handleAddNew = () => {
-    alert("Add new clicked");
+    window.location.href = "/final level/consultation/detail consultation";
     // Implement add new logic here
   };
 
@@ -92,6 +92,7 @@ export default function KonsultasiPembimbing() {
             label="Tambah"
             onClick={handleAddNew}
             bgColor={"bg-blue-400"}
+            hoverColor={"hover:bg-blue-500"}
           />
         </FilterSection>
 
