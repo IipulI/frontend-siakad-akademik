@@ -153,13 +153,13 @@ const HamburgerMenu = () => {
           icon: "icon_annon.png",
           title: "Konsultasi",
           description: "Temukan Solusi Masalah Anda",
-          to: "#",
+          to: "/final level/consultation",
         },
         {
           icon: "icon_calendar.png",
           title: "Kegiatan Pendukung",
           description: "Salurkan Bakat Anda Disini",
-          to: "#",
+          to: "/final level/supporting activities",
         },
         {
           icon: "icon_week.png",

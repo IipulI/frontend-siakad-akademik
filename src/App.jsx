@@ -12,8 +12,7 @@ import Retake from "./pages/academic/Retake";
 import Announcement from "./pages/schedule/Announcement";
 import ParentInformation from "./pages/profile/ParentInformation";
 import StudentPayment from "./pages/payment/StudentPayment";
-
-
+import Consultation from "./pages/final level/Consultation";
 
 export default function App() {
   return (
@@ -41,6 +40,9 @@ export default function App() {
       {/* Route Akademik */}
       <Route path="/academic/history" element={<History />} />
       <Route path="/academic/retake" element={<Retake />} />
+
+      {/* {Route Tingkat akhir} */}
+      <Route path="/final level/consultation" element={<Consultation />} />
 
     </Routes>
   );

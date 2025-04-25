@@ -145,13 +145,13 @@ const Navbar = () => {
           icon: "icon_annon.png",
           title: "Konsultasi",
           description: "Temukan solusi masalah Anda",
-          to: "#",
+          to: "/final level/consultation",
         },
         {
           icon: "icon_calendar.png",
           title: "Kegiatan Pendukung",
           description: "Salurkan bakat Anda disini",
-          to: "#",
+          to: "/final level/supporting activities",
         },
         {
           icon: "icon_week.png",
