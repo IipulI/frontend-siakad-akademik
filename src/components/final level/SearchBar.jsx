@@ -14,7 +14,7 @@ export default function SearchBar({
   };
 
   return (
-    <div className="flex-grow">
+    <div className="flex-grow w-full lg:w-[600px]">
       <form onSubmit={handleSubmit} className="flex">
         <input
           type="text"
@@ -25,14 +25,14 @@ export default function SearchBar({
         />
         <button
           type="submit"
-          className="bg-green-600 text-white p-2 px-3 hover:bg-green-700"
+          className="bg-green-600 text-white p-2 px-3 hover:bg-green-700 cursor-pointer"
         >
           <FaSearch />
         </button>
         <button
           type="button"
           onClick={onRefresh}
-          className="bg-blue-800 text-white p-2 px-3 rounded-r-md hover:bg-blue-900"
+          className="bg-blue-800 text-white p-2 px-3 rounded-r-md hover:bg-blue-900 cursor-pointer"
         >
           <FiRefreshCw />
         </button>

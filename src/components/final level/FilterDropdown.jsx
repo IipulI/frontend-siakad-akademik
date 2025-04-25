@@ -5,9 +5,9 @@ export default function FilterDropdown({
   placeholder = "-Semua-",
 }) {
   return (
-    <div className="relative w-full md:w-32">
+    <div className="relative w-full lg:w-70">
       <select
-        className="w-full p-1.5 border border-gray-300 rounded-md bg-white pr-8 text-gray-500 text-sm xl:text-base"
+        className="w-full p-1.5 border border-gray-300 rounded-md bg-white pr-8 text-gray-500 text-sm xl:text-base cursor-pointer"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >

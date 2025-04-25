@@ -5,11 +5,11 @@ export default function PeriodeSelector({
   label = "Periode Akademik",
 }) {
   return (
-    <div className="flex items-center">
-      <h2 className="font-semibold">{label}</h2>
-      <div className="relative w-full md:w-64 ml-3">
+    <div className="flex flex-col w-full lg:flex-row lg:w-[900px] lg:items-center">
+      <h2 className="font-semibold mb-2 lg:mb-0 lg:w-80">{label}</h2>
+      <div className="relative w-full">
         <select
-          className="w-full p-1.5 border border-gray-300 rounded-md bg-white pr-8 text-gray-500 text-sm xl:text-base"
+          className="w-full  p-1.5 border border-gray-300 rounded-md bg-white pr-8 text-gray-500 text-sm xl:text-base cursor-pointer"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >

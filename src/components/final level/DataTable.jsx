@@ -2,12 +2,12 @@ export default function DataTable({
   columns,
   data,
   emptyMessage = "Data kosong",
-  tableClassName = "w-full border-collapse border-2 text-sm xl:text-base",
+  tableClassName = " w-full border-collapse border-2 text-sm xl:text-base shrink-0",
   headerClassName = "bg-primary-green text-white font-semibold text-center",
   rowClassName = "border-b border-gray-200",
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto flex">
       <table className={tableClassName}>
         <thead>
           <tr className={headerClassName}>

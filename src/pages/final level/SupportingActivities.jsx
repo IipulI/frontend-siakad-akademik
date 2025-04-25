@@ -58,7 +58,7 @@ export default function SupportingActivities() {
   };
 
   const handleRefresh = () => {
-    setSearchQuery("");
+    location.reload();
     // Implement refresh logic here
   };
 

@@ -55,7 +55,7 @@ export default function KonsultasiPembimbing() {
   };
 
   const handleRefresh = () => {
-    setSearchQuery("");
+    location.reload();
     // Implement refresh logic here
   };
 

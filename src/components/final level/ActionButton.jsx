@@ -1,18 +1,17 @@
-export default function ActionButton({ 
-  icon, 
-  label, 
-  onClick, 
-  bgColor, 
-  hoverColor = "hover:bg-blue-500" 
+export default function ActionButton({
+  icon,
+  label,
+  onClick,
+  bgColor,
+  hoverColor = "hover:bg-blue-500",
 }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`${bgColor} ${hoverColor} text-white px-4 py-1.5 rounded-md flex items-center justify-center text-sm xl:text-base`}
+      className={`${bgColor} ${hoverColor} text-white px-4 py-1.5 rounded-md flex items-center justify-center text-sm xl:text-base cursor-pointer`}
     >
       {icon}
       {label && <p className="ml-3">{label}</p>}
     </button>
   );
 }
-
