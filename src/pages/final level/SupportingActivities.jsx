@@ -63,7 +63,8 @@ export default function SupportingActivities() {
   };
 
   const handlePrint = () => {
-    alert("Add print clicked");
+    window.location.href =
+      "/final level/supporting activities/supporting activities report";
     // Implement add new logic here
   };
 

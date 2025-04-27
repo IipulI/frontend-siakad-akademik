@@ -15,6 +15,7 @@ import StudentPayment from "./pages/payment/StudentPayment";
 import Consultation from "./pages/final level/Consultation";
 import CreateConsultation from "./pages/final level/CreateConsultation";
 import SupportingActivities from "./pages/final level/SupportingActivities";
+import SupportingActivitiesReport from "./pages/final level/SupportingActivitiesReport";
 
 export default function App() {
   return (
@@ -52,6 +53,10 @@ export default function App() {
       <Route
         path="/final level/supporting activities"
         element={<SupportingActivities />}
+      />
+      <Route
+        path="/final level/supporting activities/supporting activities report"
+        element={<SupportingActivitiesReport />}
       />
     </Routes>
   );
