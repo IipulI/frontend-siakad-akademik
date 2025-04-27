@@ -53,8 +53,8 @@ export default function CreateConsultation() {
                 icon={<FaChevronLeft />}
                 label="Kembali ke Daftar"
                 onClick={handleBack}
-                bgColor={"bg-blue-400"}
-                hoverColor={"hover:bg-blue-500"}
+                bgColor={"bg-primary-blueSoft"}
+                hoverColor={"hover:bg-blue-400"}
               />
               <ActionButton
                 icon={<AiFillSave />}

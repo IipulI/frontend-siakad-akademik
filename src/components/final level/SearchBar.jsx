@@ -32,7 +32,7 @@ export default function SearchBar({
         <button
           type="button"
           onClick={onRefresh}
-          className="bg-blue-800 text-white p-2 px-3 rounded-r-md hover:bg-blue-900 cursor-pointer"
+          className="bg-primary-blueDark text-white p-2 px-3 rounded-r-md hover:bg-blue-900 cursor-pointer"
         >
           <FiRefreshCw />
         </button>

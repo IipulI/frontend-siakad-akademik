@@ -91,8 +91,8 @@ export default function Consultation() {
             icon={<FaPlus />}
             label="Tambah"
             onClick={handleAddNew}
-            bgColor={"bg-blue-400"}
-            hoverColor={"hover:bg-blue-500"}
+            bgColor={"bg-primary-blueSoft"}
+            hoverColor={"hover:bg-blue-400"}
           />
         </FilterSection>
 

@@ -83,15 +83,15 @@ export default function SupportingActivitiesReport() {
             icon={<FaRegEye />}
             label="Tampilkan"
             onClick={handleSee}
-            bgColor={"bg-blue-800"}
-            hoverColor={"hover:bg-blue-900"}
+            bgColor={"bg-primary-blueDark"}
+            hoverColor={"hover:bg-blue-800"}
           />
           <ActionButton
             icon={<BiLinkExternal />}
             label="Lihat di Tab Baru"
             onClick={handleNewTab}
-            bgColor={"bg-blue-400"}
-            hoverColor={"hover:bg-blue-500"}
+            bgColor={"bg-primary-blueSoft"}
+            hoverColor={"hover:bg-blue-400"}
           />
         </div>
       </ContentCard>
