@@ -13,34 +13,6 @@ export default function CreateConsultation() {
   // State
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Options for dropdowns
-  const periodeOptions = [
-    { value: "2024 Genap", label: "2024 Genap" },
-    { value: "2024 Ganjil", label: "2024 Ganjil" },
-    { value: "2023 Genap", label: "2023 Genap" },
-  ];
-
-  const filterOptions = [];
-
-  // Table columns configuration
-  const columns = [
-    { header: "Post Terakhir", accessor: "postTerakhir" },
-    { header: "Topik", accessor: "topik" },
-    { header: "KRS Disetujui", accessor: "krsDisetujui" },
-    { header: "Status", accessor: "status" },
-    {
-      header: "Aksi",
-      accessor: "id",
-      render: () => (
-        <div className="flex space-x-2 justify-center">
-          <button className="bg-blue-500 text-white px-2 py-1 rounded">
-            View
-          </button>
-        </div>
-      ),
-    },
-  ];
-
   // Handlers
   const handleSearch = (query) => {
     alert("Searching for:" + query);
