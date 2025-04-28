@@ -16,6 +16,7 @@ import Consultation from "./pages/final level/Consultation";
 import CreateConsultation from "./pages/final level/CreateConsultation";
 import SupportingActivities from "./pages/final level/SupportingActivities";
 import SupportingActivitiesReport from "./pages/final level/SupportingActivitiesReport";
+import ProposalList from "./pages/final level/ProposalList";
 
 export default function App() {
   return (
@@ -57,6 +58,10 @@ export default function App() {
       <Route
         path="/final level/supporting activities/supporting activities report"
         element={<SupportingActivitiesReport />}
+      />
+      <Route
+        path="/final level/proposal list"
+        element={<ProposalList />}
       />
     </Routes>
   );

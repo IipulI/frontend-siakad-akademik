@@ -165,7 +165,7 @@ const HamburgerMenu = () => {
           icon: "icon_week.png",
           title: "Daftar proposal",
           description: "Buat Karya Anda Sekarang Juga",
-          to: "#",
+          to: "/final level/proposal list",
         },
         {
           icon: "icon_week.png",

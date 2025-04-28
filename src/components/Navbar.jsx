@@ -157,7 +157,7 @@ const Navbar = () => {
           icon: "icon_week.png",
           title: "Daftar Proposal",
           description: "Buat karya Anda sekarang juga",
-          to: "#",
+          to: "/final level/proposal list",
         },
         {
           icon: "icon_week.png",
