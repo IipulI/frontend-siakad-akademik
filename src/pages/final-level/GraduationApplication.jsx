@@ -1,5 +1,5 @@
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
+import ContentCard from "../../components/final-level/layout/ContentCard";
 
 export default function GraduationApplication() {
   return (

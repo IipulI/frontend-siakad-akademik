@@ -1,5 +1,5 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
-import { FaChevronLeft, FaChevronRight, FaAnglesLeft } from "react-icons/fa6";
 
 export default function Pagination({
   currentPage,
@@ -40,14 +40,14 @@ export default function Pagination({
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
           >
-            <FaAnglesLeft color={currentPage === 1 ? "gray" : "black"} />
+            {/* <FaAnglesLeft color={currentPage === 1 ? "gray" : "black"} /> */}
           </button>
           <button
             className="p-1.5 border-t border-b border-gray-300 bg-gray-200"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <FaChevronLeft color={currentPage === 1 ? "gray" : "black"} />
+            <ChevronLeft color={currentPage === 1 ? "gray" : "black"} />
           </button>
           <button className="p-1.5 border px-3 border-gray-300 bg-primary-green text-white">
             {currentPage}
@@ -57,7 +57,7 @@ export default function Pagination({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            <FaChevronRight
+            <ChevronRight
               color={currentPage === totalPages ? "gray" : "black"}
             />
           </button>

@@ -1,9 +1,8 @@
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
-import ActionButton from "../../components/final level/ActionButton";
+import ContentCard from "../../components/final-level/layout/ContentCard";
+import ActionButton from "../../components/final-level/ActionButton";
 import React from "react";
-import { BiLinkExternal } from "react-icons/bi";
-import { FaRegEye } from "react-icons/fa";
+import { Eye, Link } from "lucide-react";
 
 export default function SupportingActivitiesReport() {
   const handleSee = () => {
@@ -80,14 +79,14 @@ export default function SupportingActivitiesReport() {
 
         <div className="flex w-full gap-3 mt-3 justify-end">
           <ActionButton
-            icon={<FaRegEye />}
+            icon={<Eye />}
             label="Tampilkan"
             onClick={handleSee}
             bgColor={"bg-primary-blueDark"}
             hoverColor={"hover:bg-blue-800"}
           />
           <ActionButton
-            icon={<BiLinkExternal />}
+            icon={<Link />}
             label="Lihat di Tab Baru"
             onClick={handleNewTab}
             bgColor={"bg-primary-blueSoft"}

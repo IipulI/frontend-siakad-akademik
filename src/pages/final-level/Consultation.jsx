@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { FaPrint } from "react-icons/fa6";
+import { Plus } from "lucide-react";
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
-import FilterSection from "../../components/final level/layout/FilterSection";
-import PeriodeSelector from "../../components/final level/PeriodeSelector";
-import FilterDropdown from "../../components/final level/FilterDropdown";
-import SearchBar from "../../components/final level/SearchBar";
-import ActionButton from "../../components/final level/ActionButton";
-import DataTable from "../../components/final level/DataTable";
-import Pagination from "../../components/final level/Pagination";
+import ContentCard from "../../components/final-level/layout/ContentCard";
+import FilterSection from "../../components/final-level/layout/FilterSection";
+import PeriodeSelector from "../../components/final-level/PeriodeSelector";
+import FilterDropdown from "../../components/final-level/FilterDropdown";
+import SearchBar from "../../components/final-level/SearchBar";
+import ActionButton from "../../components/final-level/ActionButton";
+import DataTable from "../../components/final-level/DataTable";
+import Pagination from "../../components/final-level/Pagination";
+import { useNavigate } from "react-router-dom";
 
-export default function SupportingActivities() {
+export default function Consultation() {
   // State
   const [periodeAkademik, setPeriodeAkademik] = useState("2024 Genap");
   const [filterValue, setFilterValue] = useState("");
@@ -19,6 +20,8 @@ export default function SupportingActivities() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [totalItems] = useState(10);
+
+  const location = useNavigate();
 
   // Options for dropdowns
   const periodeOptions = [
@@ -31,13 +34,10 @@ export default function SupportingActivities() {
 
   // Table columns configuration
   const columns = [
-    { header: "Unit", accessor: "unit" },
-    { header: "Jenis", accessor: "jenis" },
-    { header: "Nama Kegiatan", accessor: "namaKegiatan" },
-    { header: "Unit", accessor: "unit" },
-    { header: "Instansi", accessor: "instansi" },
-    { header: "Mulai", accessor: "mulai" },
-    { header: "Selesai", accessor: "selesai" },
+    { header: "Post Terakhir", accessor: "postTerakhir" },
+    { header: "Topik", accessor: "topik" },
+    { header: "KRS Disetujui", accessor: "krsDisetujui" },
+    { header: "Status", accessor: "status" },
     {
       header: "Aksi",
       accessor: "id",
@@ -57,19 +57,17 @@ export default function SupportingActivities() {
     // Implement search logic here
   };
 
-  const handleRefresh = () => {
-    location.reload();
-    // Implement refresh logic here
+  const handleRefresh = (e) => {
+    e.preventDefault();
   };
 
-  const handlePrint = () => {
-    window.location.href =
-      "/final level/supporting activities/supporting activities report";
+  const handleAddNew = () => {
+    location("/final-level/consultation/detail-consultation");
     // Implement add new logic here
   };
 
   return (
-    <MainLayout titlePage="Kegiatan Pendukung">
+    <MainLayout titlePage="Konsultasi Pembimbing">
       <ContentCard>
         <FilterSection>
           <PeriodeSelector
@@ -89,12 +87,12 @@ export default function SupportingActivities() {
             onChange={setSearchQuery}
             onSearch={handleSearch}
             onRefresh={handleRefresh}
-            placeholder="Cari Kegiatan Pendukung"
+            placeholder="Cari Konsultasi Pembimbing"
           />
           <ActionButton
-            icon={<FaPrint />}
-            label="Cetak"
-            onClick={handlePrint}
+            icon={<Plus />}
+            label="Tambah"
+            onClick={handleAddNew}
             bgColor={"bg-primary-blueSoft"}
             hoverColor={"hover:bg-blue-400"}
           />

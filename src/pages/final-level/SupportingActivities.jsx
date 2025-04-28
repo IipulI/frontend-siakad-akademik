@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { FaPlus } from "react-icons/fa6";
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
-import FilterSection from "../../components/final level/layout/FilterSection";
-import PeriodeSelector from "../../components/final level/PeriodeSelector";
-import FilterDropdown from "../../components/final level/FilterDropdown";
-import SearchBar from "../../components/final level/SearchBar";
-import ActionButton from "../../components/final level/ActionButton";
-import DataTable from "../../components/final level/DataTable";
-import Pagination from "../../components/final level/Pagination";
+import ContentCard from "../../components/final-level/layout/ContentCard";
+import FilterSection from "../../components/final-level/layout/FilterSection";
+import PeriodeSelector from "../../components/final-level/PeriodeSelector";
+import FilterDropdown from "../../components/final-level/FilterDropdown";
+import SearchBar from "../../components/final-level/SearchBar";
+import ActionButton from "../../components/final-level/ActionButton";
+import DataTable from "../../components/final-level/DataTable";
+import Pagination from "../../components/final-level/Pagination";
+import { Printer } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function Consultation() {
+export default function SupportingActivities() {
   // State
   const [periodeAkademik, setPeriodeAkademik] = useState("2024 Genap");
   const [filterValue, setFilterValue] = useState("");
@@ -19,6 +20,8 @@ export default function Consultation() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [totalItems] = useState(10);
+
+  const location = useNavigate();
 
   // Options for dropdowns
   const periodeOptions = [
@@ -31,10 +34,13 @@ export default function Consultation() {
 
   // Table columns configuration
   const columns = [
-    { header: "Post Terakhir", accessor: "postTerakhir" },
-    { header: "Topik", accessor: "topik" },
-    { header: "KRS Disetujui", accessor: "krsDisetujui" },
-    { header: "Status", accessor: "status" },
+    { header: "Unit", accessor: "unit" },
+    { header: "Jenis", accessor: "jenis" },
+    { header: "Nama Kegiatan", accessor: "namaKegiatan" },
+    { header: "Unit", accessor: "unit" },
+    { header: "Instansi", accessor: "instansi" },
+    { header: "Mulai", accessor: "mulai" },
+    { header: "Selesai", accessor: "selesai" },
     {
       header: "Aksi",
       accessor: "id",
@@ -54,18 +60,17 @@ export default function Consultation() {
     // Implement search logic here
   };
 
-  const handleRefresh = () => {
-    location.reload();
-    // Implement refresh logic here
+  const handleRefresh = (e) => {
+    e.preventDefault();
   };
 
-  const handleAddNew = () => {
-    window.location.href = "/final level/consultation/detail consultation";
+  const handlePrint = () => {
+    location("/final-level/supporting-activities/supporting-activities-report");
     // Implement add new logic here
   };
 
   return (
-    <MainLayout titlePage="Konsultasi Pembimbing">
+    <MainLayout titlePage="Kegiatan Pendukung">
       <ContentCard>
         <FilterSection>
           <PeriodeSelector
@@ -85,12 +90,12 @@ export default function Consultation() {
             onChange={setSearchQuery}
             onSearch={handleSearch}
             onRefresh={handleRefresh}
-            placeholder="Cari Konsultasi Pembimbing"
+            placeholder="Cari Kegiatan Pendukung"
           />
           <ActionButton
-            icon={<FaPlus />}
-            label="Tambah"
-            onClick={handleAddNew}
+            icon={<Printer />}
+            label="Cetak"
+            onClick={handlePrint}
             bgColor={"bg-primary-blueSoft"}
             hoverColor={"hover:bg-blue-400"}
           />

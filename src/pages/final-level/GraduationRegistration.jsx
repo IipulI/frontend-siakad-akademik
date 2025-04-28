@@ -1,6 +1,6 @@
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
 import Biodata from "../../components/Biodata";
+import ContentCard from "../../components/final-level/layout/ContentCard";
 
 export default function GraduationRegistration() {
   return (
