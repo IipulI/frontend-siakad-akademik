@@ -175,7 +175,7 @@ const Navbar = () => {
           icon: "icon_timetable.png",
           title: "Pengajuan Wisuda",
           description: "Konfirmasi kehadiran Anda",
-          to: "#",
+          to: "/final level/graduation registration",
         },
       ],
     },

@@ -183,7 +183,7 @@ const HamburgerMenu = () => {
           icon: "icon_timetable.png",
           title: "Pengajuan Wisuda",
           description: "Konfirmasi Kehadiran Anda",
-          to: "#",
+          to: "/final level/graduation registration",
         },
       ],
     },

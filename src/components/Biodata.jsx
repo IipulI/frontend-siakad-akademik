@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import BiodataSection from "./BiodataSection";
 import HorizontalLine from "../components/profile/HorizontalLine";
 
-const Biodata = () => {
+const Biodata = ({ showLine = true }) => {
   // tar data dari api
   const data = {
     id: 1,
@@ -49,7 +49,7 @@ const Biodata = () => {
 
   return (
     <div className="space-y-1">
-      <HorizontalLine />
+      {showLine && <HorizontalLine />}
       <div className="w-full flex justify-between items-center bg-primary-green/5 px-6 py-4 border-l-4 border-primary-green">
         {sections.map((section, index) => (
           <Fragment key={index}>
