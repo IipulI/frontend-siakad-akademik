@@ -7,7 +7,7 @@ export default function Breadcrumb() {
 
   // Jika hanya "/dashboard", gaperlu ada breadcrumb
   if (pathnames.length === 1 && pathnames[0] === "dashboard") {
-    return null;
+    return;
   }
 
   return (

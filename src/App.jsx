@@ -18,6 +18,9 @@ import SupportingActivities from "./pages/final level/SupportingActivities";
 import SupportingActivitiesReport from "./pages/final level/SupportingActivitiesReport";
 import ProposalList from "./pages/final level/ProposalList";
 import FinalProjectList from "./pages/final level/FinalProjectList";
+import ProgramStudy from "./pages/profile/ProgramStudy";
+import EducationHistory from "./pages/profile/EducationHistory";
+import StudyPlanCard from "./pages/academic/StudyPlanCard";
 
 export default function App() {
   return (
@@ -38,6 +41,8 @@ export default function App() {
       {/* Route Profile */}
       <Route path="/profile" element={<StudentInformation />} />
       <Route path="/profile/parent" element={<ParentInformation />} />
+      <Route path="/profile/program-study" element={<ProgramStudy />} />
+      <Route path="/profile/education-history" element={<EducationHistory />} />
 
       {/* route payment */}
       <Route path="/payment" element={<StudentPayment />} />
@@ -45,11 +50,12 @@ export default function App() {
       {/* Route Akademik */}
       <Route path="/academic/history" element={<History />} />
       <Route path="/academic/retake" element={<Retake />} />
+      <Route path="/academic/study-plan" element={<StudyPlanCard />} />
 
       {/* Route Tingkat akhir */}
       <Route path="/final level/consultation" element={<Consultation />} />
       <Route
-        path="/final level/consultation/detail consultation"
+        path="/final level/consultation/detai~l consultation"
         element={<CreateConsultation />}
       />
       <Route

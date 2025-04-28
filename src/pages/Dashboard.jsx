@@ -6,7 +6,7 @@ import DashboardCardAcademic from "../components/DashboardCardAcademic";
 import DashboardAnnouncementCard from "../components/DashboardAnnouncementCard";
 import MainLayout from "../components/layouts/MainLayout";
 import IPSChart from "../components/chart/IPSChart";
-import { CalendarDays, ChevronDown } from "lucide-react";
+import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
 
 const Dashboard = () => {
   const [currentDate, setCurrentDate] = useState();

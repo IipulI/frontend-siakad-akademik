@@ -7,6 +7,7 @@ export default function MainLayout({
   children,
   isGreeting = false,
   titlePage,
+  className,
 }) {
   const [greeting, setGreeting] = useState("");
 
@@ -26,7 +27,7 @@ export default function MainLayout({
     setGreeting(message);
   }, []);
   return (
-    <div className="bg-primary-white min-h-screen">
+    <div className={`bg-primary-white min-h-screen ${className}`}>
       <Header />
       <div className="px-5 md:px-10 xl:px-40">
         {isGreeting ? (
