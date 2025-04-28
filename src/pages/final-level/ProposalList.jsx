@@ -1,14 +1,13 @@
 import { useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
-import FilterSection from "../../components/final level/layout/FilterSection";
-import FilterDropdown from "../../components/final level/FilterDropdown";
-import SearchBar from "../../components/final level/SearchBar";
-import ActionButton from "../../components/final level/ActionButton";
-import DataTable from "../../components/final level/DataTable";
-import Pagination from "../../components/final level/Pagination";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { FaPlus } from "react-icons/fa6";
+import ContentCard from "../../components/final-level/layout/ContentCard";
+import FilterSection from "../../components/final-level/layout/FilterSection";
+import FilterDropdown from "../../components/final-level/FilterDropdown";
+import SearchBar from "../../components/final-level/SearchBar";
+import ActionButton from "../../components/final-level/ActionButton";
+import DataTable from "../../components/final-level/DataTable";
+import Pagination from "../../components/final-level/Pagination";
+import { Plus, Trash } from "lucide-react";
 
 export default function ProposalList() {
   // State
@@ -81,14 +80,14 @@ export default function ProposalList() {
 
             <div className="flex space-x-5 w-full justify-center lg:justify-end">
               <ActionButton
-                icon={<FaPlus />}
+                icon={<Plus />}
                 label="Tambah"
                 onClick={handleCreate}
                 bgColor={"bg-primary-blueSoft"}
                 hoverColor={"hover:bg-blue-400"}
               />
               <ActionButton
-                icon={<FaRegTrashAlt />}
+                icon={<Trash />}
                 label="Hapus"
                 onClick={handleDelete}
                 bgColor={"bg-red-400"}

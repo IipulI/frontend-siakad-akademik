@@ -1,5 +1,4 @@
-import { FaSearch } from "react-icons/fa";
-import { FiRefreshCw } from "react-icons/fi";
+import { RotateCcw, Search } from "lucide-react";
 
 export default function SearchBar({
   value,
@@ -27,14 +26,14 @@ export default function SearchBar({
           type="submit"
           className="bg-green-600 text-white p-2 px-3 hover:bg-green-700 cursor-pointer"
         >
-          <FaSearch />
+          <Search />
         </button>
         <button
           type="button"
           onClick={onRefresh}
           className="bg-primary-blueDark text-white p-2 px-3 rounded-r-md hover:bg-blue-900 cursor-pointer"
         >
-          <FiRefreshCw />
+          <RotateCcw />
         </button>
       </form>
     </div>

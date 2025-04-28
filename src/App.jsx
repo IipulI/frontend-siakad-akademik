@@ -12,14 +12,14 @@ import Retake from "./pages/academic/Retake";
 import Announcement from "./pages/schedule/Announcement";
 import ParentInformation from "./pages/profile/ParentInformation";
 import StudentPayment from "./pages/payment/StudentPayment";
-import Consultation from "./pages/final level/Consultation";
-import CreateConsultation from "./pages/final level/CreateConsultation";
-import SupportingActivities from "./pages/final level/SupportingActivities";
-import SupportingActivitiesReport from "./pages/final level/SupportingActivitiesReport";
-import ProposalList from "./pages/final level/ProposalList";
-import FinalProjectList from "./pages/final level/FinalProjectList";
-import GraduationApplication from "./pages/final level/GraduationApplication";
-import GraduationRegistration from "./pages/final level/GraduationRegistration";
+import Consultation from "./pages/final-level/Consultation";
+import CreateConsultation from "./pages/final-level/CreateConsultation";
+import SupportingActivities from "./pages/final-level/SupportingActivities";
+import SupportingActivitiesReport from "./pages/final-level/SupportingActivitiesReport";
+import ProposalList from "./pages/final-level/ProposalList";
+import FinalProjectList from "./pages/final-level/FinalProjectList";
+import GraduationApplication from "./pages/final-level/GraduationApplication";
+import GraduationRegistration from "./pages/final-level/GraduationRegistration";
 import ProgramStudy from "./pages/profile/ProgramStudy";
 import EducationHistory from "./pages/profile/EducationHistory";
 import StudyPlanCard from "./pages/academic/StudyPlanCard";
@@ -63,30 +63,30 @@ export default function App() {
       <Route path="/academic/study-plan" element={<StudyPlanCard />} />
 
       {/* Route Tingkat akhir */}
-      <Route path="/final level/consultation" element={<Consultation />} />
+      <Route path="/final-level/consultation" element={<Consultation />} />
       <Route
-        path="/final level/consultation/detai~l consultation"
+        path="/final-level/consultation/detail-consultation"
         element={<CreateConsultation />}
       />
       <Route
-        path="/final level/supporting activities"
+        path="/final-level/supporting-activities"
         element={<SupportingActivities />}
       />
       <Route
-        path="/final level/supporting activities/supporting activities report"
+        path="/final-level/supporting-activities/supporting-activities-report"
         element={<SupportingActivitiesReport />}
       />
-      <Route path="/final level/proposal list" element={<ProposalList />} />
+      <Route path="/final-level/proposal-list" element={<ProposalList />} />
       <Route
-        path="/final level/final project list"
+        path="/final-level/final-project-list"
         element={<FinalProjectList />}
       />
       <Route
-        path="/final level/graduation application"
+        path="/final-level/graduation-application"
         element={<GraduationApplication />}
       />
       <Route
-        path="/final level/graduation registration"
+        path="/final-level/graduation-registration"
         element={<GraduationRegistration />}
       />
       <Route path="/academic/student-grade" element={<StudentGrade />} />

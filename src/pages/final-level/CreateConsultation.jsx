@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { FaChevronLeft } from "react-icons/fa6";
-import { AiFillSave } from "react-icons/ai";
-import { IoMdSettings } from "react-icons/io";
 import MainLayout from "../../components/layouts/MainLayout";
-import ContentCard from "../../components/final level/layout/ContentCard";
-import FilterSection from "../../components/final level/layout/FilterSection";
-import SearchBar from "../../components/final level/SearchBar";
-import ActionButton from "../../components/final level/ActionButton";
+import ContentCard from "../../components/final-level/layout/ContentCard";
+import FilterSection from "../../components/final-level/layout/FilterSection";
+import SearchBar from "../../components/final-level/SearchBar";
+import ActionButton from "../../components/final-level/ActionButton";
 import React from "react";
+import { ChevronLeft, Save, Settings } from "lucide-react";
 
 export default function CreateConsultation() {
   // State
@@ -25,7 +23,7 @@ export default function CreateConsultation() {
   };
 
   const handleBack = () => {
-    window.location.href = "/final level/consultation";
+    window.location.href = "/final-level/consultation";
     // Implement add back logic here
   };
   const handleSave = () => {
@@ -50,21 +48,21 @@ export default function CreateConsultation() {
 
             <div className="flex space-x-5 w-full justify-center lg:justify-end">
               <ActionButton
-                icon={<FaChevronLeft />}
+                icon={<ChevronLeft />}
                 label="Kembali ke Daftar"
                 onClick={handleBack}
                 bgColor={"bg-primary-blueSoft"}
                 hoverColor={"hover:bg-blue-400"}
               />
               <ActionButton
-                icon={<AiFillSave />}
+                icon={<Save />}
                 label="Simpan"
                 onClick={handleSave}
                 bgColor={"bg-primary-green"}
                 hoverColor={"hover:bg-green-900"}
               />
               <ActionButton
-                icon={<IoMdSettings />}
+                icon={<Settings />}
                 label="Aksi"
                 onClick={handleAksi}
                 bgColor={"bg-primary-yellow"}
