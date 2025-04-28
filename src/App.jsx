@@ -18,6 +18,7 @@ import SupportingActivities from "./pages/final level/SupportingActivities";
 import SupportingActivitiesReport from "./pages/final level/SupportingActivitiesReport";
 import ProposalList from "./pages/final level/ProposalList";
 import FinalProjectList from "./pages/final level/FinalProjectList";
+import GraduationApplication from "./pages/final level/GraduationApplication";
 import ProgramStudy from "./pages/profile/ProgramStudy";
 import EducationHistory from "./pages/profile/EducationHistory";
 import StudyPlanCard from "./pages/academic/StudyPlanCard";
@@ -70,6 +71,10 @@ export default function App() {
       <Route
         path="/final level/final project list"
         element={<FinalProjectList />}
+      />
+      <Route
+        path="/final level/graduation application"
+        element={<GraduationApplication />}
       />
     </Routes>
   );

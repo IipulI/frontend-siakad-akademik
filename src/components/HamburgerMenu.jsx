@@ -177,7 +177,7 @@ const HamburgerMenu = () => {
           icon: "icon_week.png",
           title: "Pengajuan Yudisium",
           description: "Konfirmasi Hasil Studi Anda",
-          to: "#",
+          to: "/final level/graduation application",
         },
         {
           icon: "icon_timetable.png",

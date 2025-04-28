@@ -169,7 +169,7 @@ const Navbar = () => {
           icon: "icon_week.png",
           title: "Pengajuan Yudisium",
           description: "Konfirmasi hasil studi Anda",
-          to: "#",
+          to: "/final level/graduation application",
         },
         {
           icon: "icon_timetable.png",
