@@ -8,8 +8,8 @@ import FilterDropdown from "../../components/final-level/FilterDropdown";
 import SearchBar from "../../components/final-level/SearchBar";
 import ActionButton from "../../components/final-level/ActionButton";
 import DataTable from "../../components/final-level/DataTable";
-import Pagination from "../../components/final-level/Pagination";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../components/final-level/Pagination";
 
 export default function Consultation() {
   // State
