@@ -10,7 +10,7 @@ import Pagination from "../../components/final level/Pagination";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 
-export default function ProposalList() {
+export default function FinalProjectList() {
   // State
   const [filterValue, setFilterValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,10 +24,12 @@ export default function ProposalList() {
   // Table columns configuration
   const columns = [
     { header: "Unit", accessor: "unit" },
-    { header: "Judul", accessor: "judul" },
-    { header: "Topik", accessor: "topik" },
-    { header: "Nama Pembimbing", accessor: "namaPembimbing" },
-    { header: "Tgl. Pengajuan", accessor: "tglPengajuan" },
+    { header: "Judul Tugas Akhir", accessor: "judulTugasAkhir" },
+    {
+      header: "Dosen Pembimbing dan Penguji",
+      accessor: "dosenPembimbingdanPenguji",
+    },
+    { header: "Nilai", accessor: "nilai" },
     { header: "Status", accessor: "status" },
     {
       header: "Aksi",
@@ -62,7 +64,7 @@ export default function ProposalList() {
   };
 
   return (
-    <MainLayout titlePage="Proposal Tingkat Akhir">
+    <MainLayout titlePage="Tugas Akhir">
       <ContentCard>
         <FilterSection>
           <div className="flex flex-col gap-5 lg:gap-10 items-center lg:flex-row justify-between w-full">
@@ -76,7 +78,7 @@ export default function ProposalList() {
               onChange={setSearchQuery}
               onSearch={handleSearch}
               onRefresh={handleRefresh}
-              placeholder="Cari Proposal Tingkat Akhir"
+              placeholder="Cari Proposal Tugas Akhir"
             />
 
             <div className="flex space-x-5 w-full justify-center lg:justify-end">

@@ -171,7 +171,7 @@ const HamburgerMenu = () => {
           icon: "icon_week.png",
           title: "Daftar Tugas Akhir",
           description: "Selesaikan Karya Anda Saat Ini",
-          to: "#",
+          to: "/final level/final project list",
         },
         {
           icon: "icon_week.png",

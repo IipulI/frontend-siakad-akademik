@@ -163,7 +163,7 @@ const Navbar = () => {
           icon: "icon_week.png",
           title: "Daftar Tugas Akhir",
           description: "Selesaikan karya Anda saat ini",
-          to: "#",
+          to: "/final level/final project list",
         },
         {
           icon: "icon_week.png",
