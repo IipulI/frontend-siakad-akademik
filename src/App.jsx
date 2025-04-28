@@ -14,6 +14,7 @@ import ParentInformation from "./pages/profile/ParentInformation";
 import StudentPayment from "./pages/payment/StudentPayment";
 import ProgramStudy from "./pages/profile/ProgramStudy";
 import EducationHistory from "./pages/profile/EducationHistory";
+import StudyPlanCard from "./pages/academic/StudyPlanCard";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
       {/* Route Akademik */}
       <Route path="/academic/history" element={<History />} />
       <Route path="/academic/retake" element={<Retake />} />
+      <Route path="/academic/study-plan" element={<StudyPlanCard />} />
     </Routes>
   );
 }
