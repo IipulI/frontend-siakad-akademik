@@ -1,9 +1,9 @@
+import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import Exam from "./pages/schedule/Exam";
 import CalendarAcademic from "./pages/schedule/CalendarAcademic";
-import "./App.css";
 import StudentInformation from "./pages/profile/StudentInformation";
 import ThisWeek from "./pages/schedule/ThisWeek";
 import Semester from "./pages/schedule/Semester";
@@ -15,6 +15,10 @@ import StudentPayment from "./pages/payment/StudentPayment";
 import ProgramStudy from "./pages/profile/ProgramStudy";
 import EducationHistory from "./pages/profile/EducationHistory";
 import StudyPlanCard from "./pages/academic/StudyPlanCard";
+import StudentGrade from "./pages/academic/StudentGrade";
+import StudyResultCard from "./pages/study-result/StudyResultCard";
+import TranscriptGrade from "./pages/study-result/TranscriptGrade";
+import StudentPaymentHistory from "./pages/payment/StudentPaymentHistory";
 
 export default function App() {
   return (
@@ -40,11 +44,23 @@ export default function App() {
 
       {/* route payment */}
       <Route path="/payment" element={<StudentPayment />} />
+      <Route
+        path="/payment/payment-history"
+        element={<StudentPaymentHistory />}
+      />
 
       {/* Route Akademik */}
       <Route path="/academic/history" element={<History />} />
       <Route path="/academic/retake" element={<Retake />} />
       <Route path="/academic/study-plan" element={<StudyPlanCard />} />
+      <Route path="/academic/student-grade" element={<StudentGrade />} />
+
+      {/* Route Hasil Studi */}
+      <Route
+        path="/study-result/study-result-card"
+        element={<StudyResultCard />}
+      />
+      <Route path="/study-result/transcript" element={<TranscriptGrade />} />
     </Routes>
   );
 }

@@ -25,7 +25,9 @@ const Header = () => {
                   <div>
                     <div className="text-white">
                       <h1 className="text-xs">SIM Akademik</h1>
-                      <h1 className="text-sm xl:text-base font-semibold">Universitan Ibn Khaldun</h1>
+                      <h1 className="text-sm xl:text-base font-semibold">
+                        Universitas Ibn Khaldun
+                      </h1>
                     </div>
                   </div>
                 </div>
@@ -35,7 +37,11 @@ const Header = () => {
         </div>
         <div className=" bg-primary-yellow w-1/2 rounded-bl-full flex justify-center items-center relative">
           {/* aksesoris navbar */}
-          <img src="/img/aksesoris_navbar.png" alt="" className="absolute h-full right-0"/>
+          <img
+            src="/img/aksesoris_navbar.png"
+            alt=""
+            className="absolute h-full right-0"
+          />
           <div className="flex space-x-5 items-center">
             <Bell size={30} color="#fff" />
             <Link to={"/profile"}>
