@@ -6,8 +6,8 @@ import FilterDropdown from "../../components/final-level/FilterDropdown";
 import SearchBar from "../../components/final-level/SearchBar";
 import ActionButton from "../../components/final-level/ActionButton";
 import DataTable from "../../components/final-level/DataTable";
-import Pagination from "../../components/final-level/Pagination";
 import { Plus, Trash } from "lucide-react";
+import Pagination from "../../components/final-level/Pagination";
 
 export default function ProposalList() {
   // State
