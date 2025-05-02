@@ -8,9 +8,9 @@ interface BiodataSectionProps {
 
 export default function BiodataSection({ title, isTitle }: BiodataSectionProps) {
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
             {title.map((item, key) => (
-                <h3 key={key} className={isTitle ? "text-primary-green" : ""}>{item}</h3>
+                <h3 key={key} className={isTitle ? "text-black font-semibold text-sm" : "text-sm"}>{item}</h3>
             ))}
         </div>
     )

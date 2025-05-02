@@ -2,6 +2,8 @@ import React from "react"
 import Biodata from "../../components/Biodata"
 import MainLayout from "../../components/layouts/MainLayout"
 import Table from "../../components/Table"
+import { RefreshCw, Search } from "lucide-react"
+
 
 export default function Announcement() {
     const tableHead = ["No", "Tanggal", "Penulis", "Judul", "Aksi"]
@@ -25,20 +27,28 @@ export default function Announcement() {
         aksi: "",
     }]
     return (
-        <MainLayout isGreeting={false} titlePage={"Pengumuman"} className={""}>
-            <div className="w-full bg-white min-h-screen py-2 rounded-2xl border-t-2 border-primary-green">
-                <div className="flex ml-4 justify-start gap-16">
-                    <select className="rounded px-2 text-primary-brown appearance-none border-primary-brown border p-1">
-                        <option value={""}>--Semua--</option>
-                    </select>
-                    <div className="flex">
-                        <input type="search" placeholder="Cari Pengumuman" className="px-2 py-1 rounded shadow-md border border-black/50" />
-                        <button className="-ml-2 bg-primary-green w-10"></button>
-                        <button className="bg-blue-700 rounded-r-md w-10"></button>
-                    </div>
-                </div>
-                <Table tableHead={tableHead} data={data} error={"error"} />
+      <MainLayout isGreeting={false} titlePage={"Pengumuman"} className={""}>
+        <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-yellow">
+          <div className="flex px-2 justify-start gap-16 border-2 p-2">
+            <select className="rounded px-2 text-primary-brown appearance-none border-primary-brown border p-1">
+              <option value={""}>--Semua--</option>
+            </select>
+            <div className="flex">
+              <input
+                type="search"
+                placeholder="Cari Pengumuman"
+                className="px-2 py-1 rounded shadow-md border border-black/50"
+              />
+              <button className="-ml-2 bg-primary-green w-10 flex items-center justify-center">
+                <Search color="white" size={20} />
+              </button>
+              <button className="bg-blue-700 rounded-r-md w-10 flex items-center justify-center">
+                <RefreshCw color="white" size={20} />
+              </button>
             </div>
-        </MainLayout>
-    )
+          </div>
+          <Table tableHead={tableHead} data={data} error={"error"} />
+        </div>
+      </MainLayout>
+    );
 }

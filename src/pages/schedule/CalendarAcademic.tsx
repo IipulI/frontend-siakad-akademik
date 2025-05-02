@@ -25,7 +25,7 @@ const CalendarAcademic = () => {
       titlePage={"Kalender Akademik"}
       className={""}
     >
-      <div className="grid md:grid-cols-6 grid-flow-dense gap-8">
+      <div className="grid md:grid-cols-6 grid-flow-dense gap-8 border-t-2 border-primary-yellow rounded-t-sm pt-5">
         <div className="col-span-2">
           <div className="bg-white p-4 shadow-md rounded-md text-sm space-y-3.5">
             <h1 className="font-semibold">Periode Akademik</h1>
@@ -33,7 +33,10 @@ const CalendarAcademic = () => {
               <option value="">2024 Genap</option>
             </select>
             <h1 className="font-semibold">Kegiatan Akademik</h1>
-            <h1 className="text-[#969696] p-2">Tidak ada kegiatan</h1>
+            <h1 className="text-[#969696] p-2">Manajemen Proyek (REG_B)</h1>
+            <h1 className="text-[#969696] p-2">
+              Proyek Perangkat Lunak Bidang Keilmuan (REG_B)
+            </h1>
             <h1 className="font-semibold">Informasi Lainnya</h1>
             <div className="space-y-2">
               <div className="flex-items-center space-x-2 text-[#969696]">
