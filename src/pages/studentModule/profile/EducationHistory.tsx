@@ -1,9 +1,10 @@
 import React from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import ProfileRedirectButton from "../../components/profile/ProfileRedirectButton";
-import RoundedBorderLayout from "../../components/profile/RoundedBorderLayout";
-import InputField from "../../components/profile/InputBoxField";
-import HorizontalLine from "../../components/profile/HorizontalLine";
+import MainLayout from "../../../components/layouts/MainLayout";
+import ProfileRedirectButton from "../../../components/profile/ProfileRedirectButton";
+import RoundedBorderLayout from "../../../components/profile/RoundedBorderLayout";
+import InputField from "../../../components/profile/InputBoxField";
+import HorizontalLine from "../../../components/profile/HorizontalLine";
+import { StudentRoute } from "../../../types/VarRoutes";
 
 const EducationHistory = () => {
   return (
@@ -20,16 +21,20 @@ const EducationHistory = () => {
             <span className="text-secondary-gray underline">
               idhopatan.2@gmail.com
             </span>
-            <ProfileRedirectButton route={"/profile"}>
+            <ProfileRedirectButton route={String(StudentRoute.profile.profile)}>
               Data Diri
             </ProfileRedirectButton>
-            <ProfileRedirectButton route={"/profile/parent"}>
+            <ProfileRedirectButton route={String(StudentRoute.profile.parent)}>
               Orang Tua Wali
             </ProfileRedirectButton>
-            <ProfileRedirectButton route={"/profile/program-study"}>
+            <ProfileRedirectButton
+              route={String(StudentRoute.profile.programStudy)}
+            >
               Program Studi
             </ProfileRedirectButton>
-            <ProfileRedirectButton route={"/profile/education-history"}>
+            <ProfileRedirectButton
+              route={String(StudentRoute.profile.educationHistory)}
+            >
               Pendidikan Asal
             </ProfileRedirectButton>
           </div>

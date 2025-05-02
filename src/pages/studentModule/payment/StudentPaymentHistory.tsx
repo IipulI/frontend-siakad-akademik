@@ -1,5 +1,5 @@
 import React from "react";
-import MainLayout from "../../components/layouts/MainLayout";
+import MainLayout from "../../../components/layouts/MainLayout";
 import { Calendar, RefreshCcw, Search } from "lucide-react";
 
 const StudentPaymentHistory = () => {
@@ -62,7 +62,11 @@ const StudentPaymentHistory = () => {
     },
   ];
   return (
-    <MainLayout isGreeting={false} titlePage={"Riwayat Keuangan Mahasiswa"} className={""}>
+    <MainLayout
+      isGreeting={false}
+      titlePage={"Riwayat Keuangan Mahasiswa"}
+      className={""}
+    >
       <InfoAlert />
       <div className="p-4 border w-full">
         <div className="flex justify-between items-center ">

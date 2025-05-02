@@ -2,9 +2,9 @@
 // import PaymentSteps from "./PaymentSteps";
 // import PaymentTable from "./PaymentTable";
 import React from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import PaymentSteps from "../../components/payment/PaymentSteps";
-import PaymentTable from "../../components/payment/PaymentTable";
+import MainLayout from "../../../components/layouts/MainLayout";
+import PaymentSteps from "../../../components/payment/PaymentSteps";
+import PaymentTable from "../../../components/payment/PaymentTable";
 
 export default function StudentPayment() {
   const paymentData = [

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import DashboardSubjectCard from "../components/DashboardSubjectCard";
-import DashboardBillCard from "../components/DashboardBillCard";
-import DashboardCardAcademic from "../components/DashboardCardAcademic";
-import DashboardAnnouncementCard from "../components/DashboardAnnouncementCard";
-import MainLayout from "../components/layouts/MainLayout";
-import IPSChart from "../components/chart/IPSChart";
+import DashboardSubjectCard from "../../components/DashboardSubjectCard";
+import DashboardBillCard from "../../components/DashboardBillCard";
+import DashboardCardAcademic from "../../components/DashboardCardAcademic";
+import DashboardAnnouncementCard from "../../components/DashboardAnnouncementCard";
+import MainLayout from "../../components/layouts/MainLayout";
+import IPSChart from "../../components/chart/IPSChart";
 import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
 
 const Dashboard = () => {

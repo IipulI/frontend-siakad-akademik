@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { StudentRoute } from "../types/VarRoutes";
 
 interface MenuItemProps {
   icon: string;
@@ -99,7 +100,7 @@ const HamburgerMenu = () => {
     {
       id: "beranda",
       title: "Beranda",
-      to: "/dashboard",
+      to: StudentRoute.dashboard,
       hasDropdown: false,
     },
     {
@@ -111,20 +112,20 @@ const HamburgerMenu = () => {
           icon: "icon_annon.png",
           title: "Pengumuman",
           description: "Informasi Kegiatan Kampus",
-          to: "#",
+          to: StudentRoute.schedule.announcement,
         },
         {
           icon: "icon_calendar.png",
           title: "Kalender Akademik",
           description: "Periksa Kegiatan Perkuliahan",
-          to: "/schedule/calendar",
+          to: StudentRoute.schedule.calendar,
         },
         {
           icon: "icon_week.png",
           title: "Jadwal Minggu Ini",
           description: "Aktifitas Seminggu Ke Depan",
-          to: "#",
-        }
+          to: StudentRoute.schedule.thisWeek,
+        },
       ],
     },
     {
@@ -136,25 +137,25 @@ const HamburgerMenu = () => {
           icon: "icon_annon.png",
           title: "Pengisisan Kartu Rencana Studi",
           description: "Tentukan Rencana Kuliah",
-          to: "#",
+          to: StudentRoute.academic.studyPlan,
         },
         {
           icon: "icon_calendar.png",
           title: "Riwayat KRS",
           description: "Rekap Rencana Kuliah Anda",
-          to: "#",
+          to: StudentRoute.academic.history,
         },
         {
           icon: "icon_week.png",
           title: "Mengulang",
           description: "History Perbaikan Mata Kuliah",
-          to: "#",
+          to: StudentRoute.academic.retake,
         },
         {
           icon: "icon_timetable.png",
           title: "Nilai Mahasiswa",
           description: "Kualitas Perkuliahan Anda",
-          to: "#",
+          to: StudentRoute.academic.studentGrade,
         },
       ],
     },
@@ -167,13 +168,13 @@ const HamburgerMenu = () => {
           icon: "icon_annon.png",
           title: "Kartu Hasil Studi",
           description: "Laporan Priode Anda",
-          to: "#",
+          to: StudentRoute.studyResult.studyResult,
         },
         {
           icon: "icon_timetable.png",
           title: "Transkip",
           description: "Hasil Perkuliahan Anda",
-          to: "#",
+          to: StudentRoute.studyResult.transcript,
         },
       ],
     },
@@ -186,13 +187,13 @@ const HamburgerMenu = () => {
           icon: "icon_annon.png",
           title: "Tagihan Mahasiswa",
           description: "Biaya Operasional Pendidikan",
-          to: "/payment",
+          to: StudentRoute.payment.payment,
         },
         {
           icon: "icon_timetable.png",
           title: "Riwayat Keuangan",
           description: "Riwayat BOP",
-          to: "#",
+          to: StudentRoute.payment.paymentHistory,
         },
       ],
     },
@@ -271,7 +272,7 @@ const HamburgerMenu = () => {
                             icon={subItem.icon}
                             title={subItem.title}
                             description={subItem.description}
-                            to={subItem.to}
+                            to={String(subItem.to)}
                             onClick={handleMenuItemClick}
                           />
                         ))}

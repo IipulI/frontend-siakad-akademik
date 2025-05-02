@@ -1,7 +1,7 @@
 import React from "react";
-import Biodata from "../../components/Biodata";
-import MainLayout from "../../components/layouts/MainLayout";
-import Table from "../../components/Table";
+import Biodata from "../../../components/Biodata";
+import MainLayout from "../../../components/layouts/MainLayout";
+import Table from "../../../components/Table";
 
 export default function Retake() {
   const tableHead = [

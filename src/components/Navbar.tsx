@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { StudentRoute } from "../types/VarRoutes";
 
 interface DropdownMenuItemProps {
   icon: string;
@@ -113,19 +114,19 @@ const Navbar = () => {
           icon: "icon_annon.png",
           title: "Pengumuman",
           description: "Informasi Kegiatan Kampus",
-          to: "/schedule/announcement",
+          to: StudentRoute.schedule.announcement,
         },
         {
           icon: "icon_calendar.png",
           title: "Kalender Akademik",
           description: "Periksa Kegiatan Perkuliahan",
-          to: "/schedule/calendar",
+          to: StudentRoute.schedule.calendar,
         },
         {
           icon: "icon_week.png",
           title: "Jadwal Minggu Ini",
           description: "Aktivitas Seminggu Ke Depan",
-          to: "/schedule/this-week",
+          to: StudentRoute.schedule.thisWeek,
         },
       ],
     },
@@ -136,25 +137,25 @@ const Navbar = () => {
           icon: "icon_annon.png",
           title: "Pengisian Kartu Rencana Studi",
           description: "Tentukan Rencana Kuliah",
-          to: "/academic/study-plan",
+          to: StudentRoute.academic.studyPlan,
         },
         {
           icon: "icon_calendar.png",
           title: "Riwayat KRS",
           description: "Rekap rencana kuliah Anda",
-          to: "/academic/history",
+          to: StudentRoute.academic.history,
         },
         {
           icon: "icon_week.png",
           title: "Mengulang",
           description: "History Perbaikan Mata Kuliah",
-          to: "/academic/retake",
+          to: StudentRoute.academic.retake,
         },
         {
           icon: "icon_timetable.png",
           title: "Nilai Mahasiswa",
           description: "Kualitas perkuliaha Anda",
-          to: "/academic/student-grade",
+          to: StudentRoute.academic.studentGrade,
         },
       ],
     },
@@ -165,13 +166,13 @@ const Navbar = () => {
           icon: "icon_annon.png",
           title: "Kartu Hasil Studi",
           description: "Laporan Priode Anda",
-          to: "/study-result/study-result-card",
+          to: StudentRoute.studyResult.studyResult,
         },
         {
           icon: "icon_timetable.png",
           title: "Transkrip",
           description: "Hasil Perkuliahan Anda",
-          to: "/study-result/transcript",
+          to: StudentRoute.studyResult.transcript,
         },
       ],
     },
@@ -182,13 +183,13 @@ const Navbar = () => {
           icon: "icon_annon.png",
           title: "Tagihan Mahasiswa",
           description: "Biaya Operasional Pendidikan",
-          to: "/payment",
+          to: StudentRoute.payment.payment,
         },
         {
           icon: "icon_timetable.png",
           title: "Riwayat Keuangan",
           description: "Riwayat BOP",
-          to: "/payment/payment-history",
+          to: StudentRoute.payment.paymentHistory,
         },
       ],
     },
@@ -196,7 +197,7 @@ const Navbar = () => {
 
   // Define navigation items
   const navItems = [
-    { name: "Beranda", path: "/dashboard", hasDropdown: false },
+    { name: "Beranda", path: StudentRoute.dashboard, hasDropdown: false },
     { name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
     { name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
     { name: "Hasil Studi", dropdownKey: "hasilStudi", hasDropdown: true },

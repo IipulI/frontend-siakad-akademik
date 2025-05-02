@@ -3,6 +3,7 @@ import HamburgerMenu from "./HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
+import { StudentRoute } from "../types/VarRoutes";
 
 const Header = () => {
   return (
@@ -44,7 +45,7 @@ const Header = () => {
           />
           <div className="flex space-x-5 items-center">
             <Bell size={30} color="#fff" />
-            <Link to={"/profile"}>
+            <Link to={StudentRoute.profile.profile}>
               <img
                 width={30}
                 src="/img/profile_logo.png"

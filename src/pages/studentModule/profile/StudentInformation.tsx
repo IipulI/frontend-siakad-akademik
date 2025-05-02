@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import ProfileRedirectButton from "../../components/profile/ProfileRedirectButton";
-import TabNavigationButton from "../../components/profile/TabNavigationButton";
-import RoundedBorderLayout from "../../components/profile/RoundedBorderLayout";
-import InputField from "../../components/profile/InputBoxField";
+import MainLayout from "../../../components/layouts/MainLayout";
+import ProfileRedirectButton from "../../../components/profile/ProfileRedirectButton";
+import TabNavigationButton from "../../../components/profile/TabNavigationButton";
+import RoundedBorderLayout from "../../../components/profile/RoundedBorderLayout";
+import InputField from "../../../components/profile/InputBoxField";
 import { MapPin, Phone, User } from "lucide-react";
-import HorizontalLine from "../../components/profile/HorizontalLine";
+import HorizontalLine from "../../../components/profile/HorizontalLine";
+import { StudentRoute } from "../../../types/VarRoutes";
 
 const StudentInformation = () => {
   const [activeTab, setActiveTab] = useState("data-diri");
@@ -27,16 +28,20 @@ const StudentInformation = () => {
             <span className="text-secondary-gray underline">
               idhopatan.2@gmail.com
             </span>
-            <ProfileRedirectButton route={"/profile"}>
+            <ProfileRedirectButton route={String(StudentRoute.profile.profile)}>
               Data Diri
             </ProfileRedirectButton>
-            <ProfileRedirectButton route={"/profile/parent"}>
+            <ProfileRedirectButton route={String(StudentRoute.profile.parent)}>
               Orang Tua Wali
             </ProfileRedirectButton>
-            <ProfileRedirectButton route={"/profile/program-study"}>
+            <ProfileRedirectButton
+              route={String(StudentRoute.profile.programStudy)}
+            >
               Program Studi
             </ProfileRedirectButton>
-            <ProfileRedirectButton route={"/profile/education-history"}>
+            <ProfileRedirectButton
+              route={String(StudentRoute.profile.educationHistory)}
+            >
               Pendidikan Asal
             </ProfileRedirectButton>
           </div>

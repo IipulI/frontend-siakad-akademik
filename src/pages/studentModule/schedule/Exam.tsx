@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import ExamToggleButton from "../../components/ExamToggleButton";
-import ExamScheduleCard from "../../components/ExamScheduleCard";
-import DashboardCardAcademic from "../../components/DashboardCardAcademic";
-import DashboardBillCard from "../../components/DashboardBillCard";
-import IPSChart from "../../components/chart/IPSChart";
+import MainLayout from "../../../components/layouts/MainLayout";
+import ExamToggleButton from "../../../components/ExamToggleButton";
+import ExamScheduleCard from "../../../components/ExamScheduleCard";
+import DashboardCardAcademic from "../../../components/DashboardCardAcademic";
+import DashboardBillCard from "../../../components/DashboardBillCard";
+import IPSChart from "../../../components/chart/IPSChart";
 
 const Exam = () => {
   const [examType, setExamType] = useState<"UTS" | "UAS">("UTS"); // Default UTS
@@ -104,7 +104,11 @@ const Exam = () => {
                   number={3.74}
                   color={"text-red-700"}
                 />
-                <DashboardCardAcademic title={"Jumlah IPK"} number={3.78} color={""} />
+                <DashboardCardAcademic
+                  title={"Jumlah IPK"}
+                  number={3.78}
+                  color={""}
+                />
                 <DashboardCardAcademic
                   title={"Jumlah Jumlah MK Kumulatif"}
                   number={40}

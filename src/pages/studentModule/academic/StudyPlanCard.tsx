@@ -1,6 +1,6 @@
 import React from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import HorizontalLine from "../../components/profile/HorizontalLine";
+import MainLayout from "../../../components/layouts/MainLayout";
+import HorizontalLine from "../../../components/profile/HorizontalLine";
 
 const StudyPlanCard = () => {
   const courses = [

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import MainLayout from "../../components/layouts/MainLayout";
+import MainLayout from "../../../components/layouts/MainLayout";
 import {
   format,
   startOfMonth,
