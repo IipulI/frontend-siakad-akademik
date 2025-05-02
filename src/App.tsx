@@ -6,7 +6,7 @@ import Exam from "./pages/studentModule/schedule/Exam";
 import CalendarAcademic from "./pages/studentModule/schedule/CalendarAcademic";
 import StudentInformation from "./pages/studentModule/profile/StudentInformation";
 import ThisWeek from "./pages/studentModule/schedule/ThisWeek";
-import { History } from "lucide-react";
+import History from "./pages/studentModule/academic/History";
 import Retake from "./pages/studentModule/academic/Retake";
 import Announcement from "./pages/studentModule/schedule/Announcement";
 import ParentInformation from "./pages/studentModule/profile/ParentInformation";

@@ -1,5 +1,4 @@
 import React from "react";
-import Biodata from "../../../components/Biodata";
 import MainLayout from "../../../components/layouts/MainLayout";
 import Table from "../../../components/Table";
 import { RefreshCw, Search } from "lucide-react";
