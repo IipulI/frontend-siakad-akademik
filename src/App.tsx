@@ -6,7 +6,6 @@ import Exam from "./pages/schedule/Exam";
 import CalendarAcademic from "./pages/schedule/CalendarAcademic";
 import StudentInformation from "./pages/profile/StudentInformation";
 import ThisWeek from "./pages/schedule/ThisWeek";
-import Semester from "./pages/schedule/Semester";
 import History from "./pages/academic/History";
 import Retake from "./pages/academic/Retake";
 import Announcement from "./pages/schedule/Announcement";
@@ -35,7 +34,6 @@ export default function App() {
       <Route path="/schedule/calendar" element={<CalendarAcademic />} />
       <Route path="/schedule/announcement" element={<Announcement />} />
       <Route path="/schedule/this-week" element={<ThisWeek />} />
-      <Route path="/schedule/semester" element={<Semester />} />
 
       {/* Route Profile */}
       <Route path="/profile" element={<StudentInformation />} />

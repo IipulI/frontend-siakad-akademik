@@ -125,12 +125,6 @@ const Navbar = () => {
           description: "Aktivitas Seminggu Ke Depan",
           to: "/schedule/this-week",
         },
-        {
-          icon: "icon_timetable.png",
-          title: "Jadwal Semester",
-          description: "Kegiatan Anda Satu Semester",
-          to: "/schedule/semester",
-        },
       ],
     },
     akademik: {

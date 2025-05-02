@@ -124,13 +124,7 @@ const HamburgerMenu = () => {
           title: "Jadwal Minggu Ini",
           description: "Aktifitas Seminggu Ke Depan",
           to: "#",
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Jadwal Semester",
-          description: "Kegiatan Anda Satu Semester",
-          to: "#",
-        },
+        }
       ],
     },
     {
