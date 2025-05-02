@@ -18,13 +18,15 @@ const DropdownMenuItem = ({
 }: DropdownMenuItemProps) => (
   <Link
     to={to}
-    className="px-3 py-3 border-b-1 border-primary-yellow text-sm hover:bg-primary-yellow hover:rounded-sm flex items-center justify-between group mt-3 first:mt-0"
+    className="px-3 py-3 border-b-1 mb-5 border-gray-400 group text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between group first:mt-0"
   >
     <div className="flex items-center gap-5">
       <img src={`/img/${icon}`} alt="" className="w-6" />
       <div>
         <p className="font-semibold">{title}</p>
-        <p className="text-xs font-extralight text-gray-300">{description}</p>
+        <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
+          {description}
+        </p>
       </div>
     </div>
     <svg
@@ -61,7 +63,7 @@ const DropdownMenu = ({ isOpen, title, items }: DropdownMenuProps) => {
 
   return (
     <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-      <h1 className="px-3 py-3">{title}</h1>
+      <h1 className="px-3 py-3 font-semibold text-gray-300 text-md">{title}</h1>
       {items.map((item, index) => (
         <DropdownMenuItem
           key={index}
@@ -105,7 +107,7 @@ const Navbar = () => {
   // Define menu data
   const dropdownMenus = {
     jadwal: {
-      title: "Jadwal",
+      title: "JADWAL",
       items: [
         {
           icon: "icon_annon.png",
@@ -128,7 +130,7 @@ const Navbar = () => {
       ],
     },
     akademik: {
-      title: "Akademik",
+      title: "AKADEMIK",
       items: [
         {
           icon: "icon_annon.png",
@@ -157,7 +159,7 @@ const Navbar = () => {
       ],
     },
     hasilStudi: {
-      title: "Hasil Studi",
+      title: "HASIL STUDI",
       items: [
         {
           icon: "icon_annon.png",
@@ -174,7 +176,7 @@ const Navbar = () => {
       ],
     },
     keuangan: {
-      title: "Keuangan",
+      title: "KEUANGAN",
       items: [
         {
           icon: "icon_annon.png",
