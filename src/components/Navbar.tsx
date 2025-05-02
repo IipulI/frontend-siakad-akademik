@@ -162,47 +162,6 @@ const Navbar = () => {
         },
       ],
     },
-    tingkatAkhir: {
-      title: "Tingkat Akhir",
-      items: [
-        {
-          icon: "icon_annon.png",
-          title: "Konsultasi",
-          description: "Temukan solusi masalah Anda",
-          to: "/final-level/consultation",
-        },
-        {
-          icon: "icon_calendar.png",
-          title: "Kegiatan Pendukung",
-          description: "Salurkan bakat Anda disini",
-          to: "/final-level/supporting-activities",
-        },
-        {
-          icon: "icon_week.png",
-          title: "Daftar Proposal",
-          description: "Buat karya Anda sekarang juga",
-          to: "/final-level/proposal-list",
-        },
-        {
-          icon: "icon_week.png",
-          title: "Daftar Tugas Akhir",
-          description: "Selesaikan karya Anda saat ini",
-          to: "/final-level/final-project-list",
-        },
-        {
-          icon: "icon_week.png",
-          title: "Pengajuan Yudisium",
-          description: "Konfirmasi hasil studi Anda",
-          to: "/final-level/graduation-application",
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Pengajuan Wisuda",
-          description: "Konfirmasi kehadiran Anda",
-          to: "/final-level/graduation-registration",
-        },
-      ],
-    },
     hasilStudi: {
       title: "Hasil Studi",
       items: [
@@ -244,7 +203,6 @@ const Navbar = () => {
     { name: "Beranda", path: "/dashboard", hasDropdown: false },
     { name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
     { name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
-    { name: "Tingkat Akhir", dropdownKey: "tingkatAkhir", hasDropdown: true },
     { name: "Hasil Studi", dropdownKey: "hasilStudi", hasDropdown: true },
     { name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
   ];

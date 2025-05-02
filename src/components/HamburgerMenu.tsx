@@ -165,49 +165,6 @@ const HamburgerMenu = () => {
       ],
     },
     {
-      id: "tingkatAkhir",
-      title: "Tingkat Akhir",
-      hasDropdown: true,
-      submenu: [
-        {
-          icon: "icon_annon.png",
-          title: "Konsultasi",
-          description: "Temukan Solusi Masalah Anda",
-          to: "/final level/consultation",
-        },
-        {
-          icon: "icon_calendar.png",
-          title: "Kegiatan Pendukung",
-          description: "Salurkan Bakat Anda Disini",
-          to: "/final level/supporting activities",
-        },
-        {
-          icon: "icon_week.png",
-          title: "Daftar proposal",
-          description: "Buat Karya Anda Sekarang Juga",
-          to: "/final level/proposal list",
-        },
-        {
-          icon: "icon_week.png",
-          title: "Daftar Tugas Akhir",
-          description: "Selesaikan Karya Anda Saat Ini",
-          to: "/final level/final project list",
-        },
-        {
-          icon: "icon_week.png",
-          title: "Pengajuan Yudisium",
-          description: "Konfirmasi Hasil Studi Anda",
-          to: "/final level/graduation application",
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Pengajuan Wisuda",
-          description: "Konfirmasi Kehadiran Anda",
-          to: "/final level/graduation registration",
-        },
-      ],
-    },
-    {
       id: "hasilStudi",
       title: "Hasil Studi",
       hasDropdown: true,
