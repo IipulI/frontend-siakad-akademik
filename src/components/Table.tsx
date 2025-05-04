@@ -14,14 +14,14 @@ const Table = ({ data, tableHead, error }: TableProps) => {
           {tableHead.map((head) => (
             <th
               key={head}
-              className="p-4 bg-green-200/40 border border-black/50"
+              className="p-4 bg-primary-green text-white border border-gray-600"
             >
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
         </tr>
       </thead>
-      <tbody>
+      <tbody className="font-semibold">
         {data && data.length > 0 ? (
           data.map((row, index) => {
             const rowData = Object.values(row);
