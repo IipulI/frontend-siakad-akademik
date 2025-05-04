@@ -1,6 +1,7 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import Biodata from "../../../components/Biodata";
+import { Check } from "lucide-react";
 
 const StudyResultCard = () => {
   // Data dummy (nantinya ini akan fetch dari API)
@@ -10,7 +11,7 @@ const StudyResultCard = () => {
       namaMK: "Sistem Pakar dan Penunjang Keputusan",
       sks: 3,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -18,7 +19,7 @@ const StudyResultCard = () => {
       namaMK: "Pemrograman Perangkat Bergerak + Praktikum",
       sks: 3,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -26,7 +27,7 @@ const StudyResultCard = () => {
       namaMK: "Komputer dan Masyarakat",
       sks: 2,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -34,7 +35,7 @@ const StudyResultCard = () => {
       namaMK: "User Interface and Experience",
       sks: 2,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -42,7 +43,7 @@ const StudyResultCard = () => {
       namaMK: "Keamanan Informasi + Praktikum",
       sks: 3,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -50,7 +51,7 @@ const StudyResultCard = () => {
       namaMK: "Rekayasa Perangkat Lunak Lanjut + Praktikum",
       sks: 3,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -58,7 +59,7 @@ const StudyResultCard = () => {
       namaMK: "Verifikasi dan Validasi Perangkat Lunak",
       sks: 2,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
     {
@@ -66,7 +67,7 @@ const StudyResultCard = () => {
       namaMK: "Bahasa Inggris Teknik + Praktikum",
       sks: 3,
       nilai: "A",
-      keterangan: "Dosen",
+      keterangan: "",
       transkrip: true,
     },
   ];
@@ -108,14 +109,14 @@ const StudyResultCard = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage={"Kartu Hasil Studi"} className="">
-      <div className="w-full bg-white min-h-screen py-2 rounded-2xl border-t-2 border-primary-yellow space-y-4">
-        <Biodata />
-        <div className="flex justify-start space-x-2 border p-4 items-center">
-          <button className="bg-white border-2 w-[100px] text-center rounded text-lg font-semibold text-primary-green">
+      <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow space-y-4">
+        <Biodata showLine={false} />
+        <div className="flex justify-start space-x-2 border p-3 items-center">
+          <button className="bg-white border-2 p-1 px-1.5 text-center rounded font-semibold text-primary-green">
             Periode
           </button>
-          <select className="bg-white w-[150px] py-1 rounded border-2 text-center text-primary-brown cursor-pointer">
-            <option value="">2023 Genap</option>
+          <select className="bg-white px-2 text-gray-500 p-1 rounded border-2 text-center cursor-pointer">
+            <option value="">2024 Ganjil </option>
           </select>
         </div>
 
@@ -135,75 +136,110 @@ const StudyResultCardTable = ({ data, totalSKS, periode }) => {
 
   return (
     <div className="overflow-x-auto p-4">
-      <table className="min-w-full border border-gray-300">
+      <table className="min-w-full border border-gray-500">
         <thead className="bg-primary-green text-white">
           <tr>
-            <th colSpan={9} className="text-center text-lg font-bold p-2">
+            <th colSpan={9} className="text-center text-lg font-semibold p-2">
               Periode {periode}
             </th>
           </tr>
           <tr>
-            <th className="border border-gray-300 px-4 py-2">No</th>
-            <th className="border border-gray-300 px-4 py-2">Kode MK</th>
-            <th className="border border-gray-300 px-4 py-2">
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              No
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              Kode MK
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
               Nama Mata Kuliah
             </th>
-            <th className="border border-gray-300 px-4 py-2">SKS</th>
-            <th className="border border-gray-300 px-4 py-2">Nilai Mutu</th>
-            <th className="border border-gray-300 px-4 py-2">Bobot</th>
-            <th className="border border-gray-300 px-4 py-2">Nilai</th>
-            <th className="border border-gray-300 px-4 py-2">Keterangan</th>
-            <th className="border border-gray-300 px-4 py-2">Transkrip</th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              SKS
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              Nilai Mutu
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              Bobot
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              Nilai
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              Keterangan
+            </th>
+            <th className="border border-gray-500 font-semibold px-4 py-2">
+              Transkrip
+            </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="border-b-4 border-gray-700">
           {data.map((item, index) => (
             <tr key={index} className="text-center bg-gray-50">
-              <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
-              <td className="border border-gray-300 px-4 py-2">
+              <td className="border border-gray-500 font-semibold px-4 py-2">
+                {index + 1}
+              </td>
+              <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.kodeMK}
               </td>
-              <td className="border border-gray-300 px-4 py-2">
+              <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.namaMK}
               </td>
-              <td className="border border-gray-300 px-4 py-2">{item.sks}</td>
-              <td className="border border-gray-300 px-4 py-2">
+              <td className="border border-gray-500 font-semibold px-4 py-2">
+                {item.sks}
+              </td>
+              <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.nilaiMutu ?? "-"}
               </td>
-              <td className="border border-gray-300 px-4 py-2">
+              <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.bobot ?? "-"}
               </td>
-              <td className="border border-gray-300 px-4 py-2">{item.nilai}</td>
-              <td className="border border-gray-300 px-4 py-2 text-green-600">
+              <td className="border border-gray-500 font-semibold px-4 py-2">
+                {item.nilai}
+              </td>
+              <td className="border border-gray-500 font-semibold px-4 py-2 text-green-600">
                 {item.keterangan}
               </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {item.transkrip ? "✔️" : "-"}
+              <td className="border border-gray-400 font-semibold px-4 py-2 flex justify-center">
+                {item.transkrip ? (
+                  <Check color="#00A65A" strokeWidth={5} />
+                ) : (
+                  "-"
+                )}
               </td>
             </tr>
           ))}
+        </tbody>
+        <tfoot>
           <tr className="font-bold bg-gray-100">
             <td
               colSpan={3}
-              className="border border-gray-300 px-4 py-2 text-right"
+              className="border border-gray-500 font-semibold px-4 py-2 text-left"
             >
               Total SKS
             </td>
-            <td className="border border-gray-300 px-4 py-2">{totalSKS}</td>
-            <td colSpan={5} className="border border-gray-300 px-4 py-2"></td>
+            <td className="border border-gray-500 font-semibold px-4 py-2 text-center">
+              {totalSKS}
+            </td>
+            <td
+              colSpan={5}
+              className="border border-gray-500 font-semibold px-4 py-2"
+            ></td>
           </tr>
           <tr className="font-bold bg-gray-100">
             <td
               colSpan={3}
-              className="border border-gray-300 px-4 py-2 text-right"
+              className="border border-gray-500 font-semibold px-4 py-2 text-left"
             >
               Indeks Prestasi Semester
             </td>
-            <td colSpan={6} className="border border-gray-300 px-4 py-2">
+            <td
+              className="border border-gray-500 font-semibold px-4 py-2 text-center"
+            >
               {ips}
             </td>
           </tr>
-        </tbody>
+        </tfoot>
       </table>
     </div>
   );
