@@ -1,7 +1,8 @@
 import React from "react";
 import Biodata from "../../../components/Biodata";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Table from "../../../components/Table";
+import {TableHistory} from "../../../components/Table";
+import { LayoutGrid, Settings } from "lucide-react";
 
 export default function History() {
   const tableHead = [
@@ -130,31 +131,47 @@ export default function History() {
 
   return (
     <MainLayout isGreeting={false} titlePage={"Riwayat KRS"} className="">
-      <div className="w-full bg-white min-h-screen py-2 rounded-2xl border-t-2 border-primary-green">
-        <div className="flex justify-end gap-2 mx-4 mb-4">
+      <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-yellow">
+        <div className="flex justify-end gap-2 mb-4 border-2 p-2">
           <button
             type="button"
-            className="bg-primary-green w-24 h-8 rounded"
-          ></button>
-          <button className="bg-orange-400 w-20 h-8 rounded"></button>
+            className="bg-primary-green w-30 h-8 text-sm font-semibold rounded flex items-center text-white justify-center gap-2"
+          >
+            <LayoutGrid color="white" size={20} />
+            <p>Pilih Kelas</p>
+          </button>
+          <button className="bg-orange-400 w-24 h-8 rounded text-white flex items-center justify-center gap-1 text-sm font-semibold">
+            <Settings size={20} />
+            <select name="" id="">
+              <option value="">Aksi</option>
+            </select>
+          </button>
         </div>
 
-        <Biodata />
+        <Biodata showLine={false} />
 
-        <div className="flex justify-between gap-4 m-4">
-          <button className="bg-primary-green w-24 h-8 rounded"></button>
-          <button className="bg-blue-400 w-32 h-8 rounded"></button>
+        <div className="flex gap-4 my-4 p-3 border-2">
+          <label htmlFor="" className="font-semibold">
+            Periode Akademik
+          </label>
+          <select
+            name=""
+            id=""
+            className="p-1 text-sm rounded-sm text-gray-500 w-70 border-2"
+          >
+            <option value="">2024 Genap</option>
+          </select>
         </div>
 
-        <div className="w-full bg-primary-green/20 p-4">
-          <h1 className="text-primary-green">
+        <div className="w-full bg-[#D9F7DE] p-4">
+          <h1 className="text-black">
             KRS ini<span className="font-semibold">Telah Divalidasi</span> dan
             tidak bisa diubah. Untuk membatalkan validasi KRS silakan
             menghubungi Pembimbing Akademik terkait
           </h1>
         </div>
 
-        <Table tableHead={tableHead} data={data} error="" />
+        <TableHistory tableHead={tableHead} data={data} error="" />
       </div>
     </MainLayout>
   );

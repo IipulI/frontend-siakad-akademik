@@ -1,6 +1,6 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Table from "../../../components/Table";
+import { Table } from "../../../components/Table";
 import { RefreshCw, Search } from "lucide-react";
 
 export default function Announcement() {
