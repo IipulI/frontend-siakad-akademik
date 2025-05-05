@@ -4,9 +4,9 @@ import ProfileRedirectButton from "../../../components/profile/ProfileRedirectBu
 import TabNavigationButton from "../../../components/profile/TabNavigationButton";
 import RoundedBorderLayout from "../../../components/profile/RoundedBorderLayout";
 import InputField from "../../../components/profile/InputBoxField";
-import { MapPin, Phone, User } from "lucide-react";
-import HorizontalLine from "../../../components/profile/HorizontalLine";
+import { Check, MapPin, Phone, SquareCheckBig, User } from "lucide-react";
 import { StudentRoute } from "../../../types/VarRoutes";
+import DataCard from "../../../components/profile/DataCard";
 
 const StudentInformation = () => {
   const [activeTab, setActiveTab] = useState("data-diri");
@@ -17,11 +17,15 @@ const StudentInformation = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"} className={""}>
-      <HorizontalLine />
-      <div className="grid sm:grid-cols-2 md:grid-cols-6 gap-6 p-4">
+      <div className="grid sm:grid-cols-2 md:grid-cols-8 gap-6 p-4 border-t-2 border-primary-yellow rounded-t-sm">
         <div className="md:col-span-2">
           <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
-            <img width={150} src="/img/profile_logo.png" alt="" />
+            <img  
+              width={150}
+              src="/img/profile_logo.png"
+              alt=""
+              className="border-2 shadow rounded-full"
+            />
             <h1 className="uppercase text-primary-brown">
               Muhammad Ridho Fathan
             </h1>
@@ -44,9 +48,14 @@ const StudentInformation = () => {
             >
               Pendidikan Asal
             </ProfileRedirectButton>
+
+            <button className="flex w-full mt-10 bg-primary-green rounded p-2 justify-center items-center space-x-2 text-[#DAB969]">
+              <SquareCheckBig color="#DAB969" />
+              <p>Edit Data</p>
+            </button>
           </div>
         </div>
-        <div className="md:col-span-4 space-y-4">
+        <div className="md:col-span-6 space-y-4">
           <div className="p-1 bg-[#dddddd] rounded-xl flex w-full justify-between">
             <TabNavigationButton
               icon={<User size={18} />}
@@ -60,7 +69,7 @@ const StudentInformation = () => {
               isActive={activeTab === "domisili"}
               onClick={() => handleTabClick("domisili")}
             >
-              Domisili
+              Alamat
             </TabNavigationButton>
             <TabNavigationButton
               icon={<Phone size={18} />}
@@ -82,35 +91,81 @@ const StudentInformation = () => {
 const Domicile = () => {
   return (
     <RoundedBorderLayout className={" items-start gap-4 text-[#617182]"}>
-      <div className="flex flex-col space-y-4 ">
+      <div className="flex flex-col space-y-5 ">
         <h1 className="text-primary-green text-sm font-semibold">KTP</h1>
         <div className="h-px border-2 border-primary-green"></div>
-        <InputField title={"Alamat"} type={""} textArea={false} />
-        <InputField title={"RT"} type={""} textArea={false} />
-        <InputField title={"RW"} type={""} textArea={false} />
-        <InputField title={"Dusun"} type={""} textArea={false} />
-        <InputField title={"Desa/Kelurahan"} type={""} textArea={false} />
-        <InputField title={"Provinsi"} type={""} textArea={false} />
-        <InputField title={"Kota"} type={""} textArea={false} />
-        <InputField title={"Kecamatan"} type={""} textArea={false} />
-        <InputField title={"Kode/Pos"} type={""} textArea={false} />
-        <InputField title={"Alamat(Sesuai KTP)"} type={""} textArea={false} />
+        <DataCard title={"Kewarganegaraan*"} desc={"Indonesia"} />
+        <DataCard title={"Provinsi"} desc={"Jawa Barat"} />
+        <DataCard title={"Kota"} desc={"Kota Bogor"} />
+        <DataCard title={"Kecamatan"} desc={"Tanah Sareal"} />
+        <DataCard title={"Desa/Kelurahan"} desc={"Sukaresmi"} />
+        <DataCard title={"Alamat"} desc={"Kedung Halang Sentral"} />
+
+        <InputField
+          placeholder={"15156"}
+          title={"Kode Pos"}
+          type={""}
+          textArea={false}
+        />
+        <DataCard title={"Rw"} desc={"04"} />
+        <DataCard title={"Rt"} desc={"02"} />
+        <InputField
+          placeholder={""}
+          title={"Dusun"}
+          type={""}
+          textArea={false}
+        />
       </div>
-      <div className="flex flex-col space-y-4 ">
+      <div className="flex flex-col space-y-5 ">
         <h1 className="text-primary-green text-sm font-semibold">
           Tempat Tinggal
         </h1>
         <div className="h-px border-2 border-primary-green"></div>
-        <InputField title={"Alamat"} type={""} textArea={false} />
-        <InputField title={"RT"} type={""} textArea={false} />
-        <InputField title={"RW"} type={""} textArea={false} />
-        <InputField title={"Dusun"} type={""} textArea={false} />
-        <InputField title={"Desa/Kelurahan"} type={""} textArea={false} />
-        <InputField title={"Provinsi"} type={""} textArea={false} />
-        <InputField title={"Kota"} type={""} textArea={false} />
-        <InputField title={"Kecamatan"} type={""} textArea={false} />
-        <InputField title={"Kode/Pos"} type={""} textArea={false} />
-        <InputField title={"Alamat(Sesuai KTP)"} type={""} textArea={false} />
+        <InputField
+          placeholder={"Jawa Barat"}
+          title={"Provinsi"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"Kota Bogor"}
+          title={"Kota"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"Tanah Sareal"}
+          title={"Kecamatan"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"Sukaresmi"}
+          title={"Desa/Kelurahan"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"Kedung Halang Sentral"}
+          title={"Alamat"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"15156"}
+          title={"Kode Pos"}
+          type={""}
+          textArea={false}
+        />
+        <InputField placeholder={"04"} title={"Rw"} type={""} textArea={false} />
+        <InputField placeholder={"02"} title={"Rt"} type={""} textArea={false} />
+        <InputField
+          placeholder={""}
+          title={"Dusun"}
+          type={""}
+          textArea={false}
+        />
+        <DataCard title={"Alamat sama dengan KTP?"} desc={"❌"} />
       </div>
     </RoundedBorderLayout>
   );
@@ -120,13 +175,32 @@ const Contact = () => {
   return (
     <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
       <div className="flex flex-col space-y-4 ">
-        <InputField title={"No.Telepon"} type={""} textArea={false} />
-        <InputField title={"No. HP"} type={""} textArea={false} />
-        <InputField title={"Kepemilikan"} type={""} textArea={false} />
+        <InputField
+          placeholder={"+628123456789"}
+          title={"No. Whatsapp*"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"+628123456789"}
+          title={"No. HP*"}
+          type={""}
+          textArea={false}
+        />
       </div>
       <div className="flex flex-col space-y-4 ">
-        <InputField title={"Email Kampus"} type={""} textArea={false} />
-        <InputField title={"Email Pribadi"} type={""} textArea={false} />
+        <InputField
+          placeholder={""}
+          title={"Email Kampus"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"email@gmail.com"}
+          title={"Email Pribadi*"}
+          type={""}
+          textArea={false}
+        />
       </div>
     </RoundedBorderLayout>
   );
@@ -135,23 +209,42 @@ const Contact = () => {
 const PersonalProfile = () => {
   return (
     <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
-      <div className="flex flex-col space-y-4 ">
-        <InputField title={"NIM"} type={""} textArea={false} />
-        <InputField title={"Nama Mahasiswa"} type={""} textArea={false} />
-        <InputField title={"Program Studi"} type={""} textArea={false} />
-        <InputField title={"Konsentrasi"} type={""} textArea={false} />
-        <InputField title={"Periode Masuk"} type={""} textArea={false} />
-        <InputField title={"Tahun Kurikulum"} type={""} textArea={false} />
-        <InputField title={"Kelas/Kelompok"} type={""} textArea={false} />
+      <div className="flex flex-col space-y-5 ">
+        <DataCard title={"Nama Mahasiswa"} desc={"Muhammad Ridho Fathan"} />
+        <DataCard title={"Tempat Lahir"} desc={"Bogor"} />
+        <DataCard title={"Agama"} desc={"Islam"} />
+        <InputField
+          placeholder={""}
+          title={"Suku"}
+          type={""}
+          textArea={false}
+        />
+        <InputField
+          placeholder={"70"}
+          title={"Berat Badan"}
+          type={""}
+          textArea={false}
+        />
+        <DataCard title={"Ukuran Almamater"} desc={"XL"} />
+        <DataCard title={"Status Mahasiswa"} desc={"Aktif"} />
+        <DataCard title={"Kebutuhan Khusus"} desc={"Tidak"} />
       </div>
-      <div className="flex flex-col space-y-4 ">
-        <InputField title={"Jenis Pendaftaran"} type={""} textArea={false} />
-        <InputField title={"Jalur Pendaftaran"} type={""} textArea={false} />
-        <InputField title={"Gelombang"} type={""} textArea={false} />
-        <InputField title={"Tanggal Masuk"} type={""} textArea={false} />
-        <InputField title={"Kebutuhan Khusus"} type={""} textArea={false} />
-        <InputField title={"Status Mahasiswa"} type={""} textArea={false} />
-        <InputField title={"Kampus"} type={""} textArea={false} />
+      <div className="flex flex-col space-y-5 ">
+        <DataCard title={"NIK/No KTP*"} desc={"3271060000003"} />
+        <DataCard title={"Tanggal Lahir"} desc={"15 Mei 2003"} />
+        <DataCard title={"Jenis Kelamin"} desc={"Laki - Laki"} />
+        <DataCard title={"Status Nikah"} desc={"Belum Nikah"} />
+        <InputField
+          placeholder={"183"}
+          title={"Tinggi Badan (cm)"}
+          type={""}
+          textArea={false}
+        />
+        <DataCard title={"Golongan Darah"} desc={""} />
+        <DataCard
+          title={"Biodata Valid"}
+          desc={<Check color="#00A65A" strokeWidth={5} />}
+        />
       </div>
     </RoundedBorderLayout>
   );
