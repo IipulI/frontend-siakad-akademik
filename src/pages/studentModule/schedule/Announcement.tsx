@@ -1,30 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Table } from "../../../components/Table";
+import { TableAnnouncement } from "../../../components/Table";
 import { RefreshCw, Search } from "lucide-react";
+import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement";
+import { IoIosArrowBack } from "react-icons/io";
 
 export default function Announcement() {
+  const [id, setId] = useState<string | null>(null);
+
   const tableHead = ["Tanggal", "Penulis", "Judul", "Aksi"];
   const data = [
     {
+      id: 1,
       tanggal: "6 Mar 2025, 08:53:10",
       penulis: "Shesil Varista Dea Wulandari",
       judul: "[NEW] Cara Bayar Kuliah Melalui Shopee",
       aksi: "",
     },
     {
+      id: 2,
       tanggal: "19 Nov 2024, 14:54:13",
       penulis: "Shesil Varista Dea Wulandari",
       judul: "Cara bayar kuliah melalui Tokopedia",
       aksi: "",
     },
     {
+      id: 3,
       tanggal: "13 Nov 2024, 18:25:06",
       penulis: "Shesil Varista Dea Wulandari",
       judul: "Cara bayar kuliah melalui Bank Muamalat",
       aksi: "",
     },
   ];
+
+  const dataDetail = id ? data.find((item) => parseInt(id) === item.id) : null;
+
   return (
     <MainLayout isGreeting={false} titlePage={"Pengumuman"} className={""}>
       <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-yellow">
@@ -45,8 +55,14 @@ export default function Announcement() {
               <RefreshCw color="white" size={20} />
             </button>
           </div>
+            {id && (
+              <button onClick={() => setId(null)} className="bg-primary-blueSoft flex rounded-sm pl-2 cursor-pointer pr-4 items-center ml-auto text-white">
+                <IoIosArrowBack className="mr-4" />
+                Kembali ke daftar
+              </button>
+            )}
         </div>
-        <Table tableHead={tableHead} data={data} error={"error"} />
+        {id ? <DetailAnnouncement data={dataDetail}/> : <TableAnnouncement tableHead={tableHead} data={data} error={"error"} setId={setId} />}
       </div>
     </MainLayout>
   );
