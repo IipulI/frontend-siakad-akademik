@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
+import { Eye } from "lucide-react";
 
 interface TableProps {
   data: Array<Record<string, any>>;
@@ -125,8 +125,12 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
   );
 };
 
-
-export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps) => {
+export const TableAnnouncement = ({
+  data,
+  tableHead,
+  error,
+  setId,
+}: TableProps) => {
   return (
     <table className="w-full my-4">
       <thead>
@@ -152,15 +156,18 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
                 <td className="p-2 border text-sm border-black/50">
                   {row.penulis}
                 </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    {row.judul}
+                <td className="p-2 border text-sm border-black/50">
+                  {row.judul}
                 </td>
-                <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
+                <td
+                  className="p-2 border text-sm border-black/50 text-center"
+                  style={{ verticalAlign: "middle" }}
+                >
                   <div
                     onClick={() => setId && setId(row.id)}
                     className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6"
                   >
-                    <FaEye className="text-white w-4 h-4" />
+                    <Eye className="text-white w-4 h-4" />
                   </div>
                 </td>
               </tr>

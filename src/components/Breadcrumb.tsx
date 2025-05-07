@@ -11,9 +11,12 @@ export default function Breadcrumb() {
     return;
   }
 
+  const isAdmin = pathnames.includes("admin");
+  const baseRoute = isAdmin ? "/admin/dashboard" : "/dashboard";
+
   return (
     <div className="flex space-x-2 text-sm">
-      <Link to="/dashboard" className="text-blue-500">
+      <Link to={baseRoute} className="text-blue-500">
         <House color="#939396" size={18} />
       </Link>
       {pathnames.length > 0 && <span></span>}

@@ -1,32 +1,58 @@
-import { JSX, useState } from "react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { Lock, Search, User } from "lucide-react";
+import { Api } from "../api/Index";
+import Swal from "sweetalert2";
 
 interface FormErrors {
-  npm?: string;
+  username?: string;
   password?: string;
   captcha?: string;
 }
 
-export default function FormLogin(): JSX.Element {
-  const [npm, setNPM] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [captcha, setCaptcha] = useState<string>("");
+export default function FormLogin() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [captcha, setCaptcha] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [formError, setFormError] = useState<string>("");
+  const [formError, setFormError] = useState("");
   const navigate = useNavigate();
 
-  const submitHandler = (e) => {
+  const loginMutation = useMutation({
+    mutationFn: async () => {
+      const res = await Api.post("/auth/login", { username, password });
+      return res.data.data;
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      Swal.fire({
+        title: "Login Berhasil",
+        text: "Anda akan diarahkan ke Dashboard...",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1000,
+      }).then(() => {
+        navigate("/dashboard");
+      });
+    },
+    onError: (error: any) => {
+      setFormError("Login gagal, periksa kembali akun Anda");
+      console.error(error);
+    },
+  });
+
+  const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: FormErrors = {};
     let generalError = "";
 
-    if (!npm) newErrors.npm = "NPM tidak boleh kosong";
+    if (!username) newErrors.username = "Username tidak boleh kosong";
     if (!password) newErrors.password = "Password tidak boleh kosong";
     if (!captcha) newErrors.captcha = "Captcha tidak boleh kosong";
 
-    if (!npm || !password) {
+    if (!username || !password) {
       generalError = "Akun Pengguna dan Password harus diisi";
     }
 
@@ -34,8 +60,7 @@ export default function FormLogin(): JSX.Element {
     setFormError(generalError);
 
     if (Object.keys(newErrors).length === 0) {
-      setFormError(""); // Hapus error umum jika sukses
-      navigate("/dashboard");
+      loginMutation.mutate();
     }
   };
 
@@ -45,7 +70,6 @@ export default function FormLogin(): JSX.Element {
       style={{ backgroundImage: 'url("/img/background_uika.jpg")' }}
     >
       <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl w-full">
-        {/* Kiri */}
         <div className="text-white mb-10 md:mb-0 md:w-1/2 px-4 md:px-10">
           <img src="/img/logo_uika.png" className="w-20 mb-4" alt="Logo" />
           <h1 className="text-6xl font-bold tracking-widest mb-2">
@@ -62,7 +86,6 @@ export default function FormLogin(): JSX.Element {
           </p>
         </div>
 
-        {/* Kanan (Form) */}
         <form
           onSubmit={submitHandler}
           className="bg-white rounded-3xl shadow-lg p-8 md:p-10 w-full max-w-md"
@@ -72,7 +95,6 @@ export default function FormLogin(): JSX.Element {
             Untuk Mengakses <br /> dipersilahkan untuk login terlebih dahulu.
           </p>
 
-          {/* ✅ Error Umum */}
           {formError && (
             <div className="bg-red-100 text-red-800 text-sm px-4 py-2 rounded-xl mb-4 border border-red-300 flex items-center justify-between">
               <span>{formError}</span>
@@ -101,16 +123,16 @@ export default function FormLogin(): JSX.Element {
           <div className="mb-4 relative">
             <input
               type="text"
-              placeholder="NPM"
-              value={npm}
-              onChange={(e) => setNPM(e.target.value)}
+              placeholder="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className={`w-full bg-gray-200 p-3 pr-10 rounded-xl text-sm focus:outline-none focus:ring-2 ${
-                errors.npm ? "focus:ring-red-500" : "focus:ring-green-500"
+                errors.username ? "focus:ring-red-500" : "focus:ring-green-500"
               }`}
             />
             <User className="absolute right-3 top-3 text-green-700" size={18} />
-            {errors.npm && (
-              <p className="text-red-500 text-xs mt-1">{errors.npm}</p>
+            {errors.username && (
+              <p className="text-red-500 text-xs mt-1">{errors.username}</p>
             )}
           </div>
 
@@ -165,9 +187,10 @@ export default function FormLogin(): JSX.Element {
 
           <button
             type="submit"
-            className="cursor-pointer w-full bg-green-700 hover:bg-green-800 text-white py-2 rounded-xl font-semibold transition"
+            disabled={loginMutation.isPending}
+            className="cursor-pointer w-full bg-green-700 hover:bg-green-800 text-white py-2 rounded-xl font-semibold transition disabled:opacity-50"
           >
-            Login
+            {loginMutation.isPending ? "Memproses..." : "Login"}
           </button>
         </form>
       </div>

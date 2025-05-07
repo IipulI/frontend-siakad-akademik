@@ -6,10 +6,14 @@ import DashboardAnnouncementCard from "../../components/DashboardAnnouncementCar
 import MainLayout from "../../components/layouts/MainLayout";
 import IPSChart from "../../components/chart/IPSChart";
 import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
+import axios from "axios";
 
 const Dashboard = () => {
   const [currentDate, setCurrentDate] = useState<string | undefined>();
+  const [subject, setSubject] = useState<String>();
   useEffect(() => {
+    const token =
+      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbmFrYWRlbWlrdW5pdiIsInJvbGVzIjpbIlJPTEVfQUtBREVNSUtfVU5JViJdLCJpYXQiOjE3NDY1NDgzNTcsImV4cCI6MTc0NzE1MzE1N30.2pi9mNO4_7raPL-CQGVdNqMtK9ypKgDM5TSDMnGafi3nlKfIjhqzThtPgvH3csjhRFjvPtoyKU0lD1Mh53LQTQ";
     const options: Intl.DateTimeFormatOptions = {
       weekday: "long",
       day: "numeric",
@@ -18,6 +22,25 @@ const Dashboard = () => {
     };
     const today = new Date().toLocaleDateString("id-ID", options);
     setCurrentDate(today);
+
+    const getSubject = async () => {
+      try {
+        const response = await axios.get(
+          "https://backend-simakad.azurewebsites.net/api/v1/akademik/mata-kuliah",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const { data } = response.data;
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getSubject();
   }, []);
   return (
     <>
