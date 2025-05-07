@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { TableAnnouncement } from "../../../components/Table";
-import { RefreshCw, Search } from "lucide-react";
+import { ArrowLeft, RefreshCw, Search } from "lucide-react";
 import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement";
-import { IoIosArrowBack } from "react-icons/io";
 
 export default function Announcement() {
   const [id, setId] = useState<string | null>(null);
@@ -55,14 +54,26 @@ export default function Announcement() {
               <RefreshCw color="white" size={20} />
             </button>
           </div>
-            {id && (
-              <button onClick={() => setId(null)} className="bg-primary-blueSoft flex rounded-sm pl-2 cursor-pointer pr-4 items-center ml-auto text-white">
-                <IoIosArrowBack className="mr-4" />
-                Kembali ke daftar
-              </button>
-            )}
+          {id && (
+            <button
+              onClick={() => setId(null)}
+              className="bg-primary-blueSoft flex rounded-sm pl-2 cursor-pointer pr-4 items-center ml-auto text-white"
+            >
+              <ArrowLeft className="mr-4" />
+              Kembali ke daftar
+            </button>
+          )}
         </div>
-        {id ? <DetailAnnouncement data={dataDetail}/> : <TableAnnouncement tableHead={tableHead} data={data} error={"error"} setId={setId} />}
+        {id ? (
+          <DetailAnnouncement data={dataDetail} />
+        ) : (
+          <TableAnnouncement
+            tableHead={tableHead}
+            data={data}
+            error={"error"}
+            setId={setId}
+          />
+        )}
       </div>
     </MainLayout>
   );

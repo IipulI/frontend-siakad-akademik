@@ -19,7 +19,8 @@ import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard"
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
 import React from "react";
-import { StudentRoute } from "./types/VarRoutes";
+import { AdminRoute, StudentRoute } from "./types/VarRoutes";
+import DashboardAdmin from "./pages/admin-finance/DashboardAdmin";
 
 export default function App() {
   return (
@@ -96,6 +97,12 @@ export default function App() {
       <Route
         path={String(StudentRoute.payment.paymentHistory)}
         element={<StudentPaymentHistory />}
+      />
+
+      {/* Route Untuk Admin & Keuangan */}
+      <Route
+        path={String(AdminRoute.dashboardAdmin)}
+        element={<DashboardAdmin />}
       />
     </Routes>
   );
