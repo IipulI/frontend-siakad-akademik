@@ -1,6 +1,6 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Biodata from "../../../components/Biodata";
+import Biodata from "../../../components/biodata/Biodata";
 
 const ThisWeek = () => {
   const jadwalMingguan = [

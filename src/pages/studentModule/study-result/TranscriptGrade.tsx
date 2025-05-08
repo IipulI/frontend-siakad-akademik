@@ -1,6 +1,6 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Biodata from "../../../components/Biodata";
+import Biodata from "../../../components/biodata/Biodata";
 
 const TranscriptGrade = () => {
   const data = [
@@ -11,7 +11,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF102",
@@ -20,7 +20,7 @@ const TranscriptGrade = () => {
       nilai: "B",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF103",
@@ -29,7 +29,7 @@ const TranscriptGrade = () => {
       nilai: "AB",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF104",
@@ -38,7 +38,7 @@ const TranscriptGrade = () => {
       nilai: "BC",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF105",
@@ -47,7 +47,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF106",
@@ -56,7 +56,7 @@ const TranscriptGrade = () => {
       nilai: "B",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF107",
@@ -65,7 +65,7 @@ const TranscriptGrade = () => {
       nilai: "AB",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF108",
@@ -74,7 +74,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF109",
@@ -83,7 +83,7 @@ const TranscriptGrade = () => {
       nilai: "BC",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF110",
@@ -92,7 +92,7 @@ const TranscriptGrade = () => {
       nilai: "B",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF201",
@@ -101,7 +101,7 @@ const TranscriptGrade = () => {
       nilai: "AB",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF202",
@@ -110,7 +110,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF203",
@@ -119,7 +119,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF204",
@@ -128,7 +128,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF205",
@@ -137,7 +137,7 @@ const TranscriptGrade = () => {
       nilai: "B",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF206",
@@ -146,7 +146,7 @@ const TranscriptGrade = () => {
       nilai: "AB",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF207",
@@ -155,7 +155,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF208",
@@ -164,7 +164,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF209",
@@ -173,7 +173,7 @@ const TranscriptGrade = () => {
       nilai: "BC",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF210",
@@ -182,7 +182,7 @@ const TranscriptGrade = () => {
       nilai: "B",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF301",
@@ -191,7 +191,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF302",
@@ -200,7 +200,7 @@ const TranscriptGrade = () => {
       nilai: "AB",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF303",
@@ -209,7 +209,7 @@ const TranscriptGrade = () => {
       nilai: "B",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF304",
@@ -218,7 +218,7 @@ const TranscriptGrade = () => {
       nilai: "BC",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF305",
@@ -227,7 +227,7 @@ const TranscriptGrade = () => {
       nilai: "C",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
     {
       kodeMK: "TIF306",
@@ -236,7 +236,7 @@ const TranscriptGrade = () => {
       nilai: "A",
       keterangan: "Dosen",
       transkrip: true,
-      semester:"1"
+      semester: "1",
     },
   ];
 
@@ -293,21 +293,29 @@ const TranscriptGradeTable = ({ data, periode }) => {
         <thead className="bg-primary-green text-white">
           <tr>
             <th className="border border-gray-500 p-5 font-semibold">No</th>
-            <th className="border border-gray-500 p-5 font-semibold">Kode MK</th>
+            <th className="border border-gray-500 p-5 font-semibold">
+              Kode MK
+            </th>
             <th className="border border-gray-500 p-5 font-semibold">
               Nama Mata Kuliah
             </th>
-            <th className="border border-gray-500 p-5 font-semibold">Semester</th>
+            <th className="border border-gray-500 p-5 font-semibold">
+              Semester
+            </th>
             <th className="border border-gray-500 p-5 font-semibold">SKS</th>
             <th className="border border-gray-500 p-5 font-semibold">Grade</th>
-            <th className="border border-gray-500 p-5 font-semibold">Nilai Mutu</th>
+            <th className="border border-gray-500 p-5 font-semibold">
+              Nilai Mutu
+            </th>
             <th className="border border-gray-500 p-5 font-semibold">Bobot</th>
           </tr>
         </thead>
         <tbody className="border-b-4 border-gray-700">
           {data.map((item, index) => (
             <tr key={index} className="text-center bg-gray-50">
-              <td className="border border-gray-500 font-semibold px-4 py-2">{index + 1}</td>
+              <td className="border border-gray-500 font-semibold px-4 py-2">
+                {index + 1}
+              </td>
               <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.kodeMK}
               </td>
@@ -317,8 +325,12 @@ const TranscriptGradeTable = ({ data, periode }) => {
               <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.semester}
               </td>
-              <td className="border border-gray-500 font-semibold px-4 py-2">{item.sks}</td>
-              <td className="border border-gray-500 font-semibold px-4 py-2">{item.nilai}</td>
+              <td className="border border-gray-500 font-semibold px-4 py-2">
+                {item.sks}
+              </td>
+              <td className="border border-gray-500 font-semibold px-4 py-2">
+                {item.nilai}
+              </td>
               <td className="border border-gray-500 font-semibold px-4 py-2">
                 {item.nilaiMutu ?? "-"}
               </td>

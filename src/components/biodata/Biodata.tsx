@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import BiodataSection from "./BiodataSection";
-import HorizontalLine from "./profile/HorizontalLine";
+import HorizontalLine from "../profile/HorizontalLine";
 import React from "react";
 
 interface BiodataProps {
@@ -20,7 +20,7 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
     semester: "6",
     pembimbing: "Berlina Wulandari S.T, M.Kom",
     sksLulus: "103 / 3.78",
-    totalSks: "103 / 3.78", 
+    totalSks: "103 / 3.78",
   };
 
   const sections = [

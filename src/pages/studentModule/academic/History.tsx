@@ -1,7 +1,7 @@
 import React from "react";
-import Biodata from "../../../components/Biodata";
+import Biodata from "../../../components/biodata/Biodata";
 import MainLayout from "../../../components/layouts/MainLayout";
-import {TableHistory} from "../../../components/Table";
+import { TableHistory } from "../../../components/Table";
 import { LayoutGrid, Settings } from "lucide-react";
 
 export default function History() {

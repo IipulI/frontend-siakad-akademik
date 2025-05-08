@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import ExamToggleButton from "../../../components/ExamToggleButton";
 import ExamScheduleCard from "../../../components/ExamScheduleCard";
-import DashboardCardAcademic from "../../../components/DashboardCardAcademic";
-import DashboardBillCard from "../../../components/DashboardBillCard";
+import DashboardCardAcademic from "../../../components/dashboard/DashboardCardAcademic";
+import DashboardBillCard from "../../../components/dashboard/DashboardBillCard";
 import IPSChart from "../../../components/chart/IPSChart";
 
 const Exam = () => {

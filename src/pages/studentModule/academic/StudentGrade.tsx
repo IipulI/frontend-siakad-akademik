@@ -1,6 +1,6 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Biodata from "../../../components/Biodata";
+import Biodata from "../../../components/biodata/Biodata";
 
 const StudentGrade = () => {
   //   const tableHead = [
@@ -163,7 +163,7 @@ const StudentGrade = () => {
   return (
     <MainLayout isGreeting={false} titlePage={"Nilai Mahasiswa"} className="">
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow space-y-4">
-        <Biodata showLine={false}/>
+        <Biodata showLine={false} />
         <div className="flex justify-start space-x-2 border p-3 items-center">
           <button className="bg-white border-2 p-1 px-1.5 text-center rounded font-semibold text-primary-green">
             Periode
@@ -188,46 +188,76 @@ const StudentGradeTable = ({ data }) => {
       <table className="min-w-full border border-gray-300">
         <thead className="bg-primary-green border border-black/50 text-white">
           <tr>
-            <th rowSpan={2} className="border border-gray-300 font-semibold px-4 py-2">
+            <th
+              rowSpan={2}
+              className="border border-gray-300 font-semibold px-4 py-2"
+            >
               Kurikulum
             </th>
-            <th rowSpan={2} className="border border-gray-300 font-semibold px-4 py-2">
+            <th
+              rowSpan={2}
+              className="border border-gray-300 font-semibold px-4 py-2"
+            >
               Kode MK
             </th>
-            <th rowSpan={2} className="border border-gray-300 font-semibold px-4 py-2">
+            <th
+              rowSpan={2}
+              className="border border-gray-300 font-semibold px-4 py-2"
+            >
               Nama Mata Kuliah
             </th>
-            <th rowSpan={2} className="border border-gray-300 font-semibold px-4 py-2">
+            <th
+              rowSpan={2}
+              className="border border-gray-300 font-semibold px-4 py-2"
+            >
               Nama Kelas
             </th>
-            <th colSpan={3} className="border border-gray-300 font-semibold px-4 py-2">
+            <th
+              colSpan={3}
+              className="border border-gray-300 font-semibold px-4 py-2"
+            >
               SKS
             </th>
-            <th rowSpan={2} className="border border-gray-300 font-semibold px-4 py-2">
+            <th
+              rowSpan={2}
+              className="border border-gray-300 font-semibold px-4 py-2"
+            >
               Nilai
             </th>
           </tr>
           <tr>
-            <th className="border border-gray-300 font-semibold px-4 py-2">Komponen</th>
-            <th className="border border-gray-300 font-semibold px-4 py-2">%</th>
-            <th className="border border-gray-300 font-semibold px-4 py-2">Nilai</th>
+            <th className="border border-gray-300 font-semibold px-4 py-2">
+              Komponen
+            </th>
+            <th className="border border-gray-300 font-semibold px-4 py-2">
+              %
+            </th>
+            <th className="border border-gray-300 font-semibold px-4 py-2">
+              Nilai
+            </th>
           </tr>
         </thead>
         <tbody>
           {data.map((item, index) => (
             <tr key={index} className="text-center bg-gray-50">
-              <td className="border border-gray-300 font-semibold px-4 py-2">2021</td>
+              <td className="border border-gray-300 font-semibold px-4 py-2">
+                2021
+              </td>
               <td className="border border-gray-300 font-semibold px-4 py-2">
                 {item.kodeMK}
               </td>
               <td className="border border-gray-300 font-semibold px-4 py-2">
                 {item.namaMK}
               </td>
-              <td className="border border-gray-300 font-semibold px-4 py-2">REG_B</td>
+              <td className="border border-gray-300 font-semibold px-4 py-2">
+                REG_B
+              </td>
               <td className="border border-gray-300 font-semibold px-4 py-2"></td>
               <td className="border border-gray-300 font-semibold px-4 py-2"></td>
               <td className="border border-gray-300 font-semibold px-4 py-2"></td>
-              <td className="border border-gray-300 font-semibold px-4 py-2">{item.nilai}</td>
+              <td className="border border-gray-300 font-semibold px-4 py-2">
+                {item.nilai}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -1,6 +1,6 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Biodata from "../../../components/Biodata";
+import Biodata from "../../../components/biodata/Biodata";
 import { Check } from "lucide-react";
 
 const StudyResultCard = () => {
@@ -233,9 +233,7 @@ const StudyResultCardTable = ({ data, totalSKS, periode }) => {
             >
               Indeks Prestasi Semester
             </td>
-            <td
-              className="border border-gray-500 font-semibold px-4 py-2 text-center"
-            >
+            <td className="border border-gray-500 font-semibold px-4 py-2 text-center">
               {ips}
             </td>
           </tr>
