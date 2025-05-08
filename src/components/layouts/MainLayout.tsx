@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import Breadcrumb from "../Breadcrumb";
 import Header from "../Header";
-import MainLayout from "../../types/MainLayout";
 import React from "react";
+
+interface MainLayout {
+  children: React.ReactNode;
+  isGreeting: boolean;
+  titlePage: string;
+  className?: string;
+}
 
 export default function MainLayout({
   children,

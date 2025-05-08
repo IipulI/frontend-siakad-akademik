@@ -1,10 +1,10 @@
 import React from "react";
-import MainLayout from "../../components/layouts/MainLayout";
+import MainLayoutAdminAcademic from "../../components/layouts/MainLayoutAdminAcademic";
 
 export default function DashboardAdminFinance() {
   return (
-    <MainLayout titlePage={"Beranda"} isGreeting={false}>
+    <MainLayoutAdminAcademic titlePage={"Beranda"}>
       DashboardAdminAkademik
-    </MainLayout>
+    </MainLayoutAdminAcademic>
   );
 }
