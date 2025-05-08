@@ -1,13 +1,14 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { StudentRoute } from "../types/VarRoutes";
 
+// Props interface for dropdown menu items
 interface DropdownMenuItemProps {
   icon: string;
   title: string;
   description: string;
   to: string;
+  iconBasePath?: string;
 }
 
 // Create separate component for dropdown menu items
@@ -16,13 +17,14 @@ const DropdownMenuItem = ({
   title,
   description,
   to,
+  iconBasePath = "/img/",
 }: DropdownMenuItemProps) => (
   <Link
     to={to}
     className="px-3 py-3 border-b-1 mb-5 border-gray-400 group text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between group first:mt-0"
   >
     <div className="flex items-center gap-5">
-      <img src={`/img/${icon}`} alt="" className="w-6" />
+      <img src={`${iconBasePath}${icon}`} alt="" className="w-6" />
       <div>
         <p className="font-semibold">{title}</p>
         <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
@@ -47,6 +49,7 @@ const DropdownMenuItem = ({
   </Link>
 );
 
+// Props interface for dropdown menu
 interface DropdownMenuProps {
   isOpen: boolean;
   title: string;
@@ -56,10 +59,16 @@ interface DropdownMenuProps {
     description: string;
     to: string;
   }[];
+  iconBasePath?: string;
 }
 
 // Create separate component for dropdown menus
-const DropdownMenu = ({ isOpen, title, items }: DropdownMenuProps) => {
+const DropdownMenu = ({
+  isOpen,
+  title,
+  items,
+  iconBasePath,
+}: DropdownMenuProps) => {
   if (!isOpen) return null;
 
   return (
@@ -72,6 +81,7 @@ const DropdownMenu = ({ isOpen, title, items }: DropdownMenuProps) => {
           title={item.title}
           description={item.description}
           to={item.to}
+          iconBasePath={iconBasePath}
         />
       ))}
     </div>
@@ -98,121 +108,66 @@ const DropdownArrow = ({ isOpen }) => (
   </svg>
 );
 
-const Navbar = () => {
+// Interface for navbar item
+interface NavItem {
+  name: string;
+  path?: string;
+  dropdownKey?: string;
+  hasDropdown: boolean;
+}
+
+// Interface for dropdown menu data
+interface DropdownMenuData {
+  [key: string]: {
+    title: string;
+    items: {
+      icon: string;
+      title: string;
+      description: string;
+      to: string;
+    }[];
+  };
+}
+
+// Main Navbar props interface
+interface NavbarProps {
+  navItems: NavItem[];
+  dropdownMenus: DropdownMenuData;
+  iconBasePath?: string;
+  className?: string;
+  containerClassName?: string;
+  activeItemClassName?: string;
+  defaultClassName?: string;
+}
+
+const Navbar = ({
+  navItems,
+  dropdownMenus,
+  iconBasePath = "/img/",
+  className = "xl:flex space-x-12 text-white hidden bg-primary-green w-fit text-sm p-2.5 rounded-full",
+  containerClassName = "px-40",
+  activeItemClassName = "",
+  defaultClassName = "",
+}: NavbarProps) => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const toggleDropdown = (dropdownName) => {
     setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
   };
 
-  // Define menu data
-  const dropdownMenus = {
-    jadwal: {
-      title: "JADWAL",
-      items: [
-        {
-          icon: "icon_annon.png",
-          title: "Pengumuman",
-          description: "Informasi Kegiatan Kampus",
-          to: StudentRoute.schedule.announcement,
-        },
-        {
-          icon: "icon_calendar.png",
-          title: "Kalender Akademik",
-          description: "Periksa Kegiatan Perkuliahan",
-          to: StudentRoute.schedule.calendar,
-        },
-        {
-          icon: "icon_week.png",
-          title: "Jadwal Minggu Ini",
-          description: "Aktivitas Seminggu Ke Depan",
-          to: StudentRoute.schedule.thisWeek,
-        },
-      ],
-    },
-    akademik: {
-      title: "AKADEMIK",
-      items: [
-        {
-          icon: "icon_annon.png",
-          title: "Pengisian Kartu Rencana Studi",
-          description: "Tentukan Rencana Kuliah",
-          to: StudentRoute.academic.studyPlan,
-        },
-        {
-          icon: "icon_calendar.png",
-          title: "Riwayat KRS",
-          description: "Rekap rencana kuliah Anda",
-          to: StudentRoute.academic.history,
-        },
-        {
-          icon: "icon_week.png",
-          title: "Mengulang",
-          description: "History Perbaikan Mata Kuliah",
-          to: StudentRoute.academic.retake,
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Nilai Mahasiswa",
-          description: "Kualitas perkuliaha Anda",
-          to: StudentRoute.academic.studentGrade,
-        },
-      ],
-    },
-    hasilStudi: {
-      title: "HASIL STUDI",
-      items: [
-        {
-          icon: "icon_annon.png",
-          title: "Kartu Hasil Studi",
-          description: "Laporan Priode Anda",
-          to: StudentRoute.studyResult.studyResult,
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Transkrip",
-          description: "Hasil Perkuliahan Anda",
-          to: StudentRoute.studyResult.transcript,
-        },
-      ],
-    },
-    keuangan: {
-      title: "KEUANGAN",
-      items: [
-        {
-          icon: "icon_annon.png",
-          title: "Tagihan Mahasiswa",
-          description: "Biaya Operasional Pendidikan",
-          to: StudentRoute.payment.payment,
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Riwayat Keuangan",
-          description: "Riwayat BOP",
-          to: StudentRoute.payment.paymentHistory,
-        },
-      ],
-    },
-  };
-
-  // Define navigation items
-  const navItems = [
-    { name: "Beranda", path: StudentRoute.dashboard, hasDropdown: false },
-    { name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
-    { name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
-    { name: "Hasil Studi", dropdownKey: "hasilStudi", hasDropdown: true },
-    { name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
-  ];
-
   return (
-    <div className="px-40">
-      <ul className="xl:flex space-x-12 text-white hidden bg-primary-green w-fit text-sm p-2.5 rounded-full">
+    <div className={containerClassName}>
+      <ul className={className}>
         {navItems.map((item) => (
           <li key={item.name} className="relative">
             {item.hasDropdown ? (
               <>
                 <button
-                  className="flex items-center focus:outline-none cursor-pointer"
+                  className={`flex items-center focus:outline-none cursor-pointer ${
+                    openDropdown === item.dropdownKey
+                      ? activeItemClassName
+                      : defaultClassName
+                  }`}
                   onClick={() => toggleDropdown(item.dropdownKey)}
                 >
                   {item.name}
@@ -230,10 +185,13 @@ const Navbar = () => {
                       ? dropdownMenus[item.dropdownKey]?.items
                       : []
                   }
+                  iconBasePath={iconBasePath}
                 />
               </>
             ) : (
-              <Link to={item.path || "#"}>{item.name}</Link>
+              <Link to={item.path || "#"} className={defaultClassName}>
+                {item.name}
+              </Link>
             )}
           </li>
         ))}

@@ -5,6 +5,105 @@ import { Bell } from "lucide-react";
 import React from "react";
 import { StudentRoute } from "../types/VarRoutes";
 
+// Define navigation items
+const navItems = [
+  { name: "Beranda", path: StudentRoute.dashboard, hasDropdown: false },
+  { name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
+  { name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
+  { name: "Hasil Studi", dropdownKey: "hasilStudi", hasDropdown: true },
+  { name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
+];
+
+// Define menu data
+const dropdownMenus = {
+  jadwal: {
+    title: "JADWAL",
+    items: [
+      {
+        icon: "icon_annon.png",
+        title: "Pengumuman",
+        description: "Informasi Kegiatan Kampus",
+        to: String(StudentRoute.schedule.announcement),
+      },
+      {
+        icon: "icon_calendar.png",
+        title: "Kalender Akademik",
+        description: "Periksa Kegiatan Perkuliahan",
+        to: String(StudentRoute.schedule.calendar),
+      },
+      {
+        icon: "icon_week.png",
+        title: "Jadwal Minggu Ini",
+        description: "Aktivitas Seminggu Ke Depan",
+        to: String(StudentRoute.schedule.thisWeek),
+      },
+    ],
+  },
+  akademik: {
+    title: "AKADEMIK",
+    items: [
+      {
+        icon: "icon_annon.png",
+        title: "Pengisian Kartu Rencana Studi",
+        description: "Tentukan Rencana Kuliah",
+        to: String(StudentRoute.academic.studyPlan),
+      },
+      {
+        icon: "icon_calendar.png",
+        title: "Riwayat KRS",
+        description: "Rekap rencana kuliah Anda",
+        to: String(StudentRoute.academic.history),
+      },
+      {
+        icon: "icon_week.png",
+        title: "Mengulang",
+        description: "History Perbaikan Mata Kuliah",
+        to: String(StudentRoute.academic.retake),
+      },
+      {
+        icon: "icon_timetable.png",
+        title: "Nilai Mahasiswa",
+        description: "Kualitas perkuliaha Anda",
+        to: String(StudentRoute.academic.studentGrade),
+      },
+    ],
+  },
+  hasilStudi: {
+    title: "HASIL STUDI",
+    items: [
+      {
+        icon: "icon_annon.png",
+        title: "Kartu Hasil Studi",
+        description: "Laporan Priode Anda",
+        to: String(StudentRoute.studyResult.studyResult),
+      },
+      {
+        icon: "icon_timetable.png",
+        title: "Transkrip",
+        description: "Hasil Perkuliahan Anda",
+        to: String(StudentRoute.studyResult.transcript),
+      },
+    ],
+  },
+  keuangan: {
+    title: "KEUANGAN",
+    items: [
+      {
+        icon: "icon_annon.png",
+        title: "Tagihan Mahasiswa",
+        description: "Biaya Operasional Pendidikan",
+        to: String(StudentRoute.payment.payment),
+      },
+      {
+        icon: "icon_timetable.png",
+        title: "Riwayat Keuangan",
+        description: "Riwayat BOP",
+        to: String(StudentRoute.payment.paymentHistory),
+      },
+    ],
+  },
+};
+
 const Header = () => {
   return (
     <div className="w-full flex flex-col space-y-4">
@@ -55,7 +154,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <Navbar />
+      <Navbar navItems={navItems} dropdownMenus={dropdownMenus} />
     </div>
   );
 };
