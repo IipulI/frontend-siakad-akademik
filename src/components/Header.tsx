@@ -7,11 +7,21 @@ import { StudentRoute } from "../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
-  { name: "Beranda", path: StudentRoute.dashboard, hasDropdown: false },
-  { name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
-  { name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
-  { name: "Hasil Studi", dropdownKey: "hasilStudi", hasDropdown: true },
-  { name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
+  {
+    id: "1",
+    name: "Beranda",
+    path: StudentRoute.dashboard,
+    hasDropdown: false,
+  },
+  { id: "2", name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
+  { id: "3", name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
+  {
+    id: "4",
+    name: "Hasil Studi",
+    dropdownKey: "hasilStudi",
+    hasDropdown: true,
+  },
+  { id: "5", name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
 ];
 
 // Define menu data
@@ -114,7 +124,10 @@ const Header = () => {
               <div>
                 <div className="flex items-center gap-4">
                   {/* menu hamburger */}
-                  <HamburgerMenu />
+                  <HamburgerMenu
+                    navItems={navItems}
+                    dropdownMenus={dropdownMenus}
+                  />
                   {/* logo */}
                   <Link
                     to={"/dashboard"}
