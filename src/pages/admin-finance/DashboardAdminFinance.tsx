@@ -1,12 +1,12 @@
 import React from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 
-const DashboardAdmin = () => {
+const DashboardAdminFinance = () => {
   return (
     <MainLayout titlePage={"Beranda"} isGreeting={false}>
-      DashboardAdmin
+      DashboardAdminFinance
     </MainLayout>
   );
 };
 
-export default DashboardAdmin;
+export default DashboardAdminFinance;

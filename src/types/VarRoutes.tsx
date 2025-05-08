@@ -32,6 +32,10 @@ export const StudentRoute = {
   } as routeType,
 };
 
-export const AdminRoute: routeType = {
-  dashboardAdmin: "/admin/dashboard",
+export const AdminAcademicRoute: routeType = {
+  dashboardAdminAcademic: "/admin-academic/dashboard",
+};
+
+export const AdminFinanceRoute: routeType = {
+  dashboardAdminFinance: "/admin-finance/dashboard",
 };
