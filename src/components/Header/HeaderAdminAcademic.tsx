@@ -1,51 +1,50 @@
-import Navbar from "./Navbar";
-import HamburgerMenu from "./HamburgerMenu";
+import Navbar from "../Navbar";
+import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
-import { StudentRoute } from "../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: StudentRoute.dashboard,
+    path: "",
     hasDropdown: false,
   },
-  { id: "2", name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
+  { id: "2", name: "Mahasiswa", dropdownKey: "mahasiswa", hasDropdown: true },
   { id: "3", name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
   {
     id: "4",
-    name: "Hasil Studi",
-    dropdownKey: "hasilStudi",
-    hasDropdown: true,
+    name: "Kelas kuliah",
+    path: "",
+    hasDropdown: false,
   },
-  { id: "5", name: "Keuangan", dropdownKey: "keuangan", hasDropdown: true },
+  {
+    id: "5",
+    name: "Pengumuman",
+    path: "",
+    hasDropdown: false,
+  },
+  { id: "6", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
 ];
 
 // Define menu data
 const dropdownMenus = {
-  jadwal: {
-    title: "JADWAL",
+  mahasiswa: {
+    title: "MAHASISWA",
     items: [
       {
         icon: "icon_annon.png",
-        title: "Pengumuman",
-        description: "Informasi Kegiatan Kampus",
-        to: String(StudentRoute.schedule.announcement),
+        title: "Data Mahasiswa",
+        description: "Manajemen Data Mahasiswa",
+        to: String(),
       },
       {
         icon: "icon_calendar.png",
-        title: "Kalender Akademik",
-        description: "Periksa Kegiatan Perkuliahan",
-        to: String(StudentRoute.schedule.calendar),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Jadwal Minggu Ini",
-        description: "Aktivitas Seminggu Ke Depan",
-        to: String(StudentRoute.schedule.thisWeek),
+        title: "Pembimbing Akademik",
+        description: "Set Pembimbing Mahasiswa Dosen",
+        to: String(),
       },
     ],
   },
@@ -54,67 +53,74 @@ const dropdownMenus = {
     items: [
       {
         icon: "icon_annon.png",
-        title: "Pengisian Kartu Rencana Studi",
-        description: "Tentukan Rencana Kuliah",
-        to: String(StudentRoute.academic.studyPlan),
+        title: "Tahun Akademik",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
+      },
+      {
+        icon: "icon_annon.png",
+        title: "Mata Kuliah",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
+      },
+      {
+        icon: "icon_annon.png",
+        title: "Kurikulum Program Studi",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
+      },
+      {
+        icon: "icon_annon.png",
+        title: "Manajemen OBE",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
       },
       {
         icon: "icon_calendar.png",
-        title: "Riwayat KRS",
-        description: "Rekap rencana kuliah Anda",
-        to: String(StudentRoute.academic.history),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Mengulang",
-        description: "History Perbaikan Mata Kuliah",
-        to: String(StudentRoute.academic.retake),
-      },
-      {
-        icon: "icon_timetable.png",
-        title: "Nilai Mahasiswa",
-        description: "Kualitas perkuliaha Anda",
-        to: String(StudentRoute.academic.studentGrade),
+        title: "Manajemen RPS",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
       },
     ],
   },
-  hasilStudi: {
-    title: "HASIL STUDI",
+  pengaturan: {
+    title: "PENGATURAN",
     items: [
       {
         icon: "icon_annon.png",
-        title: "Kartu Hasil Studi",
-        description: "Laporan Priode Anda",
-        to: String(StudentRoute.studyResult.studyResult),
+        title: "Tahun Ajaran",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
       },
-      {
-        icon: "icon_timetable.png",
-        title: "Transkrip",
-        description: "Hasil Perkuliahan Anda",
-        to: String(StudentRoute.studyResult.transcript),
-      },
-    ],
-  },
-  keuangan: {
-    title: "KEUANGAN",
-    items: [
       {
         icon: "icon_annon.png",
-        title: "Tagihan Mahasiswa",
-        description: "Biaya Operasional Pendidikan",
-        to: String(StudentRoute.payment.payment),
+        title: "Periode Akademik",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
       },
       {
-        icon: "icon_timetable.png",
-        title: "Riwayat Keuangan",
-        description: "Riwayat BOP",
-        to: String(StudentRoute.payment.paymentHistory),
+        icon: "icon_annon.png",
+        title: "Jenjang Pendidikan",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
+      },
+      {
+        icon: "icon_annon.png",
+        title: "Batas SKS",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
+      },
+      {
+        icon: "icon_calendar.png",
+        title: "Skala Penilaian",
+        description: "lorem ipsum dolor sit amet",
+        to: String(),
       },
     ],
   },
 };
 
-const Header = () => {
+const HeaderAdminAcademic = () => {
   return (
     <div className="w-full flex flex-col space-y-4">
       <div className="flex">
@@ -157,7 +163,7 @@ const Header = () => {
           />
           <div className="flex space-x-5 items-center">
             <Bell size={30} color="#fff" />
-            <Link to={StudentRoute.profile.profile}>
+            <Link to="">
               <img
                 width={30}
                 src="/img/profile_logo.png"
@@ -172,4 +178,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderAdminAcademic;

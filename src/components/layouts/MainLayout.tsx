@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import Breadcrumb from "../Breadcrumb";
-import Header from "../Header";
+import Header from "../Header/Header";
+import HeaderAdminAcademic from "../Header/HeaderAdminAcademic";
+import HeaderAdminFinance from "../Header/HeaderAdminFinance";
+import HeaderLecturer from "../Header/HeaderLecturer";
 import React from "react";
 
 interface MainLayout {
@@ -9,6 +12,7 @@ interface MainLayout {
   isGreeting: boolean;
   titlePage: string;
   className?: string;
+  headerRole?: "student" | "lecturer" | "adminAcademic" | "adminFinance";
 }
 
 export default function MainLayout({
@@ -16,6 +20,7 @@ export default function MainLayout({
   isGreeting,
   titlePage,
   className,
+  headerRole = "student",
 }: MainLayout) {
   const [greeting, setGreeting] = useState("");
 
@@ -34,9 +39,23 @@ export default function MainLayout({
     }
     setGreeting(message);
   }, []);
+
+  // Fungsi render header berdasarkan role
+  const renderHeader = () => {
+    switch (headerRole) {
+      case "lecturer":
+        return <HeaderLecturer />;
+      case "adminAcademic":
+        return <HeaderAdminAcademic />;
+      case "adminFinance":
+        return <HeaderAdminFinance />;
+      default:
+        return <Header />;
+    }
+  };
   return (
     <div className={`bg-primary-white min-h-screen ${className}`}>
-      <Header />
+      {renderHeader()}
       <div className="px-5 md:px-10 xl:px-40">
         {isGreeting ? (
           <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
