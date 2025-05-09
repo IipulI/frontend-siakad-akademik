@@ -1,5 +1,5 @@
 type routeType = {
-  [key: string]: string | routeType;
+  [key: string]: string | string;
 };
 
 export const StudentRoute = {

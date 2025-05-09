@@ -4,6 +4,11 @@ import { useMutation } from "@tanstack/react-query";
 import { Lock, Search, User } from "lucide-react";
 import { Api } from "../api/Index";
 import Swal from "sweetalert2";
+import {
+  AdminFinanceRoute,
+  StudentRoute,
+  AdminAcademicRoute,
+} from "../types/VarRoutes";
 
 interface FormErrors {
   username?: string;
@@ -25,8 +30,10 @@ export default function FormLogin() {
       return res.data.data;
     },
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const token = localStorage.setItem("token", data.token);
+      const user = localStorage.setItem("user", JSON.stringify(data.user));
+      const role = data.user.roles[0];
+
       Swal.fire({
         title: "Login Berhasil",
         text: "Anda akan diarahkan ke Dashboard...",
@@ -34,7 +41,21 @@ export default function FormLogin() {
         showConfirmButton: false,
         timer: 1000,
       }).then(() => {
-        navigate("/dashboard");
+        if (role === "MAHASISWA" || role === "DOSEN") {
+          navigate(StudentRoute.dashboard);
+        } else if (
+          role === "AKADEMIK_UNIV" ||
+          role === "AKADEMIK_FAK" ||
+          role === "AKADEMIK_PRODI"
+        ) {
+          navigate(AdminAcademicRoute.dashboardAdminAcademic);
+        } else if (
+          role === "KEUANGAN_UNIV" ||
+          role === "KEUANGAN_FAK" ||
+          role === "KEUANGAN_PRODI"
+        ) {
+          navigate(AdminFinanceRoute.dashboardAdminFinance);
+        }
       });
     },
     onError: (error: any) => {
