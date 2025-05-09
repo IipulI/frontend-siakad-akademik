@@ -1,6 +1,11 @@
 import { ChevronRight, House } from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import {
+  AdminFinanceRoute,
+  StudentRoute,
+  AdminAcademicRoute,
+} from "../types/VarRoutes";
 
 export default function Breadcrumb() {
   const location = useLocation();
@@ -8,11 +13,18 @@ export default function Breadcrumb() {
 
   // Jika hanya "/dashboard", gaperlu ada breadcrumb
   if (pathnames.length === 1 && pathnames[0] === "dashboard") {
-    return;
+    return null;
   }
 
-  const isAdmin = pathnames.includes("admin");
-  const baseRoute = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const isAdminFinance = pathnames.includes("admin-finance");
+  const isAdminAcademic = pathnames.includes("admin-academic");
+
+  let baseRoute = StudentRoute.dashboard;
+  if (isAdminFinance) {
+    baseRoute = AdminFinanceRoute.dashboardAdminFinance;
+  } else if (isAdminAcademic) {
+    baseRoute = AdminAcademicRoute.dashboardAdminAcademic;
+  }
 
   return (
     <div className="flex space-x-2 text-sm">

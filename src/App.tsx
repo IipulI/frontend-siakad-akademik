@@ -1,4 +1,5 @@
 import "./App.css";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/studentModule/Dashboard";
@@ -18,7 +19,6 @@ import StudentGrade from "./pages/studentModule/academic/StudentGrade";
 import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard";
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
-import React from "react";
 import {
   AdminFinanceRoute,
   StudentRoute,
