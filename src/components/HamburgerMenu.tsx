@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { StudentRoute } from "../types/VarRoutes";
 
-interface MenuItemProps {
+// Interface for dropdown menu items
+interface DropdownMenuItemProps {
   icon: string;
   title: string;
   description: string;
   to: string;
-  onClick: () => void;
+  onClick?: () => void;
+  iconBasePath?: string;
 }
 
 // Component for rendering submenu items
@@ -17,7 +18,8 @@ const SubMenuItem = ({
   description,
   to,
   onClick,
-}: MenuItemProps) => (
+  iconBasePath = "/img/",
+}: DropdownMenuItemProps) => (
   <li>
     <Link
       to={to}
@@ -25,7 +27,7 @@ const SubMenuItem = ({
       onClick={onClick}
     >
       <div className="flex items-center gap-5">
-        <img src={`/img/${icon}`} alt="" className="w-6 invert" />
+        <img src={`${iconBasePath}${icon}`} alt="" className="w-6 invert" />
         <div>
           <p>{title}</p>
           <p className="text-xs font-extralight">{description}</p>
@@ -35,6 +37,7 @@ const SubMenuItem = ({
   </li>
 );
 
+// Interface for dropdown toggle button
 interface DropdownToggleProps {
   title: string;
   isOpen: boolean;
@@ -65,11 +68,17 @@ const DropdownToggle = ({ title, isOpen, onClick }: DropdownToggleProps) => (
   </div>
 );
 
+// Interface for hamburger icon props
+interface HamburgerIconProps {
+  onClick: () => void;
+  customClass?: string;
+}
+
 // Component for hamburger icon
-const HamburgerIcon = ({ onClick }) => (
+const HamburgerIcon = ({ onClick, customClass = "" }: HamburgerIconProps) => (
   <button
     onClick={onClick}
-    className="flex flex-col justify-center items-center cursor-pointer w-10 h-10 xl:hidden focus:outline-none transition-all duration-300 border-1 shadow-sm"
+    className={`flex flex-col justify-center items-center cursor-pointer w-10 h-10 xl:hidden focus:outline-none transition-all duration-300 border-1 shadow-sm ${customClass}`}
     aria-label="Menu"
   >
     <span className="block w-6 h-0.5 bg-white transition-transform mb-1.5"></span>
@@ -78,12 +87,18 @@ const HamburgerIcon = ({ onClick }) => (
   </button>
 );
 
+// Interface for close button props
+interface CloseButtonProps {
+  onClick: () => void;
+  customClass?: string;
+}
+
 // Component for close button
-const CloseButton = ({ onClick }) => (
+const CloseButton = ({ onClick, customClass = "" }: CloseButtonProps) => (
   <button
     onClick={onClick}
-    className="flex flex-col justify-center cursor-pointer items-center w-10 h-10 xl:hidden focus:outline-none transition-all duration-300"
-    aria-label="Menu"
+    className={`flex flex-col justify-center cursor-pointer items-center w-10 h-10 xl:hidden focus:outline-none transition-all duration-300 ${customClass}`}
+    aria-label="Close Menu"
   >
     <span className="block w-6 h-0.5 bg-black transition-transform transform rotate-45 translate-y-1"></span>
     <span className="block w-6 h-0.5 bg-black opacity-0 mb-1"></span>
@@ -91,113 +106,64 @@ const CloseButton = ({ onClick }) => (
   </button>
 );
 
-const HamburgerMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [openDropdowns, setOpenDropdowns] = useState({});
+// Interface for nav item
+export interface NavItem {
+  id: string;
+  name: string;
+  path?: string;
+  dropdownKey?: string;
+  hasDropdown: boolean;
+}
 
-  // Define all menu data
-  const menuItems = [
-    {
-      id: "beranda",
-      title: "Beranda",
-      to: StudentRoute.dashboard,
-      hasDropdown: false,
-    },
-    {
-      id: "jadwal",
-      title: "Jadwal",
-      hasDropdown: true,
-      submenu: [
-        {
-          icon: "icon_annon.png",
-          title: "Pengumuman",
-          description: "Informasi Kegiatan Kampus",
-          to: StudentRoute.schedule.announcement,
-        },
-        {
-          icon: "icon_calendar.png",
-          title: "Kalender Akademik",
-          description: "Periksa Kegiatan Perkuliahan",
-          to: StudentRoute.schedule.calendar,
-        },
-        {
-          icon: "icon_week.png",
-          title: "Jadwal Minggu Ini",
-          description: "Aktifitas Seminggu Ke Depan",
-          to: StudentRoute.schedule.thisWeek,
-        },
-      ],
-    },
-    {
-      id: "akademik",
-      title: "Akademik",
-      hasDropdown: true,
-      submenu: [
-        {
-          icon: "icon_annon.png",
-          title: "Pengisisan Kartu Rencana Studi",
-          description: "Tentukan Rencana Kuliah",
-          to: StudentRoute.academic.studyPlan,
-        },
-        {
-          icon: "icon_calendar.png",
-          title: "Riwayat KRS",
-          description: "Rekap Rencana Kuliah Anda",
-          to: StudentRoute.academic.history,
-        },
-        {
-          icon: "icon_week.png",
-          title: "Mengulang",
-          description: "History Perbaikan Mata Kuliah",
-          to: StudentRoute.academic.retake,
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Nilai Mahasiswa",
-          description: "Kualitas Perkuliahan Anda",
-          to: StudentRoute.academic.studentGrade,
-        },
-      ],
-    },
-    {
-      id: "hasilStudi",
-      title: "Hasil Studi",
-      hasDropdown: true,
-      submenu: [
-        {
-          icon: "icon_annon.png",
-          title: "Kartu Hasil Studi",
-          description: "Laporan Priode Anda",
-          to: StudentRoute.studyResult.studyResult,
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Transkip",
-          description: "Hasil Perkuliahan Anda",
-          to: StudentRoute.studyResult.transcript,
-        },
-      ],
-    },
-    {
-      id: "keuangan",
-      title: "Keuangan",
-      hasDropdown: true,
-      submenu: [
-        {
-          icon: "icon_annon.png",
-          title: "Tagihan Mahasiswa",
-          description: "Biaya Operasional Pendidikan",
-          to: StudentRoute.payment.payment,
-        },
-        {
-          icon: "icon_timetable.png",
-          title: "Riwayat Keuangan",
-          description: "Riwayat BOP",
-          to: StudentRoute.payment.paymentHistory,
-        },
-      ],
-    },
-  ];
+// Interface for dropdown menu data
+export interface DropdownMenuData {
+  [key: string]: {
+    title: string;
+    items: {
+      icon: string;
+      title: string;
+      description: string;
+      to: string;
+    }[];
+  };
+}
+
+// Main HamburgerMenu props interface
+export interface HamburgerMenuProps {
+  navItems: NavItem[];
+  dropdownMenus: DropdownMenuData;
+  logo?: string;
+  title?: string;
+  subtitle?: string;
+  iconBasePath?: string;
+  onMenuItemClick?: () => void;
+  customClasses?: {
+    container?: string;
+    hamburgerButton?: string;
+    closeButton?: string;
+    logo?: string;
+    title?: string;
+    subtitle?: string;
+    navContainer?: string;
+    dropdownToggle?: string;
+    subMenuItem?: string;
+  };
+}
+
+const HamburgerMenu = ({
+  navItems,
+  dropdownMenus,
+  logo,
+  title,
+  subtitle,
+  iconBasePath = "/img/", // Keeping this default as it's commonly needed
+  onMenuItemClick,
+  customClasses = {},
+}: HamburgerMenuProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -209,7 +175,7 @@ const HamburgerMenu = () => {
     document.body.style.overflow = isOpen ? "auto" : "hidden";
   };
 
-  const toggleDropdown = (id) => {
+  const toggleDropdown = (id: string) => {
     setOpenDropdowns((prev) => ({
       ...prev,
       [id]: !prev[id],
@@ -219,12 +185,18 @@ const HamburgerMenu = () => {
   // Handle menu item click
   const handleMenuItemClick = () => {
     toggleMenu();
+    if (onMenuItemClick) {
+      onMenuItemClick();
+    }
   };
 
   return (
     <>
       {/* Hamburger Button */}
-      <HamburgerIcon onClick={toggleMenu} />
+      <HamburgerIcon
+        onClick={toggleMenu}
+        customClass={customClasses.hamburgerButton}
+      />
 
       {/* Fullscreen Menu */}
       <div
@@ -232,10 +204,13 @@ const HamburgerMenu = () => {
           isOpen
             ? "opacity-100 visible"
             : "opacity-0 invisible pointer-events-none -translate-y-50"
-        }`}
+        } ${customClasses.container || ""}`}
       >
         {/* Close button */}
-        <CloseButton onClick={toggleMenu} />
+        <CloseButton
+          onClick={toggleMenu}
+          customClass={customClasses.closeButton}
+        />
 
         {/* University Logo and Title */}
         <div className="flex items-center mb-8 mt-10">
@@ -252,40 +227,49 @@ const HamburgerMenu = () => {
           </div>
         </div>
 
-        <nav className="w-full border-t border-gray-200">
+        <nav
+          className={`w-full border-t border-gray-200 ${
+            customClasses.navContainer || ""
+          }`}
+        >
           <ul className="w-full text-gray-800">
-            {menuItems.map((item) => (
+            {navItems.map((item) => (
               <li key={item.id} className="border-b border-gray-200">
                 {item.hasDropdown ? (
                   <>
                     <DropdownToggle
-                      title={item.title}
-                      isOpen={openDropdowns[item.id]}
+                      title={item.name}
+                      isOpen={openDropdowns[item.id] || false}
                       onClick={() => toggleDropdown(item.id)}
                     />
 
-                    {openDropdowns[item.id] && (
-                      <ul className="ml-4 mb-3 space-y-2 text-gray-600">
-                        {item.submenu?.map((subItem, idx) => (
-                          <SubMenuItem
-                            key={idx}
-                            icon={subItem.icon}
-                            title={subItem.title}
-                            description={subItem.description}
-                            to={String(subItem.to)}
-                            onClick={handleMenuItemClick}
-                          />
-                        ))}
-                      </ul>
-                    )}
+                    {openDropdowns[item.id] &&
+                      item.dropdownKey &&
+                      dropdownMenus[item.dropdownKey] && (
+                        <ul className="ml-4 mb-3 space-y-2 text-gray-600">
+                          {dropdownMenus[item.dropdownKey].items.map(
+                            (subItem, idx) => (
+                              <SubMenuItem
+                                key={idx}
+                                icon={subItem.icon}
+                                title={subItem.title}
+                                description={subItem.description}
+                                to={String(subItem.to)}
+                                onClick={handleMenuItemClick}
+                                iconBasePath={iconBasePath}
+                              />
+                            )
+                          )}
+                        </ul>
+                      )}
                   </>
                 ) : (
                   <Link
-                    to={item.to || "#"}
+                    to={item.path || "#"}
                     className="py-4 flex justify-between items-center"
                     onClick={handleMenuItemClick}
                   >
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium">{item.name}</span>
                   </Link>
                 )}
               </li>

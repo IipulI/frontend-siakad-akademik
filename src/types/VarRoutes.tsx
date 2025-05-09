@@ -33,7 +33,7 @@ export const StudentRoute = {
 };
 
 export const AdminAcademicRoute: routeType = {
-  dashboardAdminAcademic: "/admin-academic/dashboard",
+  dashboardAdminAcademic: "/admin-akademik/dashboard",
 };
 
 export const AdminFinanceRoute: routeType = {
