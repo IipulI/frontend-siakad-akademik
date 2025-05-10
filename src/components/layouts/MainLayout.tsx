@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import Navbar from "../Navbar";
 import Breadcrumb from "../Breadcrumb";
 import Header from "../Header/Header";
+import HeaderAdminAcademic from "../Header/HeaderAdminAcademic";
+import HeaderAdminFinance from "../Header/HeaderAdminFinance";
+import HeaderLecturer from "../Header/HeaderLecturer";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MainLayout {
   children: React.ReactNode;
@@ -18,10 +21,20 @@ export default function MainLayout({
   className,
 }: MainLayout) {
   const [greeting, setGreeting] = useState("");
+  const [userRole, setUserRole] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const hour = new Date().getHours();
-    let message = "";
+    let message = ""; 
+    
+    const user = localStorage.getItem("user");
+    if (user) {
+      const userRole = JSON.parse(user).roles[0];
+      setUserRole(userRole);
+    } else {
+      navigate("/");
+    }
 
     if (hour >= 6 && hour <= 11) {
       message = "Selamat Pagi";
@@ -35,9 +48,22 @@ export default function MainLayout({
     setGreeting(message);
   }, []);
 
+  const renderHeader = () => {
+    switch (userRole) {
+      case "AKADEMIK_UNIV":
+        return <HeaderAdminAcademic />;
+      case "KEUANGAN_UNIV":
+        return <HeaderAdminFinance />;
+      case "DOSEN":
+        return <HeaderLecturer />;
+      default:
+        return <Header />;
+    }
+  };
+
   return (
     <div className={`bg-primary-white min-h-screen ${className}`}>
-      <Header />
+      {renderHeader()}
       <div className="px-5 md:px-10 xl:px-40">
         {isGreeting ? (
           <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
