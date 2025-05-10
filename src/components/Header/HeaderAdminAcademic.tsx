@@ -9,7 +9,7 @@ const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "",
+    path: "/admin-akademik/dashboard",
     hasDropdown: false,
   },
   { id: "2", name: "Mahasiswa", dropdownKey: "mahasiswa", hasDropdown: true },
@@ -23,7 +23,7 @@ const navItems = [
   {
     id: "5",
     name: "Pengumuman",
-    path: "",
+    path: "/admin-akademik/pengumuman",
     hasDropdown: false,
   },
   { id: "6", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
