@@ -34,6 +34,7 @@ export const StudentRoute = {
 
 export const AdminAcademicRoute: routeType = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
+  announcement: "/admin-akademik/pengumuman",
 };
 
 export const AdminFinanceRoute: routeType = {
