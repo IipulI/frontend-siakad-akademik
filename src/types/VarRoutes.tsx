@@ -32,9 +32,18 @@ export const StudentRoute = {
   } as routeType,
 };
 
-export const AdminAcademicRoute: routeType = {
+export const AdminAcademicRoute = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
   announcement: "/admin-akademik/pengumuman",
+  setting: {
+    year: "/admin-akademik/tahun-ajaran",
+    period: "/admin-akademik/periode-akademik",
+    scale: "/admin-akademik/skala-penilaian",
+    level: "/admin-akademik/jenjang-pendidikan",
+    limit: "/admin-akademik/batas-sks",
+    composition: "/admin-akademik/komposisi-nilai",
+    setComposition: "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
+  } as routeType
 };
 
 export const AdminFinanceRoute: routeType = {
