@@ -5,7 +5,7 @@ import { Search, Plus, Trash, ChevronLeft, ChevronRight, ArrowLeft, Save } from 
 import { TableAnnouncement } from "../../../components/admin-academic/announcement/TableAnnouncement"
 import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement"
 import FormAddAnnouncement from "../../../components/admin-academic/announcement/FormAddAnnouncement"
-
+import Paging from "../../../components/admin-academic/Paging"
 const AnnouncementAdminAcademic = () => {
   const [id, setId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -49,7 +49,7 @@ const AnnouncementAdminAcademic = () => {
     >
         {id || showAddForm ? 
             (
-                <div className="w-full mt-2 bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-green">
+                <div className="w-full mt-2 bg-white py-2 rounded-sm border-t-2 border-primary-green">
                     <div className="flex mb-4 justify-end">
                         <div className="flex px-4 gap-4">
                             <button
@@ -81,8 +81,8 @@ const AnnouncementAdminAcademic = () => {
         :
         (
             <>
-                <FilterDropdown title="Status" options={statusOptions} />
-                <div className="w-full mt-8 bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-green">
+                <FilterDropdown title={"Status"} options={statusOptions} />
+                <div className="w-full mt-8 bg-white py-2 rounded-sm border-t-2 border-primary-green">
                     <div className="flex px-4 justify-between">
                         <div className="flex">
                             <input
@@ -113,30 +113,7 @@ const AnnouncementAdminAcademic = () => {
                         error={"error"}
                         setId={setId}
                     />
-                    <div className="flex justify-between">
-                        <div className="flex gap-4">
-                            <div className="bg-blue-50 py-2 px-4">
-                                <p className="text-xs text-primary-brown text-center">Hal 1/8 (6 Data, 0.0032 Detik)</p>
-                            </div>
-                            <select className="rounded-md px-4 text-xs appearance-none text-primary-brown border-gray-400 border">
-                                <option value="10">10 Baris</option>
-                                <option value="20">20 Baris</option>
-                            </select>
-                        </div>
-                        <div className="flex">
-                            <button onClick={() => setPage(page - 1)} className="bg-gray-400 cursor-pointer text-white px-2">
-                                <ChevronLeft color="white" size={16} />
-                            </button>
-                            {[1,2,3,4,5].map((item) => (
-                                <button onClick={() => setPage(item)} className={`px-3 cursor-pointer ${page === item ? "bg-primary-green text-white" : ""}`}>
-                                    {item}
-                                </button>
-                            ))}
-                            <button onClick={() => setPage(page + 1)} className="bg-gray-400 cursor-pointer text-white px-2">
-                                <ChevronRight color="white" size={16} />
-                            </button>    
-                        </div>
-                    </div>
+                    <Paging page={page} setPage={setPage} />
                 </div>
             </>
         )
