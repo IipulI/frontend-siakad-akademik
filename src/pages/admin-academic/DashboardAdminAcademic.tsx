@@ -22,7 +22,6 @@ export default function DashboardAdminFinance() {
     <MainLayout
       titlePage={"Beranda"}
       isGreeting={false}
-      headerRole="adminAcademic"
     >
       {/* periode akademik */}
       <div className="flex text-xs bg-white sm:text-sm space-x-5 items-center w-full p-2 px-4 border-t-2 border-primary-yellow rounded-sm shadow-sm">
