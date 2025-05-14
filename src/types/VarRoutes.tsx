@@ -1,3 +1,5 @@
+import StudentData from "../pages/admin-academic/StudentData";
+
 type routeType = {
   [key: string]: string | string;
 };
@@ -33,7 +35,11 @@ export const StudentRoute = {
 };
 
 export const AdminAcademicRoute: routeType = {
-  dashboardAdminAcademic: "/admin-akademik/dashboard",
+  dashboardAdminAcademic: "/portal/dashboard",
+  studentData: "/portal/mahasiswa",
+  createStudent: "/portal/mahasiswa/data-mahasiswa",
+  detailStudent: "/portal/mahasiswa/detail-mahasiswa",
+  academicAdvisor: "/mahasiswa/pembimbing-akademik"
 };
 
 export const AdminFinanceRoute: routeType = {

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 import Card from "../../components/admin-academic/dashboard/Card";
-import TabNavigationButtonStatistik from "../../components/admin-academic/dashboard/TabNavigasiButtonStatistik";
-import LayoutStatistik from "../../components/admin-academic/dashboard/LayoutStatistik";
+import { TabNavigationButton } from "../../components/admin-academic/dashboard/TabNavigasiButton";
+import LayoutStatistik from "../../components/admin-academic/dashboard/LayoutForTabNavigation";
 import {
   TabelAKMAngkatan,
   TabelAKMProdi,
@@ -19,10 +19,7 @@ export default function DashboardAdminFinance() {
   };
 
   return (
-    <MainLayout
-      titlePage={"Beranda"}
-      isGreeting={false}
-    >
+    <MainLayout titlePage={"Beranda"} isGreeting={false}>
       {/* periode akademik */}
       <div className="flex text-xs bg-white sm:text-sm space-x-5 items-center w-full p-2 px-4 border-t-2 border-primary-yellow rounded-sm shadow-sm">
         <label htmlFor="" className="font-semibold">
@@ -52,24 +49,24 @@ export default function DashboardAdminFinance() {
             Statistik Mahasiswa Periode : 2024 Genap
           </h1>
           <div className="p-1 rounded-xl flex w-full space-x-4 justify-between">
-            <TabNavigationButtonStatistik
+            <TabNavigationButton
               isActive={activeTab === "angkatan"}
               onClick={() => handleTabClick("angkatan")}
             >
               AKM Angkatan
-            </TabNavigationButtonStatistik>
-            <TabNavigationButtonStatistik
+            </TabNavigationButton>
+            <TabNavigationButton
               isActive={activeTab === "prodi"}
               onClick={() => handleTabClick("prodi")}
             >
               AKM Prodi
-            </TabNavigationButtonStatistik>
-            <TabNavigationButtonStatistik
+            </TabNavigationButton>
+            <TabNavigationButton
               isActive={activeTab === "mahasiswa-baru"}
               onClick={() => handleTabClick("mahasiswa-baru")}
             >
               Mahasiswa Baru
-            </TabNavigationButtonStatistik>
+            </TabNavigationButton>
           </div>
           {activeTab === "angkatan" && <AKMClassOfYear />}
           {activeTab === "prodi" && <AKMProdi />}

@@ -26,6 +26,10 @@ import {
 } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
+import StudentData from "./pages/admin-academic/StudentData";
+import CreateStudent from "./pages/admin-academic/CreateStudent";
+import DetailStudent from "./pages/admin-academic/DetailStudent";
+import AcademikAdvisor from "./pages/admin-academic/AcademicAdvisor";
 
 export default function App() {
   return (
@@ -109,6 +113,23 @@ export default function App() {
         path={String(AdminAcademicRoute.dashboardAdminAcademic)}
         element={<DashboardAdminAcademic />}
       />
+      <Route
+        path={String(AdminAcademicRoute.studentData)}
+        element={<StudentData />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.createStudent)}
+        element={<CreateStudent />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.detailStudent)}
+        element={<DetailStudent />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.academicAdvisor)}
+        element={<AcademikAdvisor />}
+      />
+
       {/* Route Untuk Admin Keuangan */}
       <Route
         path={String(AdminFinanceRoute.dashboardAdminFinance)}
