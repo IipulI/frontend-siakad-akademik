@@ -3,6 +3,7 @@ import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
+import { AdminAcademicRoute } from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
@@ -38,13 +39,13 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Data Mahasiswa",
         description: "Manajemen Data Mahasiswa",
-        to: String(),
+        to: String(AdminAcademicRoute.student.studentData),
       },
       {
         icon: "icon_calendar.png",
         title: "Pembimbing Akademik",
         description: "Set Pembimbing Mahasiswa Dosen",
-        to: String(),
+        to: String(AdminAcademicRoute.student.academicAdvisor),
       },
     ],
   },
