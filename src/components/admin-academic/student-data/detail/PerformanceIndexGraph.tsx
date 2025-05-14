@@ -21,7 +21,7 @@ export default function PerformanceIndexGraph() {
   ];
 
   return (
-    <div className="flex flex-col items-center w-full border-2 col-span-5 lg:col-span-2">
+    <div className="flex flex-col items-center w-full border-2 col-span-5 lg:col-span-3">
       <h2 className="text-xl text-center font-semibold text-[#4572A7] mt-3">
         Indeks Prestasi
       </h2>
