@@ -3,13 +3,14 @@ import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
+import { AdminAcademicRoute } from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "",
+    path: "/admin-akademik/dashboard",
     hasDropdown: false,
   },
   { id: "2", name: "Mahasiswa", dropdownKey: "mahasiswa", hasDropdown: true },
@@ -23,7 +24,7 @@ const navItems = [
   {
     id: "5",
     name: "Pengumuman",
-    path: "",
+    path: "/admin-akademik/pengumuman",
     hasDropdown: false,
   },
   { id: "6", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
@@ -38,13 +39,13 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Data Mahasiswa",
         description: "Manajemen Data Mahasiswa",
-        to: String(),
+        to: String(AdminAcademicRoute.student.studentData),
       },
       {
         icon: "icon_calendar.png",
         title: "Pembimbing Akademik",
         description: "Set Pembimbing Mahasiswa Dosen",
-        to: String(),
+        to: String(AdminAcademicRoute.student.academicAdvisor),
       },
     ],
   },
@@ -90,31 +91,37 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Tahun Ajaran",
         description: "lorem ipsum dolor sit amet",
-        to: String(),
+        to: "/admin-akademik/tahun-ajaran",
       },
       {
         icon: "icon_annon.png",
         title: "Periode Akademik",
         description: "lorem ipsum dolor sit amet",
-        to: String(),
+        to: "/admin-akademik/periode-akademik",
       },
       {
         icon: "icon_annon.png",
         title: "Jenjang Pendidikan",
         description: "lorem ipsum dolor sit amet",
-        to: String(),
+        to: "/admin-akademik/jenjang-pendidikan",
       },
       {
         icon: "icon_annon.png",
         title: "Batas SKS",
         description: "lorem ipsum dolor sit amet",
-        to: String(),
+        to: "/admin-akademik/batas-sks",
       },
       {
         icon: "icon_calendar.png",
         title: "Skala Penilaian",
         description: "lorem ipsum dolor sit amet",
-        to: String(),
+        to: "/admin-akademik/skala-penilaian",
+      },
+      {
+        icon: "icon_calendar.png",
+        title: "Komposisi Nilai",
+        description: "lorem ipsum dolor sit amet",
+        to: "/admin-akademik/komposisi-nilai",
       },
     ],
   },

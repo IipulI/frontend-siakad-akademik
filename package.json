@@ -24,6 +24,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.3.0",
+    "recharts": "^2.15.3",
     "sweetalert2": "^11.21.0",
     "sweetalert2-react-content": "^5.1.0",
     "tailwind-merge": "^3.0.2",

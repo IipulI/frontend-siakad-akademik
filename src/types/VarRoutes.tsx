@@ -1,3 +1,5 @@
+import StudentData from "../pages/admin-academic/StudentData";
+
 type routeType = {
   [key: string]: string | string;
 };
@@ -36,6 +38,23 @@ export const AdminAcademicRoute = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
   collegeClass: {
     class: "/admin-akademik/kelas-kuliah",
+  } as routeType,
+  student: {
+    studentData: "/portal/mahasiswa",
+    createStudent: "/portal/mahasiswa/data-mahasiswa",
+    detailStudent: "/portal/mahasiswa/detail-mahasiswa",
+    academicAdvisor: "/mahasiswa/pembimbing-akademik",
+  },
+  announcement: "/admin-akademik/pengumuman",
+  setting: {
+    year: "/admin-akademik/tahun-ajaran",
+    period: "/admin-akademik/periode-akademik",
+    scale: "/admin-akademik/skala-penilaian",
+    level: "/admin-akademik/jenjang-pendidikan",
+    limit: "/admin-akademik/batas-sks",
+    composition: "/admin-akademik/komposisi-nilai",
+    setComposition:
+      "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
   } as routeType,
 };
 

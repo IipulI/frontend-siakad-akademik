@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 import Card from "../../components/admin-academic/dashboard/Card";
-import TabNavigationButtonStatistik from "../../components/admin-academic/dashboard/TabNavigasiButtonStatistik";
-import LayoutStatistik from "../../components/admin-academic/dashboard/LayoutStatistik";
+import { TabNavigationButton } from "../../components/admin-academic/dashboard/TabNavigasiButton";
+import LayoutStatistik from "../../components/admin-academic/dashboard/LayoutForTabNavigation";
 import {
   TabelAKMAngkatan,
   TabelAKMProdi,
@@ -11,27 +11,19 @@ import {
 import ChartJSAKMClassOfYear from "../../components/admin-academic/dashboard/ChartJSAKMClassOfYear";
 import ChartJSAKMProdi from "../../components/admin-academic/dashboard/ChartJSAKMProdi";
 import DashboardInfoCard from "../../components/admin-academic/dashboard/DashboardInfoCard";
-
+import FilterDropdown from "../../components/admin-academic/FilterDropdown";
 export default function DashboardAdminFinance() {
   const [activeTab, setActiveTab] = useState("angkatan");
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
+  const periodOptions = ["2024 Ganjil", "2024 Genap", "2025 Ganjil", "2025 Genap"]
+
   return (
-    <MainLayout
-      titlePage={"Beranda"}
-      isGreeting={false}
-    >
+    <MainLayout titlePage={"Beranda"} isGreeting={false}>
       {/* periode akademik */}
-      <div className="flex text-xs bg-white sm:text-sm space-x-5 items-center w-full p-2 px-4 border-t-2 border-primary-yellow rounded-sm shadow-sm">
-        <label htmlFor="" className="font-semibold">
-          Periode Akademik
-        </label>
-        <select name="" id="" className="border-2 p-1 rounded w-40 sm:w-60 ">
-          <option value="">2025 Ganjil</option>
-        </select>
-      </div>
+      <FilterDropdown title="Periode Akademik" options={periodOptions} />
 
       <div className="w-full mt-10 grid grid-cols-1 gap-5 sm:gap-10 lg:gap-5 xl:gap-16 sm:grid-cols-2 lg:grid-cols-4 pb-20">
         <Card
@@ -52,24 +44,24 @@ export default function DashboardAdminFinance() {
             Statistik Mahasiswa Periode : 2024 Genap
           </h1>
           <div className="p-1 rounded-xl flex w-full space-x-4 justify-between">
-            <TabNavigationButtonStatistik
+            <TabNavigationButton
               isActive={activeTab === "angkatan"}
               onClick={() => handleTabClick("angkatan")}
             >
               AKM Angkatan
-            </TabNavigationButtonStatistik>
-            <TabNavigationButtonStatistik
+            </TabNavigationButton>
+            <TabNavigationButton
               isActive={activeTab === "prodi"}
               onClick={() => handleTabClick("prodi")}
             >
               AKM Prodi
-            </TabNavigationButtonStatistik>
-            <TabNavigationButtonStatistik
+            </TabNavigationButton>
+            <TabNavigationButton
               isActive={activeTab === "mahasiswa-baru"}
               onClick={() => handleTabClick("mahasiswa-baru")}
             >
               Mahasiswa Baru
-            </TabNavigationButtonStatistik>
+            </TabNavigationButton>
           </div>
           {activeTab === "angkatan" && <AKMClassOfYear />}
           {activeTab === "prodi" && <AKMProdi />}
