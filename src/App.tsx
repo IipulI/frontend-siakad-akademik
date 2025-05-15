@@ -19,6 +19,7 @@ import StudentGrade from "./pages/studentModule/academic/StudentGrade";
 import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard";
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
+import CollegeClass from "./pages/admin-academic/class/CollegeClass";
 import {
   AdminFinanceRoute,
   StudentRoute,
@@ -108,6 +109,10 @@ export default function App() {
       <Route
         path={String(AdminAcademicRoute.dashboardAdminAcademic)}
         element={<DashboardAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.class)}
+        element={<CollegeClass />}
       />
       {/* Route Untuk Admin Keuangan */}
       <Route

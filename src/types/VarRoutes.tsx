@@ -32,8 +32,11 @@ export const StudentRoute = {
   } as routeType,
 };
 
-export const AdminAcademicRoute: routeType = {
+export const AdminAcademicRoute = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
+  collegeClass: {
+    class: "/admin-akademik/kelas-kuliah",
+  } as routeType,
 };
 
 export const AdminFinanceRoute: routeType = {
