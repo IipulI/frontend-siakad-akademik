@@ -38,6 +38,8 @@ export const AdminAcademicRoute = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
   collegeClass: {
     class: "/admin-akademik/kelas-kuliah",
+    createClass: "/admin-akademik/tambah-kelas-kuliah",
+    detailClass: "/admin-akademik/detail-kelas",
   } as routeType,
   student: {
     studentData: "/portal/mahasiswa",

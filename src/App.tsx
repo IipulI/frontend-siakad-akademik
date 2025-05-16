@@ -39,6 +39,8 @@ import LimitSKSAdminAcademic from "./pages/admin-academic/setting/LimitSKSAdminA
 import LevelAdminAcademic from "./pages/admin-academic/setting/LevelAdminAcademic";
 import CompositionAdminAcademic from "./pages/admin-academic/setting/CompositionAdminAcademic";
 import SetCompositionAdminAcademic from "./pages/admin-academic/setting/SetCompositionAdminAcademic";
+import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
+import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
 export default function App() {
   return (
     <Routes>
@@ -124,6 +126,18 @@ export default function App() {
       <Route
         path={String(AdminAcademicRoute.collegeClass.class)}
         element={<CollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.class)}
+        element={<CollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.createClass)}
+        element={<CreateCollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.detailClass)}
+        element={<DetailCollegeClass />}
       />
       <Route
         path={String(AdminAcademicRoute.student.studentData)}
