@@ -18,7 +18,7 @@ const navItems = [
   {
     id: "4",
     name: "Kelas kuliah",
-    path: "",
+    path: AdminAcademicRoute.collegeClass.class,
     hasDropdown: false,
   },
   {
