@@ -6,30 +6,39 @@ interface OptionProps {
 }
 
 interface InputFilterProps {
-  options: OptionProps[];
+  options?: OptionProps[];
   label: string;
+  select: boolean;
   defaultValue?: string;
 }
 
 // input for filter student
 export function InputFilter({
   options,
+  select = true,
   label,
   defaultValue = "",
 }: InputFilterProps) {
   return (
     <div className={`input-filter-container grid grid-cols-2 items-center`}>
       <label className="text-xs w-fit font-medium">{label}</label>
-      <select
-        className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
-        defaultValue={defaultValue}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      {select ? (
+        <select
+          className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
+          defaultValue={defaultValue}
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
+          defaultValue={defaultValue}
+        />
+      )}
     </div>
   );
 }

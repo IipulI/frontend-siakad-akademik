@@ -10,7 +10,7 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import { Pagination } from "../../components/admin-academic/student-data/Pagination";
+import { Pagination } from "../../components/admin-academic/Pagination";
 import { useState } from "react";
 import Status from "../../components/admin-academic/student-data/Status";
 import { useNavigate } from "react-router-dom";

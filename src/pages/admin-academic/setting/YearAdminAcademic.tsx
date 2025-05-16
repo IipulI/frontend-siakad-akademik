@@ -1,12 +1,13 @@
 import React, { useState } from "react"
 import MainLayout from "../../../components/layouts/MainLayout"
 import TableSetting from "../../../components/admin-academic/setting/TableSetting"
-import Paging from "../../../components/admin-academic/Paging"
 import { Plus, Search } from "lucide-react"
 import { RefreshCw } from "lucide-react"
+import { Pagination } from "../../../components/admin-academic/Pagination"
 
 const YearAdminAcademic = () => {
-    const [page, setPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
     const tableHead = ["Tahun", "Nama Tahun", "Aksi"]
     const data = [
         {
@@ -67,7 +68,14 @@ const YearAdminAcademic = () => {
                     error={"error"}
                     // setId={setId}
                 />
-                <Paging page={page} setPage={setPage} />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={1000}
+                    onPageChange={setCurrentPage}
+                    rowsPerPage={rowsPerPage}
+                    totalRows={65}
+                    onRowsPerPageChange={setRowsPerPage}
+                />
             </div>
         </MainLayout>
 
