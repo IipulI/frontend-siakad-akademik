@@ -1,7 +1,6 @@
-import StudentData from "../pages/admin-academic/StudentData";
-
 type routeType = {
   [key: string]: string | string;
+  // [key: string]: string | routeType;
 };
 
 export const StudentRoute = {
@@ -19,7 +18,7 @@ export const StudentRoute = {
     thisWeek: "/jadwal/jadwal-minggu-ini",
   } as routeType,
   academic: {
-    history: "/akademik/riwayat-KRS",
+    history: "/akademik/rinwayat-KRS",
     retake: "/akademik/mengulang",
     studyPlan: "/akademik/pengisian-kartu-rencana-studi",
     studentGrade: "/akademik/nilai-mahasiswa",
@@ -37,12 +36,38 @@ export const StudentRoute = {
 export const AdminAcademicRoute = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
   student: {
-    studentData: "/portal/mahasiswa",
+    studentData: "  ",
     createStudent: "/portal/mahasiswa/data-mahasiswa",
     detailStudent: "/portal/mahasiswa/detail-mahasiswa",
     academicAdvisor: "/mahasiswa/pembimbing-akademik",
   },
   announcement: "/admin-akademik/pengumuman",
+  curriculumYear: {
+    curriculumYear: "/admin-akademik/tahun-kurikulum",
+  },
+  courseManagement: {
+    courseManagement: "/admin-akademik/mata-kuliah",
+    addCourse: "/admin-akademik/mata-kuliah/tambah-mata-kuliah",
+    editCourse: "/admin-akademik/mata-kuliah/edit-mata-kuliah",
+    detailCourse: "/admin-akademik/mata-kuliah/detail-mata-kuliah",
+    cplCpmkCourse: "/admin-akademik/mata-kuliah/cpl-cpmk",
+    rpsCourse: "/admin-akademik/mata-kuliah/rps-mata-kuliah",
+  },
+  obeManagement: {
+    obeManagement: "/admin-akademik/obe/management-obe",
+    graduateProfile: "/admin-akademik/obe/profil-lulusan",
+    cpl: "/admin-akademik/obe/cpl",
+    cpmk: "/admin-akademik/obe/cpmk",
+    cpmkMataKuliah: "/admin-akademik/obe/cpmk-mata-kuliah",
+  },
+  prodiCurriculum: {
+    curriculum: "/admin-akademik/kurikulum-prodi",
+  },
+  rpsManagement: {
+    rpsManagement: "/admin-akademik/rps",
+    addRps: "/admin-akademik/rps/tambah-rps",
+    detailRps: "/admin-akademik/rps/detail-rps",
+  },
   setting: {
     year: "/admin-akademik/tahun-ajaran",
     period: "/admin-akademik/periode-akademik",
@@ -50,8 +75,7 @@ export const AdminAcademicRoute = {
     level: "/admin-akademik/jenjang-pendidikan",
     limit: "/admin-akademik/batas-sks",
     composition: "/admin-akademik/komposisi-nilai",
-    setComposition:
-      "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
+    setComposition: "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
   } as routeType,
 };
 
