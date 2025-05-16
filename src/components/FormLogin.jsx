@@ -71,7 +71,7 @@ export default function FormLogin() {
             <div className="bg-red-100 text-red-800 text-sm px-4 py-2 rounded-xl mb-4 border border-red-300 flex items-center justify-between">
               <span>{formError}</span>
               <button
-                type="button"
+                type="button" 
                 onClick={() => setFormError("")}
                 className="text-red-500 ml-4 hover:text-red-700 font-bold cursor-pointer"
               >

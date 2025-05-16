@@ -4,5 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react({
+    jsxRuntime: 'automatic', // ini dia
+  }), tailwindcss()],
+  test: {
+    setupFiles:'/src/setupTests.js',
+    globals: true,
+    environment: 'jsdom',
+  },
 });

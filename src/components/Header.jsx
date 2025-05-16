@@ -1,3 +1,4 @@
+import React from 'react';
 import ProfileLogo from "../../public/img/profile_logo.png";
 import Navbar from "./Navbar";
 import HamburgerMenu from "./HamburgerMenu";

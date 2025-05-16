@@ -82,7 +82,7 @@ const Dashboard = () => {
             </div>
             <div className="md:col-span-2 space-y-4">
               <div>
-                <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
+                <h1 className="font-semibold md:p-0 p-2 ">Grafik Akademik</h1>
               </div>
               <IPSChart />
               <div className="space-y-4">

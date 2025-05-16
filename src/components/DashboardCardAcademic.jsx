@@ -1,3 +1,4 @@
+import React from "react";
 export default function DashboardCardAcademic({ number, title, color }) {
   return (
     <div className="p-4 bg-white rounded-xl shadow-md border">

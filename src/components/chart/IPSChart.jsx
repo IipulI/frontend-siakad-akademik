@@ -57,11 +57,11 @@ export default function IPSChart() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="bg-white rounded-lg shadow p-4" data-testid="academic-chart">
       <h2 className="text-center mb-2 font-semibold text-[#939393]">
         Grafik IPS (Semester)
       </h2>
-      <Line data={data} options={options} />
+      <Line data-testid="mock-line-chart" data={data} options={options} />
     </div>
   );
 }

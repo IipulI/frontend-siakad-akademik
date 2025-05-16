@@ -1,3 +1,4 @@
+import React from "react";
 import { TriangleAlert } from "lucide-react";
 
 export default function DashboardBillCard({ title, price, pay = false }) {
