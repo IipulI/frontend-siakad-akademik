@@ -2,8 +2,8 @@ import MainLayout from "../../components/layouts/MainLayout";
 import { InputFilter } from "../../components/admin-academic/student-data/Input";
 import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
 import { Check, Eye, Pen, Search, Settings, Trash2, X } from "lucide-react";
-import { Pagination } from "../../components/admin-academic/student-data/Pagination";
 import { useState } from "react";
+import { Pagination } from "../../components/admin-academic/Pagination";
 
 export default function AcademikAdvisor() {
   const periode = [{ value: "", label: "2025 Ganjil" }];

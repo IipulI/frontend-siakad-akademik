@@ -5,10 +5,12 @@ import { Search, Plus, Trash, ChevronLeft, ChevronRight, ArrowLeft, Save } from 
 import { TableAnnouncement } from "../../../components/admin-academic/announcement/TableAnnouncement"
 import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement"
 import FormAddAnnouncement from "../../../components/admin-academic/announcement/FormAddAnnouncement"
-import Paging from "../../../components/admin-academic/Paging"
+import { Pagination } from "../../../components/admin-academic/Pagination"
+
 const AnnouncementAdminAcademic = () => {
   const [id, setId] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showAddForm, setShowAddForm] = useState(false);
 
     const data = [
@@ -113,7 +115,14 @@ const AnnouncementAdminAcademic = () => {
                         error={"error"}
                         setId={setId}
                     />
-                    <Paging page={page} setPage={setPage} />
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={1000}
+                        onPageChange={setCurrentPage}
+                        rowsPerPage={rowsPerPage}
+                        totalRows={65}
+                        onRowsPerPageChange={setRowsPerPage}
+                    />
                 </div>
             </>
         )
