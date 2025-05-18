@@ -9,7 +9,7 @@ const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "",
+    path: "/admin-finance/dashboard",
     hasDropdown: false,
   },
   {
