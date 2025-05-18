@@ -27,10 +27,10 @@ import {
 } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
-import StudentData from "./pages/admin-academic/StudentData";
-import CreateStudent from "./pages/admin-academic/CreateStudent";
-import DetailStudent from "./pages/admin-academic/DetailStudent";
-import AcademikAdvisor from "./pages/admin-academic/AcademicAdvisor";
+import StudentData from "./pages/admin-academic/student/StudentData";
+import CreateStudent from "./pages/admin-academic/student/CreateStudent";
+import DetailStudent from "./pages/admin-academic/student/DetailStudent";
+import AcademikAdvisor from "./pages/admin-academic/student/AcademicAdvisor";
 import AnnouncementAdminAcademic from "./pages/admin-academic/announcement/AnnouncementAdminAcademic";
 import YearAdminAcademic from "./pages/admin-academic/setting/YearAdminAcademic";
 import PeriodAdminAcademic from "./pages/admin-academic/setting/PeriodAdminAcademy";

@@ -8,13 +8,13 @@ interface OptionProps {
 interface InputFilterProps {
   options?: OptionProps[];
   label: string;
-  select: boolean;
+  select?: boolean;
   defaultValue?: string;
 }
 
 // input for filter student
 export function InputFilter({
-  options,
+  options = [],
   select = true,
   label,
   defaultValue = "",

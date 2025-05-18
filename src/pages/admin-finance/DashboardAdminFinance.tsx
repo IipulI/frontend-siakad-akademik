@@ -4,7 +4,10 @@ import MainLayout from "../../components/layouts/MainLayout";
 const DashboardAdminFinance = () => {
   return (
     <MainLayout titlePage={"Beranda"} isGreeting={false}>
-      DashboardAdminFinance
+      <div className="border-t-2 border-primary-green rounded-sm">
+        <div></div>
+
+      </div>
     </MainLayout>
   );
 };
