@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
-import { Check, Search, X } from "lucide-react";
+import { Check, Eye, Pen, Search, Trash2, X } from "lucide-react";
 import Card from "../../components/admin-academic/dashboard/Card";
 import { Pagination } from "../../components/admin-academic/Pagination";
 import FacultyBill from "../../components/admin-finance/facultyBill";
 import LastTransaction from "../../components/admin-finance/LastTransaction";
+import { useNavigate } from "react-router-dom";
 
 const DashboardAdminFinance = () => {
   function SearchSubmit() {
@@ -34,6 +35,18 @@ const DashboardAdminFinance = () => {
       lunas: false,
     },
   ];
+
+  const usenavigate = useNavigate()
+
+  function Detail() {
+    alert("ok detail");
+  }
+  function Edit() {
+    usenavigate("/admin-finance/dashboard/edit-tagihan");
+  }
+  function Remove() {
+    alert("ok remove");
+  }
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -152,26 +165,42 @@ const DashboardAdminFinance = () => {
                       </div>
                     </td>
                     <td className="border-1 border-gray-500 font-semibold p-2 text-center text-sm md:text-base">
-                      aksi
+                      <div className="flex justify-center space-x-2 items-center">
+                        <ButtonClick
+                          color="bg-primary-blueSoft"
+                          icon={<Eye size={16} />}
+                          onClick={Detail}
+                        />
+                        <ButtonClick
+                          color="bg-primary-yellow"
+                          icon={<Pen size={16} />}
+                          onClick={Edit}
+                        />
+                        <ButtonClick
+                          color="bg-red-500"
+                          icon={<Trash2 size={16} />}
+                          onClick={Remove}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={1000}
-              onPageChange={setCurrentPage}
-              rowsPerPage={rowsPerPage}
-              totalRows={65}
-              onRowsPerPageChange={setRowsPerPage}
-            />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={1000}
+            onPageChange={setCurrentPage}
+            rowsPerPage={rowsPerPage}
+            totalRows={65}
+            onRowsPerPageChange={setRowsPerPage}
+          />
         </div>
 
         <div className="grid grid-cols-7 mt-7 gap-10 mb-10">
           <FacultyBill />
-          <LastTransaction/>
+          <LastTransaction />
         </div>
       </div>
     </MainLayout>

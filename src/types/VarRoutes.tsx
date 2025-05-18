@@ -86,4 +86,5 @@ export const AdminAcademicRoute = {
 
 export const AdminFinanceRoute: routeType = {
   dashboardAdminFinance: "/admin-finance/dashboard",
+  editBill: "/admin-finance/dashboard/edit-tagihan",
 };

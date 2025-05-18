@@ -55,9 +55,9 @@ import CurriculumProdi from "./pages/admin-academic/academic/CurriculumProdi";
 import RpsManagement from "./pages/admin-academic/academic/RpsManagement";
 import AddRps from "./pages/admin-academic/academic/AddRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
-
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
+import EditBill from "./pages/admin-finance/EditBill";
 export default function App() {
   return (
     <Routes>
@@ -166,6 +166,7 @@ export default function App() {
 
       {/* Route Untuk Admin Keuangan */}
       <Route path={String(AdminFinanceRoute.dashboardAdminFinance)} element={<DashboardAdminFinance />} />
+      <Route path={String(AdminFinanceRoute.editBill)} element={<EditBill />} />
     </Routes>
   );
 }
