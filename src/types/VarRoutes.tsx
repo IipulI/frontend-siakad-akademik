@@ -1,6 +1,5 @@
 type routeType = {
-  [key: string]: string | string;
-  // [key: string]: string | routeType;
+  [key: string]: string | routeType;
 };
 
 export const StudentRoute = {
@@ -80,11 +79,13 @@ export const AdminAcademicRoute = {
     level: "/admin-akademik/jenjang-pendidikan",
     limit: "/admin-akademik/batas-sks",
     composition: "/admin-akademik/komposisi-nilai",
-    setComposition: "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
+    setComposition:
+      "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
   } as routeType,
 };
 
 export const AdminFinanceRoute: routeType = {
-  dashboardAdminFinance: "/admin-finance/dashboard",
-  editBill: "/admin-finance/dashboard/edit-tagihan",
+  dashboardAdminFinance: "/admin-keuangan/dashboard",
+  editBill: "/admin-keuangan/dashboard/edit-tagihan",
+  createBill: "/admin-keuangan/buat-tagihan",
 };

@@ -2,20 +2,20 @@ import Navbar from "../Navbar";
 import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
-import React from "react";
+import { AdminFinanceRoute } from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "/admin-finance/dashboard",
+    path: String(AdminFinanceRoute.dashboardAdminFinance),
     hasDropdown: false,
   },
   {
     id: "2",
     name: "Buat Tagihan",
-    path: "",
+    path: String(AdminFinanceRoute.createBill),
     hasDropdown: false,
   },
   {
