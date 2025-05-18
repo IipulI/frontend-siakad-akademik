@@ -4,9 +4,9 @@ import { InputFilter } from "../../../components/admin-academic/student-data/Inp
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { Eye, Link2, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Pagination } from "../../../components/admin-academic/student-data/Pagination";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
+import { Pagination } from "../../../components/admin-academic/Pagination";
 
 const sampleData = [
   {
