@@ -88,4 +88,5 @@ export const AdminFinanceRoute: routeType = {
   dashboardAdminFinance: "/admin-keuangan/dashboard",
   editBill: "/admin-keuangan/dashboard/edit-tagihan",
   createBill: "/admin-keuangan/buat-tagihan",
+  formCreateBill: "/admin-keuangan/buat-tagihan/form-buat-tagihan",
 };

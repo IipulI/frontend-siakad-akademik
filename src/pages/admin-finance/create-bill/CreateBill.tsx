@@ -12,6 +12,8 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import Table from "../../../components/admin-finance/Tabel";
+import { useNavigate } from "react-router-dom";
+import { AdminFinanceRoute } from "../../../types/VarRoutes";
 
 export default function CreateBill() {
   const angkatan = [{ value: "", label: "-- Pilih Angkatan --" }];
@@ -19,6 +21,7 @@ export default function CreateBill() {
   const semester = [{ value: "", label: "-- Pilih Semester --" }];
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
 
+  const usenavigate = useNavigate();
   function SearchSubmit() {
     alert("oke search");
   }
@@ -26,7 +29,7 @@ export default function CreateBill() {
     window.location.reload();
   }
   function Create() {
-    alert("oke");
+    usenavigate(AdminFinanceRoute.formCreateBill);
   }
   function Setting() {
     alert("oke");
