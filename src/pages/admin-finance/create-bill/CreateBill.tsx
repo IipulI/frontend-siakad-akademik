@@ -11,6 +11,7 @@ import { InputFilter } from "../../../components/admin-academic/student-data/Inp
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
+import Table from "../../../components/admin-finance/Tabel";
 
 export default function CreateBill() {
   const angkatan = [{ value: "", label: "-- Pilih Angkatan --" }];
@@ -31,7 +32,15 @@ export default function CreateBill() {
     alert("oke");
   }
 
-  const students = [
+  const headers: string[] = [
+    "NPM",
+    "Nama",
+    "Fakultas",
+    "Program Studi",
+    "Semester",
+  ];
+
+  const studentData = [
     {
       id: "1",
       npm: "221106043035",
@@ -39,7 +48,6 @@ export default function CreateBill() {
       fakultas: "Fakultas Teknik dan Sains",
       programStudi: "Teknik Informatika",
       semester: 7,
-      selected: false,
     },
     {
       id: "2",
@@ -48,7 +56,6 @@ export default function CreateBill() {
       fakultas: "Fakultas Teknik dan Sains",
       programStudi: "Sistem Informasi",
       semester: 7,
-      selected: false,
     },
     {
       id: "3",
@@ -57,7 +64,6 @@ export default function CreateBill() {
       fakultas: "Fakultas Teknik dan Sains",
       programStudi: "Teknik Informatika",
       semester: 7,
-      selected: false,
     },
     {
       id: "4",
@@ -66,7 +72,6 @@ export default function CreateBill() {
       fakultas: "Fakultas Teknik dan Sains",
       programStudi: "Sistem Informasi",
       semester: 7,
-      selected: false,
     },
   ];
 
@@ -133,60 +138,7 @@ export default function CreateBill() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="bg-primary-green text-white p-2 border border-gray-500 font-semibold">
-                    <input type="checkbox" className="w-4 h-4" />
-                  </th>
-                  <th className="bg-primary-green text-white p-2 border border-gray-500 font-semibold">
-                    NPM
-                  </th>
-                  <th className="bg-primary-green text-white p-2 border border-gray-500 font-semibold">
-                    Nama
-                  </th>
-                  <th className="bg-primary-green text-white p-2 border border-gray-500 font-semibold">
-                    Fakultas
-                  </th>
-                  <th className="bg-primary-green text-white p-2 border border-gray-500 font-semibold">
-                    Program Studi
-                  </th>
-                  <th className="bg-primary-green text-white p-2 border border-gray-500 font-semibold">
-                    Semester
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student) => (
-                  <tr key={student.id}>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <input
-                        type="checkbox"
-                        checked={student.selected}
-                        className="w-4 h-4"
-                      />
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {student.npm}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {student.nama}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {student.fakultas}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {student.programStudi}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {student.semester}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table headers={headers} data={studentData} showCheckbox={true} />
 
           <Pagination
             currentPage={currentPage}

@@ -7,6 +7,7 @@ import { Pagination } from "../../components/admin-academic/Pagination";
 import FacultyBill from "../../components/admin-finance/facultyBill";
 import LastTransaction from "../../components/admin-finance/LastTransaction";
 import { useNavigate } from "react-router-dom";
+import { AdminFinanceRoute } from "../../types/VarRoutes";
 
 const DashboardAdminFinance = () => {
   function SearchSubmit() {
@@ -36,13 +37,13 @@ const DashboardAdminFinance = () => {
     },
   ];
 
-  const usenavigate = useNavigate()
+  const usenavigate = useNavigate();
 
   function Detail() {
     alert("ok detail");
   }
   function Edit() {
-    usenavigate("/admin-finance/dashboard/edit-tagihan");
+    usenavigate(AdminFinanceRoute.editBill);
   }
   function Remove() {
     alert("ok remove");
