@@ -21,7 +21,7 @@ const navItems = [
   {
     id: "1",
     name: "Tagihan Mahasiswa",
-    path: "",
+    path: String(AdminFinanceRoute.studentBill),
     hasDropdown: false,
   },
   {

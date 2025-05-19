@@ -84,7 +84,7 @@ export default function CreateBill() {
   return (
     <MainLayout isGreeting={false} titlePage="Buat Tagihan">
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 md:px-20 lg:px-40 md:gap-x-10 p-2 rounded-sm shadow-sm gap-2 bg-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:px-20 lg:px-40 md:gap-x-10 p-2 rounded-sm shadow-md gap-2 bg-white">
           <InputFilter options={angkatan} label="Angkatan" />
           <InputFilter options={fakultas} label="Fakultas" />
           <InputFilter options={semester} label="Semester" />

@@ -10,6 +10,7 @@ interface InputFilterProps {
   label: string;
   select?: boolean;
   defaultValue?: string;
+  placeholder?: string;
 }
 
 // input for filter student
@@ -18,6 +19,7 @@ export function InputFilter({
   select = true,
   label,
   defaultValue = "",
+  placeholder,
 }: InputFilterProps) {
   return (
     <div className={`input-filter-container grid grid-cols-2 items-center`}>
@@ -35,6 +37,7 @@ export function InputFilter({
         </select>
       ) : (
         <input
+          placeholder={placeholder}
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
           defaultValue={defaultValue}
         />
