@@ -90,4 +90,5 @@ export const AdminFinanceRoute: routeType = {
   createBill: "/admin-keuangan/buat-tagihan",
   formCreateBill: "/admin-keuangan/buat-tagihan/form-buat-tagihan",
   studentBill: "/admin-keuangan/tagihan-mahasiswa",
+  detailStudentBill: "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
 };

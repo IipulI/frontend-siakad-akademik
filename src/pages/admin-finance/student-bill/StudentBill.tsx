@@ -5,6 +5,8 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import Table from "../../../components/admin-finance/Tabel";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AdminFinanceRoute } from "../../../types/VarRoutes";
 
 export default function StudentBill() {
   const periode = [{ value: "", label: "2025 Ganjil" }];
@@ -13,6 +15,7 @@ export default function StudentBill() {
   const fakultas = [{ value: "", label: "-- Pilih Fakultas --" }];
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
 
+  const usenavigate = useNavigate();
   function SearchSubmit() {
     alert("oke search");
   }
@@ -63,7 +66,7 @@ export default function StudentBill() {
   ];
 
   function handleView() {
-    alert("oke");
+    usenavigate(AdminFinanceRoute.detailStudentBill);
   }
 
   const [currentPage, setCurrentPage] = useState(1);
