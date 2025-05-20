@@ -27,7 +27,7 @@ const navItems = [
   {
     id: "1",
     name: "Komponen Tagihan",
-    path: "",
+    path: String(AdminFinanceRoute.componentBill),
     hasDropdown: false,
   },
 ];

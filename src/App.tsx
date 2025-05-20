@@ -62,6 +62,7 @@ import CreateBill from "./pages/admin-finance/create-bill/CreateBill";
 import FormCreateBill from "./pages/admin-finance/create-bill/FormCreateBill";
 import StudentBill from "./pages/admin-finance/student-bill/StudentBill";
 import DetailStudentBill from "./pages/admin-finance/student-bill/DetailStudentBill";
+import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 export default function App() {
   return (
     <Routes>
@@ -175,6 +176,7 @@ export default function App() {
       <Route path={String(AdminFinanceRoute.formCreateBill)} element={<FormCreateBill />} />
       <Route path={String(AdminFinanceRoute.studentBill)} element={<StudentBill />} />
       <Route path={String(AdminFinanceRoute.detailStudentBill)} element={<DetailStudentBill />} />
+      <Route path={String(AdminFinanceRoute.componentBill)} element={<ComponentBill />} />
     </Routes>
   );
 }
