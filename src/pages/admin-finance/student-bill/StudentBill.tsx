@@ -127,7 +127,7 @@ export default function StudentBill() {
             </div>
           </div>
 
-          <div className="flex bg-primary-yellow items-center rounded p-1 px-2">
+          <div className="flex bg-primary-yellow items-center rounded p-1 px-2 w-fit">
             <Settings color="white" size={17} />
             <select
               name=""

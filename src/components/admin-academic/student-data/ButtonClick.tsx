@@ -18,7 +18,7 @@ export default function ButtonClick({
   return (
     <button
       onClick={onClick}
-      className={`${color} text-white rounded items-center px-2 cursor-pointer p-1 text-xs md:text-sm font-semibold flex justify-center space-x-${spacing}`}
+      className={`${color} text-white w-fit rounded items-center px-2 cursor-pointer p-1 text-xs md:text-sm font-semibold flex justify-center space-x-${spacing}`}
     >
       {icon}
       <span>{text}</span>
