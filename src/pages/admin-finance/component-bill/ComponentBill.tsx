@@ -36,8 +36,8 @@ export default function ComponentBill() {
     },
   ];
 
-  function handleView() {
-    alert("oke view");
+  function handleEdit() {
+    alert("oke edit");
   }
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,7 +87,7 @@ export default function ComponentBill() {
           data={componentData}
           showCheckbox={false}
           actions={{
-            view: () => handleView(),
+            edit: () => handleEdit(),
           }}
         />
 
