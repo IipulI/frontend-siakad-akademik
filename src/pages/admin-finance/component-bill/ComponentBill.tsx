@@ -4,8 +4,11 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import Table from "../../../components/admin-finance/Tabel";
 import { useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
+import { useNavigate } from "react-router-dom";
+import { AdminFinanceRoute } from "../../../types/VarRoutes";
 
 export default function ComponentBill() {
+    const usenavigate = useNavigate()
   function SearchSubmit() {
     alert("oke search");
   }
@@ -13,7 +16,7 @@ export default function ComponentBill() {
     window.location.reload();
   }
   function Create() {
-    alert("oke create");
+    usenavigate(AdminFinanceRoute.createComponentBill)
   }
 
   const headers = ["Kode Komponen", "Nama", "Nominal"];
@@ -41,9 +44,9 @@ export default function ComponentBill() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   return (
-    <MainLayout isGreeting={false} titlePage="Komponent Tagihan">
+    <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
       <div className="bg-white shadow-md p-3 rounded-sm">
-        <h1 className="text-lg lg:text-2xl font-semibold">
+        <h1 className="text-lg sm:text-2xl font-semibold">
           Data Komponen Tagihan
         </h1>
         <div className="my-4 gap-2 lg:gap-0 flex flex-col lg:flex-row justify-between">
