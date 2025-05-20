@@ -37,7 +37,7 @@ export default function ComponentBill() {
   ];
 
   function handleEdit() {
-    alert("oke edit");
+    usenavigate(AdminFinanceRoute.editComponentBill)
   }
 
   const [currentPage, setCurrentPage] = useState(1);
