@@ -1,33 +1,33 @@
 import { ChevronLeft, Save, Search } from "lucide-react";
-import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
-import MainLayout from "../../components/layouts/MainLayout";
+import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
+import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import {
   DateInput,
   RadioInput,
   SelectInput,
   TextInput,
-} from "../../components/admin-academic/student-data/Input";
+} from "../../../components/admin-academic/student-data/Input";
 import {
   TabNavigationButton,
   TabNavigationButtonStudent,
-} from "../../components/admin-academic/dashboard/TabNavigasiButton";
+} from "../../../components/admin-academic/dashboard/TabNavigasiButton";
 import { useState } from "react";
-import FormGeneralInformation from "../../components/admin-academic/student-data/bio-data/FormGeneralInformation";
-import FormDomicili from "../../components/admin-academic/student-data/bio-data/FormDomicili";
-import FormParents from "../../components/admin-academic/student-data/bio-data/FormParents";
-import FormGuardian from "../../components/admin-academic/student-data/bio-data/FormGuardian";
-import FormSchool from "../../components/admin-academic/student-data/bio-data/FormSchool";
-import SemesterStatus from "../../components/admin-academic/student-data/detail/SemesterStatus";
-import LearningProgres from "../../components/admin-academic/student-data/detail/LearningProgres";
-import StudyPlanCard from "../../components/admin-academic/student-data/detail/StudyPlanCard";
-import StudyResultCard from "../../components/admin-academic/student-data/detail/StudyResultCard";
-import Transkrip from "../../components/admin-academic/student-data/detail/Transkrip";
-import FinalizationMK from "../../components/admin-academic/student-data/detail/FinalizationMK";
-import CollegeGrades from "../../components/admin-academic/student-data/detail/CollegeGrades";
-import FinantialHistory from "../../components/admin-academic/student-data/detail/FinantialHistory";
-import Repeat from "../../components/admin-academic/student-data/detail/Repeat";
-import EditKRS from "../../components/admin-academic/student-data/detail/EditKRS";
+import FormGeneralInformation from "../../../components/admin-academic/student-data/bio-data/FormGeneralInformation";
+import FormDomicili from "../../../components/admin-academic/student-data/bio-data/FormDomicili";
+import FormParents from "../../../components/admin-academic/student-data/bio-data/FormParents";
+import FormGuardian from "../../../components/admin-academic/student-data/bio-data/FormGuardian";
+import FormSchool from "../../../components/admin-academic/student-data/bio-data/FormSchool";
+import SemesterStatus from "../../../components/admin-academic/student-data/detail/SemesterStatus";
+import LearningProgres from "../../../components/admin-academic/student-data/detail/LearningProgres";
+import StudyPlanCard from "../../../components/admin-academic/student-data/detail/StudyPlanCard";
+import StudyResultCard from "../../../components/admin-academic/student-data/detail/StudyResultCard";
+import Transkrip from "../../../components/admin-academic/student-data/detail/Transkrip";
+import FinalizationMK from "../../../components/admin-academic/student-data/detail/FinalizationMK";
+import CollegeGrades from "../../../components/admin-academic/student-data/detail/CollegeGrades";
+import FinantialHistory from "../../../components/admin-academic/student-data/detail/FinantialHistory";
+import Repeat from "../../../components/admin-academic/student-data/detail/Repeat";
+import EditKRS from "../../../components/admin-academic/student-data/detail/EditKRS";
 
 export default function DetailStudent() {
   function SearchSubmit() {

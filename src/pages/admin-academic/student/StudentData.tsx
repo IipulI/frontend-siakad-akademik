@@ -1,7 +1,7 @@
-import MainLayout from "../../components/layouts/MainLayout";
-import { InputFilter } from "../../components/admin-academic/student-data/Input";
-import TableStudent from "../../components/admin-academic/student-data/TableStudent";
-import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
+import MainLayout from "../../../components/layouts/MainLayout";
+import { InputFilter } from "../../../components/admin-academic/student-data/Input";
+import TableStudent from "../../../components/admin-academic/student-data/TableStudent";
+import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import {
   Plus,
   Printer,
@@ -10,9 +10,9 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import { Pagination } from "../../components/admin-academic/Pagination";
+import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useState } from "react";
-import Status from "../../components/admin-academic/student-data/Status";
+import Status from "../../../components/admin-academic/student-data/Status";
 import { useNavigate } from "react-router-dom";
 
 export default function StudentData() {
