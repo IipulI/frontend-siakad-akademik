@@ -7,7 +7,6 @@ import { Search, ArrowLeft, Save, Edit } from "lucide-react";
 
 const CplCpmkCourse: React.FC = () => {
   const navigate = useNavigate();
-
   const [sksTatapMuka, setSksTatapMuka] = useState<number>(0);
   const [sksPraktikum, setSksPraktikum] = useState<number>(0);
   const [totalSks, setTotalSks] = useState<number>(0);
@@ -35,7 +34,11 @@ const CplCpmkCourse: React.FC = () => {
         " 1. Bertakwa kepada Tuhan Yang Maha Esa  dan mampu menunjukkan sikap religius; 2. Berperan sebagai warga negara yang bangga dan cinta tanah air,  memiliki nasionalisme rasa tanggung jawab pada negara dan bangsa; 3. Taat hukum dan disiplin dalam kehidupan bermasyarakat dan bernegara; 4. Menjunjung tinggi norma, tata nilai, moral, agama, etika, dan  tanggung jawab profesional; 5. Menginternalisasi nilai, norma, dan etika akademik; 6. Memiliki kemampuan berkomunikasi secara efektif dengan para ahli di  bidang Pendidikan Agama Islam; 7. Memiliki kemampuan bekerja sama dalam suatu tim dan menyesuaikan diri dengan cepat di lingkungan kerja; 8. Memiliki sikap peduli (care) terhadap Pendidikan Agama Islam; 9. Memiliki sikap peduli (empaty) terhadap permasalahan dalam pendidikan Islam, menggali faktor penyebab dan menemukan alternatif solusi,  melakukan tindakan nyata menjadi bagian dalam memberikan solusi; 10. Memiliki etika, moral, dan kepribadian dalam menerapkan ilmu untuk  berkarya di bidang Pendidikan Agama Islam; 11. Memiliki sikap keterbukaan dan inovasi dalam menjalin kerjasama  dengan tenaga pendidik lainnya; 12. Menghargai keaslian ide, konsep dan penemuan lainnya, serta  mempunyai rasa ingin tahu (curiousity).",
       kategori: "Sikap",
     },
-    { kodeCpl: "CPL002", deskripsiCpl: "Deskripsi CPL 2", kategori: "Kategori 2" },
+    {
+      kodeCpl: "CPL002",
+      deskripsiCpl: "Ahli dalam mengurai berbagai  permasalahan yang dihadapi oleh sekolah/madrasah dan dapat  menyelesaikannya dengan solusi-solusi yang sesuai dengan potensi yang  dimiliki oleh satuan pendidikannya.",
+      kategori: "Keterampilan Umum",
+    },
   ];
 
   const cpmkData = [
@@ -43,7 +46,7 @@ const CplCpmkCourse: React.FC = () => {
     { kodeCpmk: "CPMK002", deskripsiCpmk: "Deskripsi CPMK 2" },
   ];
 
-  const tableHeadCpl = ["Kode CPL", "Deskripsi CPL", "Kategori"];
+  const tableHeadCpl = ["Kode CPL", "Deskripsi Capaian Pembelajaran Lulusan (CPL)", "Kategori"];
   const tableHeadCpmk = ["Kode CPMK", "Deskripsi"];
 
   return (
@@ -72,13 +75,13 @@ const CplCpmkCourse: React.FC = () => {
         <div className="flex ">
           {/* Sidebar Menu */}
           <div className="w-[20%] h-50 text-white p-3 space-y-2 mr-3">
-            <div className="flex items-center bg-[#116E63]/60  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
+            <div className="flex items-center bg-[#116E63]/30  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p className="text-black font-semibold">Data Mata Kuliah</p>
+              <p>Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
+            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p>CPL dan CPMK</p>
+              <p className="text-black font-semibold">CPL dan CPMK</p>
             </div>
             <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
@@ -87,30 +90,43 @@ const CplCpmkCourse: React.FC = () => {
           </div>
           {/* Detail Data Mata Kuliah */}
           <div className="w-[80%] p-3">
-            <div className="-mx-4 bg-primary-green/10 p-4 grid grid-cols-2 gap-2 w-full">
-              <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Kode Mata Kuliah:</span>
-                <span className="w-full text-left">MK001</span>
-              </div>
-              <div className="flex justify-between ml-8">
-                <span className="font-semibold w-full text-left">Tahun Kurikulum:</span>
-                <span className="w-full text-left">2024</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Mata Kuliah:</span>
-                <span className="w-full text-left">Pemrograman Lanjut</span>
-              </div>
-              <div className="flex justify-between ml-8">
-                <span className="font-semibold w-full text-left">Semester:</span>
-                <span className="w-full text-left">1</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Unit Pengampu:</span>
-                <span className="w-full text-left">Teknik Informatika</span>
-              </div>
-              <div className="flex justify-between ml-8">
-                <span className="font-semibold w-full text-left">Total SKS:</span>
-                <span className="w-full text-left">3</span>
+            <div className="flex bg-primary-green/10">
+              {/* Sidebar Biru */}
+              <div className="w-2 bg-primary-green"></div>
+
+              {/* Konten */}
+              <div className="flex-1 p-4 grid grid-cols-2 gap-x-6">
+                {/* Kolom Kiri */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Kode Mata Kuliah:</span>
+                    <span className="flex-1 text-left">MK001</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Tahun Kurikulum:</span>
+                    <span className="flex-1 text-left">2024</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Mata Kuliah:</span>
+                    <span className="flex-1 text-left">Pemrograman Lanjut</span>
+                  </div>
+                </div>
+
+                {/* Kolom Kanan */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Semester:</span>
+                    <span className="flex-1 text-left">1</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Unit Pengampu:</span>
+                    <span className="flex-1 text-left">Teknik Informatika</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">SKS:</span>
+                    <span className="flex-1 text-left">3</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -119,7 +135,7 @@ const CplCpmkCourse: React.FC = () => {
               <TableCpl data={cplData} tableHead={tableHeadCpl} error="Data CPL tidak ditemukan." />
             </div>
             <div className="mt-4 ml-[-10px]">
-              <h2 className="font-semibold">Capaian Pembelajaran Mata Kuliah</h2>
+              <h2 className="font-semibold">CapaianMata Kuliah</h2>
               <TableCpmk data={cpmkData} tableHead={tableHeadCpmk} error="Data CPMK tidak ditemukan." />
             </div>
           </div>

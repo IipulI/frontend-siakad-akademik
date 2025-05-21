@@ -61,46 +61,59 @@ const RPS: React.FC = () => {
         <div className="flex ">
           {/* Sidebar Menu */}
           <div className="w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/60  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
+            <div className="flex items-center bg-[#116E63]/30  mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p className="text-black font-semibold">Data Mata Kuliah</p>
+              <p>Data Mata Kuliah</p>
             </div>
             <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
+            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p>RPS</p>
+              <p className="text-black font-semibold">RPS</p>
             </div>
           </div>
 
           {/* Detail Data Mata Kuliah */}
           <div className="w-[80%] p-3">
-            <div className="grid grid-cols-2 gap-2 bg-primary-green/10 p-4">
-              <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Kode Mata Kuliah:</span>
-                <span className="w-full text-left">MK001</span>
-              </div>
-              <div className="flex justify-between ml-8 ">
-                <span className="font-semibold w-full text-left">Tahun Kurikulum:</span>
-                <span className="w-full text-left">2024</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Mata Kuliah:</span>
-                <span className="w-full text-left">Pemrograman Lanjut</span>
-              </div>
-              <div className="flex justify-between ml-8">
-                <span className="font-semibold w-full text-left">Semester:</span>
-                <span className="w-full text-left">1</span>
-              </div>
-              <div className="flex justify-between ">
-                <span className="font-semibold w-full text-left">Unit Pengampu:</span>
-                <span className="w-full text-left">Teknik Informatika</span>
-              </div>
-              <div className="flex justify-between ml-8">
-                <span className="font-semibold w-full text-left">Total SKS:</span>
-                <span className="w-full text-left">3</span>
+            <div className="flex bg-primary-green/10">
+              {/* Sidebar Biru */}
+              <div className="w-2 bg-primary-green"></div>
+
+              {/* Konten */}
+              <div className="flex-1 p-4 grid grid-cols-2 gap-x-6">
+                {/* Kolom Kiri */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Kode Mata Kuliah:</span>
+                    <span className="flex-1 text-left">MK001</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Tahun Kurikulum:</span>
+                    <span className="flex-1 text-left">2024</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Mata Kuliah:</span>
+                    <span className="flex-1 text-left">Pemrograman Lanjut</span>
+                  </div>
+                </div>
+
+                {/* Kolom Kanan */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Semester:</span>
+                    <span className="flex-1 text-left">1</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">Unit Pengampu:</span>
+                    <span className="flex-1 text-left">Teknik Informatika</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold w-40">SKS:</span>
+                    <span className="flex-1 text-left">3</span>
+                  </div>
+                </div>
               </div>
             </div>
 

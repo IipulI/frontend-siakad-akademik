@@ -38,21 +38,21 @@ const OBEManagement: React.FC = () => {
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">2025</option>
             </select>
           </div>
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Program Studi</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">-- Semua Program Studi --</option>
             </select>
           </div>
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Jenjang</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">-- Semua Jenjang --</option>
             </select>
           </div>
         </div>

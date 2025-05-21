@@ -6,7 +6,7 @@ import { TableObeCPL } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus, Table } from "lucide-react";
 
 interface CPLData {
-  id: string;
+  id: number;
   kodePl: string;
   deskripsiCapaianPembelajaran: string;
   kategori: string;
@@ -15,49 +15,85 @@ interface CPLData {
 
 const ObeCpl: React.FC = () => {
   const navigate = useNavigate();
+  const [cplData, setCplData] = useState<CPLData[]>([
+    { id: 1, kodePl: "PL001", deskripsiCapaianPembelajaran: "Pemrograman Dasar", kategori: "Algoritma", pemetaan: "PPL001" },
+    { id: 2, kodePl: "PL001", deskripsiCapaianPembelajaran: "Pemrograman Dasar", kategori: "Algoritma", pemetaan: "PPL001" },
+  ]);
 
-  const [cplData, setCplData] = useState<CPLData[]>([{ id: "1", kodePl: "PL001", deskripsiCapaianPembelajaran: "Pemrograman Dasar", kategori: "Algoritma", pemetaan: "PPL001" }]);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [currentData, setCurrentData] = useState<CPLData | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState("2024");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const [isAdding, setIsAdding] = useState(false);
-  const [newCpl, setNewCpl] = useState<CPLData>({
-    id: "",
-    kodePl: "",
-    deskripsiCapaianPembelajaran: "",
-    kategori: "",
-    pemetaan: "",
-  });
-
-  const handleBack = () => {
-    navigate(AdminAcademicRoute.courseManagement.courseManagement);
+  const handleEdit = (id: number) => {
+    const selectedData = cplData.find((item) => item.id === id);
+    if (selectedData) {
+      setCurrentData(selectedData);
+      setIsEditing(true);
+      setIsAdding(false);
+      setErrorMessage("");
+    }
   };
 
-  const handleSave = () => {
-    console.log("Data disimpan", cplData);
+  const handleDelete = (id: number) => {
+    setCplData(cplData.filter((item) => item.id !== id));
+    setErrorMessage("");
+  };
+
+  const handleBack = () => {
+    navigate(AdminAcademicRoute.obeManagement.obeManagement);
   };
 
   const handleAddCpl = () => {
     setIsAdding(true);
-    setNewCpl({ id: Date.now().toString(), kodePl: "", deskripsiCapaianPembelajaran: "", kategori: "", pemetaan: "" });
+    setIsEditing(false);
+    setCurrentData({
+      id: Date.now(),
+      kodePl: "",
+      deskripsiCapaianPembelajaran: "",
+      kategori: "",
+      pemetaan: "",
+    });
+    setErrorMessage("");
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewCpl((prev) => ({ ...prev, [name]: value }));
+    setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
-  const handleSaveNewCpl = () => {
-    if (!newCpl.kodePl.trim() || !newCpl.deskripsiCapaianPembelajaran.trim()) {
-      alert("Kode PL dan Deskripsi CPL wajib diisi");
+  const isFormValid = () => {
+    return !!(currentData?.kodePl && currentData?.deskripsiCapaianPembelajaran && currentData?.kategori && currentData?.pemetaan);
+  };
+
+  const handleSave = () => {
+    if (!currentData) return;
+
+    if (!isFormValid()) {
+      setErrorMessage("Semua kolom harus diisi sebelum menyimpan.");
       return;
     }
-    setCplData((prev) => [...prev, newCpl]);
-    setIsAdding(false);
-    setNewCpl({ id: "", kodePl: "", deskripsiCapaianPembelajaran: "", kategori: "", pemetaan: "" });
+
+    setErrorMessage("");
+
+    if (isEditing) {
+      const updatedData = cplData.map((item) => (item.id === currentData.id ? currentData : item));
+      setCplData(updatedData);
+      setIsEditing(false);
+    } else if (isAdding) {
+      setCplData([currentData, ...cplData]);
+      setIsAdding(false);
+    }
+
+    setCurrentData(null);
   };
 
-  const handleCancelAdd = () => {
+  const handleReset = () => {
     setIsAdding(false);
+    setIsEditing(false);
+    setCurrentData(null);
+    setErrorMessage("");
   };
 
   const handleNavigation = (path: string) => {
@@ -65,11 +101,11 @@ const ObeCpl: React.FC = () => {
   };
 
   return (
-    <MainLayout isGreeting={false} titlePage="CPL Management" className="">
+    <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center ">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded-l-md">
+            <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
@@ -127,7 +163,7 @@ const ObeCpl: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-6 flex items-center gap-2">
               <h2 className="text-lg font-semibold">Tahun Kurikulum</h2>
               <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="border border-black/50 rounded-md px-2 py-1 w-40">
                 <option value="2024">2024</option>
@@ -140,17 +176,23 @@ const ObeCpl: React.FC = () => {
               </button>
             </div>
 
+            {/* Tampilkan error validasi */}
+            {errorMessage && <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>}
+
             <div className="mt-4 overflow-x-auto">
               <TableObeCPL
                 data={cplData}
                 tableHead={["Kode PL", "Deskripsi Capaian Pembelajaran Lulusan (CPL)", "Kategori", "Pemetaan PL ke CPL", "Aksi"]}
                 error="Data tidak ditemukan."
-                isAdding={isAdding}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isEditing={isEditing}
+                currentData={currentData}
+                onSave={handleSave}
+                onReset={handleReset}
                 onInputChange={handleInputChange}
-                onCancelAdd={handleCancelAdd}
-                onSaveNewProfile={handleSaveNewCpl}
-                newCpl={newCpl}
-                onSave={handleSaveNewCpl}
+                isAdding={isAdding}
+                isFormValid={isFormValid}
               />
             </div>
           </div>

@@ -46,9 +46,7 @@ export const AdminAcademicRoute = {
     academicAdvisor: "/mahasiswa/pembimbing-akademik",
   },
   announcement: "/admin-akademik/pengumuman",
-  curriculumYear: {
-    curriculumYear: "/admin-akademik/tahun-kurikulum",
-  },
+  curriculumYear: "/admin-akademik/tahun-kurikulum",
   courseManagement: {
     courseManagement: "/admin-akademik/mata-kuliah",
     addCourse: "/admin-akademik/mata-kuliah/tambah-mata-kuliah",
@@ -58,18 +56,17 @@ export const AdminAcademicRoute = {
     rpsCourse: "/admin-akademik/mata-kuliah/rps-mata-kuliah",
   },
   obeManagement: {
-    obeManagement: "/admin-akademik/obe/management-obe",
+    obeManagement: "/admin-akademik/obe/manajemen-obe",
     graduateProfile: "/admin-akademik/obe/profil-lulusan",
     cpl: "/admin-akademik/obe/cpl",
     cpmk: "/admin-akademik/obe/cpmk",
     cpmkMataKuliah: "/admin-akademik/obe/cpmk-mata-kuliah",
   },
-  prodiCurriculum: {
-    curriculum: "/admin-akademik/kurikulum-prodi",
-  },
+  prodiCurriculum: "/admin-akademik/kurikulum-prodi",
   rpsManagement: {
     rpsManagement: "/admin-akademik/rps",
     addRps: "/admin-akademik/rps/tambah-rps",
+    editRps: "/admin-akademik/rps/edit-rps",
     detailRps: "/admin-akademik/rps/detail-rps",
   },
   setting: {

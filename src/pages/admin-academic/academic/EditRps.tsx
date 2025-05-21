@@ -6,7 +6,7 @@ import { ArrowLeft, Save } from "lucide-react";
 
 import RichTextEditor from "../../../components/admin-academic/RichTextEditor";
 
-const AddRps = () => {
+const EditRps = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -45,7 +45,7 @@ const AddRps = () => {
   };
 
   return (
-    <MainLayout isGreeting={false} titlePage="Tambah RPS">
+    <MainLayout isGreeting={false} titlePage="Edit RPS">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-green px-5 relative">
         <div className="flex items-center justify-end mb-6 mt-4">
           <div className="flex gap-2">
@@ -174,4 +174,4 @@ const AddRps = () => {
   );
 };
 
-export default AddRps;
+export default EditRps;
