@@ -27,10 +27,10 @@ import {
 } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
-import StudentData from "./pages/admin-academic/StudentData";
-import CreateStudent from "./pages/admin-academic/CreateStudent";
-import DetailStudent from "./pages/admin-academic/DetailStudent";
-import AcademikAdvisor from "./pages/admin-academic/AcademicAdvisor";
+import StudentData from "./pages/admin-academic/student/StudentData";
+import CreateStudent from "./pages/admin-academic/student/CreateStudent";
+import DetailStudent from "./pages/admin-academic/student/DetailStudent";
+import AcademikAdvisor from "./pages/admin-academic/student/AcademicAdvisor";
 import AnnouncementAdminAcademic from "./pages/admin-academic/announcement/AnnouncementAdminAcademic";
 import YearAdminAcademic from "./pages/admin-academic/setting/YearAdminAcademic";
 import PeriodAdminAcademic from "./pages/admin-academic/setting/PeriodAdminAcademy";
@@ -55,9 +55,16 @@ import CurriculumProdi from "./pages/admin-academic/academic/CurriculumProdi";
 import RpsManagement from "./pages/admin-academic/academic/RpsManagement";
 import AddRps from "./pages/admin-academic/academic/AddRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
-
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
+import EditBill from "./pages/admin-finance/EditBill";
+import CreateBill from "./pages/admin-finance/create-bill/CreateBill";
+import FormCreateBill from "./pages/admin-finance/create-bill/FormCreateBill";
+import StudentBill from "./pages/admin-finance/student-bill/StudentBill";
+import DetailStudentBill from "./pages/admin-finance/student-bill/DetailStudentBill";
+import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
+import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
+import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
 export default function App() {
   return (
     <Routes>
@@ -166,6 +173,14 @@ export default function App() {
 
       {/* Route Untuk Admin Keuangan */}
       <Route path={String(AdminFinanceRoute.dashboardAdminFinance)} element={<DashboardAdminFinance />} />
+      <Route path={String(AdminFinanceRoute.editBill)} element={<EditBill />} />
+      <Route path={String(AdminFinanceRoute.createBill)} element={<CreateBill />} />
+      <Route path={String(AdminFinanceRoute.formCreateBill)} element={<FormCreateBill />} />
+      <Route path={String(AdminFinanceRoute.studentBill)} element={<StudentBill />} />
+      <Route path={String(AdminFinanceRoute.detailStudentBill)} element={<DetailStudentBill />} />
+      <Route path={String(AdminFinanceRoute.componentBill)} element={<ComponentBill />} />
+      <Route path={String(AdminFinanceRoute.createComponentBill)} element={<CreateComponentBill />} />
+      <Route path={String(AdminFinanceRoute.editComponentBill)} element={<EditComponentBill />} />
     </Routes>
   );
 }

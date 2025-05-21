@@ -1,23 +1,23 @@
 import { ChevronLeft, Save, Search } from "lucide-react";
-import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
-import MainLayout from "../../components/layouts/MainLayout";
+import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
+import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import {
   DateInput,
   RadioInput,
   SelectInput,
   TextInput,
-} from "../../components/admin-academic/student-data/Input";
+} from "../../../components/admin-academic/student-data/Input";
 import {
   TabNavigationButton,
   TabNavigationButtonStudent,
-} from "../../components/admin-academic/dashboard/TabNavigasiButton";
+} from "../../../components/admin-academic/dashboard/TabNavigasiButton";
 import { useState } from "react";
-import FormGeneralInformation from "../../components/admin-academic/student-data/bio-data/FormGeneralInformation";
-import FormDomicili from "../../components/admin-academic/student-data/bio-data/FormDomicili";
-import FormParents from "../../components/admin-academic/student-data/bio-data/FormParents";
-import FormGuardian from "../../components/admin-academic/student-data/bio-data/FormGuardian";
-import FormSchool from "../../components/admin-academic/student-data/bio-data/FormSchool";
+import FormGeneralInformation from "../../../components/admin-academic/student-data/bio-data/FormGeneralInformation";
+import FormDomicili from "../../../components/admin-academic/student-data/bio-data/FormDomicili";
+import FormParents from "../../../components/admin-academic/student-data/bio-data/FormParents";
+import FormGuardian from "../../../components/admin-academic/student-data/bio-data/FormGuardian";
+import FormSchool from "../../../components/admin-academic/student-data/bio-data/FormSchool";
 
 export default function CreateStudent() {
   function SearchSubmit() {
