@@ -20,11 +20,7 @@ import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard"
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
 import CollegeClass from "./pages/admin-academic/class/CollegeClass";
-import {
-  AdminFinanceRoute,
-  StudentRoute,
-  AdminAcademicRoute,
-} from "./types/VarRoutes";
+import { AdminFinanceRoute, StudentRoute, AdminAcademicRoute } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
 import StudentData from "./pages/admin-academic/StudentData";
@@ -54,6 +50,7 @@ import ObeCpmkMatkul from "./pages/admin-academic/academic/ObeCpmkMatkul";
 import CurriculumProdi from "./pages/admin-academic/academic/CurriculumProdi";
 import RpsManagement from "./pages/admin-academic/academic/RpsManagement";
 import AddRps from "./pages/admin-academic/academic/AddRps";
+import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
@@ -95,22 +92,10 @@ export default function App() {
 
       {/* Route Untuk Admin Akademik */}
       <Route path={String(AdminAcademicRoute.dashboardAdminAcademic)} element={<DashboardAdminAcademic />} />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.class)}
-        element={<CollegeClass />}
-      />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.class)}
-        element={<CollegeClass />}
-      />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.createClass)}
-        element={<CreateCollegeClass />}
-      />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.detailClass)}
-        element={<DetailCollegeClass />}
-      />
+      <Route path={String(AdminAcademicRoute.collegeClass.class)} element={<CollegeClass />} />
+      <Route path={String(AdminAcademicRoute.collegeClass.class)} element={<CollegeClass />} />
+      <Route path={String(AdminAcademicRoute.collegeClass.createClass)} element={<CreateCollegeClass />} />
+      <Route path={String(AdminAcademicRoute.collegeClass.detailClass)} element={<DetailCollegeClass />} />
       <Route path={String(AdminAcademicRoute.student.studentData)} element={<StudentData />} />
       <Route path={String(AdminAcademicRoute.student.createStudent)} element={<CreateStudent />} />
       <Route path={String(AdminAcademicRoute.student.detailStudent)} element={<DetailStudent />} />
@@ -128,7 +113,7 @@ export default function App() {
       <Route path={String(AdminAcademicRoute.setting.setComposition)} element={<SetCompositionAdminAcademic />} />
 
       {/* Route untuk admin akademik - Tahun Kurikulum */}
-      <Route path={String(AdminAcademicRoute.curriculumYear.curriculumYear)} element={<CurriculumYear />} />
+      <Route path={String(AdminAcademicRoute.curriculumYear)} element={<CurriculumYear />} />
 
       {/* Route untuk admin akademik - Manajemen Mata Kuliah*/}
       <Route path={String(AdminAcademicRoute.courseManagement.courseManagement)} element={<CourseManagement />} />
@@ -155,14 +140,16 @@ export default function App() {
       <Route path={String(AdminAcademicRoute.obeManagement.cpmkMataKuliah)} element={<ObeCpmkMatkul />} />
 
       {/* Route untuk admin akademik - Kurikulum Prodi */}
-      <Route path={String(AdminAcademicRoute.prodiCurriculum.curriculum)} element={<CurriculumProdi />} />
+      <Route path={String(AdminAcademicRoute.prodiCurriculum)} element={<CurriculumProdi />} />
 
       {/* Route untuk admin akademik - Manajemen RPS */}
       <Route path={String(AdminAcademicRoute.rpsManagement.rpsManagement)} element={<RpsManagement />} />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.detailRps)} element={<DetailRps />} />
-
       <Route path={String(AdminAcademicRoute.rpsManagement.addRps)} element={<AddRps />} />
+
+      <Route path={String(AdminAcademicRoute.rpsManagement.editRps)} element={<EditRps />} />
+
+      <Route path={String(AdminAcademicRoute.rpsManagement.detailRps)} element={<DetailRps />} />
 
       {/* Route Untuk Admin Keuangan */}
       <Route path={String(AdminFinanceRoute.dashboardAdminFinance)} element={<DashboardAdminFinance />} />

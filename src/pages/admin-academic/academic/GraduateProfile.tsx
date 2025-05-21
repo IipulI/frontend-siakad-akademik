@@ -4,9 +4,10 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate } from "react-router-dom";
 import { TableGraduateProfile } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus } from "lucide-react";
+import { set } from "date-fns";
 
 interface GraduateProfileData {
-  id: string;
+  id: number;
   kodePl: string;
   profilLulusan: string;
   profesi: string;
@@ -16,69 +17,85 @@ interface GraduateProfileData {
 const GraduateProfile: React.FC = () => {
   const navigate = useNavigate();
 
-  const [profileData, setProfileData] = useState<GraduateProfileData[]>([{ id: "1", kodePl: "PL001", profilLulusan: "MK001", profesi: "Algoritma", deskripsi: "Aktif" }]);
+  const [profileData, setProfileData] = useState<GraduateProfileData[]>([
+    { id: 1, kodePl: "PL001", profilLulusan: "MK001", profesi: "Algoritma", deskripsi: "Aktif" },
+    { id: 2, kodePl: "PL001", profilLulusan: "MK001", profesi: "Algoritma", deskripsi: "Aktif" },
+  ]);
   const [selectedYear, setSelectedYear] = useState("2024");
 
-  // State untuk add inline
-  const [isAdding, setIsAdding] = useState(false);
-  const [newProfile, setNewProfile] = useState<GraduateProfileData>({
-    id: "",
-    kodePl: "",
-    profilLulusan: "",
-    profesi: "",
-    deskripsi: "",
-  });
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [currentData, setCurrentData] = useState<GraduateProfileData | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleEdit = (id: number) => {
+    const selectedData = profileData.find((item) => item.id === id);
+    if (selectedData) {
+      setCurrentData(selectedData);
+      setIsEditing(true);
+      setIsAdding(false);
+      setErrorMessage("");
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setProfileData(profileData.filter((item) => item.id !== id));
+    setErrorMessage("");
+  };
+
+  const handleAdd = () => {
+    setIsAdding(true);
+    setIsEditing(false);
+    setCurrentData({
+      id: Date.now(),
+      kodePl: "",
+      profilLulusan: "",
+      profesi: "",
+      deskripsi: "",
+    });
+    setErrorMessage("");
+  };
+
+  const isFormValid = () => {
+    return !!(currentData?.kodePl && currentData?.profilLulusan && currentData?.profesi && currentData?.deskripsi);
+  };
 
   const handleBack = () => {
-    navigate(AdminAcademicRoute.courseManagement.courseManagement);
+    navigate(AdminAcademicRoute.obeManagement.obeManagement);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   const handleSave = () => {
-    console.log("Data disimpan");
-  };
+    if (!currentData) return;
 
-  const handleAddProfile = () => {
-    setIsAdding(true);
-    setNewProfile({
-      id: Date.now().toString(),
-      kodePl: "",
-      profilLulusan: "",
-      profesi: "",
-      deskripsi: "",
-    });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewProfile((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveNewProfile = () => {
-    // Validasi sederhana: minimal kodePl dan profilLulusan tidak kosong
-    if (newProfile.kodePl.trim() === "" || newProfile.profilLulusan.trim() === "") {
-      alert("Kode PL dan Profil Lulusan wajib diisi");
+    if (!isFormValid()) {
+      setErrorMessage("Semua kolom harus diisi sebelum menyimpan.");
       return;
     }
-    setProfileData((prev) => [...prev, newProfile]);
-    setIsAdding(false);
-    setNewProfile({
-      id: "",
-      kodePl: "",
-      profilLulusan: "",
-      profesi: "",
-      deskripsi: "",
-    });
+
+    setErrorMessage("");
+
+    if (isEditing) {
+      const updatedData = profileData.map((item) => (item.id === currentData.id ? currentData : item));
+      setProfileData(updatedData);
+      setIsEditing(false);
+    } else if (isAdding) {
+      setProfileData([currentData, ...profileData]);
+      setIsAdding(false);
+    }
+
+    setCurrentData(null);
   };
 
-  const handleCancelAdd = () => {
+  const handleReset = () => {
     setIsAdding(false);
-    setNewProfile({
-      id: "",
-      kodePl: "",
-      profilLulusan: "",
-      profesi: "",
-      deskripsi: "",
-    });
+    setIsEditing(false);
+    setCurrentData(null);
+    setErrorMessage("");
   };
 
   const handleNavigation = (path: string) => {
@@ -90,12 +107,12 @@ const GraduateProfile: React.FC = () => {
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center ">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded-l-md">
+            <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md cursor-pointer">
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50  w-64" />
-              <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
+              <input type="search" placeholder="Cari Profil Lulusan" className="px-3 py-2 border border-black/50 w-64" />
+              <button className="bg-primary-yellow px-3 py-3 rounded-r-md cursor-pointer">
                 <Search color="white" size={20} />
               </button>
             </div>
@@ -105,7 +122,7 @@ const GraduateProfile: React.FC = () => {
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
             </button>
-            <button onClick={handleSave} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center">
+            <button onClick={handleSave} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center cursor-pointer">
               <Save className="mr-2" size={16} />
               Simpan
             </button>
@@ -129,7 +146,7 @@ const GraduateProfile: React.FC = () => {
             </div>
           </div>
 
-          {/* Detail Data Mata Kuliah */}
+          {/* Detail Data Profil Lulusan */}
           <div className="w-[80%] p-3">
             <div className="grid grid-cols-2 gap-2 bg-primary-green/10 p-4">
               <div className="flex justify-between">
@@ -157,23 +174,33 @@ const GraduateProfile: React.FC = () => {
                 <option value="2023">2023</option>
                 <option value="2022">2022</option>
               </select>
-              <button onClick={handleAddProfile} disabled={isAdding} className={`ml-auto bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding ? "opacity-50 cursor-not-allowed" : ""}`}>
+              <button
+                onClick={handleAdd}
+                disabled={isAdding || isEditing}
+                className={`ml-auto bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding || isEditing ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
                 <Plus className="mr-2" size={16} />
                 Tambah Profil Lulusan
               </button>
             </div>
+
+            {/* Pesan error */}
+            {errorMessage && <p className="text-red-600 mt-2">{errorMessage}</p>}
 
             <div className="mt-4 overflow-x-auto">
               <TableGraduateProfile
                 data={profileData}
                 tableHead={["Kode PL", "Profil Lulusan", "Profesi", "Deskripsi", "Aksi"]}
                 error="Data tidak ditemukan."
-                isAdding={isAdding}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isEditing={isEditing}
+                currentData={currentData}
+                onSave={handleSave}
+                onReset={handleReset}
                 onInputChange={handleInputChange}
-                onCancelAdd={handleCancelAdd}
-                onSaveNewProfile={handleSaveNewProfile}
-                newProfile={newProfile}
-                onSave={handleSaveNewProfile}
+                isAdding={isAdding}
+                isFormValid={isFormValid}
               />
             </div>
           </div>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, CornerUpLeft } from "lucide-react";
 import { TableRpsManagement } from "../../../components/Table";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes.tsx";
 
 interface RPSData {
@@ -64,42 +64,35 @@ const RpsManagement: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Manajemen RPS">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-3 gap-6">
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Tahun Kurikulum</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Program Studi</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Jenjang</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
-            </select>
-          </div>
+        <div className="grid grid-cols-4 gap-6">
+          {[
+            { label: "Tahun Kurikulum", value: "2021" },
+            { label: "Program Studi", value: "2025 Genap" },
+            { label: "Jenjang", value: "S1 - Teknik Informatika" },
+            { label: "Status Kelas", value: "-- Semua Status --" },
+          ].map((item, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <label className="w-36 text-gray-700">{item.label}</label>
+              <select className="flex-1 rounded px-2 py-1 border border-primary-brown">
+                <option value="all">{item.value}</option>
+              </select>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex">
-          <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-1 w-72 rounded-l-md border border-black/50" />
+          <input type="search" placeholder="Cari Program Studi" className="px-3 py-1 w-72 rounded-l-md border border-black/50" />
           <button className="bg-primary-yellow rounded-r-md w-10 flex items-center justify-center">
             <Search color="white" size={20} />
           </button>
-        </div>
 
-        <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white ml-auto flex items-center">
-          <Plus className="mr-2" size={16} />
-          Tambah
-        </button>
+          <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white ml-auto flex items-center">
+            <Plus className="mr-2" size={16} />
+            Tambah
+          </button>
+        </div>
 
         {/* Tabel RPS */}
         <div className="mt-4">

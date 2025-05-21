@@ -54,33 +54,33 @@ const dropdownMenus = {
     items: [
       {
         icon: "icon_annon.png",
-        title: "Tahun Akademik",
-        description: "lorem ipsum dolor sit amet",
-        to: String(),
+        title: "Tahun Kurikulum",
+        description: "Tahun Kurikulum",
+        to: String(AdminAcademicRoute.curriculumYear),
       },
       {
         icon: "icon_annon.png",
         title: "Mata Kuliah",
-        description: "lorem ipsum dolor sit amet",
-        to: String(),
+        description: "Manajemen Mata Kuliah",
+        to: String(AdminAcademicRoute.courseManagement.courseManagement),
       },
       {
         icon: "icon_annon.png",
         title: "Kurikulum Program Studi",
-        description: "lorem ipsum dolor sit amet",
-        to: String(),
+        description: "Kurikulum Program Studi",
+        to: String(AdminAcademicRoute.prodiCurriculum),
       },
       {
         icon: "icon_annon.png",
         title: "Manajemen OBE",
-        description: "lorem ipsum dolor sit amet",
-        to: String(),
+        description: "Managemen OBE",
+        to: String(AdminAcademicRoute.obeManagement.obeManagement),
       },
       {
         icon: "icon_calendar.png",
         title: "Manajemen RPS",
-        description: "lorem ipsum dolor sit amet",
-        to: String(),
+        description: "Manajemen RPS",
+        to: String(AdminAcademicRoute.rpsManagement.rpsManagement),
       },
     ],
   },
@@ -137,23 +137,15 @@ const HeaderAdminAcademic = () => {
               <div>
                 <div className="flex items-center gap-4">
                   {/* menu hamburger */}
-                  <HamburgerMenu
-                    navItems={navItems}
-                    dropdownMenus={dropdownMenus}
-                  />
+                  <HamburgerMenu navItems={navItems} dropdownMenus={dropdownMenus} />
                   {/* logo */}
-                  <Link
-                    to={"/dashboard"}
-                    className="hidden sm:block sm:w-12 xl:w-15"
-                  >
+                  <Link to={"/dashboard"} className="hidden sm:block sm:w-12 xl:w-15">
                     <img width={60} src="/img/logo_uika.png" alt="" />
                   </Link>
                   <div>
                     <div className="text-white">
                       <h1 className="text-xs">SIM Akademik</h1>
-                      <h1 className="text-sm xl:text-base font-semibold">
-                        Universitas Ibn Khaldun
-                      </h1>
+                      <h1 className="text-sm xl:text-base font-semibold">Universitas Ibn Khaldun</h1>
                     </div>
                   </div>
                 </div>
@@ -163,19 +155,11 @@ const HeaderAdminAcademic = () => {
         </div>
         <div className=" bg-primary-yellow w-1/2 rounded-bl-full flex justify-center items-center relative">
           {/* aksesoris navbar */}
-          <img
-            src="/img/aksesoris_navbar.png"
-            alt=""
-            className="absolute h-full right-0"
-          />
+          <img src="/img/aksesoris_navbar.png" alt="" className="absolute h-full right-0" />
           <div className="flex space-x-5 items-center">
             <Bell size={30} color="#fff" />
             <Link to="">
-              <img
-                width={30}
-                src="/img/profile_logo.png"
-                className="rounded-full"
-              />
+              <img width={30} src="/img/profile_logo.png" className="rounded-full" />
             </Link>
           </div>
         </div>
