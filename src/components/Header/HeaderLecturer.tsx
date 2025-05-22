@@ -3,13 +3,14 @@ import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
+import { LecturerRoute } from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "",
+    path: LecturerRoute.dashboard,
     hasDropdown: false,
   },
   { id: "2", name: "Bimbingan", dropdownKey: "bimbingan", hasDropdown: true },
@@ -32,31 +33,31 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Konsultasi",
         description: "Konsultasi dengan Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.consultation,
       },
       {
         icon: "icon_calendar.png",
         title: "Bimbingan Akademik",
         description: "Monitoring KRS Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.advisor,
       },
       {
         icon: "icon_week.png",
         title: "Proposal Tugas Akhir",
         description: "Pengajuan Tugas Akhir Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.proposal,
       },
       {
         icon: "icon_calendar.png",
         title: "Daftar Tugas Akhir",
         description: "Progres Tugas Akhir Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.finalProject,
       },
       {
         icon: "icon_timetable.png",
         title: "Kegiatan Pendukung",
         description: "Monitoring Kegiatan Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.supporter,
       },
     ],
   },
@@ -64,10 +65,10 @@ const dropdownMenus = {
     title: "JADWAL",
     items: [
       {
-        icon: "icon_annon.png",
+        icon: "icon_calendar.png",
         title: "Kalendar Akademik",
         description: "Daftar Kegiatan Akademik",
-        to: String(),
+        to: LecturerRoute.schedule.calendar,
       },
       {
         icon: "icon_annon.png",
@@ -96,19 +97,19 @@ const dropdownMenus = {
         icon: "icon_calendar.png",
         title: "Mata Kuliah",
         description: "Daftar Mata Kuliah Dosen",
-        to: String(),
+        to: LecturerRoute.courses.course,
       },
       {
         icon: "icon_week.png",
         title: "Kelas Kuliah",
         description: "Reserensi SKS Mahasiswa",
-        to: String(),
+        to: LecturerRoute.courses.class,
       },
       {
         icon: "icon_timetable.png",
         title: "Berhenti Studi",
         description: "Mahasiswa",
-        to: String(),
+        to: LecturerRoute.courses.stopStudy,
       },
     ],
   },

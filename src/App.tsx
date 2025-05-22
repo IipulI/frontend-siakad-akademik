@@ -20,7 +20,7 @@ import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard"
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
 import CollegeClass from "./pages/admin-academic/class/CollegeClass";
-import { AdminFinanceRoute, StudentRoute, AdminAcademicRoute } from "./types/VarRoutes";
+import { AdminFinanceRoute, StudentRoute, AdminAcademicRoute, LecturerRoute } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
 import StudentData from "./pages/admin-academic/student/StudentData";
@@ -54,6 +54,16 @@ import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
+import ConsultationLecturer from "./pages/lecturer/guidance/ConsultationLecturer";
+import CalendarLecturer from "./pages/lecturer/schedule/CalendarLecturer";
+import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
+import ProposalLecturer from "./pages/lecturer/guidance/ProposalLecturer";
+import FinalProjectLecturer from "./pages/lecturer/guidance/FinalProjectLecturer";
+import SupporterLecturer from "./pages/lecturer/guidance/SupporterLecturer";
+import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
+import StopStudyLecturer from "./pages/lecturer/courses/StopStudyLecturer";
+import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
+import ClassLecturer from "./pages/lecturer/courses/ClassLecturer";
 import EditBill from "./pages/admin-finance/EditBill";
 import CreateBill from "./pages/admin-finance/create-bill/CreateBill";
 import FormCreateBill from "./pages/admin-finance/create-bill/FormCreateBill";
@@ -62,6 +72,7 @@ import DetailStudentBill from "./pages/admin-finance/student-bill/DetailStudentB
 import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
 import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
+
 export default function App() {
   return (
     <Routes>
@@ -168,6 +179,18 @@ export default function App() {
       <Route path={String(AdminFinanceRoute.componentBill)} element={<ComponentBill />} />
       <Route path={String(AdminFinanceRoute.createComponentBill)} element={<CreateComponentBill />} />
       <Route path={String(AdminFinanceRoute.editComponentBill)} element={<EditComponentBill />} />
+
+       {/* Route untuk dosen */}
+      <Route path={String(LecturerRoute.dashboard)} element={<DashboardLecturer />} />
+      <Route path={String(LecturerRoute.guidance.consultation)} element={<ConsultationLecturer />} />
+      <Route path={String(LecturerRoute.guidance.proposal)} element={<ProposalLecturer />} />
+      <Route path={String(LecturerRoute.schedule.calendar)} element={<CalendarLecturer />} />
+      <Route path={String(LecturerRoute.guidance.finalProject)} element={<FinalProjectLecturer />} />
+      <Route path={String(LecturerRoute.guidance.supporter)} element={<SupporterLecturer />} />
+      <Route path={String(LecturerRoute.guidance.advisor)} element={<AdvisorLecturer />} />
+      <Route path={String(LecturerRoute.courses.course)} element={<CourseLecturer />} />
+      <Route path={String(LecturerRoute.courses.stopStudy)} element={<StopStudyLecturer />} />
+      <Route path={String(LecturerRoute.courses.class)} element={<ClassLecturer />} />
     </Routes>
   );
 }
