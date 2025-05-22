@@ -8,6 +8,7 @@ import {
   AdminFinanceRoute,
   StudentRoute,
   AdminAcademicRoute,
+  LecturerRoute,
 } from "../types/VarRoutes";
 
 interface FormErrors {
@@ -41,8 +42,10 @@ export default function FormLogin() {
         showConfirmButton: false,
         timer: 1000,
       }).then(() => {
-        if (role === "MAHASISWA" || role === "DOSEN") {
+        if (role === "MAHASISWA") {
           navigate(StudentRoute.dashboard);
+        } else if (role === "DOSEN") {
+          navigate(LecturerRoute.dashboard)
         } else if (
           role === "AKADEMIK_UNIV" ||
           role === "AKADEMIK_FAK" ||
