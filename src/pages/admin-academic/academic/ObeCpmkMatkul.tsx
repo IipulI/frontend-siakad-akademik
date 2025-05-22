@@ -4,9 +4,10 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate } from "react-router-dom";
 import { TableObeCpmkMatkul } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus, Table } from "lucide-react";
+import { cp } from "fs";
 
 interface CpmkMatkulData {
-  id: string;
+  id: number;
   kodeCpmk: string;
   deskripsi: string;
   pemetaan: string;
@@ -15,47 +16,84 @@ interface CpmkMatkulData {
 const ObeCpmkMatkul: React.FC = () => {
   const navigate = useNavigate();
 
-  const [cpmkMatkulData, setCpmkMatkulData] = useState<CpmkMatkulData[]>([{ id: "1", kodeCpmk: "PL001", deskripsi: "Pemrograman Dasar", pemetaan: "PPL001" }]);
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [cpmkMatkulData, setCpmkMatkulData] = useState<CpmkMatkulData[]>([
+    { id: 1, kodeCpmk: "PL001", deskripsi: "Pemrograman Dasar", pemetaan: "PPL001" },
+    { id: 2, kodeCpmk: "PL001", deskripsi: "Pemrograman Dasar", pemetaan: "PPL001" },
+  ]);
 
-  const [isAdding, setIsAdding] = useState(false);
-  const [newCpmkMatkul, setNewCpmkMatkul] = useState<CpmkMatkulData>({
-    id: "",
-    kodeCpmk: "",
-    deskripsi: "",
-    pemetaan: "",
-  });
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [currentData, setCurrentData] = useState<CpmkMatkulData | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleEdit = (id: number) => {
+    const selectedData = cpmkMatkulData.find((item) => item.id === id);
+    if (selectedData) {
+      setCurrentData(selectedData);
+      setIsEditing(true);
+      setIsAdding(false);
+      setErrorMessage("");
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setCpmkMatkulData(cpmkMatkulData.filter((item) => item.id !== id));
+    setErrorMessage("");
+  };
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.courseManagement.courseManagement);
   };
 
-  const handleSave = () => {
-    console.log("Data disimpan", cpmkMatkulData);
-  };
-
   const handleAddCpmkMatkul = () => {
     setIsAdding(true);
-    setNewCpmkMatkul({ id: Date.now().toString(), kodeCpmk: "", deskripsi: "", pemetaan: "" });
+    setIsEditing(false);
+    setCurrentData({
+      id: Date.now(),
+      kodeCpmk: "",
+      deskripsi: "",
+      pemetaan: "",
+    });
+    setErrorMessage("");
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewCpmkMatkul((prev) => ({ ...prev, [name]: value }));
+    setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
-  const handleSaveNewCpmkMatkul = () => {
-    if (!newCpmkMatkul.kodeCpmk.trim() || !newCpmkMatkul.deskripsi.trim()) {
-      alert("Kode CPMK dan Deskripsi wajib diisi");
+  const isFormValid = () => {
+    return !!(currentData?.kodeCpmk && currentData?.deskripsi && currentData?.pemetaan);
+  };
+
+  const handleSave = () => {
+    if (!currentData) return;
+
+    if (!isFormValid()) {
+      setErrorMessage("Semua kolom harus diisi sebelum menyimpan.");
       return;
     }
-    setCpmkMatkulData((prev) => [...prev, newCpmkMatkul]);
-    setIsAdding(false);
-    setNewCpmkMatkul({ id: "", kodeCpmk: "", deskripsi: "", pemetaan: "" });
+
+    setErrorMessage("");
+
+    if (isEditing) {
+      const updatedData = cpmkMatkulData.map((item) => (item.id === currentData.id ? currentData : item));
+      setCpmkMatkulData(updatedData);
+      setIsEditing(false);
+    } else if (isAdding) {
+      setCpmkMatkulData([currentData, ...cpmkMatkulData]);
+      setIsAdding(false);
+    }
+
+    setCurrentData(null);
   };
 
-  const handleCancelAdd = () => {
+  const handleReset = () => {
     setIsAdding(false);
+    setIsEditing(false);
+    setCurrentData(null);
+    setErrorMessage("");
   };
 
   const handleNavigation = (path: string) => {
@@ -138,17 +176,23 @@ const ObeCpmkMatkul: React.FC = () => {
               </button>
             </div>
 
+            {/* Tampilkan error validasi */}
+            {errorMessage && <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>}
+
             <div className="mt-4 overflow-x-auto">
               <TableObeCpmkMatkul
                 data={cpmkMatkulData}
                 tableHead={["Kode CPMK", "Deskripsi", "Pemetaan PL", "Aksi"]}
                 error="Data tidak ditemukan."
-                isAdding={isAdding}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isEditing={isEditing}
+                currentData={currentData}
+                onSave={handleSave}
+                onReset={handleReset}
                 onInputChange={handleInputChange}
-                onCancelAdd={handleCancelAdd}
-                onSaveNewCpmkMatkul={handleSaveNewCpmkMatkul}
-                newCpmkMatkul={newCpmkMatkul}
-                onSave={handleSaveNewCpmkMatkul}
+                isAdding={isAdding}
+                isFormValid={isFormValid}
               />
             </div>
           </div>

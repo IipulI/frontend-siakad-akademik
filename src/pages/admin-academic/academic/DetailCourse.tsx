@@ -68,7 +68,7 @@ const DetailCourse: React.FC = () => {
           </div>
 
           {/* Detail Data Mata Kuliah */}
-          <div className="w-[80%] bg-white py-2 px-5">
+          <div className="w-[80%] bg-white py-2 px-2">
             <div className="bg-[#DFF0D8] p-5 mb-6 text-black">
               <h2>
                 Kode, Nama & Total SKS tidak bisa diubah karena mata kuliah sudah digunakan di kurikulum <strong>S1 Akuntansi</strong>
@@ -76,64 +76,68 @@ const DetailCourse: React.FC = () => {
             </div>
 
             <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="font-semibold">Tahun Kurikulum:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{kurikulum}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">Tahun Kurikulum:</label>
+                <p className="px-3 py-2 rounded flex-1">{kurikulum}</p>
               </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Unit Pengampu:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{unitPengampu}</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="font-semibold">Kode Mata Kuliah:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{kodeMataKuliah}</p>
-              </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Semester:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{semester}</p>
+              <div className="w-1/2 flex items-center gap-10">
+                <label className="font-semibold w-40">Unit Pengampu:</label>
+                <p className="px-3 py-2 rounded flex-1">{unitPengampu}</p>
               </div>
             </div>
+            <hr className="border-t-2 border-gray-200 " />
 
             <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="font-semibold">Nama Mata Kuliah:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{namaMataKuliah}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">Kode Mata Kuliah:</label>
+                <p className="px-3 py-2 rounded flex-1">{kodeMataKuliah}</p>
               </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Mata Kuliah Prasyarat 1:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{prasyarat1}</p>
+              <div className="w-1/2 flex items-center gap-11">
+                <label className="font-semibold w-40">Semester:</label>
+                <p className="px-3 py-2 rounded flex-1">{semester}</p>
               </div>
             </div>
+            <hr className="border-t-2 border-gray-200 " />
 
             <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="font-semibold">SKS Tatap Muka:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{sksTatapMuka}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">Nama Mata Kuliah:</label>
+                <p className="px-3 py-2 rounded flex-1">{namaMataKuliah}</p>
               </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Mata Kuliah Prasyarat 2:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{prasyarat2}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-48 whitespace-nowrap">Mata Kuliah Prasyarat 1:</label>
+                <p className="px-3 py-2 rounded flex-1">{prasyarat1}</p>
               </div>
             </div>
+            <hr className="border-t-2 border-gray-200 " />
 
             <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="font-semibold">SKS Praktikum:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{sksPraktikum}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">SKS Tatap Muka:</label>
+                <p className="px-3 py-2 rounded flex-1">{sksTatapMuka}</p>
               </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Mata Kuliah Prasyarat 3:</label>
-                <p className="border border-black/50 px-3 py-2 rounded">{prasyarat3}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-48 whitespace-nowrap">Mata Kuliah Prasyarat 2:</label>
+                <p className="px-3 py-2 rounded flex-1">{prasyarat2}</p>
               </div>
             </div>
+            <hr className="border-t-2 border-gray-200 " />
 
             <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="font-semibold">Total SKS:</label>
-                <p className="border border-black/50 px-3 py-2 rounded bg-gray-200">{totalSks}</p>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">SKS Praktikum:</label>
+                <p className="px-3 py-2 rounded flex-1">{sksPraktikum}</p>
+              </div>
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-48 whitespace-nowrap">Mata Kuliah Prasyarat 3:</label>
+                <p className="px-3 py-2 rounded flex-1">{prasyarat3}</p>
+              </div>
+            </div>
+            <hr className="border-t-2 border-gray-200 " />
+            <div className="flex gap-4 mb-4">
+              <div className="w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">Total SKS:</label>
+                <p className="px-3 py-2 rounded  flex-1">{totalSks}</p>
               </div>
             </div>
           </div>

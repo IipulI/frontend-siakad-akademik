@@ -20,12 +20,7 @@ import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard"
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
 import CollegeClass from "./pages/admin-academic/class/CollegeClass";
-import {
-  AdminFinanceRoute,
-  StudentRoute,
-  AdminAcademicRoute,
-  LecturerRoute,
-} from "./types/VarRoutes";
+import { AdminFinanceRoute, StudentRoute, AdminAcademicRoute, LecturerRoute } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
 import StudentData from "./pages/admin-academic/student/StudentData";
@@ -55,8 +50,8 @@ import ObeCpmkMatkul from "./pages/admin-academic/academic/ObeCpmkMatkul";
 import CurriculumProdi from "./pages/admin-academic/academic/CurriculumProdi";
 import RpsManagement from "./pages/admin-academic/academic/RpsManagement";
 import AddRps from "./pages/admin-academic/academic/AddRps";
+import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
-
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
 import ConsultationLecturer from "./pages/lecturer/guidance/ConsultationLecturer";
@@ -69,6 +64,15 @@ import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
 import StopStudyLecturer from "./pages/lecturer/courses/StopStudyLecturer";
 import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
 import ClassLecturer from "./pages/lecturer/courses/ClassLecturer";
+import EditBill from "./pages/admin-finance/EditBill";
+import CreateBill from "./pages/admin-finance/create-bill/CreateBill";
+import FormCreateBill from "./pages/admin-finance/create-bill/FormCreateBill";
+import StudentBill from "./pages/admin-finance/student-bill/StudentBill";
+import DetailStudentBill from "./pages/admin-finance/student-bill/DetailStudentBill";
+import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
+import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
+import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
+
 export default function App() {
   return (
     <Routes>
@@ -106,22 +110,10 @@ export default function App() {
 
       {/* Route Untuk Admin Akademik */}
       <Route path={String(AdminAcademicRoute.dashboardAdminAcademic)} element={<DashboardAdminAcademic />} />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.class)}
-        element={<CollegeClass />}
-      />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.class)}
-        element={<CollegeClass />}
-      />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.createClass)}
-        element={<CreateCollegeClass />}
-      />
-      <Route
-        path={String(AdminAcademicRoute.collegeClass.detailClass)}
-        element={<DetailCollegeClass />}
-      />
+      <Route path={String(AdminAcademicRoute.collegeClass.class)} element={<CollegeClass />} />
+      <Route path={String(AdminAcademicRoute.collegeClass.class)} element={<CollegeClass />} />
+      <Route path={String(AdminAcademicRoute.collegeClass.createClass)} element={<CreateCollegeClass />} />
+      <Route path={String(AdminAcademicRoute.collegeClass.detailClass)} element={<DetailCollegeClass />} />
       <Route path={String(AdminAcademicRoute.student.studentData)} element={<StudentData />} />
       <Route path={String(AdminAcademicRoute.student.createStudent)} element={<CreateStudent />} />
       <Route path={String(AdminAcademicRoute.student.detailStudent)} element={<DetailStudent />} />
@@ -139,7 +131,7 @@ export default function App() {
       <Route path={String(AdminAcademicRoute.setting.setComposition)} element={<SetCompositionAdminAcademic />} />
 
       {/* Route untuk admin akademik - Tahun Kurikulum */}
-      <Route path={String(AdminAcademicRoute.curriculumYear.curriculumYear)} element={<CurriculumYear />} />
+      <Route path={String(AdminAcademicRoute.curriculumYear)} element={<CurriculumYear />} />
 
       {/* Route untuk admin akademik - Manajemen Mata Kuliah*/}
       <Route path={String(AdminAcademicRoute.courseManagement.courseManagement)} element={<CourseManagement />} />
@@ -166,19 +158,29 @@ export default function App() {
       <Route path={String(AdminAcademicRoute.obeManagement.cpmkMataKuliah)} element={<ObeCpmkMatkul />} />
 
       {/* Route untuk admin akademik - Kurikulum Prodi */}
-      <Route path={String(AdminAcademicRoute.prodiCurriculum.curriculum)} element={<CurriculumProdi />} />
+      <Route path={String(AdminAcademicRoute.prodiCurriculum)} element={<CurriculumProdi />} />
 
       {/* Route untuk admin akademik - Manajemen RPS */}
       <Route path={String(AdminAcademicRoute.rpsManagement.rpsManagement)} element={<RpsManagement />} />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.detailRps)} element={<DetailRps />} />
-
       <Route path={String(AdminAcademicRoute.rpsManagement.addRps)} element={<AddRps />} />
+
+      <Route path={String(AdminAcademicRoute.rpsManagement.editRps)} element={<EditRps />} />
+
+      <Route path={String(AdminAcademicRoute.rpsManagement.detailRps)} element={<DetailRps />} />
 
       {/* Route Untuk Admin Keuangan */}
       <Route path={String(AdminFinanceRoute.dashboardAdminFinance)} element={<DashboardAdminFinance />} />
-    
-      {/* Route untuk dosen */}
+      <Route path={String(AdminFinanceRoute.editBill)} element={<EditBill />} />
+      <Route path={String(AdminFinanceRoute.createBill)} element={<CreateBill />} />
+      <Route path={String(AdminFinanceRoute.formCreateBill)} element={<FormCreateBill />} />
+      <Route path={String(AdminFinanceRoute.studentBill)} element={<StudentBill />} />
+      <Route path={String(AdminFinanceRoute.detailStudentBill)} element={<DetailStudentBill />} />
+      <Route path={String(AdminFinanceRoute.componentBill)} element={<ComponentBill />} />
+      <Route path={String(AdminFinanceRoute.createComponentBill)} element={<CreateComponentBill />} />
+      <Route path={String(AdminFinanceRoute.editComponentBill)} element={<EditComponentBill />} />
+
+       {/* Route untuk dosen */}
       <Route path={String(LecturerRoute.dashboard)} element={<DashboardLecturer />} />
       <Route path={String(LecturerRoute.guidance.consultation)} element={<ConsultationLecturer />} />
       <Route path={String(LecturerRoute.guidance.proposal)} element={<ProposalLecturer />} />

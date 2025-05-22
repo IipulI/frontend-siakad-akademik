@@ -1,6 +1,5 @@
 type routeType = {
-  [key: string]: string | string;
-  // [key: string]: string | routeType;
+  [key: string]: string | routeType;
 };
 
 export const StudentRoute = {
@@ -47,9 +46,7 @@ export const AdminAcademicRoute = {
     academicAdvisor: "/mahasiswa/pembimbing-akademik",
   },
   announcement: "/admin-akademik/pengumuman",
-  curriculumYear: {
-    curriculumYear: "/admin-akademik/tahun-kurikulum",
-  },
+  curriculumYear: "/admin-akademik/tahun-kurikulum",
   courseManagement: {
     courseManagement: "/admin-akademik/mata-kuliah",
     addCourse: "/admin-akademik/mata-kuliah/tambah-mata-kuliah",
@@ -59,18 +56,17 @@ export const AdminAcademicRoute = {
     rpsCourse: "/admin-akademik/mata-kuliah/rps-mata-kuliah",
   },
   obeManagement: {
-    obeManagement: "/admin-akademik/obe/management-obe",
+    obeManagement: "/admin-akademik/obe/manajemen-obe",
     graduateProfile: "/admin-akademik/obe/profil-lulusan",
     cpl: "/admin-akademik/obe/cpl",
     cpmk: "/admin-akademik/obe/cpmk",
     cpmkMataKuliah: "/admin-akademik/obe/cpmk-mata-kuliah",
   },
-  prodiCurriculum: {
-    curriculum: "/admin-akademik/kurikulum-prodi",
-  },
+  prodiCurriculum: "/admin-akademik/kurikulum-prodi",
   rpsManagement: {
     rpsManagement: "/admin-akademik/rps",
     addRps: "/admin-akademik/rps/tambah-rps",
+    editRps: "/admin-akademik/rps/edit-rps",
     detailRps: "/admin-akademik/rps/detail-rps",
   },
   setting: {
@@ -80,12 +76,21 @@ export const AdminAcademicRoute = {
     level: "/admin-akademik/jenjang-pendidikan",
     limit: "/admin-akademik/batas-sks",
     composition: "/admin-akademik/komposisi-nilai",
-    setComposition: "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
+    setComposition:
+      "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
   } as routeType,
 };
 
 export const AdminFinanceRoute: routeType = {
-  dashboardAdminFinance: "/admin-finance/dashboard",
+  dashboardAdminFinance: "/admin-keuangan/dashboard",
+  editBill: "/admin-keuangan/dashboard/edit-tagihan",
+  createBill: "/admin-keuangan/buat-tagihan",
+  formCreateBill: "/admin-keuangan/buat-tagihan/form-buat-tagihan",
+  studentBill: "/admin-keuangan/tagihan-mahasiswa",
+  detailStudentBill: "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
+  componentBill: "/admin-keuangan/komponen-tagihan",
+  createComponentBill: "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
+  editComponentBill: "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan",
 };
 
 export const LecturerRoute = {

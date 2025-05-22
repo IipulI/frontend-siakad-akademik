@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TableCourseManagement } from "../../../components/Table";
 import { RefreshCw, Search, Plus, Trash, Settings } from "lucide-react";
@@ -135,32 +135,32 @@ const CourseManagement: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Mata Kuliah" className="">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-x-6 gap-y-2">
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">2025 Ganjil</option>
             </select>
           </div>
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Jenis Mata Kuliah</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">Kuliah</option>
             </select>
           </div>
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Kelompok Mata Kuliah</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">MKK</option>
             </select>
           </div>
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Unit / Prodi Pengampu</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+              <option value="all">-- Universitas Ibn Khaldun --</option>
             </select>
           </div>
         </div>
@@ -172,7 +172,7 @@ const CourseManagement: React.FC = () => {
             <option value="all">-Semua-</option>
           </select>
           <div className="flex">
-            <input type="search" placeholder="Cari Tahun Kurikulum" className="px-3 py-1 w-72 rounded-l-md border border-black/50" />
+            <input type="search" placeholder="Cari Kelas Kuliah" className="px-3 py-1 w-72 rounded-l-md border border-black/50" />
             <button className="bg-primary-yellow w-10 flex items-center justify-center">
               <Search color="white" size={20} />
             </button>
@@ -186,7 +186,6 @@ const CourseManagement: React.FC = () => {
               Tambah
             </button>
 
-            {/* Tombol Hapus sekarang hapus semua yang terpilih */}
             <button
               onClick={() => {
                 setData(data.filter((item) => !selectedIds.includes(item.id)));

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { TableCurriculumProdi } from "../../../components/Table";
-import { RefreshCw, Search, Plus, Trash } from "lucide-react";
+import { RefreshCw, Search, Plus, Trash, Save } from "lucide-react";
 
 interface CurriculumProdiData {
   id: number;
@@ -36,7 +36,7 @@ const CurriculumProdi: React.FC = () => {
       sks: "3",
       status: "Wajib",
       nilaiMin: "C",
-      prasyarat: "Algoritma dan Pemrograman",
+      prasyarat: "-",
       konsentrasiBidang: "Informatika",
     },
     {
@@ -45,7 +45,7 @@ const CurriculumProdi: React.FC = () => {
       kode: "CS103",
       mataKuliah: "Matematika Diskrit",
       sks: "3",
-      status: "Pilihan",
+      status: "Wajib",
       nilaiMin: "C",
       prasyarat: "-",
       konsentrasiBidang: "Informatika",
@@ -53,71 +53,111 @@ const CurriculumProdi: React.FC = () => {
   ]);
 
   return (
-    <MainLayout isGreeting={false} titlePage="Mata Kuliah" className="">
+    <MainLayout isGreeting={false} titlePage="Kurikulum Prodi" className="">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5 flex items-center justify-between gap-4">
         <div className="flex gap-4">
-          <div className="flex flex-col gap-2 w-64">
-            <span>Program Studi</span>
-            <select className="rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+          <div className="flex items-center gap-2 w-96">
+            <span className="whitespace-nowrap w-28 text-primary-yellow font-semibold">Program Studi</span>
+            <select className="rounded px-3 py-2 border border-primary-brown flex-1 ">
+              <option value="all">-- Semua Status --</option>
             </select>
           </div>
-          <div className="flex flex-col gap-2 w-64">
-            <span>Kurikulum</span>
-            <select className="rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
+          <div className="flex items-center gap-2 w-72">
+            <span className="whitespace-nowrap w-28 text-primary-yellow font-semibold">Kurikulum</span>
+            <select className="rounded px-3 py-2 border border-primary-brown flex-1 ">
+              <option value="all">-- 2024 --</option>
             </select>
           </div>
         </div>
 
         <div className="flex gap-2">
-          <button className="bg-primary-yellow text-white rounded px-4 py-2 flex items-center gap-1">
-            <Plus size={16} />
+          <button className="bg-primary-yellow text-white rounded px-6 py-2 flex items-center gap-1">
+            <Save size={16} />
             Salin
           </button>
-          <button className="bg-primary-blueSoft text-white rounded px-4 py-2 flex items-center gap-1">
-            <RefreshCw size={16} />
+          <button className="bg-primary-blueSoft text-white rounded px-6 py-2 flex items-center gap-1">
+            <Save size={16} />
             Cetak
           </button>
         </div>
       </div>
 
-      <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5 flex items-center justify-between gap-4">
+      <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-green px-5 flex items-center justify-between gap-4">
         <div className="flex gap-4">
-          <div className="flex flex-col gap-2 w-64">
-            <span>Mata Kuliah</span>
-            <select className="rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
-            </select>
+          <div className="flex flex-col gap-2 w-96">
+            <span className="text-primary-green font-semibold">Mata Kuliah</span>
+            <div className="relative">
+              <select className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold">
+                <option value="all" className="py-2 hover:bg-primary-yellow">
+                  -- Cari Mata Kuliah --
+                </option>
+                <option value="CS101" className="py-2 hover:bg-primary-yellow">
+                  TIF152 - Basis data + praktikum - 3 sks
+                </option>
+                <option value="CS102" className="py-2 hover:bg-primary-yellow">
+                  TIF451 - Komputasi Berbasis Jaringan + praktikum - 3sks
+                </option>
+              </select>
+            </div>
           </div>
-          <div className="flex flex-col gap-2 w-64">
-            <span>Semester</span>
-            <select className="rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
-            </select>
+
+          <div className="flex flex-col gap-2 w-40">
+            <span className="text-primary-green font-semibold">Semester</span>
+            <div className="relative">
+              <select className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold">
+                <option value="all" className="py-2 hover:bg-primary-yellow">
+                  -- 2024 --
+                </option>
+                <option value="1" className="py-2 hover:bg-primary-yellow">
+                  Semester 1
+                </option>
+                <option value="2" className="py-2 hover:bg-primary-yellow">
+                  Semester 2
+                </option>
+                <option value="3" className="py-2 hover:bg-primary-yellow">
+                  Semester 3
+                </option>
+              </select>
+            </div>
           </div>
-          <div className="flex flex-col gap-2 w-64">
-            <span>Nilai</span>
-            <select className="rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-Semua-</option>
-            </select>
+
+          <div className="flex flex-col gap-2 w-40">
+            <span className="text-primary-green font-semibold">Nilai</span>
+            <div className="relative">
+              <select className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold">
+                <option value="all" className="py-2 hover:bg-primary-yellow">
+                  -- Pilih Nilai --
+                </option>
+                <option value="A" className="py-2 hover:bg-primary-yellow">
+                  A
+                </option>
+                <option value="B" className="py-2 hover:bg-primary-yellow">
+                  B
+                </option>
+                <option value="C" className="py-2 hover:bg-primary-yellow">
+                  C
+                </option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Checkbox Section */}
         <div className="flex flex-col gap-2 text-primary-green">
           <h3 className="font-bold">Opsi Tambahan</h3>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="showPassed" className="w-4 h-4" />
-            <label htmlFor="showPassed" className="font-semibold">
-              MK Wajib
-            </label>
-          </div>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="showFailed" className="w-4 h-4 " />
-            <label htmlFor="showFailed" className="font-semibold">
-              Paket MK
-            </label>
+          <div className="flex flex-row gap-4">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="showPassed" className="w-4 h-4" />
+              <label htmlFor="showPassed" className="font-semibold">
+                MK Wajib
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="showFailed" className="w-4 h-4" />
+              <label htmlFor="showFailed" className="font-semibold">
+                Paket MK
+              </label>
+            </div>
           </div>
         </div>
 
@@ -131,7 +171,10 @@ const CurriculumProdi: React.FC = () => {
 
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow p-8">
         {/* Table Rendering */}
-        <div className="mt-4">
+        <div className="mt-4 ">
+          <TableCurriculumProdi data={data} tableHead={["No", "Kode", "Mata Kuliah", "SKS", "Status", "Nilai Min", "Prasyarat", "Konsentrasi", "Aksi"]} error="Data tidak ditemukan." />
+        </div>
+        <div className="mt-8 ">
           <TableCurriculumProdi data={data} tableHead={["No", "Kode", "Mata Kuliah", "SKS", "Status", "Nilai Min", "Prasyarat", "Konsentrasi", "Aksi"]} error="Data tidak ditemukan." />
         </div>
       </div>
