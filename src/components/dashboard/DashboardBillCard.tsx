@@ -1,3 +1,4 @@
+import React from "react";
 import { TriangleAlert } from "lucide-react";
 import React from "react";
 
