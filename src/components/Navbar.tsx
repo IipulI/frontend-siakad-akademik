@@ -63,6 +63,7 @@ const DropdownArrow = ({ isOpen }) => (
 
 // Interface for navbar item
 interface NavItem {
+  id: string;
   name: string;
   path?: string;
   dropdownKey?: string;
@@ -127,7 +128,7 @@ const Navbar = ({
                 />
               </>
             ) : (
-              <Link to={item.path || "#"} className={defaultClassName}>
+              <Link to={item.path || "#"} data-testid={item.id} className={defaultClassName}>
                 {item.name}
               </Link>
             )}

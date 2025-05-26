@@ -4,11 +4,12 @@ interface CardProps {
   title: string;
   value: string;
   color: string;
+  testId?: string;
 }
 
-export default function Card({ title, value, color }: CardProps) {
+export default function Card({ title, value, color, testId }: CardProps) {
   return (
-    <div
+    <div data-testid={testId}
       className={`text-white ${color} aspect-[3/2] sm:aspect-auto lg:aspect-auto rounded-md p-12 flex flex-col gap justify-center text-center space-y-3 lg:space-y-1`}
     >
       <h1 className="text-base sm:text-sm md:text-base lg:text-sm">{title}</h1>

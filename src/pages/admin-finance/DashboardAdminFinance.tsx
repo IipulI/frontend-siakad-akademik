@@ -16,6 +16,7 @@ const DashboardAdminFinance = () => {
 
   const dataTagihan = [
     {
+      id: "data-terbaru-1",
       tanggal: "12/04/2025",
       kodeTagihan: "INV/20242/0000001",
       nim: "221106041234",
@@ -26,6 +27,7 @@ const DashboardAdminFinance = () => {
       lunas: true,
     },
     {
+      id: "data-terbaru-2",
       tanggal: "12/04/2025",
       kodeTagihan: "INV/20242/0000002",
       nim: "221106041234",
@@ -83,16 +85,19 @@ const DashboardAdminFinance = () => {
             title="Total Tagihan"
             value="16.6 M"
             color="bg-primary-blueSoft"
+            testId="total-tagihan"
           />
           <Card
             title="total Tagihan Terbayar"
             value="10 M"
             color="bg-primary-yellow"
+            testId="total-tagihan-sudah-bayar"
           />
           <Card
             title="Total Tagihan Belum Terbayar"
             value="6.6 M"
             color="bg-red-500"
+            testId="total-tagihan-belum-bayar"
           />
         </div>
 
@@ -134,7 +139,7 @@ const DashboardAdminFinance = () => {
                   </td>
                 </tr>
                 {dataTagihan.map((data) => (
-                  <tr>
+                  <tr key={data.id} data-testid={data.id}>
                     <td className="border-1 border-gray-500 font-semibold p-2 text-center text-sm md:text-base">
                       {data.tanggal}
                     </td>

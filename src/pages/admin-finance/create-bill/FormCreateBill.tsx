@@ -9,7 +9,7 @@ export default function FormCreateBill() {
 
   const studentData = [
     {
-      id: 1,
+      id: 'data-1',
       npm: "2211060643035",
       nama: "Maulana Ikhsan",
       fakultas: "Fakultas Teknik dan Sains",
@@ -17,7 +17,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 2,
+      id: 'data-2',
       npm: "2211060642918",
       nama: "Maraginda Pangabean",
       fakultas: "Fakultas Teknik dan Sains",
@@ -25,7 +25,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 3,
+      id: 'data-3',
       npm: "2211060643035",
       nama: "Alexander",
       fakultas: "Fakultas Teknik dan Sains",
@@ -33,7 +33,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 4,
+      id: 'data-4',
       npm: "2211060642918",
       nama: "Gabriella",
       fakultas: "Fakultas Teknik dan Sains",
@@ -41,7 +41,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 5,
+      id: 'data-5',
       npm: "2211060643035",
       nama: "Alexander",
       fakultas: "Fakultas Teknik dan Sains",
@@ -49,7 +49,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 6,
+      id: 'data-6',
       npm: "2211060642918",
       nama: "Gabriella",
       fakultas: "Fakultas Teknik dan Sains",
@@ -57,7 +57,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 7,
+      id: 'data-7',
       npm: "2211060643035",
       nama: "Alexander",
       fakultas: "Fakultas Teknik dan Sains",
@@ -65,7 +65,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 8,
+      id: 'data-8',
       npm: "2211060642918",
       nama: "Gabriella",
       fakultas: "Fakultas Teknik dan Sains",
@@ -73,7 +73,7 @@ export default function FormCreateBill() {
       semester: 7,
     },
     {
-      id: 9,
+      id: 'data-9',
       npm: "2211060643035",
       nama: "Alexander",
       fakultas: "Fakultas Teknik dan Sains",

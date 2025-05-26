@@ -45,7 +45,7 @@ export default function CreateBill() {
 
   const studentData = [
     {
-      id: "1",
+      id: "data-1",
       npm: "221106043035",
       nama: "Maulana Ikhsan",
       fakultas: "Fakultas Teknik dan Sains",
@@ -53,7 +53,7 @@ export default function CreateBill() {
       semester: 7,
     },
     {
-      id: "2",
+      id: "data-2",
       npm: "221106042918",
       nama: "Maraginda Pangabean",
       fakultas: "Fakultas Teknik dan Sains",
@@ -61,7 +61,7 @@ export default function CreateBill() {
       semester: 7,
     },
     {
-      id: "3",
+      id: "data-3",
       npm: "221106043035",
       nama: "Alexander",
       fakultas: "Fakultas Teknik dan Sains",
@@ -69,7 +69,7 @@ export default function CreateBill() {
       semester: 7,
     },
     {
-      id: "4",
+      id: "data-4",
       npm: "221106042918",
       nama: "Gabriella",
       fakultas: "Fakultas Teknik dan Sains",

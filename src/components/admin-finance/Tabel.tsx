@@ -60,7 +60,7 @@ export default function Table({
         </thead>
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={row.id || rowIndex}>
+            <tr key={row.id || rowIndex} data-testid={row.id}>
               {showCheckbox && (
                 <td className={cellClassName}>
                   <input type="checkbox" className="w-4 h-4" />

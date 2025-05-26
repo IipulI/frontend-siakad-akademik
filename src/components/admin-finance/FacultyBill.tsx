@@ -36,8 +36,8 @@ export default function FacultyBill() {
     <div className="flex flex-col w-full border-1 rounded-lg p-4 mx-auto col-span-7 lg:col-span-2">
       <h2 className="text-md text-gray-800 mb-6">Tagihan Per Fakultas</h2>
 
-      <div className="h-64 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-64 w-full" data-testid="chart-test">
+        <ResponsiveContainer width="100%" height="100%" >
           <PieChart>
             <Pie
               data={data}

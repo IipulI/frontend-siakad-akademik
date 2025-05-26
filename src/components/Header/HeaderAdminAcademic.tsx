@@ -140,7 +140,7 @@ const HeaderAdminAcademic = () => {
                   <HamburgerMenu navItems={navItems} dropdownMenus={dropdownMenus} />
                   {/* logo */}
                   <Link to={"/dashboard"} className="hidden sm:block sm:w-12 xl:w-15">
-                    <img width={60} src="/img/logo_uika.png" alt="" />
+                    <img width={60} src="/img/logo_uika.png" alt="logo" />
                   </Link>
                   <div>
                     <div className="text-white">
@@ -155,7 +155,7 @@ const HeaderAdminAcademic = () => {
         </div>
         <div className=" bg-primary-yellow w-1/2 rounded-bl-full flex justify-center items-center relative">
           {/* aksesoris navbar */}
-          <img src="/img/aksesoris_navbar.png" alt="" className="absolute h-full right-0" />
+          <img src="/img/aksesoris_navbar.png" alt="aksesoris" className="absolute h-full right-0" />
           <div className="flex space-x-5 items-center">
             <Bell size={30} color="#fff" />
             <Link to="">

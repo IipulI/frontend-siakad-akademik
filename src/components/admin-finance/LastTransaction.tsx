@@ -3,42 +3,49 @@ import { MoreVertical } from "lucide-react";
 export default function LastTransaction() {
   const transactions = [
     {
+      id: "latest-trans-1",
       name: "Muhammad Ridho Fatan",
       method: "Bank account",
       date: "2024/04/01",
       amount: "+Rp2.000.000",
     },
     {
+      id: "latest-trans-2",
       name: "Muhammad Ridho Fatan",
       method: "Tokopedia",
       date: "2024/03/29",
       amount: "+Rp2.000.000",
     },
     {
+      id: "latest-trans-3",
       name: "Muhammad Ridho Fatan",
       method: "Shopee",
       date: "2024/03/29",
       amount: "+Rp2.000.000",
     },
     {
+      id: "latest-trans-4",
       name: "Muhammad Ridho Fatan",
       method: "Bank account",
       date: "2024/03/27",
       amount: "+Rp2.000.000",
     },
     {
+      id: "latest-trans-5",
       name: "Muhammad Ridho Fatan",
       method: "Tokopedia",
       date: "2024/03/26",
       amount: "+Rp2.000.000",
     },
     {
+      id: "latest-trans-6",
       name: "Muhammad Ridho Fatan",
       method: "Tokopedia",
       date: "2024/03/24",
       amount: "+Rp2.000.000",
     },
     {
+      id: "latest-trans-7",
       name: "Muhammad Ridho Fatan",
       method: "Shopee",
       date: "2024/03/21",
@@ -74,7 +81,7 @@ export default function LastTransaction() {
           </thead>
           <tbody>
             {transactions.map((transaction, index) => (
-              <tr key={index} className="border-1 text-sm">
+              <tr data-testid={transaction.id} key={index} className="border-1 text-sm">
                 <td className="py-3 px-6">{transaction.name}</td>
                 <td className="py-3 px-6 text-gray-600">
                   {transaction.method}

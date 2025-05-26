@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../components/layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
+import ExpenseSelectionPanel from "@/components/admin-finance/ExpenseSelectionPanel";
 
 export default function EditBill() {
   const usenavigate = useNavigate();
@@ -61,6 +62,8 @@ export default function EditBill() {
             />
           </div>
         </div>
+
+        {/*<ExpenseSelectionPanel />*/}
       </div>
     </MainLayout>
   );

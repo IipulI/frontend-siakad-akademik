@@ -106,6 +106,7 @@ export default function ExpenseSelectionPanel() {
                       <div className="flex items-center space-x-3">
                         <span>{formatAmount(expense.amount)}</span>
                         <button
+                            data-testid={"tambah-" + expense.id}
                           className="text-blue-500 text-sm hover:underline"
                           onClick={() => handleAddExpense(expense)}
                         >
@@ -155,6 +156,7 @@ export default function ExpenseSelectionPanel() {
                       <div className="flex items-center space-x-3">
                         <span>{formatAmount(expense.amount)}</span>
                         <button
+                            data-testid={"hapus-" + expense.id}
                           className="text-red-500 text-sm hover:underline"
                           onClick={() => handleRemoveExpense(expense)}
                         >
@@ -181,7 +183,7 @@ export default function ExpenseSelectionPanel() {
           <p className="text-sm font-medium text-gray-600">
             Total Invoice Price
           </p>
-          <p className="text-xl font-bold">{formatAmount(totalPrice)}</p>
+          <p className="text-xl font-bold" data-testid={"total-price"}>{formatAmount(totalPrice)}</p>
         </div>
 
         {/* Action Buttons */}

@@ -1,0 +1,27 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022", // Or "ESNext", depending on your target browser support
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2022"], // Include DOM for browser APIs, ES2022 for modern JS features
+    "allowJs": false, // Set to true if you still have .js files you want TS to check
+    "skipLibCheck": true, // Speeds up compilation, good for development
+    "esModuleInterop": true, // Crucial for the import React from 'react' issue
+    "allowSyntheticDefaultImports": true, // Also helps with default imports from non-ESM modules
+    "strict": true, // Highly recommended for type safety
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext", // Or "NodeNext" for more strict Node.js module resolution
+    "moduleResolution": "bundler", // Recommended for Vite
+    "resolveJsonModule": true,
+    "isolatedModules": true, // For Babel/SWC and other isolated compilation environments
+    "noEmit": true, // Vite handles emission, TS just does type checking
+    "jsx": "react-jsx", // For React 17+ JSX transform
+    "baseUrl": ".", // Important for paths to work relative to tsconfig.json
+    "paths": {
+      // Optional: Add path aliases if you use them (e.g., "@components/*": ["./src/components/*"])
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "__tests__/**/*.ts", "__tests__/**/*.tsx"], // Make sure your __tests__ folder is included
+  "references": [{ "path": "./tsconfig.node.json" }] // If you also create tsconfig.node.json
+}
