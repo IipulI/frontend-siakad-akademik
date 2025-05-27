@@ -6,24 +6,37 @@ interface OptionProps {
 }
 
 interface InputFilterProps {
+<<<<<<< HEAD
   options?: OptionProps[];
   label: string;
   select?: boolean;
   defaultValue?: string;
   placeholder?: string;
+=======
+  options: OptionProps[];
+  label: string;
+  defaultValue?: string;
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 }
 
 // input for filter student
 export function InputFilter({
+<<<<<<< HEAD
   options = [],
   select = true,
   label,
   defaultValue = "",
   placeholder,
+=======
+  options,
+  label,
+  defaultValue = "",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 }: InputFilterProps) {
   return (
     <div className={`input-filter-container grid grid-cols-2 items-center`}>
       <label className="text-xs w-fit font-medium">{label}</label>
+<<<<<<< HEAD
       {select ? (
         <select
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
@@ -42,6 +55,18 @@ export function InputFilter({
           defaultValue={defaultValue}
         />
       )}
+=======
+      <select
+        className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
+        defaultValue={defaultValue}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     </div>
   );
 }

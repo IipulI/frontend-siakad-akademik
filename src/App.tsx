@@ -19,6 +19,7 @@ import StudentGrade from "./pages/studentModule/academic/StudentGrade";
 import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard";
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
+<<<<<<< HEAD
 import CollegeClass from "./pages/admin-academic/class/CollegeClass";
 import { AdminFinanceRoute, StudentRoute, AdminAcademicRoute, LecturerRoute } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
@@ -27,6 +28,19 @@ import StudentData from "./pages/admin-academic/student/StudentData";
 import CreateStudent from "./pages/admin-academic/student/CreateStudent";
 import DetailStudent from "./pages/admin-academic/student/DetailStudent";
 import AcademikAdvisor from "./pages/admin-academic/student/AcademicAdvisor";
+=======
+import {
+  AdminFinanceRoute,
+  StudentRoute,
+  AdminAcademicRoute,
+} from "./types/VarRoutes";
+import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
+import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
+import StudentData from "./pages/admin-academic/StudentData";
+import CreateStudent from "./pages/admin-academic/CreateStudent";
+import DetailStudent from "./pages/admin-academic/DetailStudent";
+import AcademikAdvisor from "./pages/admin-academic/AcademicAdvisor";
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 import AnnouncementAdminAcademic from "./pages/admin-academic/announcement/AnnouncementAdminAcademic";
 import YearAdminAcademic from "./pages/admin-academic/setting/YearAdminAcademic";
 import PeriodAdminAcademic from "./pages/admin-academic/setting/PeriodAdminAcademy";
@@ -35,6 +49,7 @@ import LimitSKSAdminAcademic from "./pages/admin-academic/setting/LimitSKSAdminA
 import LevelAdminAcademic from "./pages/admin-academic/setting/LevelAdminAcademic";
 import CompositionAdminAcademic from "./pages/admin-academic/setting/CompositionAdminAcademic";
 import SetCompositionAdminAcademic from "./pages/admin-academic/setting/SetCompositionAdminAcademic";
+<<<<<<< HEAD
 import CurriculumYear from "./pages/admin-academic/academic/CurriculumYear";
 import CourseManagement from "./pages/admin-academic/academic/CourseManagement";
 import AddCourse from "./pages/admin-academic/academic/AddCourse";
@@ -73,6 +88,8 @@ import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
 import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
 
+=======
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 export default function App() {
   return (
     <Routes>
@@ -84,6 +101,7 @@ export default function App() {
 
       {/* Route Jadwal */}
       <Route path={String(StudentRoute.schedule.exam)} element={<Exam />} />
+<<<<<<< HEAD
       <Route path={String(StudentRoute.schedule.calendar)} element={<CalendarAcademic />} />
       <Route path={String(StudentRoute.schedule.announcement)} element={<Announcement />} />
       <Route path={String(StudentRoute.schedule.thisWeek)} element={<ThisWeek />} />
@@ -191,6 +209,136 @@ export default function App() {
       <Route path={String(LecturerRoute.courses.course)} element={<CourseLecturer />} />
       <Route path={String(LecturerRoute.courses.stopStudy)} element={<StopStudyLecturer />} />
       <Route path={String(LecturerRoute.courses.class)} element={<ClassLecturer />} />
+=======
+      <Route
+        path={String(StudentRoute.schedule.calendar)}
+        element={<CalendarAcademic />}
+      />
+      <Route
+        path={String(StudentRoute.schedule.announcement)}
+        element={<Announcement />}
+      />
+      <Route
+        path={String(StudentRoute.schedule.thisWeek)}
+        element={<ThisWeek />}
+      />
+
+      {/* Route Profile */}
+      <Route
+        path={String(StudentRoute.profile.profile)}
+        element={<StudentInformation />}
+      />
+      <Route
+        path={String(StudentRoute.profile.parent)}
+        element={<ParentInformation />}
+      />
+      <Route
+        path={String(StudentRoute.profile.programStudy)}
+        element={<ProgramStudy />}
+      />
+      <Route
+        path={String(StudentRoute.profile.educationHistory)}
+        element={<EducationHistory />}
+      />
+
+      {/* Route Akademik */}
+      <Route
+        path={String(StudentRoute.academic.history)}
+        element={<History />}
+      />
+      <Route path={String(StudentRoute.academic.retake)} element={<Retake />} />
+      <Route
+        path={String(StudentRoute.academic.studyPlan)}
+        element={<StudyPlanCard />}
+      />
+      <Route
+        path={String(StudentRoute.academic.studentGrade)}
+        element={<StudentGrade />}
+      />
+
+      {/* Route Hasil Studi */}
+      <Route
+        path={String(StudentRoute.studyResult.studyResult)}
+        element={<StudyResultCard />}
+      />
+      <Route
+        path={String(StudentRoute.studyResult.transcript)}
+        element={<TranscriptGrade />}
+      />
+
+      {/* route payment */}
+      <Route
+        path={String(StudentRoute.payment.payment)}
+        element={<StudentPayment />}
+      />
+      <Route
+        path={String(StudentRoute.payment.paymentHistory)}
+        element={<StudentPaymentHistory />}
+      />
+
+      {/* Route Untuk Admin Akademik */}
+      <Route
+        path={String(AdminAcademicRoute.dashboardAdminAcademic)}
+        element={<DashboardAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.studentData)}
+        element={<StudentData />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.createStudent)}
+        element={<CreateStudent />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.detailStudent)}
+        element={<DetailStudent />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.academicAdvisor)}
+        element={<AcademikAdvisor />}
+      />
+
+      {/* Route untuk admin akademik - pengumuman */}
+      <Route
+        path={String(AdminAcademicRoute.announcement)}
+        element={<AnnouncementAdminAcademic />}
+      />
+      {/* Route untuk admin akademik - pengaturan */}
+      <Route
+        path={String(AdminAcademicRoute.setting.year)}
+        element={<YearAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.period)}
+        element={<PeriodAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.scale)}
+        element={<ScaleAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.level)}
+        element={<LevelAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.limit)}
+        element={<LimitSKSAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.composition)}
+        element={<CompositionAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.setComposition)}
+        element={<SetCompositionAdminAcademic />}
+      />
+
+      {/* Route Untuk Admin Keuangan */}
+      <Route
+        path={String(AdminFinanceRoute.dashboardAdminFinance)}
+        element={<DashboardAdminFinance />}
+      />
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     </Routes>
   );
 }

@@ -5,12 +5,19 @@ import { Search, Plus, Trash, ChevronLeft, ChevronRight, ArrowLeft, Save } from 
 import { TableAnnouncement } from "../../../components/admin-academic/announcement/TableAnnouncement"
 import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement"
 import FormAddAnnouncement from "../../../components/admin-academic/announcement/FormAddAnnouncement"
+<<<<<<< HEAD
 import { Pagination } from "../../../components/admin-academic/Pagination"
 
 const AnnouncementAdminAcademic = () => {
   const [id, setId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+=======
+import Paging from "../../../components/admin-academic/Paging"
+const AnnouncementAdminAcademic = () => {
+  const [id, setId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
   const [showAddForm, setShowAddForm] = useState(false);
 
     const data = [
@@ -115,6 +122,7 @@ const AnnouncementAdminAcademic = () => {
                         error={"error"}
                         setId={setId}
                     />
+<<<<<<< HEAD
                     <Pagination
                         currentPage={currentPage}
                         totalPages={1000}
@@ -123,6 +131,9 @@ const AnnouncementAdminAcademic = () => {
                         totalRows={65}
                         onRowsPerPageChange={setRowsPerPage}
                     />
+=======
+                    <Paging page={page} setPage={setPage} />
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
                 </div>
             </>
         )

@@ -104,7 +104,11 @@ const Dashboard = () => {
             </div>
             <div className="md:col-span-2 space-y-4">
               <div>
+<<<<<<< HEAD
                 <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
+=======
+                <h1 className="font-semibold md:p-0 p-2 ">Grafik Akademik</h1>
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               </div>
               <IPSChart />
               <div className="space-y-4">

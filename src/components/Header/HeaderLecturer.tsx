@@ -3,14 +3,21 @@ import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
+<<<<<<< HEAD
 import { LecturerRoute } from "../../types/VarRoutes";
+=======
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
+<<<<<<< HEAD
     path: LecturerRoute.dashboard,
+=======
+    path: "",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     hasDropdown: false,
   },
   { id: "2", name: "Bimbingan", dropdownKey: "bimbingan", hasDropdown: true },
@@ -33,31 +40,51 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Konsultasi",
         description: "Konsultasi dengan Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.guidance.consultation,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_calendar.png",
         title: "Bimbingan Akademik",
         description: "Monitoring KRS Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.guidance.advisor,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_week.png",
         title: "Proposal Tugas Akhir",
         description: "Pengajuan Tugas Akhir Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.guidance.proposal,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_calendar.png",
         title: "Daftar Tugas Akhir",
         description: "Progres Tugas Akhir Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.guidance.finalProject,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_timetable.png",
         title: "Kegiatan Pendukung",
         description: "Monitoring Kegiatan Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.guidance.supporter,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
     ],
   },
@@ -65,10 +92,17 @@ const dropdownMenus = {
     title: "JADWAL",
     items: [
       {
+<<<<<<< HEAD
         icon: "icon_calendar.png",
         title: "Kalendar Akademik",
         description: "Daftar Kegiatan Akademik",
         to: LecturerRoute.schedule.calendar,
+=======
+        icon: "icon_annon.png",
+        title: "Kalendar Akademik",
+        description: "Daftar Kegiatan Akademik",
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_annon.png",
@@ -97,19 +131,31 @@ const dropdownMenus = {
         icon: "icon_calendar.png",
         title: "Mata Kuliah",
         description: "Daftar Mata Kuliah Dosen",
+<<<<<<< HEAD
         to: LecturerRoute.courses.course,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_week.png",
         title: "Kelas Kuliah",
         description: "Reserensi SKS Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.courses.class,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
       {
         icon: "icon_timetable.png",
         title: "Berhenti Studi",
         description: "Mahasiswa",
+<<<<<<< HEAD
         to: LecturerRoute.courses.stopStudy,
+=======
+        to: String(),
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
       },
     ],
   },

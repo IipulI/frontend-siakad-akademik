@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 type routeType = {
   [key: string]: string | routeType;
+=======
+import StudentData from "../pages/admin-academic/StudentData";
+
+type routeType = {
+  [key: string]: string | string;
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 };
 
 export const StudentRoute = {
@@ -17,7 +24,11 @@ export const StudentRoute = {
     thisWeek: "/jadwal/jadwal-minggu-ini",
   } as routeType,
   academic: {
+<<<<<<< HEAD
     history: "/akademik/rinwayat-KRS",
+=======
+    history: "/akademik/riwayat-KRS",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     retake: "/akademik/mengulang",
     studyPlan: "/akademik/pengisian-kartu-rencana-studi",
     studentGrade: "/akademik/nilai-mahasiswa",
@@ -34,6 +45,7 @@ export const StudentRoute = {
 
 export const AdminAcademicRoute = {
   dashboardAdminAcademic: "/admin-akademik/dashboard",
+<<<<<<< HEAD
   collegeClass: {
     class: "/admin-akademik/kelas-kuliah",
     createClass: "/admin-akademik/tambah-kelas-kuliah",
@@ -41,11 +53,16 @@ export const AdminAcademicRoute = {
   } as routeType,
   student: {
     studentData: "  ",
+=======
+  student: {
+    studentData: "/portal/mahasiswa",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     createStudent: "/portal/mahasiswa/data-mahasiswa",
     detailStudent: "/portal/mahasiswa/detail-mahasiswa",
     academicAdvisor: "/mahasiswa/pembimbing-akademik",
   },
   announcement: "/admin-akademik/pengumuman",
+<<<<<<< HEAD
   curriculumYear: "/admin-akademik/tahun-kurikulum",
   courseManagement: {
     courseManagement: "/admin-akademik/mata-kuliah",
@@ -69,6 +86,8 @@ export const AdminAcademicRoute = {
     editRps: "/admin-akademik/rps/edit-rps",
     detailRps: "/admin-akademik/rps/detail-rps",
   },
+=======
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
   setting: {
     year: "/admin-akademik/tahun-ajaran",
     period: "/admin-akademik/periode-akademik",
@@ -82,6 +101,7 @@ export const AdminAcademicRoute = {
 };
 
 export const AdminFinanceRoute: routeType = {
+<<<<<<< HEAD
   dashboardAdminFinance: "/admin-keuangan/dashboard",
   editBill: "/admin-keuangan/dashboard/edit-tagihan",
   createBill: "/admin-keuangan/buat-tagihan",
@@ -114,4 +134,7 @@ export const LecturerRoute = {
     class: "/dosen/perkuliahan/kelas-kuliah",
     stopStudy: "/dosen/perkuliahan/berhenti-studi"
   }
+=======
+  dashboardAdminFinance: "/admin-finance/dashboard",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 };

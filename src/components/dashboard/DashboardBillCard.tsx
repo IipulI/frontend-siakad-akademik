@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import React from "react";
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 import { TriangleAlert } from "lucide-react";
 import React from "react";
 

@@ -1,14 +1,20 @@
 import React from "react";
+<<<<<<< HEAD
 import { useState } from "react";
 import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
 import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil } from "lucide-react";
+=======
+import { Link } from "react-router-dom";
+import { Eye } from "lucide-react";
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 
 interface TableProps {
   data: Array<Record<string, any>>;
   tableHead: string[];
   error: string;
   setId?: (id: string | null) => void;
+<<<<<<< HEAD
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
   isEditing: boolean;
@@ -39,6 +45,8 @@ interface TableProps {
   // ObeCpmkMatkul
   onSaveNewCpmkMatkul?: () => void;
   newCpmkMatkul?: any;
+=======
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 }
 
 export const Table = ({ data, tableHead, error }: TableProps) => {
@@ -47,7 +55,14 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
       <thead>
         <tr>
           {tableHead.map((head) => (
+<<<<<<< HEAD
             <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+=======
+            <th
+              key={head}
+              className="p-4 bg-primary-green text-white border border-gray-600"
+            >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
@@ -70,7 +85,14 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
           })
         ) : (
           <tr>
+<<<<<<< HEAD
             <td colSpan={tableHead.length} className="text-center border-black border p-2">
+=======
+            <td
+              colSpan={tableHead.length}
+              className="text-center border-black border p-2"
+            >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               {error}
             </td>
           </tr>
@@ -86,7 +108,14 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
       <thead>
         <tr>
           {tableHead.map((head) => (
+<<<<<<< HEAD
             <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+=======
+            <th
+              key={head}
+              className="p-4 bg-primary-green text-white border border-gray-600"
+            >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
@@ -109,12 +138,20 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
           })
         ) : (
           <tr>
+<<<<<<< HEAD
             <td colSpan={tableHead.length} className="text-center border-black border p-2">
+=======
+            <td
+              colSpan={tableHead.length}
+              className="text-center border-black border p-2"
+            >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               {error}
             </td>
           </tr>
         )}
         <tr>
+<<<<<<< HEAD
           <td colSpan={4} className="border-black/50 text-sm text-center p-2 border">
             Total SKS
           </td>
@@ -127,19 +164,61 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
           </td>
           <td className="border-black/50 text-center p-2 text-sm border">25</td>
           <td colSpan={4} className="border-black/50 text-sm border text-center p-2"></td>
+=======
+          <td
+            colSpan={4}
+            className="border-black/50 text-sm text-center p-2 border"
+          >
+            Total SKS
+          </td>
+          <td className="border-black/50 text-sm border text-center p-2">25</td>
+          <td
+            colSpan={4}
+            className="border-black/50 text-sm border text-center p-2"
+          ></td>
+        </tr>
+        <tr>
+          <td
+            colSpan={4}
+            className="border-black/50 text-center p-2 text-sm border"
+          >
+            Batas SKS
+          </td>
+          <td className="border-black/50 text-center p-2 text-sm border">25</td>
+          <td
+            colSpan={4}
+            className="border-black/50 text-sm border text-center p-2"
+          ></td>
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
         </tr>
       </tbody>
     </table>
   );
 };
 
+<<<<<<< HEAD
 export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps) => {
+=======
+export const TableAnnouncement = ({
+  data,
+  tableHead,
+  error,
+  setId,
+}: TableProps) => {
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
   return (
     <table className="w-full my-4">
       <thead>
         <tr>
           {tableHead.map((head) => (
+<<<<<<< HEAD
             <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+=======
+            <th
+              key={head}
+              className="p-4 bg-primary-green text-white border border-gray-600"
+            >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
@@ -150,11 +229,31 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
           data.map((row, index) => {
             return (
               <tr key={index} className="text-center">
+<<<<<<< HEAD
                 <td className="p-2 border text-sm border-black/50">{row.tanggal}</td>
                 <td className="p-2 border text-sm border-black/50">{row.penulis}</td>
                 <td className="p-2 border text-sm border-black/50">{row.judul}</td>
                 <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
                   <div onClick={() => setId && setId(row.id)} className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6">
+=======
+                <td className="p-2 border text-sm border-black/50">
+                  {row.tanggal}
+                </td>
+                <td className="p-2 border text-sm border-black/50">
+                  {row.penulis}
+                </td>
+                <td className="p-2 border text-sm border-black/50">
+                  {row.judul}
+                </td>
+                <td
+                  className="p-2 border text-sm border-black/50 text-center"
+                  style={{ verticalAlign: "middle" }}
+                >
+                  <div
+                    onClick={() => setId && setId(row.id)}
+                    className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6"
+                  >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
                     <Eye className="text-white w-4 h-4" />
                   </div>
                 </td>
@@ -163,7 +262,14 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
           })
         ) : (
           <tr>
+<<<<<<< HEAD
             <td colSpan={tableHead.length} className="text-center border-black border p-2">
+=======
+            <td
+              colSpan={tableHead.length}
+              className="text-center border-black border p-2"
+            >
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
               {error}
             </td>
           </tr>
@@ -172,6 +278,7 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
     </table>
   );
 };
+<<<<<<< HEAD
 
 export const TableCurriculumYear = ({ data, tableHead = [], error, onEdit, onDelete, isEditing, isAdding, currentData, onSave, onReset, onInputChange, isFormValid }: TableProps) => {
   const isDataAvailable = data && data.length > 0;
@@ -1222,3 +1329,5 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
     </>
   );
 };
+=======
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446

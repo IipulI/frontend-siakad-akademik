@@ -2,32 +2,52 @@ import Navbar from "../Navbar";
 import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
+<<<<<<< HEAD
 import { AdminFinanceRoute } from "../../types/VarRoutes";
+=======
+import React from "react";
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
+<<<<<<< HEAD
     path: String(AdminFinanceRoute.dashboardAdminFinance),
+=======
+    path: "",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     hasDropdown: false,
   },
   {
     id: "2",
     name: "Buat Tagihan",
+<<<<<<< HEAD
     path: String(AdminFinanceRoute.createBill),
+=======
+    path: "",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     hasDropdown: false,
   },
   {
     id: "1",
     name: "Tagihan Mahasiswa",
+<<<<<<< HEAD
     path: String(AdminFinanceRoute.studentBill),
+=======
+    path: "",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     hasDropdown: false,
   },
   {
     id: "1",
     name: "Komponen Tagihan",
+<<<<<<< HEAD
     path: String(AdminFinanceRoute.componentBill),
+=======
+    path: "",
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     hasDropdown: false,
   },
 ];

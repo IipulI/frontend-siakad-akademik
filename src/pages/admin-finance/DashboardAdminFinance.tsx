@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
@@ -204,6 +205,15 @@ const DashboardAdminFinance = () => {
           <LastTransaction />
         </div>
       </div>
+=======
+import React from "react";
+import MainLayout from "../../components/layouts/MainLayout";
+
+const DashboardAdminFinance = () => {
+  return (
+    <MainLayout titlePage={"Beranda"} isGreeting={false}>
+      DashboardAdminFinance
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
     </MainLayout>
   );
 };

@@ -8,7 +8,10 @@ import {
   AdminFinanceRoute,
   StudentRoute,
   AdminAcademicRoute,
+<<<<<<< HEAD
   LecturerRoute,
+=======
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
 } from "../types/VarRoutes";
 
 interface FormErrors {
@@ -42,10 +45,15 @@ export default function FormLogin() {
         showConfirmButton: false,
         timer: 1000,
       }).then(() => {
+<<<<<<< HEAD
         if (role === "MAHASISWA") {
           navigate(StudentRoute.dashboard);
         } else if (role === "DOSEN") {
           navigate(LecturerRoute.dashboard)
+=======
+        if (role === "MAHASISWA" || role === "DOSEN") {
+          navigate(StudentRoute.dashboard);
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
         } else if (
           role === "AKADEMIK_UNIV" ||
           role === "AKADEMIK_FAK" ||
@@ -123,7 +131,11 @@ export default function FormLogin() {
             <div className="bg-red-100 text-red-800 text-sm px-4 py-2 rounded-xl mb-4 border border-red-300 flex items-center justify-between">
               <span>{formError}</span>
               <button
+<<<<<<< HEAD
                 type="button"
+=======
+                type="button" 
+>>>>>>> d685ecb07137074c521652c6c12012c786fc6446
                 onClick={() => setFormError("")}
                 className="text-red-500 ml-4 hover:text-red-700 font-bold cursor-pointer"
               >
