@@ -1,0 +1,1 @@
+// hanya menampilkan biodata saja
