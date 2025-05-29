@@ -53,7 +53,7 @@ export default function ComponentBill() {
   }
 
   function handleEdit(id: string) {
-    usenavigate(`/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/${id}`);
+    usenavigate(AdminFinanceRoute.editComponentBill);
   }
 
   function handleDelete() {
