@@ -1,5 +1,6 @@
-import { TriangleAlert } from "lucide-react";
+// @ts-ignore
 import React from "react";
+import { TriangleAlert } from "lucide-react";
 
 interface DashboardBillCardProps {
   title: string;

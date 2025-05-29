@@ -1,5 +1,4 @@
 import { User } from "lucide-react";
-import React from "react";
 
 interface TabNavigationButtonProps {
   children: React.ReactNode;
