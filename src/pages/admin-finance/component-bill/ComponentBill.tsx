@@ -16,10 +16,12 @@ interface ComponentData {
 
 export default function ComponentBill() {
   const [componentApiData, setComponentApiData] = useState<ComponentData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   console.log("Component API Data:", componentApiData);
 
   async function fetchComponentData() {
     try {
+      setIsLoading(true);
       const token = localStorage.getItem("token");
       const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
         headers: {
@@ -29,14 +31,56 @@ export default function ComponentBill() {
       setComponentApiData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
+      alert("Gagal memuat data komponen tagihan");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    // Konfirmasi sebelum menghapus
+    const isConfirmed = window.confirm(
+      "Apakah Anda yakin ingin menghapus komponen tagihan ini? Tindakan ini tidak dapat dibatalkan."
+    );
+
+    if (!isConfirmed) return;
+
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+
+      // Kirim request DELETE ke API
+      await Api.delete(`/keuangan/invoice-komponen-mahasiswa/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Update state dengan menghapus item yang sudah dihapus
+      setComponentApiData((prev) => prev.filter((item) => item.id !== id));
+
+      alert("Komponen tagihan berhasil dihapus!");
+    } catch (error: any) {
+      console.error("Error deleting component:", error);
+
+      // Handle different error scenarios
+      if (error.response?.status === 404) {
+        alert("Komponen tagihan tidak ditemukan");
+      } else if (error.response?.status === 403) {
+        alert("Anda tidak memiliki izin untuk menghapus komponen tagihan ini");
+      } else if (error.response?.status === 409) {
+        alert("Komponen tagihan tidak dapat dihapus karena masih digunakan");
+      } else {
+        alert("Gagal menghapus komponen tagihan. Silakan coba lagi.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
     fetchComponentData();
   }, []);
-
-  console.log("Component API Data:", componentApiData);
 
   const usenavigate = useNavigate();
 
@@ -45,19 +89,22 @@ export default function ComponentBill() {
   }
 
   function Refres() {
-    window.location.reload();
+    fetchComponentData(); // Lebih baik daripada reload page
   }
 
   function Create() {
     usenavigate(AdminFinanceRoute.createComponentBill);
   }
 
-  function handleEdit(id: string) {
-    usenavigate(AdminFinanceRoute.editComponentBill);
-  }
-
-  function handleDelete() {
-    alert("hapus");
+  function handleEdit(id: string, itemData: ComponentData) {
+    usenavigate(
+      `/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/${id}`,
+      {
+        state: {
+          componentData: itemData,
+        },
+      }
+    );
   }
 
   function handleView() {
@@ -147,12 +194,12 @@ export default function ComponentBill() {
                       <ButtonClick
                         icon={<Pen size={16} strokeWidth={3} />}
                         color="bg-yellow-500"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => handleEdit(item.id, item)}
                       />
                       <ButtonClick
                         icon={<Trash2 size={16} strokeWidth={3} />}
                         color="bg-red-500"
-                        onClick={() => handleDelete()}
+                        onClick={() => handleDelete(item.id)}
                       />
                     </div>
                   </td>
