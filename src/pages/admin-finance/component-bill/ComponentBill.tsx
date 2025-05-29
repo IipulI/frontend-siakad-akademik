@@ -16,12 +16,9 @@ interface ComponentData {
 
 export default function ComponentBill() {
   const [componentApiData, setComponentApiData] = useState<ComponentData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  console.log("Component API Data:", componentApiData);
 
   async function fetchComponentData() {
     try {
-      setIsLoading(true);
       const token = localStorage.getItem("token");
       const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
         headers: {
@@ -32,8 +29,6 @@ export default function ComponentBill() {
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("Gagal memuat data komponen tagihan");
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -46,7 +41,6 @@ export default function ComponentBill() {
     if (!isConfirmed) return;
 
     try {
-      setIsLoading(true);
       const token = localStorage.getItem("token");
 
       // Kirim request DELETE ke API
@@ -60,7 +54,7 @@ export default function ComponentBill() {
       setComponentApiData((prev) => prev.filter((item) => item.id !== id));
 
       alert("Komponen tagihan berhasil dihapus!");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error deleting component:", error);
 
       // Handle different error scenarios
@@ -73,8 +67,6 @@ export default function ComponentBill() {
       } else {
         alert("Gagal menghapus komponen tagihan. Silakan coba lagi.");
       }
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -89,22 +81,15 @@ export default function ComponentBill() {
   }
 
   function Refres() {
-    fetchComponentData(); // Lebih baik daripada reload page
+    window.location.reload();
   }
 
   function Create() {
     usenavigate(AdminFinanceRoute.createComponentBill);
   }
 
-  function handleEdit(id: string, itemData: ComponentData) {
-    usenavigate(
-      `/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/${id}`,
-      {
-        state: {
-          componentData: itemData,
-        },
-      }
-    );
+  function handleEdit(id: string) {
+    usenavigate(`/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/${id}`);
   }
 
   function handleView() {
@@ -194,7 +179,7 @@ export default function ComponentBill() {
                       <ButtonClick
                         icon={<Pen size={16} strokeWidth={3} />}
                         color="bg-yellow-500"
-                        onClick={() => handleEdit(item.id, item)}
+                        onClick={() => handleEdit(item.id)}
                       />
                       <ButtonClick
                         icon={<Trash2 size={16} strokeWidth={3} />}
