@@ -13,15 +13,22 @@ const navItems = [
     path: LecturerRoute.dashboard,
     hasDropdown: false,
   },
-  { id: "2", name: "Bimbingan", dropdownKey: "bimbingan", hasDropdown: true },
-  { id: "3", name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
+  { id: "2",
+    name: "Bimbingan", 
+    dropdownKey: "bimbingan", 
+    hasDropdown: true
+  },
+  { id: "3", 
+    name: "Jadwal", 
+    path: LecturerRoute.schedule.calendar,
+    hasDropdown: false 
+  },
   {
     id: "4",
     name: "Perkuliahan",
     dropdownKey: "perkuliahan",
     hasDropdown: true,
   },
-  { id: "5", name: "Laporan", dropdownKey: "laporan", hasDropdown: true },
 ];
 
 // Define menu data
@@ -61,38 +68,9 @@ const dropdownMenus = {
       },
     ],
   },
-  jadwal: {
-    title: "JADWAL",
-    items: [
-      {
-        icon: "icon_calendar.png",
-        title: "Kalendar Akademik",
-        description: "Daftar Kegiatan Akademik",
-        to: LecturerRoute.schedule.calendar,
-      },
-      {
-        icon: "icon_annon.png",
-        title: "Jadwal Minggu Ini",
-        description: "Kegiatan Dalam Seminggu",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Jadwal Semester Ini",
-        description: "Kegiatan Dalam Semester",
-        to: String(),
-      },
-    ],
-  },
   perkuliahan: {
     title: "PERKULIAHAN",
     items: [
-      {
-        icon: "icon_annon.png",
-        title: "E-Learning",
-        description: "Pembelajaran Akademik",
-        to: String(),
-      },
       {
         icon: "icon_calendar.png",
         title: "Mata Kuliah",
@@ -110,47 +88,6 @@ const dropdownMenus = {
         title: "Berhenti Studi",
         description: "Mahasiswa",
         to: LecturerRoute.courses.stopStudy,
-      },
-    ],
-  },
-  laporan: {
-    title: "LAPORAN",
-    items: [
-      {
-        icon: "icon_annon.png",
-        title: "Konsultasi",
-        description: "Temukan Solusi Masalah Anda",
-        to: String(),
-      },
-      {
-        icon: "icon_calendar.png",
-        title: "Kegiatan Pendukung",
-        description: "Salurkan Bakat Anda Disini",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Daftar Proposal",
-        description: "Buat Karya Anda Sekarang Juga",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Daftar Tugas Akhir",
-        description: "Selesaikan Karya Anda Saat Ini",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Pengajuan Yudisium",
-        description: "Konfirmasi Hasil Studi Anda",
-        to: String(),
-      },
-      {
-        icon: "icon_timetable.png",
-        title: "Pengajuan Wisuda",
-        description: "Konfirmasi Kehadiran Anda",
-        to: String(),
       },
     ],
   },
