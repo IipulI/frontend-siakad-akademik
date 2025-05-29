@@ -5,9 +5,12 @@ import { Check, Eye, Pen, RefreshCw, Search, Settings, Trash2, X } from "lucide-
 import { useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import React from "react";
+import DetailAdvisorLecturer from "./DetailAdvisorLecturer";
 
 
 export default function AdvisorLecturer() {
+  const [id, setId] = useState<string | null>(null)
+
   const periode = [{ value: "", label: "2025 Ganjil" }];
   const statusPembimbing = [
     { value: "", label: "-- Semua Status Pembimbing --" },
@@ -212,16 +215,17 @@ export default function AdvisorLecturer() {
     alert("oke edit");
   }
 
-  function Detail() {
-    alert("oke Detail");
-  }
+  
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   return (
     <MainLayout isGreeting={false} titlePage="Pembimbing Akademik">
-      <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
+      
+      {!id ? 
+        <>
+          <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
         <InputFilter options={periode} label="Periode Akademik" />
         <InputFilter options={statusPembimbing} label="Status Pembimbing" />
         <InputFilter options={semester} label="Semester" />
@@ -400,7 +404,7 @@ export default function AdvisorLecturer() {
                       <ButtonClick
                         icon={<Eye size={16} />}
                         color="bg-primary-blueSoft"
-                        onClick={Detail}
+                        onClick={() => setId("1")}
                       />
                     </div>
                   </td>
@@ -420,6 +424,12 @@ export default function AdvisorLecturer() {
         />
       </div>
       <div className="py-10"></div>
+        </>
+
+        :
+
+        <DetailAdvisorLecturer />
+      }
     </MainLayout>
   );
 }
