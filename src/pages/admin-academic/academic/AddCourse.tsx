@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import MainLayout from "../../../components/layouts/MainLayout";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Search, ArrowLeft, Save } from "lucide-react";
-import MainLayout from "../../../components/layouts/MainLayout";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 const AddCourse: React.FC = () => {
@@ -33,7 +34,7 @@ const AddCourse: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Tambah Mata Kuliah" className="">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5 ">
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
           <div className="flex items-center ">
             <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
               <ArrowLeft className="mr-2" size={16} />
@@ -57,9 +58,9 @@ const AddCourse: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
           {/* Sidebar Menu */}
-          <div className="w-[20%] h-50 text-white p-3 space-y-2">
+          <div className="w-full h-50 text-white p-3 space-y-2 md:w-[20%]">
             <div className="flex items-center bg-[#116E63]/60  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p className="text-black font-semibold">Data Mata Kuliah</p>
@@ -75,32 +76,32 @@ const AddCourse: React.FC = () => {
           </div>
 
           {/* Form Data Mata Kuliah */}
-          <div className="w-[80%] bg-white py-2 px-5">
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Tahun Kurikulum</label>
+          <div className="w-full bg-white py-2 px-5 md:w-[80%]">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className="w-full font-semibold md:w-1/2">Tahun Kurikulum</label>
                 <select className="w-full px-3 py-2 border border-black/50 rounded">
                   <option>2024 Genap</option>
                 </select>
               </div>
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Unit Pengampu</label>
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">Unit Pengampu</label>
                 <select value={unitPengampu} onChange={(e) => setUnitPengampu(e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option>Universitas Ibn Khaldun Bogor</option>
                 </select>
               </div>
             </div>
 
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">
                   Kode Mata Kuliah
                   <span className="text-red-500">*</span>
                 </label>
                 <input type="text" className="w-full px-3 py-2 border border-black/50 rounded" />
               </div>
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Semester</label>
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">Semester</label>
                 <select value={semester} onChange={(e) => setSemester(Number(e.target.value))} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value={1}>1</option>
                   <option value={2}>2</option>
@@ -108,52 +109,52 @@ const AddCourse: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Nama Mata Kuliah</label>
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">Nama Mata Kuliah</label>
                 <input type="text" className="w-full px-3 py-2 border border-black/50 rounded" />
               </div>
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Prasyarat 1</label>
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">Prasyarat 1</label>
                 <select className="w-full px-3 py-2 border border-black/50 rounded">
                   <option>Cari Mata Kuliah</option>
                 </select>
               </div>
             </div>
 
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">
                   SKS Tatap Muka <span className="text-red-500">*</span>
                 </label>
                 <input type="number" value={sksTatapMuka} onChange={(e) => setSksTatapMuka(Number(e.target.value))} className="w-full px-3 py-2 border border-black/50 rounded" />
               </div>
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Prasyarat 2</label>
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">Prasyarat 2</label>
                 <select className="w-full px-3 py-2 border border-black/50 rounded">
                   <option>Cari Mata Kuliah</option>
                 </select>
               </div>
             </div>
 
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="flex items-center gap-4 w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">
                   SKS Praktikum <span className="text-red-500">*</span>
                 </label>
                 <input type="number" value={sksPraktikum} onChange={(e) => setSksPraktikum(Number(e.target.value))} className="w-full px-3 py-2 border border-black/50 rounded" />
               </div>
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">Prasyarat 3</label>
+              <div className="flex items-center gap-4  w-full md:w-1/2">
+                <label className="w-full md:w-1/2 font-semibold">Prasyarat 3</label>
                 <select className="w-full px-3 py-2 border border-black/50 rounded">
                   <option>Cari Mata Kuliah</option>
                 </select>
               </div>
             </div>
 
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-4 w-1/2">
-                <label className="w-1/2 font-semibold">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="flex items-center gap-4  w-full md:w-1/2">
+                <label className=" w-full md:w-1/2 font-semibold">
                   Total SKS <span className="text-red-500">*</span>
                 </label>
                 <input type="number" value={totalSks} className="w-full px-3 py-2 border border-black/50 rounded bg-gray-200" readOnly />

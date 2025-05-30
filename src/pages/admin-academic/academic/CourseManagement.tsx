@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import MainLayout from "../../../components/layouts/MainLayout";
+// import { Api } from "../../../api/Index";
 import { useNavigate } from "react-router-dom";
+import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TableCourseManagement } from "../../../components/Table";
 import { RefreshCw, Search, Plus, Trash, Settings } from "lucide-react";
@@ -135,7 +138,7 @@ const CourseManagement: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Mata Kuliah" className="">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-3 gap-x-6 gap-y-2">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-3">
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
@@ -159,16 +162,16 @@ const CourseManagement: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Unit / Prodi Pengampu</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-36 ">
               <option value="all">-- Universitas Ibn Khaldun --</option>
             </select>
           </div>
         </div>
       </div>
 
-      <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-green mt-8">
-        <div className="flex px-4 py-2 gap-4 border-b-2">
-          <select className="rounded px-3 py-1 border border-primary-brown w-35">
+      <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-green mt-8 ">
+        <div className="flex flex-col md:flex-row px-4 py-2 gap-4 border-b-2">
+          <select className="rounded px-3 py-1 border border-primary-brown w-full md:w-36">
             <option value="all">-Semua-</option>
           </select>
           <div className="flex">
@@ -230,44 +233,7 @@ const CourseManagement: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 px-4">
-          <div className="text-sm flex items-center gap-2">
-            <div className="flex items-center bg-sky-100 mr-3">
-              <div className="w-2 h-7 bg-blue-500 mr-3 "></div>
-              <span className="pr-3">
-                Hal {currentPage} / {totalPages} ({data.length} data, 0,031 Detik)
-              </span>
-            </div>
-
-            <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="rounded px-3 py-2 border border-primary-brown">
-              <option value={10}>10 Baris</option>
-              <option value={25}>25 Baris</option>
-              <option value={50}>50 Baris</option>
-            </select>
-          </div>
-
-          <div className="flex items-center">
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &lt;&lt;
-            </button>
-            <button onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)} disabled={currentPage === 1} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &lt;
-            </button>
-
-            {pageNumbers.map((number) => (
-              <button key={number} onClick={() => setCurrentPage(number)} className={`w-8 h-8 ${currentPage === number ? "bg-primary-green text-white" : "bg-white border border-gray-300"}`}>
-                {number}
-              </button>
-            ))}
-
-            <button onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)} disabled={currentPage === totalPages} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &gt;
-            </button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &gt;&gt;
-            </button>
-          </div>
-        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
       </div>
     </MainLayout>
   );
