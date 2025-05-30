@@ -3,24 +3,32 @@ import HamburgerMenu from "../HamburgerMenu";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import React from "react";
+import { LecturerRoute } from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "",
+    path: LecturerRoute.dashboard,
     hasDropdown: false,
   },
-  { id: "2", name: "Bimbingan", dropdownKey: "bimbingan", hasDropdown: true },
-  { id: "3", name: "Jadwal", dropdownKey: "jadwal", hasDropdown: true },
+  { id: "2",
+    name: "Bimbingan", 
+    dropdownKey: "bimbingan", 
+    hasDropdown: true
+  },
+  { id: "3", 
+    name: "Jadwal", 
+    path: LecturerRoute.schedule.calendar,
+    hasDropdown: false 
+  },
   {
     id: "4",
     name: "Perkuliahan",
     dropdownKey: "perkuliahan",
     hasDropdown: true,
   },
-  { id: "5", name: "Laporan", dropdownKey: "laporan", hasDropdown: true },
 ];
 
 // Define menu data
@@ -32,54 +40,31 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Konsultasi",
         description: "Konsultasi dengan Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.consultation,
       },
       {
         icon: "icon_calendar.png",
         title: "Bimbingan Akademik",
         description: "Monitoring KRS Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.advisor,
       },
       {
         icon: "icon_week.png",
         title: "Proposal Tugas Akhir",
         description: "Pengajuan Tugas Akhir Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.proposal,
       },
       {
         icon: "icon_calendar.png",
         title: "Daftar Tugas Akhir",
         description: "Progres Tugas Akhir Mahasiswa",
-        to: String(),
+        to: LecturerRoute.guidance.finalProject,
       },
       {
         icon: "icon_timetable.png",
         title: "Kegiatan Pendukung",
         description: "Monitoring Kegiatan Mahasiswa",
-        to: String(),
-      },
-    ],
-  },
-  jadwal: {
-    title: "JADWAL",
-    items: [
-      {
-        icon: "icon_annon.png",
-        title: "Kalendar Akademik",
-        description: "Daftar Kegiatan Akademik",
-        to: String(),
-      },
-      {
-        icon: "icon_annon.png",
-        title: "Jadwal Minggu Ini",
-        description: "Kegiatan Dalam Seminggu",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Jadwal Semester Ini",
-        description: "Kegiatan Dalam Semester",
-        to: String(),
+        to: LecturerRoute.guidance.supporter,
       },
     ],
   },
@@ -87,69 +72,22 @@ const dropdownMenus = {
     title: "PERKULIAHAN",
     items: [
       {
-        icon: "icon_annon.png",
-        title: "E-Learning",
-        description: "Pembelajaran Akademik",
-        to: String(),
-      },
-      {
         icon: "icon_calendar.png",
         title: "Mata Kuliah",
         description: "Daftar Mata Kuliah Dosen",
-        to: String(),
+        to: LecturerRoute.courses.course,
       },
       {
         icon: "icon_week.png",
         title: "Kelas Kuliah",
         description: "Reserensi SKS Mahasiswa",
-        to: String(),
+        to: LecturerRoute.courses.class,
       },
       {
         icon: "icon_timetable.png",
         title: "Berhenti Studi",
         description: "Mahasiswa",
-        to: String(),
-      },
-    ],
-  },
-  laporan: {
-    title: "LAPORAN",
-    items: [
-      {
-        icon: "icon_annon.png",
-        title: "Konsultasi",
-        description: "Temukan Solusi Masalah Anda",
-        to: String(),
-      },
-      {
-        icon: "icon_calendar.png",
-        title: "Kegiatan Pendukung",
-        description: "Salurkan Bakat Anda Disini",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Daftar Proposal",
-        description: "Buat Karya Anda Sekarang Juga",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Daftar Tugas Akhir",
-        description: "Selesaikan Karya Anda Saat Ini",
-        to: String(),
-      },
-      {
-        icon: "icon_week.png",
-        title: "Pengajuan Yudisium",
-        description: "Konfirmasi Hasil Studi Anda",
-        to: String(),
-      },
-      {
-        icon: "icon_timetable.png",
-        title: "Pengajuan Wisuda",
-        description: "Konfirmasi Kehadiran Anda",
-        to: String(),
+        to: LecturerRoute.courses.stopStudy,
       },
     ],
   },

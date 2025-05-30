@@ -24,6 +24,7 @@ import {
   AdminFinanceRoute,
   StudentRoute,
   AdminAcademicRoute,
+  LecturerRoute,
 } from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
@@ -58,6 +59,16 @@ import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
+import ConsultationLecturer from "./pages/lecturer/guidance/ConsultationLecturer";
+import CalendarLecturer from "./pages/lecturer/schedule/CalendarLecturer";
+import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
+import ProposalLecturer from "./pages/lecturer/guidance/ProposalLecturer";
+import FinalProjectLecturer from "./pages/lecturer/guidance/FinalProjectLecturer";
+import SupporterLecturer from "./pages/lecturer/guidance/SupporterLecturer";
+import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
+import StopStudyLecturer from "./pages/lecturer/courses/StopStudyLecturer";
+import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
+import ClassLecturer from "./pages/lecturer/courses/ClassLecturer";
 import EditBill from "./pages/admin-finance/EditBill";
 import CreateBill from "./pages/admin-finance/create-bill/CreateBill";
 import FormCreateBill from "./pages/admin-finance/create-bill/FormCreateBill";
@@ -67,6 +78,7 @@ import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
 import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
 import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetailTransaction";
+
 export default function App() {
   return (
     <Routes>
