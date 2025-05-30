@@ -52,9 +52,9 @@ const CplCpmkCourse: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
           <div className="flex items-center ">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded-l-md">
+            <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
@@ -72,9 +72,9 @@ const CplCpmkCourse: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex ">
+        <div className="flex flex-col md:flex-row">
           {/* Sidebar Menu */}
-          <div className="w-[20%] h-50 text-white p-3 space-y-2 mr-3">
+          <div className="w-full  md:w-[20%] h-50 text-white p-3 space-y-2 mr-3">
             <div className="flex items-center bg-[#116E63]/30  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>Data Mata Kuliah</p>
@@ -89,13 +89,13 @@ const CplCpmkCourse: React.FC = () => {
             </div>
           </div>
           {/* Detail Data Mata Kuliah */}
-          <div className="w-[80%] p-3">
-            <div className="flex bg-primary-green/10">
+          <div className="w-full md:w-[80%] p-3">
+            <div className="flex flex-col bg-primary-green/10 md:flex-row">
               {/* Sidebar Biru */}
               <div className="w-2 bg-primary-green"></div>
 
               {/* Konten */}
-              <div className="flex-1 p-4 grid grid-cols-2 gap-x-6">
+              <div className="flex-1 p-4 grid grid-cols-1 gap-x-6 md:grid-cols-2">
                 {/* Kolom Kiri */}
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">

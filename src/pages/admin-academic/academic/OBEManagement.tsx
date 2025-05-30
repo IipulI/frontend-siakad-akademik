@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { TableOBE } from "../../../components/Table";
 import { Search } from "lucide-react";
+import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 
 interface OBEData {
   id: number;
@@ -34,7 +35,7 @@ const OBEManagement: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Manajemen OBE">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
@@ -72,47 +73,7 @@ const OBEManagement: React.FC = () => {
         </div>
 
         {/* Pagination info and controls */}
-        <div className="flex justify-between items-center mt-4 px-4">
-          <div className="text-sm flex items-center gap-2">
-            <div className="flex items-center bg-sky-100 mr-3">
-              <div className="w-2 h-7 bg-blue-500 mr-3 "></div>
-              <span className="pr-3">
-                Hal {currentPage} / {totalPages} ({data.length} data, 0,031 Detik)
-              </span>
-            </div>
-
-            {/* Dropdown for items per page */}
-            <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="rounded px-3 py-2 border border-primary-brown">
-              <option value={10}>10 Baris</option>
-              <option value={25}>25 Baris</option>
-              <option value={50}>50 Baris</option>
-            </select>
-          </div>
-
-          <div className="flex items-center">
-            {/* Pagination buttons */}
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &lt;&lt;
-            </button>
-            <button onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)} disabled={currentPage === 1} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &lt;
-            </button>
-
-            {/* Page numbers */}
-            {pageNumbers.map((number) => (
-              <button key={number} onClick={() => setCurrentPage(number)} className={`w-8 h-8 ${currentPage === number ? "bg-primary-green text-white" : "bg-white border border-gray-300"}`}>
-                {number}
-              </button>
-            ))}
-
-            <button onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)} disabled={currentPage === totalPages} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &gt;
-            </button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &gt;&gt;
-            </button>
-          </div>
-        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
       </div>
     </MainLayout>
   );
