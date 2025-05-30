@@ -29,6 +29,7 @@ export const StudentRoute = {
   payment: {
     payment: "/keuangan/tagihan-mahasiswa",
     paymentHistory: "/keuangan/riwayat-keuangan",
+    paymentDetailHistory: "/keuangan/riwayat-keuangan/detail-transaksi",
   } as routeType,
 };
 
@@ -87,8 +88,10 @@ export const AdminFinanceRoute: routeType = {
   createBill: "/admin-keuangan/buat-tagihan",
   formCreateBill: "/admin-keuangan/buat-tagihan/form-buat-tagihan",
   studentBill: "/admin-keuangan/tagihan-mahasiswa",
-  detailStudentBill: "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
+  detailStudentBill:
+    "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
   componentBill: "/admin-keuangan/komponen-tagihan",
-  createComponentBill: "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
+  createComponentBill:
+    "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
   editComponentBill: "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan",
 };
