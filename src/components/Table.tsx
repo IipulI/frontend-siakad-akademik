@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
+import { CurriculumData, PeriodeAkademik } from "../components/types.ts";
 import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil } from "lucide-react";
 
@@ -9,8 +10,8 @@ interface TableProps {
   tableHead: string[];
   error: string;
   setId?: (id: string | null) => void;
-  onEdit?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
   isEditing: boolean;
   currentData: any | null;
   onSave: () => void;
@@ -40,6 +41,26 @@ interface TableProps {
   onSaveNewCpmkMatkul?: () => void;
   newCpmkMatkul?: any;
 }
+
+interface TableCurriculumYearProps {
+  data: CurriculumData[];
+  tableHead: string[];
+  error: string;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  isEditing: boolean;
+  isAdding: boolean;
+  currentData: CurriculumData | null;
+  onSave: () => void;
+  onReset: () => void;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;
+  isFormValid: () => boolean;
+  periodeAkademikList: PeriodeAkademik[];
+  selectedPeriodeId: string;
+  setSelectedPeriodeId: (id: string) => void;
+}
+
+// table
 
 export const Table = ({ data, tableHead, error }: TableProps) => {
   return (
@@ -173,7 +194,23 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
   );
 };
 
-export const TableCurriculumYear = ({ data, tableHead = [], error, onEdit, onDelete, isEditing, isAdding, currentData, onSave, onReset, onInputChange, isFormValid }: TableProps) => {
+export const TableCurriculumYear = ({
+  data,
+  tableHead = [],
+  error,
+  onEdit,
+  onDelete,
+  isEditing,
+  isAdding,
+  currentData,
+  onSave,
+  onReset,
+  onInputChange,
+  isFormValid,
+  periodeAkademikList,
+  selectedPeriodeId,
+  setSelectedPeriodeId,
+}: TableCurriculumYearProps) => {
   const isDataAvailable = data && data.length > 0;
 
   const renderDate = (dateString: string) => {
@@ -182,126 +219,172 @@ export const TableCurriculumYear = ({ data, tableHead = [], error, onEdit, onDel
     return new Date(dateString).toLocaleDateString("id-ID", options);
   };
 
+  const getPeriodeName = (periodeId: string) => {
+    // Debug logging
+    console.log("🔍 Debug getPeriodeName:");
+    console.log("periodeId:", periodeId);
+    console.log("periodeAkademikList:", periodeAkademikList);
+
+    if (!periodeId || periodeId.trim() === "") {
+      console.log("❌ No periode ID provided");
+      return "Tidak ada periode";
+    }
+
+    // Try to find exact match first
+    let periode = periodeAkademikList.find((p) => p.id === periodeId);
+
+    if (!periode) {
+      // Try string comparison in case of type mismatch
+      periode = periodeAkademikList.find((p) => String(p.id) === String(periodeId));
+    }
+
+    if (!periode) {
+      // Try loose matching (trim whitespace)
+      periode = periodeAkademikList.find((p) => String(p.id).trim() === String(periodeId).trim());
+    }
+
+    if (periode) {
+      console.log("✅ Found periode:", periode);
+      return periode.namaPeriode || periode.nama || "Nama periode tidak tersedia";
+    }
+
+    console.log("❌ Periode not found for ID:", periodeId);
+    console.log(
+      "Available IDs:",
+      periodeAkademikList.map((p) => p.id)
+    );
+    return `ID tidak ditemukan: ${periodeId}`;
+  };
+
   return (
-    <table className="w-full my-4">
-      <thead>
-        <tr>
-          {tableHead.length > 0 ? (
-            tableHead.map((head) => (
-              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
-                <p className="font-semibold text-center">{head}</p>
+    <div className="w-full overflow-x-auto">
+      <table className="w-full my-4 ">
+        <thead>
+          <tr>
+            {tableHead.length > 0 ? (
+              tableHead.map((head) => (
+                <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+                  <p className="font-semibold text-center">{head}</p>
+                </th>
+              ))
+            ) : (
+              <th className="p-4 bg-primary-green text-white border border-gray-600">
+                <p className="font-semibold text-center">Data tidak tersedia</p>
               </th>
+            )}
+          </tr>
+        </thead>
+        <tbody className="font-semibold">
+          {/* Form tambah */}
+          {isAdding && currentData && (
+            <tr className="text-center">
+              <td className="p-2 border text-sm border-black/50">
+                <input type="text" name="tahun" value={currentData.tahun} onChange={onInputChange} className="border p-2 w-full" />
+              </td>
+              <td className="p-2 border text-sm border-black/50">
+                <input type="text" name="keterangan" value={currentData.keterangan} onChange={onInputChange} className="border p-2 w-full" />
+              </td>
+              <td className="p-2 border text-sm border-black/50">
+                <select name="siakPeriodeAkademikId" value={selectedPeriodeId} onChange={(e) => setSelectedPeriodeId(e.target.value)} className="border px-2 py-1 rounded w-full">
+                  <option value="">-- Pilih Periode Akademik --</option>
+                  {periodeAkademikList.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.namaPeriode}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border text-sm border-black/50">
+                <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
+              </td>
+              <td className="p-2 border text-sm border-black/50">
+                <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
+              </td>
+              <td className="p-2 border text-sm border-black/50">
+                <div className="flex gap-2 justify-center">
+                  <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded disabled:opacity-50" disabled={!isFormValid()}>
+                    <Save size={17} />
+                  </button>
+                  <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                    <RefreshCw size={17} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          )}
+
+          {/* Data rows */}
+          {isDataAvailable ? (
+            data.map((row) => (
+              <tr key={row.id} className="text-center">
+                {isEditing && currentData?.id === row.id ? (
+                  <>
+                    <td className="p-2 border text-sm border-black/50">
+                      <input type="text" name="tahun" value={currentData.tahun} onChange={onInputChange} className="border p-2 w-full" />
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <input type="text" name="keterangan" value={currentData.keterangan} onChange={onInputChange} className="border p-2 w-full" />
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <select name="siakPeriodeAkademikId" value={selectedPeriodeId} onChange={(e) => setSelectedPeriodeId(e.target.value)} className="border p-2 w-full">
+                        <option value="">-- Pilih Periode Akademik --</option>
+                        {periodeAkademikList.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.namaPeriode}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <div className="flex gap-2 justify-center">
+                        <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded disabled:opacity-50" disabled={!isFormValid()}>
+                          <Save size={17} />
+                        </button>
+                        <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                          <RefreshCw size={17} />
+                        </button>
+                      </div>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td className="p-2 border text-sm border-black/50">{row.tahun}</td>
+                    <td className="p-2 border text-sm border-black/50">{row.keterangan}</td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <span className={row.siakPeriodeAkademikId ? "" : "text-red-500 italic"}>{getPeriodeName(row.siakPeriodeAkademikId)}</span>
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAwal)}</td>
+                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAkhir)}</td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <div className="flex gap-2 justify-center">
+                        <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                          <Pencil size={17} />
+                        </button>
+                        <button onClick={() => onDelete && onDelete(row.id)} className="bg-red-500 p-2 text-white cursor-pointer rounded">
+                          <Trash2 size={17} />
+                        </button>
+                      </div>
+                    </td>
+                  </>
+                )}
+              </tr>
             ))
           ) : (
-            <th className="p-4 bg-primary-green text-white border border-gray-600">
-              <p className="font-semibold text-center">Data tidak tersedia</p>
-            </th>
-          )}
-        </tr>
-      </thead>
-      <tbody className="font-semibold">
-        {isAdding && currentData && (
-          <tr className="text-center ">
-            <td className="p-2 border text-sm border-black/50">
-              <input type="text" name="tahun" value={currentData.tahun} onChange={onInputChange} className="border p-2 w-full" />
-            </td>
-            <td className="p-2 border text-sm border-black/50">
-              <input type="text" name="Keterangan" value={currentData.Keterangan} onChange={onInputChange} className="border p-2 w-full" />
-            </td>
-            <td className="p-2 border text-sm border-black/50">
-              <select name="mulaiBerlaku" value={currentData.mulaiBerlaku} onChange={onInputChange} className="border p-2 w-full">
-                <option value="2025 Genap">2025 Genap</option>
-                <option value="2025 Ganjil">2025 Ganjil</option>
-                <option value="2024 Genap">2024 Genap</option>
-                <option value="2024 Ganjil">2024 Ganjil</option>
-              </select>
-            </td>
-            <td className="p-2 border text-sm border-black/50">
-              <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
-            </td>
-            <td className="p-2 border text-sm border-black/50">
-              <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
-            </td>
-            <td className="p-2 border text-sm border-black/50">
-              <div className="flex gap-2 justify-center">
-                <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded">
-                  <Save size={15} />
-                </button>
-                <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
-                  <RefreshCw size={15} />
-                </button>
-              </div>
-            </td>
-          </tr>
-        )}
-
-        {isDataAvailable ? (
-          data.map((row) => (
-            <tr key={row.id} className="text-center">
-              {isEditing && currentData?.id === row.id ? (
-                <>
-                  <td className="p-2 border text-sm border-black/50">
-                    <input type="text" name="tahun" value={currentData.tahun} onChange={onInputChange} className="border p-2 w-full" />
-                  </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    <input type="text" name="Keterangan" value={currentData.Keterangan} onChange={onInputChange} className="border p-2 w-full" />
-                  </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    <select name="mulaiBerlaku" value={currentData.mulaiBerlaku} onChange={onInputChange} className="border p-2 w-full">
-                      <option value="2025 Genap">2025 Genap</option>
-                      <option value="2025 Ganjil">2025 Ganjil</option>
-                      <option value="2024 Genap">2024 Genap</option>
-                      <option value="2024 Ganjil">2024 Ganjil</option>
-                    </select>
-                  </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
-                  </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
-                  </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    <div className="flex gap-2 justify-center">
-                      <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded">
-                        <Save size={15} />
-                      </button>
-                      <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
-                        <RefreshCw size={15} />
-                      </button>
-                    </div>
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td className="p-2 border text-sm border-black/50">{row.tahun}</td>
-                  <td className="p-2 border text-sm border-black/50">{row.Keterangan}</td>
-                  <td className="p-2 border text-sm border-black/50">{row.mulaiBerlaku}</td>
-                  <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAwal)}</td>
-                  <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAkhir)}</td>
-                  <td className="p-2 border text-sm border-black/50">
-                    <div className="flex gap-2 justify-center">
-                      <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
-                        <Edit size={15} />
-                      </button>
-
-                      <button onClick={() => onDelete && onDelete(row.id)} className="bg-red-500 p-2 text-white cursor-pointer rounded">
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </td>
-                </>
-              )}
+            <tr>
+              <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+                {error}
+              </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
-              {error}
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
@@ -313,202 +396,208 @@ export const TableCourseManagement: React.FC<TableProps> = ({ data, tableHead = 
   const isAllSelected = data.length > 0 && (selectedIds?.length ?? 0) === data.length;
 
   return (
-    <table className="w-full my-4 border-collapse border border-gray-400">
-      <thead>
-        <tr>
-          <th className="p-4 bg-primary-green text-white border border-gray-600">
-            <input type="checkbox" checked={isAllSelected} onChange={() => onSelect?.(-1)} className="cursor-pointer" />
-          </th>
-
-          {tableHead.slice(1).map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
-              <p className="font-semibold text-center">{head}</p>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className="font-semibold">
-        {isDataAvailable ? (
-          data.map((row) => {
-            const { id, kurikulum, kode, mataKuliah, sks, jenisMK, prodiPengampu } = row;
-            const isChecked = selectedIds?.includes(id) ?? false;
-
-            // if (isEditing && currentData && currentData.id === id) {
-            //   return (
-            //     <tr key={id} className="text-center bg-yellow-50">
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="kurikulum" value={currentData.kurikulum} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="kode" value={currentData.kode} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="mataKuliah" value={currentData.mataKuliah} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="number" name="sks" value={currentData.sks} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="jenisMK" value={currentData.jenisMK} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="prodiPengampu" value={currentData.prodiPengampu} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50 text-center">
-            //         <button onClick={onSave} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
-            //           Simpan
-            //         </button>
-            //         <button onClick={onReset} className="bg-gray-500 text-white px-3 py-1 rounded">
-            //           Batal
-            //         </button>
-            //       </td>
-            //     </tr>
-            //   );
-            // }
-
-            // if (isAdding && currentData && currentData.id === id) {
-            //   // Render baris input untuk tambah data baru
-            //   return (
-            //     <tr key={id} className="text-center bg-green-50">
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="kurikulum" value={currentData.kurikulum} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="kode" value={currentData.kode} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="mataKuliah" value={currentData.mataKuliah} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="number" name="sks" value={currentData.sks} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="jenisMK" value={currentData.jenisMK} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50">
-            //         <input type="text" name="prodiPengampu" value={currentData.prodiPengampu} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-            //       </td>
-            //       <td className="p-2 border text-sm border-black/50 text-center">
-            //         <button onClick={onSave} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
-            //           Simpan
-            //         </button>
-            //         <button onClick={onReset} className="bg-gray-500 text-white px-3 py-1 rounded">
-            //           Batal
-            //         </button>
-            //       </td>
-            //     </tr>
-            //   );
-            // }
-
-            return (
-              <tr key={id} className="text-center">
-                <td className="p-2 border text-sm border-black/50">
-                  <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto cursor-pointer" />
-                </td>
-                <td className="p-2 border text-sm border-black/50">{kurikulum}</td>
-                <td className="p-2 border text-sm border-black/50">{kode}</td>
-                <td className="p-2 border text-sm border-black/50">{mataKuliah}</td>
-                <td className="p-2 border text-sm border-black/50">{sks}</td>
-                <td className="p-2 border text-sm border-black/50">{jenisMK}</td>
-                <td className="p-2 border text-sm border-black/50">{prodiPengampu}</td>
-                <td className="p-2 border text-sm border-black/50 text-center">
-                  <div className="flex justify-center gap-2">
-                    <div onClick={() => navigate(AdminAcademicRoute.courseManagement.detailCourse)} className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Edit">
-                      <Eye className="text-white w-4 h-4" />
-                    </div>
-
-                    <div onClick={() => onDelete?.(id)} className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Hapus">
-                      <Trash2 className="text-white w-4 h-4" />
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            );
-          })
-        ) : (
+    <div className="w-full overflow-x-auto">
+      <table className="w-full my-4 border-collapse border border-gray-400">
+        <thead>
           <tr>
-            <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
-              {error}
-            </td>
+            <th className="p-4 bg-primary-green text-white border border-gray-600">
+              <input type="checkbox" checked={isAllSelected} onChange={() => onSelect?.(-1)} className="cursor-pointer" />
+            </th>
+
+            {tableHead.slice(1).map((head) => (
+              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+                <p className="font-semibold text-center">{head}</p>
+              </th>
+            ))}
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="font-semibold">
+          {isDataAvailable ? (
+            data.map((row) => {
+              const { id, kurikulum, kode, mataKuliah, sks, jenisMK, prodiPengampu } = row;
+              const isChecked = selectedIds?.includes(id) ?? false;
+
+              // if (isEditing && currentData && currentData.id === id) {
+              //   return (
+              //     <tr key={id} className="text-center bg-yellow-50">
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="kurikulum" value={currentData.kurikulum} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="kode" value={currentData.kode} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="mataKuliah" value={currentData.mataKuliah} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="number" name="sks" value={currentData.sks} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="jenisMK" value={currentData.jenisMK} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="prodiPengampu" value={currentData.prodiPengampu} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50 text-center">
+              //         <button onClick={onSave} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
+              //           Simpan
+              //         </button>
+              //         <button onClick={onReset} className="bg-gray-500 text-white px-3 py-1 rounded">
+              //           Batal
+              //         </button>
+              //       </td>
+              //     </tr>
+              //   );
+              // }
+
+              // if (isAdding && currentData && currentData.id === id) {
+              //   // Render baris input untuk tambah data baru
+              //   return (
+              //     <tr key={id} className="text-center bg-green-50">
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="kurikulum" value={currentData.kurikulum} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="kode" value={currentData.kode} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="mataKuliah" value={currentData.mataKuliah} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="number" name="sks" value={currentData.sks} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="jenisMK" value={currentData.jenisMK} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50">
+              //         <input type="text" name="prodiPengampu" value={currentData.prodiPengampu} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
+              //       </td>
+              //       <td className="p-2 border text-sm border-black/50 text-center">
+              //         <button onClick={onSave} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
+              //           Simpan
+              //         </button>
+              //         <button onClick={onReset} className="bg-gray-500 text-white px-3 py-1 rounded">
+              //           Batal
+              //         </button>
+              //       </td>
+              //     </tr>
+              //   );
+              // }
+
+              return (
+                <tr key={id} className="text-center">
+                  <td className="p-2 border text-sm border-black/50">
+                    <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto cursor-pointer" />
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">{kurikulum}</td>
+                  <td className="p-2 border text-sm border-black/50">{kode}</td>
+                  <td className="p-2 border text-sm border-black/50">{mataKuliah}</td>
+                  <td className="p-2 border text-sm border-black/50">{sks}</td>
+                  <td className="p-2 border text-sm border-black/50">{jenisMK}</td>
+                  <td className="p-2 border text-sm border-black/50">{prodiPengampu}</td>
+                  <td className="p-2 border text-sm border-black/50 text-center">
+                    <div className="flex justify-center gap-2">
+                      <div onClick={() => navigate(AdminAcademicRoute.courseManagement.detailCourse)} className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Edit">
+                        <Eye className="text-white w-4 h-4" />
+                      </div>
+
+                      <div onClick={() => onDelete?.(id)} className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Hapus">
+                        <Trash2 className="text-white w-4 h-4" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+                {error}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
 export const TableCpl = ({ data, tableHead, error }: TableProps) => {
   return (
-    <table className="w-full my-4">
-      <thead>
-        <tr>
-          {tableHead.map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
-              <p className="font-semibold text-center">{head}</p>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className="font-semibold">
-        {data && data.length > 0 ? (
-          data.map((row, index) => {
-            return (
-              <tr key={index} className="text-center">
-                <td className="p-2 border text-sm border-black/50 text-left align-top">{row.kodeCpl}</td>
-                <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpl}</td>
-                <td className="p-2 border text-sm border-black/50 align-top text-left ">{row.kategori}</td>
-              </tr>
-            );
-          })
-        ) : (
+    <div className="w-full overflow-x-auto">
+      <table className="w-full my-4">
+        <thead>
           <tr>
-            <td colSpan={tableHead.length} className="text-center border-black border p-2">
-              {error}
-            </td>
+            {tableHead.map((head) => (
+              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+                <p className="font-semibold text-center">{head}</p>
+              </th>
+            ))}
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="font-semibold">
+          {data && data.length > 0 ? (
+            data.map((row, index) => {
+              return (
+                <tr key={index} className="text-center">
+                  <td className="p-2 border text-sm border-black/50 text-left align-top">{row.kodeCpl}</td>
+                  <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpl}</td>
+                  <td className="p-2 border text-sm border-black/50 align-top text-left ">{row.kategori}</td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan={tableHead.length} className="text-center border-black border p-2">
+                {error}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
 export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
   return (
-    <table className="w-full my-4">
-      <thead>
-        <tr>
-          {tableHead.map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
-              <p className="font-semibold text-center">{head}</p>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className="font-semibold">
-        {data && data.length > 0 ? (
-          data.map((row, index) => {
-            return (
-              <tr key={index} className="text-center">
-                <td className="p-2 border text-sm border-black/50">{row.kodeCpmk}</td>
-                <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpmk}</td>
-              </tr>
-            );
-          })
-        ) : (
+    <div className="w-full overflow-x-auto">
+      <table className="w-full my-4">
+        <thead>
           <tr>
-            <td colSpan={tableHead.length} className="text-center border-black border p-2">
-              {error}
-            </td>
+            {tableHead.map((head) => (
+              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+                <p className="font-semibold text-center">{head}</p>
+              </th>
+            ))}
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="font-semibold">
+          {data && data.length > 0 ? (
+            data.map((row, index) => {
+              return (
+                <tr key={index} className="text-center">
+                  <td className="p-2 border text-sm border-black/50">{row.kodeCpmk}</td>
+                  <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpmk}</td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan={tableHead.length} className="text-center border-black border p-2">
+                {error}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
@@ -516,51 +605,55 @@ export const TableRps = ({ data, error, setId }: TableProps) => {
   const navigate = useNavigate();
 
   return (
-    <table className="w-full my-4">
-      <thead>
-        <tr>
-          <th className="p-4 bg-primary-green text-white border border-gray-600">
-            <p className="font-semibold text-center">Dosen Penyusun</p>
-          </th>
-          <th className="p-4 bg-primary-green text-white border border-gray-600">
-            <p className="font-semibold text-center">Periode Akademik</p>
-          </th>
-          <th className="p-4 bg-primary-green text-white border border-gray-600">
-            <p className="font-semibold text-center">Kelas</p>
-          </th>
-          <th className="p-4 bg-primary-green text-white border border-gray-600">
-            <p className="font-semibold text-center">Aksi</p>
-          </th>
-        </tr>
-      </thead>
-      <tbody className="font-semibold">
-        {data && data.length > 0 ? (
-          data.map((row) => (
-            <tr key={row.id} className="text-center">
-              <td className="p-2 border text-sm border-black/50">{row.dosenPenyusun}</td>
-              <td className="p-2 border text-sm border-black/50">{row.periodeAkademik}</td>
-              <td className="p-2 border text-sm border-black/50">{row.kelas}</td>
-              <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
-                <div onClick={() => navigate(AdminAcademicRoute.rpsManagement.rpsManagement)} className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-8">
-                  <Eye className="text-white w-4 h-4" />
-                </div>
+    <div className="w-full overflow-x-auto">
+      <table className="w-full my-4">
+        <thead>
+          <tr>
+            <th className="p-4 bg-primary-green text-white border border-gray-600">
+              <p className="font-semibold text-center">Dosen Penyusun</p>
+            </th>
+            <th className="p-4 bg-primary-green text-white border border-gray-600">
+              <p className="font-semibold text-center">Periode Akademik</p>
+            </th>
+            <th className="p-4 bg-primary-green text-white border border-gray-600">
+              <p className="font-semibold text-center">Kelas</p>
+            </th>
+            <th className="p-4 bg-primary-green text-white border border-gray-600">
+              <p className="font-semibold text-center">Aksi</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody className="font-semibold">
+          {data && data.length > 0 ? (
+            data.map((row) => (
+              <tr key={row.id} className="text-center">
+                <td className="p-2 border text-sm border-black/50">{row.dosenPenyusun}</td>
+                <td className="p-2 border text-sm border-black/50">{row.periodeAkademik}</td>
+                <td className="p-2 border text-sm border-black/50">{row.kelas}</td>
+                <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
+                  <div onClick={() => navigate(AdminAcademicRoute.rpsManagement.rpsManagement)} className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-8">
+                    <Eye className="text-white w-4 h-4" />
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="text-center border-black border p-2">
+                {error}
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan={4} className="text-center border-black border p-2">
-              {error}
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
 export const TableOBE = ({ data, tableHead, error }) => {
   const isDataAvailable = data.length > 0;
+
+  const navigate = useNavigate();
 
   return (
     <div className="overflow-x-auto w-full">
@@ -604,7 +697,7 @@ export const TableOBE = ({ data, tableHead, error }) => {
                 <td className="p-2 border border-black/50">{item.cpmk ? "✅" : "❌"}</td>
                 <td className="p-2 border border-black/50 text-center">
                   <div className="flex justify-center gap-2">
-                    <button className="bg-primary-blueSoft text-white p-2 rounded">
+                    <button className="bg-primary-blueSoft text-white p-2 rounded" onClick={() => navigate(AdminAcademicRoute.obeManagement.graduateProfile)}>
                       <Eye className="w-4 h-4" />
                     </button>
                   </div>
@@ -1029,82 +1122,84 @@ export const TableCurriculumProdi: React.FC<TableProps> = ({ data, onEdit, onDel
   const totalPilihan = data.filter((item) => item.status === "Pilihan").reduce((acc, item) => acc + parseInt(item.sks), 0);
 
   return (
-    <table className="w-full border border-gray-600 border-collapse">
-      <thead className="bg-primary-green">
-        <tr>
-          <th className="p-2 text-white border " colSpan={9}>
-            Semester 1
-          </th>
-        </tr>
-        <tr>
-          <th className="p-2 text-white border font-medium">No</th>
-          <th className="p-2 text-white border font-medium">Kode</th>
-          <th className="p-2 text-white border font-medium">Mata Kuliah</th>
-          <th className="p-2 text-white border font-medium">SKS</th>
-          <th className="p-2 text-white border font-medium">Status</th>
-          <th className="p-2 text-white border font-medium">Nilai Min</th>
-          <th className="p-2 text-white border font-medium">Prasyarat</th>
-          <th className="p-2 text-white border font-medium">Konsentrasi</th>
-          <th className="p-2 text-white border font-medium">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.length > 0 ? (
-          data.map((item) => (
-            <tr key={item.id} className="text-center">
-              <td className="p-2 border">{item.no}</td>
-              <td className="p-2 border">{item.kode}</td>
-              <td className="p-2 border text-left">{item.mataKuliah}</td>
-              <td className="p-2 border">{item.sks}</td>
-              <td className="p-2 border text-center">
-                <div
-                  className={`inline-block px-3 py-1 rounded font-semibold
+    <div className="w-full overflow-x-auto">
+      <table className="w-full border border-gray-600 border-collapse">
+        <thead className="bg-primary-green">
+          <tr>
+            <th className="p-2 text-white border " colSpan={9}>
+              Semester 1
+            </th>
+          </tr>
+          <tr>
+            <th className="p-2 text-white border font-medium">No</th>
+            <th className="p-2 text-white border font-medium">Kode</th>
+            <th className="p-2 text-white border font-medium">Mata Kuliah</th>
+            <th className="p-2 text-white border font-medium">SKS</th>
+            <th className="p-2 text-white border font-medium">Status</th>
+            <th className="p-2 text-white border font-medium">Nilai Min</th>
+            <th className="p-2 text-white border font-medium">Prasyarat</th>
+            <th className="p-2 text-white border font-medium">Konsentrasi</th>
+            <th className="p-2 text-white border font-medium">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.length > 0 ? (
+            data.map((item) => (
+              <tr key={item.id} className="text-center">
+                <td className="p-2 border">{item.no}</td>
+                <td className="p-2 border">{item.kode}</td>
+                <td className="p-2 border text-left">{item.mataKuliah}</td>
+                <td className="p-2 border">{item.sks}</td>
+                <td className="p-2 border text-center">
+                  <div
+                    className={`inline-block px-3 py-1 rounded font-semibold
       ${item.status === "Wajib" ? "bg-primary-blueSoft text-white" : ""}
       ${item.status === "Pilihan" ? "bg-yellow-400 text-black" : ""}
     `}
-                >
-                  {item.status}
-                </div>
-              </td>
-              <td className="p-2 border">{item.nilaiMin}</td>
-              <td className="p-2 border">{item.prasyarat}</td>
-              <td className="p-2 border">{item.konsentrasiBidang}</td>
-              <td className="p-2 border flex justify-center gap-2">
-                <button onClick={() => onEdit?.(item.id)} className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8">
-                  <Paperclip className="w-4 h-4" />
-                </button>
+                  >
+                    {item.status}
+                  </div>
+                </td>
+                <td className="p-2 border">{item.nilaiMin}</td>
+                <td className="p-2 border">{item.prasyarat}</td>
+                <td className="p-2 border">{item.konsentrasiBidang}</td>
+                <td className="p-2 border flex justify-center gap-2">
+                  <button onClick={() => onEdit?.(item.id)} className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8">
+                    <Paperclip className="w-4 h-4" />
+                  </button>
 
-                <button onClick={() => onEdit?.(item.id)} className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8">
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                  <button onClick={() => onEdit?.(item.id)} className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8">
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={9} className="p-2 text-center">
+                Data tidak ditemukan.
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan={9} className="p-2 text-center">
-              Data tidak ditemukan.
-            </td>
-          </tr>
-        )}
+          )}
 
-        {/* Row for Total SKS and Summary */}
-        <tr className="bg-gray-100 font-semibold">
-          <td className="p-2 border text-center" colSpan={3}>
-            Total SKS
-          </td>
-          <td className="p-2 border text-center">{totalSKS}</td>
-          <td className="p-2 border text-center">
-            Wajib: {totalWajib} | Pilihan: {totalPilihan}
-          </td>
-          <td className="p-2 border text-center">D</td>
-          <td className="p-2 border" colSpan={3}></td>
-        </tr>
-      </tbody>
-    </table>
+          {/* Row for Total SKS and Summary */}
+          <tr className="bg-gray-100 font-semibold">
+            <td className="p-2 border text-center" colSpan={3}>
+              Total SKS
+            </td>
+            <td className="p-2 border text-center">{totalSKS}</td>
+            <td className="p-2 border text-center">
+              Wajib: {totalWajib} | Pilihan: {totalPilihan}
+            </td>
+            <td className="p-2 border text-center">D</td>
+            <td className="p-2 border" colSpan={3}></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
@@ -1124,6 +1219,8 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RPSData | null>(null);
 
+  const navigate = useNavigate();
+
   const handlePaperclipClick = (item: RPSData) => {
     setSelectedItem(item);
     setIsModalOpen(true);
@@ -1138,50 +1235,52 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
 
   return (
     <>
-      <table className="w-full border border-gray-600">
-        <thead className="bg-primary-green text-white">
-          <tr>
-            <th className="p-2 border font-medium">Kode MK</th>
-            <th className="p-2 border font-medium">Mata Kuliah</th>
-            <th className="p-2 border font-medium">Dosen Penyusun</th>
-            <th className="p-2 border font-medium">Smt.</th>
-            <th className="p-2 border font-medium">SKS</th>
-            <th className="p-2 border font-medium">Kelas</th>
-            <th className="p-2 border font-medium">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <tr key={item.id} className="text-center">
-                <td className="p-2 border">{item.kodeMk}</td>
-                <td className="p-2 border">{item.mataKuliah}</td>
-                <td className="p-2 border">{item.dosenPenyusun}</td>
-                <td className="p-2 border">{item.smt}</td>
-                <td className="p-2 border">{item.sks}</td>
-                <td className="p-2 border">{item.kelas}</td>
-                <td className="p-2 border flex justify-center gap-2">
-                  <button onClick={() => handlePaperclipClick(item)} className="bg-purple-500 text-white px-2 py-1 rounded" title="Edit">
-                    <Paperclip className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => onEdit?.(item.id)} className="bg-yellow-500 text-white px-2 py-1 rounded" title="Edit">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8" title="Hapus">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+      <div className="w-full overflow-x-auto">
+        <table className="w-full border border-gray-600">
+          <thead className="bg-primary-green text-white">
+            <tr>
+              <th className="p-2 border font-medium">Kode MK</th>
+              <th className="p-2 border font-medium">Mata Kuliah</th>
+              <th className="p-2 border font-medium">Dosen Penyusun</th>
+              <th className="p-2 border font-medium">Smt.</th>
+              <th className="p-2 border font-medium">SKS</th>
+              <th className="p-2 border font-medium">Kelas</th>
+              <th className="p-2 border font-medium">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((item) => (
+                <tr key={item.id} className="text-center">
+                  <td className="p-2 border">{item.kodeMk}</td>
+                  <td className="p-2 border">{item.mataKuliah}</td>
+                  <td className="p-2 border">{item.dosenPenyusun}</td>
+                  <td className="p-2 border">{item.smt}</td>
+                  <td className="p-2 border">{item.sks}</td>
+                  <td className="p-2 border">{item.kelas}</td>
+                  <td className="p-2 border flex justify-center gap-2">
+                    <button onClick={() => handlePaperclipClick(item)} className="bg-purple-500 text-white px-2 py-1 rounded" title="Edit">
+                      <Paperclip className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => navigate(AdminAcademicRoute.rpsManagement.editRps)} className="bg-yellow-500 text-white px-2 py-1 rounded" title="Edit">
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8" title="Hapus">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="p-2 text-center">
+                  Data tidak ditemukan.
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={7} className="p-2 text-center">
-                Data tidak ditemukan.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {isModalOpen && selectedItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
