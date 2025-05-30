@@ -1,12 +1,15 @@
 // import MainLayout from "../layout/MainLayout";
 // import PaymentSteps from "./PaymentSteps";
 // import PaymentTable from "./PaymentTable";
-import React from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import PaymentSteps from "../../../components/payment/PaymentSteps";
 import PaymentTable from "../../../components/payment/PaymentTable";
+import PaymentConfirmation from "../../../components/payment/PaymentConfirmation";
+import PaymentReceipt from "../../../components/payment/PaymentReceipt";
 
 export default function StudentPayment() {
+  const [step, setStep] = useState(1);
   const paymentData = [
     {
       id: 1,
@@ -41,17 +44,23 @@ export default function StudentPayment() {
 
   return (
     <MainLayout titlePage="Tagihan Mahasiswa" isGreeting={false} className={""}>
-      <PaymentSteps />
-      <PaymentTable
-        data={paymentData}
-        total={total}
-        onClick={function (): void {
-          throw new Error("Function not implemented.");
-        }}
-        className={""}
-        loading={false}
-        error={false}
-      />
+      <div className="space-y-4">
+        <PaymentSteps step={step} setStep={setStep} />
+        {step === 1 && (
+          <PaymentTable
+            data={paymentData}
+            total={total}
+            onClick={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+            className={""}
+            loading={false}
+            error={false}
+          />
+        )}
+        {step === 2 && <PaymentConfirmation />}
+        {step === 3 && <PaymentReceipt />}
+      </div>
     </MainLayout>
   );
 }

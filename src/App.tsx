@@ -20,7 +20,12 @@ import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard"
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
 import CollegeClass from "./pages/admin-academic/class/CollegeClass";
-import { AdminFinanceRoute, StudentRoute, AdminAcademicRoute, LecturerRoute } from "./types/VarRoutes";
+import {
+  AdminFinanceRoute,
+  StudentRoute,
+  AdminAcademicRoute,
+  LecturerRoute,
+} from "./types/VarRoutes";
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
 import StudentData from "./pages/admin-academic/student/StudentData";
@@ -72,6 +77,7 @@ import DetailStudentBill from "./pages/admin-finance/student-bill/DetailStudentB
 import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
 import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
+import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetailTransaction";
 
 export default function App() {
   return (
@@ -84,113 +90,273 @@ export default function App() {
 
       {/* Route Jadwal */}
       <Route path={String(StudentRoute.schedule.exam)} element={<Exam />} />
-      <Route path={String(StudentRoute.schedule.calendar)} element={<CalendarAcademic />} />
-      <Route path={String(StudentRoute.schedule.announcement)} element={<Announcement />} />
-      <Route path={String(StudentRoute.schedule.thisWeek)} element={<ThisWeek />} />
+      <Route
+        path={String(StudentRoute.schedule.calendar)}
+        element={<CalendarAcademic />}
+      />
+      <Route
+        path={String(StudentRoute.schedule.announcement)}
+        element={<Announcement />}
+      />
+      <Route
+        path={String(StudentRoute.schedule.thisWeek)}
+        element={<ThisWeek />}
+      />
 
       {/* Route Profile */}
-      <Route path={String(StudentRoute.profile.profile)} element={<StudentInformation />} />
-      <Route path={String(StudentRoute.profile.parent)} element={<ParentInformation />} />
-      <Route path={String(StudentRoute.profile.programStudy)} element={<ProgramStudy />} />
-      <Route path={String(StudentRoute.profile.educationHistory)} element={<EducationHistory />} />
+      <Route
+        path={String(StudentRoute.profile.profile)}
+        element={<StudentInformation />}
+      />
+      <Route
+        path={String(StudentRoute.profile.parent)}
+        element={<ParentInformation />}
+      />
+      <Route
+        path={String(StudentRoute.profile.programStudy)}
+        element={<ProgramStudy />}
+      />
+      <Route
+        path={String(StudentRoute.profile.educationHistory)}
+        element={<EducationHistory />}
+      />
 
       {/* Route Akademik */}
-      <Route path={String(StudentRoute.academic.history)} element={<History />} />
+      <Route
+        path={String(StudentRoute.academic.history)}
+        element={<History />}
+      />
       <Route path={String(StudentRoute.academic.retake)} element={<Retake />} />
-      <Route path={String(StudentRoute.academic.studyPlan)} element={<StudyPlanCard />} />
-      <Route path={String(StudentRoute.academic.studentGrade)} element={<StudentGrade />} />
+      <Route
+        path={String(StudentRoute.academic.studyPlan)}
+        element={<StudyPlanCard />}
+      />
+      <Route
+        path={String(StudentRoute.academic.studentGrade)}
+        element={<StudentGrade />}
+      />
 
       {/* Route Hasil Studi */}
-      <Route path={String(StudentRoute.studyResult.studyResult)} element={<StudyResultCard />} />
-      <Route path={String(StudentRoute.studyResult.transcript)} element={<TranscriptGrade />} />
+      <Route
+        path={String(StudentRoute.studyResult.studyResult)}
+        element={<StudyResultCard />}
+      />
+      <Route
+        path={String(StudentRoute.studyResult.transcript)}
+        element={<TranscriptGrade />}
+      />
 
       {/* route payment */}
-      <Route path={String(StudentRoute.payment.payment)} element={<StudentPayment />} />
-      <Route path={String(StudentRoute.payment.paymentHistory)} element={<StudentPaymentHistory />} />
+      <Route
+        path={String(StudentRoute.payment.payment)}
+        element={<StudentPayment />}
+      />
+      <Route
+        path={String(StudentRoute.payment.paymentHistory)}
+        element={<StudentPaymentHistory />}
+      />
+      <Route
+        path={String(StudentRoute.payment.paymentDetailHistory)}
+        element={<PaymentDetailTransaction />}
+      />
 
       {/* Route Untuk Admin Akademik */}
-      <Route path={String(AdminAcademicRoute.dashboardAdminAcademic)} element={<DashboardAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.collegeClass.class)} element={<CollegeClass />} />
-      <Route path={String(AdminAcademicRoute.collegeClass.class)} element={<CollegeClass />} />
-      <Route path={String(AdminAcademicRoute.collegeClass.createClass)} element={<CreateCollegeClass />} />
-      <Route path={String(AdminAcademicRoute.collegeClass.detailClass)} element={<DetailCollegeClass />} />
-      <Route path={String(AdminAcademicRoute.student.studentData)} element={<StudentData />} />
-      <Route path={String(AdminAcademicRoute.student.createStudent)} element={<CreateStudent />} />
-      <Route path={String(AdminAcademicRoute.student.detailStudent)} element={<DetailStudent />} />
-      <Route path={String(AdminAcademicRoute.student.academicAdvisor)} element={<AcademikAdvisor />} />
+      <Route
+        path={String(AdminAcademicRoute.dashboardAdminAcademic)}
+        element={<DashboardAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.class)}
+        element={<CollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.class)}
+        element={<CollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.createClass)}
+        element={<CreateCollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.collegeClass.detailClass)}
+        element={<DetailCollegeClass />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.studentData)}
+        element={<StudentData />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.createStudent)}
+        element={<CreateStudent />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.detailStudent)}
+        element={<DetailStudent />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.student.academicAdvisor)}
+        element={<AcademikAdvisor />}
+      />
 
       {/* Route untuk admin akademik - pengumuman */}
-      <Route path={String(AdminAcademicRoute.announcement)} element={<AnnouncementAdminAcademic />} />
+      <Route
+        path={String(AdminAcademicRoute.announcement)}
+        element={<AnnouncementAdminAcademic />}
+      />
       {/* Route untuk admin akademik - pengaturan */}
-      <Route path={String(AdminAcademicRoute.setting.year)} element={<YearAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.setting.period)} element={<PeriodAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.setting.scale)} element={<ScaleAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.setting.level)} element={<LevelAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.setting.limit)} element={<LimitSKSAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.setting.composition)} element={<CompositionAdminAcademic />} />
-      <Route path={String(AdminAcademicRoute.setting.setComposition)} element={<SetCompositionAdminAcademic />} />
+      <Route
+        path={String(AdminAcademicRoute.setting.year)}
+        element={<YearAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.period)}
+        element={<PeriodAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.scale)}
+        element={<ScaleAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.level)}
+        element={<LevelAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.limit)}
+        element={<LimitSKSAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.composition)}
+        element={<CompositionAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.setting.setComposition)}
+        element={<SetCompositionAdminAcademic />}
+      />
 
       {/* Route untuk admin akademik - Tahun Kurikulum */}
-      <Route path={String(AdminAcademicRoute.curriculumYear)} element={<CurriculumYear />} />
+      <Route
+        path={String(AdminAcademicRoute.curriculumYear)}
+        element={<CurriculumYear />}
+      />
 
       {/* Route untuk admin akademik - Manajemen Mata Kuliah*/}
-      <Route path={String(AdminAcademicRoute.courseManagement.courseManagement)} element={<CourseManagement />} />
+      <Route
+        path={String(AdminAcademicRoute.courseManagement.courseManagement)}
+        element={<CourseManagement />}
+      />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.addCourse)} element={<AddCourse />} />
+      <Route
+        path={String(AdminAcademicRoute.courseManagement.addCourse)}
+        element={<AddCourse />}
+      />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.editCourse)} element={<EditCourse />} />
+      <Route
+        path={String(AdminAcademicRoute.courseManagement.editCourse)}
+        element={<EditCourse />}
+      />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.detailCourse)} element={<DetailCourse />} />
+      <Route
+        path={String(AdminAcademicRoute.courseManagement.detailCourse)}
+        element={<DetailCourse />}
+      />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.cplCpmkCourse)} element={<CplCpmkCourse />} />
+      <Route
+        path={String(AdminAcademicRoute.courseManagement.cplCpmkCourse)}
+        element={<CplCpmkCourse />}
+      />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.rpsCourse)} element={<RpsCourse />} />
+      <Route
+        path={String(AdminAcademicRoute.courseManagement.rpsCourse)}
+        element={<RpsCourse />}
+      />
 
       {/* Route untuk admin akademik - OBE Management */}
-      <Route path={String(AdminAcademicRoute.obeManagement.obeManagement)} element={<OBEManagement />} />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.obeManagement)}
+        element={<OBEManagement />}
+      />
 
-      <Route path={String(AdminAcademicRoute.obeManagement.graduateProfile)} element={<GraduateProfile />} />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.graduateProfile)}
+        element={<GraduateProfile />}
+      />
 
-      <Route path={String(AdminAcademicRoute.obeManagement.cpl)} element={<ObeCpl />} />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.cpl)}
+        element={<ObeCpl />}
+      />
 
-      <Route path={String(AdminAcademicRoute.obeManagement.cpmk)} element={<ObeCpmk />} />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.cpmk)}
+        element={<ObeCpmk />}
+      />
 
-      <Route path={String(AdminAcademicRoute.obeManagement.cpmkMataKuliah)} element={<ObeCpmkMatkul />} />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.cpmkMataKuliah)}
+        element={<ObeCpmkMatkul />}
+      />
 
       {/* Route untuk admin akademik - Kurikulum Prodi */}
-      <Route path={String(AdminAcademicRoute.prodiCurriculum)} element={<CurriculumProdi />} />
+      <Route
+        path={String(AdminAcademicRoute.prodiCurriculum)}
+        element={<CurriculumProdi />}
+      />
 
       {/* Route untuk admin akademik - Manajemen RPS */}
-      <Route path={String(AdminAcademicRoute.rpsManagement.rpsManagement)} element={<RpsManagement />} />
+      <Route
+        path={String(AdminAcademicRoute.rpsManagement.rpsManagement)}
+        element={<RpsManagement />}
+      />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.addRps)} element={<AddRps />} />
+      <Route
+        path={String(AdminAcademicRoute.rpsManagement.addRps)}
+        element={<AddRps />}
+      />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.editRps)} element={<EditRps />} />
+      <Route
+        path={String(AdminAcademicRoute.rpsManagement.editRps)}
+        element={<EditRps />}
+      />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.detailRps)} element={<DetailRps />} />
+      <Route
+        path={String(AdminAcademicRoute.rpsManagement.detailRps)}
+        element={<DetailRps />}
+      />
 
       {/* Route Untuk Admin Keuangan */}
-      <Route path={String(AdminFinanceRoute.dashboardAdminFinance)} element={<DashboardAdminFinance />} />
+      <Route
+        path={String(AdminFinanceRoute.dashboardAdminFinance)}
+        element={<DashboardAdminFinance />}
+      />
       <Route path={String(AdminFinanceRoute.editBill)} element={<EditBill />} />
-      <Route path={String(AdminFinanceRoute.createBill)} element={<CreateBill />} />
-      <Route path={String(AdminFinanceRoute.formCreateBill)} element={<FormCreateBill />} />
-      <Route path={String(AdminFinanceRoute.studentBill)} element={<StudentBill />} />
-      <Route path={String(AdminFinanceRoute.detailStudentBill)} element={<DetailStudentBill />} />
-      <Route path={String(AdminFinanceRoute.componentBill)} element={<ComponentBill />} />
-      <Route path={String(AdminFinanceRoute.createComponentBill)} element={<CreateComponentBill />} />
-      <Route path={String(AdminFinanceRoute.editComponentBill)} element={<EditComponentBill />} />
-
-       {/* Route untuk dosen */}
-      <Route path={String(LecturerRoute.dashboard)} element={<DashboardLecturer />} />
-      <Route path={String(LecturerRoute.guidance.consultation)} element={<ConsultationLecturer />} />
-      <Route path={String(LecturerRoute.guidance.proposal)} element={<ProposalLecturer />} />
-      <Route path={String(LecturerRoute.schedule.calendar)} element={<CalendarLecturer />} />
-      <Route path={String(LecturerRoute.guidance.finalProject)} element={<FinalProjectLecturer />} />
-      <Route path={String(LecturerRoute.guidance.supporter)} element={<SupporterLecturer />} />
-      <Route path={String(LecturerRoute.guidance.advisor)} element={<AdvisorLecturer />} />
-      <Route path={String(LecturerRoute.courses.course)} element={<CourseLecturer />} />
-      <Route path={String(LecturerRoute.courses.stopStudy)} element={<StopStudyLecturer />} />
-      <Route path={String(LecturerRoute.courses.class)} element={<ClassLecturer />} />
+      <Route
+        path={String(AdminFinanceRoute.createBill)}
+        element={<CreateBill />}
+      />
+      <Route
+        path={String(AdminFinanceRoute.formCreateBill)}
+        element={<FormCreateBill />}
+      />
+      <Route
+        path={String(AdminFinanceRoute.studentBill)}
+        element={<StudentBill />}
+      />
+      <Route
+        path={String(AdminFinanceRoute.detailStudentBill)}
+        element={<DetailStudentBill />}
+      />
+      <Route
+        path={String(AdminFinanceRoute.componentBill)}
+        element={<ComponentBill />}
+      />
+      <Route
+        path={String(AdminFinanceRoute.createComponentBill)}
+        element={<CreateComponentBill />}
+      />
+      <Route
+        path={String(AdminFinanceRoute.editComponentBill)}
+        element={<EditComponentBill />}
+      />
     </Routes>
   );
 }
