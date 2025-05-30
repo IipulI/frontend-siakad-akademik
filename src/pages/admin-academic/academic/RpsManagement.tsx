@@ -4,6 +4,7 @@ import { Search, Plus, CornerUpLeft } from "lucide-react";
 import { TableRpsManagement } from "../../../components/Table";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes.tsx";
+import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 
 interface RPSData {
   id: number;
@@ -64,7 +65,7 @@ const RpsManagement: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Manajemen RPS">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
           {[
             { label: "Tahun Kurikulum", value: "2021" },
             { label: "Program Studi", value: "2025 Genap" },
@@ -82,15 +83,17 @@ const RpsManagement: React.FC = () => {
       </div>
 
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-green px-5">
-        <div className="flex">
-          <input type="search" placeholder="Cari Program Studi" className="px-3 py-1 w-72 rounded-l-md border border-black/50" />
-          <button className="bg-primary-yellow rounded-r-md w-10 flex items-center justify-center">
-            <Search color="white" size={20} />
-          </button>
+        <div className="flex flex-col gap-6 md:flex-row md:gap-0">
+          <div className="flex flex-row">
+            <input type="search" placeholder="Cari Program Studi" className="px-3 py-1 w-full md:w-72 rounded-l-md border border-black/50" />
+            <button className="bg-primary-yellow rounded-r-md w-10 flex items-center justify-center">
+              <Search color="white" size={20} />
+            </button>
+          </div>
 
-          <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white ml-auto flex items-center">
+          <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white ml-auto w-full md:w-36 flex items-center justify-center">
             <Plus className="mr-2" size={16} />
-            Tambah
+            <span className="text-center w-full md:w-auto">Tambah</span>
           </button>
         </div>
 
@@ -100,44 +103,7 @@ const RpsManagement: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 px-4">
-          <div className="text-sm flex items-center gap-2">
-            <div className="flex items-center bg-sky-100 mr-3">
-              <div className="w-2 h-7 bg-blue-500 mr-3"></div>
-              <span className="pr-3">
-                Hal {currentPage} / {totalPages} ({data.length} data, 0,031 Detik)
-              </span>
-            </div>
-
-            <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="rounded px-3 py-2 border border-primary-brown">
-              <option value={10}>10 Baris</option>
-              <option value={25}>25 Baris</option>
-              <option value={50}>50 Baris</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &lt;&lt;
-            </button>
-            <button onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)} disabled={currentPage === 1} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &lt;
-            </button>
-
-            {pageNumbers.map((number) => (
-              <button key={number} onClick={() => setCurrentPage(number)} className={`w-8 h-8 ${currentPage === number ? "bg-primary-green text-white" : "bg-white border border-gray-300"}`}>
-                {number}
-              </button>
-            ))}
-
-            <button onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)} disabled={currentPage === totalPages} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &gt;
-            </button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="bg-white border border-gray-300 w-8 h-8 flex items-center justify-center">
-              &gt;&gt;
-            </button>
-          </div>
-        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
       </div>
     </MainLayout>
   );
