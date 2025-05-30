@@ -13,10 +13,11 @@ const navItems = [
     path: LecturerRoute.dashboard,
     hasDropdown: false,
   },
-  { id: "2",
-    name: "Bimbingan", 
-    dropdownKey: "bimbingan", 
-    hasDropdown: true
+  {
+    id: "2",
+    name: "Bimbingan Akademik",
+    path: LecturerRoute.guidance.advisor,
+    hasDropdown: false,
   },
   { id: "3", 
     name: "Jadwal", 
@@ -41,12 +42,6 @@ const dropdownMenus = {
         title: "Konsultasi",
         description: "Konsultasi dengan Mahasiswa",
         to: LecturerRoute.guidance.consultation,
-      },
-      {
-        icon: "icon_calendar.png",
-        title: "Bimbingan Akademik",
-        description: "Monitoring KRS Mahasiswa",
-        to: LecturerRoute.guidance.advisor,
       },
       {
         icon: "icon_week.png",
@@ -83,12 +78,12 @@ const dropdownMenus = {
         description: "Reserensi SKS Mahasiswa",
         to: LecturerRoute.courses.class,
       },
-      {
-        icon: "icon_timetable.png",
-        title: "Berhenti Studi",
-        description: "Mahasiswa",
-        to: LecturerRoute.courses.stopStudy,
-      },
+      // {
+      //   icon: "icon_timetable.png",
+      //   title: "Berhenti Studi",
+      //   description: "Mahasiswa",
+      //   to: LecturerRoute.courses.stopStudy,
+      // },
     ],
   },
 };
