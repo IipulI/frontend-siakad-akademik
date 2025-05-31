@@ -1,8 +1,8 @@
 import { Plus, RefreshCw, Search, Eye, Pen, Trash2 } from "lucide-react";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../../components/layouts/MainLayout";
+import Pagination from "../Pagination";
 import { useEffect, useState } from "react";
-import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import { Api } from "../../../api/Index";
@@ -14,26 +14,76 @@ interface ComponentData {
   nominal: number;
 }
 
+interface PaginationMeta {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+}
+
 export default function ComponentBill() {
   const [componentApiData, setComponentApiData] = useState<ComponentData[]>([]);
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function fetchComponentData() {
+  async function fetchComponentData(
+    page: number = 1,
+    size: number = 10,
+    search: string = ""
+  ) {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const params = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+        ...(search && { search }),
       });
+
+      const response = await Api.get(
+        `/keuangan/invoice-komponen-mahasiswa?${params}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setComponentApiData(response.data.data);
+
+      // Update pagination info from API response
+      if (response.data.pagination) {
+        setPagination({
+          currentPage: response.data.pagination.currentPage || page,
+          totalPages: response.data.pagination.totalPages || 1,
+          totalItems: response.data.pagination.totalItems || 0,
+          itemsPerPage: response.data.pagination.perPage || size,
+        });
+      } else {
+        // Fallback if API doesn't return pagination info
+        setPagination({
+          currentPage: page,
+          totalPages: Math.ceil(response.data.data.length / size),
+          totalItems: response.data.data.length,
+          itemsPerPage: size,
+        });
+      }
+      
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("Gagal memuat data komponen tagihan");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleDelete(id: string) {
-    // Konfirmasi sebelum menghapus
     const isConfirmed = window.confirm(
       "Apakah Anda yakin ingin menghapus komponen tagihan ini? Tindakan ini tidak dapat dibatalkan."
     );
@@ -43,21 +93,23 @@ export default function ComponentBill() {
     try {
       const token = localStorage.getItem("token");
 
-      // Kirim request DELETE ke API
       await Api.delete(`/keuangan/invoice-komponen-mahasiswa/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Update state dengan menghapus item yang sudah dihapus
-      setComponentApiData((prev) => prev.filter((item) => item.id !== id));
-
       alert("Komponen tagihan berhasil dihapus!");
+
+      // Refresh current page data
+      fetchComponentData(
+        pagination.currentPage,
+        pagination.itemsPerPage,
+        searchQuery
+      );
     } catch (error) {
       console.error("Error deleting component:", error);
 
-      // Handle different error scenarios
       if (error.response?.status === 404) {
         alert("Komponen tagihan tidak ditemukan");
       } else if (error.response?.status === 403) {
@@ -70,34 +122,51 @@ export default function ComponentBill() {
     }
   }
 
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    fetchComponentData(page, pagination.itemsPerPage, searchQuery);
+  };
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (size: number) => {
+    fetchComponentData(1, size, searchQuery); // Reset to page 1 when changing page size
+  };
+
+  // Handle search
+  const handleSearch = () => {
+    fetchComponentData(1, pagination.itemsPerPage, searchQuery); // Reset to page 1 when searching
+  };
+
+  // Handle refresh
+  const handleRefresh = () => {
+    setSearchQuery("");
+    fetchComponentData(1, pagination.itemsPerPage, "");
+  };
+
   useEffect(() => {
     fetchComponentData();
   }, []);
 
   const usenavigate = useNavigate();
 
-  function SearchSubmit() {
-    alert("oke search");
-  }
-
-  function Refres() {
-    window.location.reload();
-  }
-
   function Create() {
     usenavigate(AdminFinanceRoute.createComponentBill);
   }
 
-  function handleEdit(id: string) {
-    usenavigate(`/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/${id}`);
+  function handleEdit(id: string, itemData: ComponentData) {
+    usenavigate(
+      `/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/${id}`,
+      {
+        state: {
+          componentData: itemData,
+        },
+      }
+    );
   }
 
   function handleView() {
     console.log("Viewing");
   }
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base";
@@ -119,18 +188,21 @@ export default function ComponentBill() {
             <div className="flex items-center">
               <input
                 type="text"
-                className="border-2 p-1 rounded text-xs w-50  "
-                placeholder="Cari Kelas Kuliah"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                className="border-2 p-1 rounded text-xs w-50"
+                placeholder="Cari Komponen Tagihan"
               />
               <ButtonClick
                 icon={<Search size={16} strokeWidth={3} />}
                 color="bg-primary-yellow"
-                onClick={SearchSubmit}
+                onClick={handleSearch}
               />
               <ButtonClick
                 icon={<RefreshCw size={16} strokeWidth={3} />}
                 color="bg-blue-900"
-                onClick={Refres}
+                onClick={handleRefresh}
               />
             </div>
           </div>
@@ -144,64 +216,92 @@ export default function ComponentBill() {
           />
         </div>
 
-        {/* Integrated Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className={headerClassName}>Kode Komponen</th>
-                <th className={headerClassName}>Nama</th>
-                <th className={headerClassName}>Nominal</th>
-                <th className={headerClassName}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {componentApiData.map((item, Index) => (
-                <tr key={Index}>
-                  <td className={cellClassName}>{item.kodeKomponen}</td>
-                  <td className={`${cellClassName} text-left`}>{item.nama}</td>
-                  <td className={cellClassName}>
-                    {new Intl.NumberFormat("id-ID", {
-                      style: "currency",
-                      currency: "IDR",
-                      minimumFractionDigits: 0,
-                    })
-                      .format(item.nominal)
-                      .replace("Rp", "Rp ")}
-                  </td>
-                  <td className={cellClassName}>
-                    <div className="flex justify-center space-x-2">
-                      <ButtonClick
-                        icon={<Eye size={16} strokeWidth={3} />}
-                        color="bg-blue-500"
-                        onClick={() => handleView()}
-                      />
-                      <ButtonClick
-                        icon={<Pen size={16} strokeWidth={3} />}
-                        color="bg-yellow-500"
-                        onClick={() => handleEdit(item.id)}
-                      />
-                      <ButtonClick
-                        icon={<Trash2 size={16} strokeWidth={3} />}
-                        color="bg-red-500"
-                        onClick={() => handleDelete(item.id)}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-8">
+            <RefreshCw className="animate-spin h-8 w-8 text-primary-green" />
+            <span className="ml-2 text-gray-600">Memuat data...</span>
+          </div>
+        )}
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={8}
-          onPageChange={setCurrentPage}
-          rowsPerPage={rowsPerPage}
-          totalRows={65}
-          onRowsPerPageChange={setRowsPerPage}
-        />
+        {/* Table */}
+        {!isLoading && (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className={headerClassName}>Kode Komponen</th>
+                  <th className={headerClassName}>Nama</th>
+                  <th className={headerClassName}>Nominal</th>
+                  <th className={headerClassName}>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {componentApiData.length > 0 ? (
+                  componentApiData.map((item, Index) => (
+                    <tr key={Index}>
+                      <td className={cellClassName}>{item.kodeKomponen}</td>
+                      <td className={`${cellClassName} text-left`}>
+                        {item.nama}
+                      </td>
+                      <td className={cellClassName}>
+                        {new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                          minimumFractionDigits: 0,
+                        })
+                          .format(item.nominal)
+                          .replace("Rp", "Rp ")}
+                      </td>
+                      <td className={cellClassName}>
+                        <div className="flex justify-center space-x-2">
+                          <ButtonClick
+                            icon={<Eye size={16} strokeWidth={3} />}
+                            color="bg-blue-500"
+                            onClick={() => handleView()}
+                          />
+                          <ButtonClick
+                            icon={<Pen size={16} strokeWidth={3} />}
+                            color="bg-yellow-500"
+                            onClick={() => handleEdit(item.id, item)}
+                          />
+                          <ButtonClick
+                            icon={<Trash2 size={16} strokeWidth={3} />}
+                            color="bg-red-500"
+                            onClick={() => handleDelete(item.id)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className={`${cellClassName} text-center py-8 text-gray-500`}
+                    >
+                      {searchQuery
+                        ? "Tidak ada data yang sesuai dengan pencarian"
+                        : "Tidak ada data tersedia"}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!isLoading && componentApiData.length > 0 && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            itemsPerPage={pagination.itemsPerPage}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={handleItemsPerPageChange}
+          />
+        )}
       </div>
       <div className="py-10"></div>
     </MainLayout>
