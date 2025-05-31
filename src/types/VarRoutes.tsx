@@ -29,6 +29,7 @@ export const StudentRoute = {
   payment: {
     payment: "/keuangan/tagihan-mahasiswa",
     paymentHistory: "/keuangan/riwayat-keuangan",
+    paymentDetailHistory: "/keuangan/riwayat-keuangan/detail-transaksi",
   } as routeType,
 };
 
@@ -87,10 +88,13 @@ export const AdminFinanceRoute: routeType = {
   createBill: "/admin-keuangan/buat-tagihan",
   formCreateBill: "/admin-keuangan/buat-tagihan/form-buat-tagihan",
   studentBill: "/admin-keuangan/tagihan-mahasiswa",
-  detailStudentBill: "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
+  detailStudentBill:
+    "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
   componentBill: "/admin-keuangan/komponen-tagihan",
-  createComponentBill: "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
-  editComponentBill: "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/:id",
+  createComponentBill:
+    "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
+  editComponentBill:
+    "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/:id",
 };
 
 export const LecturerRoute = {
@@ -101,17 +105,15 @@ export const LecturerRoute = {
     proposal: "/dosen/bimbingan/proposal",
     finalProject: "/dosen/bimbingan/tugas-akhir",
     supporter: "/dosen/bimbingan/kegiatan-pendukung",
-    advisor: "/dosen/bimbingan/pembimbing-akademik"
+    advisor: "/dosen/bimbingan/pembimbing-akademik",
   } as routeType,
-  announcement: {
-
-  },
-  schedule:  {
-    calendar: "/dosen/jadwal/kalender-akademik"
+  announcement: {},
+  schedule: {
+    calendar: "/dosen/jadwal/kalender-akademik",
   },
   courses: {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
-    stopStudy: "/dosen/perkuliahan/berhenti-studi"
-  }
+    stopStudy: "/dosen/perkuliahan/berhenti-studi",
+  },
 };

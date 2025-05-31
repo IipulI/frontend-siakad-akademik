@@ -61,15 +61,15 @@ const AddRps = () => {
         </div>
 
         {/* Header Info */}
-        <div className="flex mb-6 mt-8">
+        <div className="flex  mb-6 mt-8 ">
           {/* Garis hijau di kiri */}
           <div className="bg-primary-green w-2"></div>
 
           {/* Konten kanan */}
-          <div className="flex justify-between bg-[#F5FFF9] p-4 flex-1">
+          <div className="flex flex-col justify-between bg-[#F5FFF9] p-4 flex-1 md:flex-row md:gap-4">
             {/* Kolom 1 */}
             <div className="flex-1">
-              <div className="flex gap-2">
+              <div className="flex justify-between gap-2 md:justify-normal">
                 <div className="font-semibold text-primary-green">Tahun Kurikulum:</div>
                 <div>2023</div>
               </div>
@@ -77,7 +77,7 @@ const AddRps = () => {
 
             {/* Kolom 2 */}
             <div className="flex-1">
-              <div className="flex gap-2">
+              <div className="flex justify-between gap-2 md:justify-normal">
                 <div className="font-semibold text-primary-green">Periode Akademik:</div>
                 <div>2025 Genap</div>
               </div>
@@ -85,7 +85,7 @@ const AddRps = () => {
 
             {/* Kolom 3 */}
             <div className="flex-1">
-              <div className="flex gap-2">
+              <div className="flex justify-between  md:justify-normal">
                 <div className="font-semibold text-primary-green">Program Studi:</div>
                 <div>SI - Teknik Informatika</div>
               </div>
@@ -96,11 +96,11 @@ const AddRps = () => {
         {/* Form Content */}
         <div className="space-y-6">
           {/* Mata Kuliah */}
-          <div className="form-group flex items-center gap-4">
+          <div className="form-group flex flex-col items-start md:items-center gap-4 md:flex-row">
             <label className="w-48 font-medium">
               Mata Kuliah<span className="text-red-500">*</span>
             </label>
-            <select name="mataKuliah" value={formData.mataKuliah} onChange={handleChange} className="flex-1 p-2 border border-gray-300 rounded" required>
+            <select name="mataKuliah" value={formData.mataKuliah} onChange={handleChange} className="flex-1 p-2 border border-gray-300 rounded w-full" required>
               <option value="" disabled>
                 -- Pilih Mata Kuliah --
               </option>
@@ -111,19 +111,19 @@ const AddRps = () => {
           </div>
 
           {/* Tanggal Perkuliahan */}
-          <div className="form-group flex items-center gap-4">
+          <div className="form-group flex flex-col  items-start md:items-center md:flex-row gap-4">
             <label className="w-48 font-medium">
               Tanggal Perkuliahan<span className="text-red-500">*</span>
             </label>
-            <input type="date" name="tanggalPenyusunan" value={formData.tanggalPenyusunan} onChange={handleChange} className="flex-1 p-2 border border-gray-300 rounded" required />
+            <input type="date" name="tanggalPenyusunan" value={formData.tanggalPenyusunan} onChange={handleChange} className="flex-1 p-2 border border-gray-300 rounded w-full" required />
           </div>
 
           {/* Dosen Pengajar */}
-          <div className="form-group flex items-center gap-4">
+          <div className="form-group flex flex-col items-start md:items-center gap-4 md:flex-row">
             <label className="w-48 font-medium">
               Dosen Penyusun<span className="text-red-500">*</span>
             </label>
-            <select name="dosenPenyusun" value={formData.dosenPenyusun} onChange={handleChange} className="flex-1 p-2 border border-gray-300 rounded" required>
+            <select name="dosenPenyusun" value={formData.dosenPenyusun} onChange={handleChange} className="flex-1 p-2 border border-gray-300 rounded w-full" required>
               <option value="" disabled>
                 -- Pilih Dosen --
               </option>
@@ -141,7 +141,7 @@ const AddRps = () => {
             { name: "pustakaUtama", label: "Pustaka Utama" },
             { name: "pustakaPendukung", label: "Pustaka Pendukung" },
           ].map((field) => (
-            <div key={field.name} className="form-group flex items-start gap-4">
+            <div key={field.name} className="form-group flex flex-col items-start gap-4 md:flex-row">
               <label className="w-48 font-medium pt-2">{field.label}</label>
               <div className="flex-1">
                 <RichTextEditor name={field.name} value={formData[field.name]} onChange={handleEditorChange} />
@@ -150,7 +150,7 @@ const AddRps = () => {
           ))}
 
           {/* Upload Dokumen */}
-          <div className="form-group flex items-start gap-4 mb-4">
+          <div className="form-group flex flex-col items-start gap-4 mb-4  md:flex-row">
             {/* Label kiri */}
             <label htmlFor="dokumenRps" className="w-48 font-medium text-gray-700 pt-2">
               Dokumen RPS

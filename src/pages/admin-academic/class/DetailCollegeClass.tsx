@@ -7,6 +7,7 @@ import {
   Plus,
   Save,
   Settings,
+  Trash,
   Trash2,
 } from "lucide-react";
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
@@ -188,6 +189,7 @@ const DetailCollegeClass = () => {
               {activeTab === "classAttendant" && <ClassAttendant />}
               {activeTab === "rps" && <RPS />}
               {activeTab === "grading" && <Grading />}
+              {activeTab === "examSchedule" && <ExamSchedule />}
             </div>
           </div>
         </BorderedGreenContainer>
@@ -789,6 +791,97 @@ const Grading = () => {
                       ❌
                     </span>
                   )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const ExamSchedule = () => {
+  const data = [
+    {
+      no: "1",
+      type: "UTS",
+      date: "14 April 2025",
+      time: "13:00 - 14:30",
+      room: "Ruang Kuliah Lantai 3 No 305",
+      watcher: "221106043035 - Maulana Ikhsan",
+      attendance: "30",
+    },
+    {
+      no: "2",
+      type: "UTS",
+      date: "15 April 2025",
+      time: "13:00 - 18:30",
+      room: "Ruang Kuliah Lantai 3 No 311",
+      watcher: "221106043035 - Maulana Ikhsan",
+      attendance: "10",
+    },
+  ];
+  return (
+    <div className="space-y-4">
+      <ClassBio />
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-primary-green text-white">
+              <th className="py-2 px-4 border font-semibold border-gray-300">
+                No
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">
+                Jenis Ujian
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">
+                Tanggal
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">
+                Waktu
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">
+                Ruang
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">
+                Pengawas Ujian
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">
+                Peserta
+              </th>
+              <th className="p-2 border font-semibold border-gray-300">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((exam) => (
+              <tr key={exam.no} className="hover:bg-gray-50 text-center">
+                <td className="py-2 px-4 text-center border border-gray-300 font-semibold">
+                  {exam.no}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold">
+                  {exam.type}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {exam.date}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {exam.time}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {exam.room}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {exam.watcher}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {exam.attendance}
+                </td>
+
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  <button className="py-1 px-2 rounded bg-red-400">
+                    <Trash color="#fff" size={20} />
+                  </button>
                 </td>
               </tr>
             ))}

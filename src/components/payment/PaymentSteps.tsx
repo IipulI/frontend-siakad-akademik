@@ -1,9 +1,6 @@
 import React from "react";
-import { useState } from "react";
 
-export default function PaymentSteps() {
-  const [activeStep] = useState(1);
-
+export default function PaymentSteps({ step, setStep }) {
   const steps = [
     { id: 1, label: "Bayar Tagihan" },
     { id: 2, label: "Konfirmasi Pembayaran" },
@@ -13,17 +10,18 @@ export default function PaymentSteps() {
   return (
     <div>
       <div className="flex items-center">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex items-center">
-            <div
-              className={`py-5 px-4 border-b-2 ${
-                activeStep === step.id
-                  ? "border-primary-green text-primary-green"
-                  : " text-primary-green opacity-60"
+        {steps.map((s, index) => (
+          <div key={s.id} className="flex items-center">
+            <button
+              onClick={() => setStep(s.id)}
+              className={`py-5 px-4 border-b-2 transition-all duration-300 ${
+                step === s.id
+                  ? "border-primary-green text-primary-green font-semibold"
+                  : "border-transparent text-primary-green opacity-60"
               }`}
             >
-              {step.id}. {step.label}
-            </div>
+              {s.id}. {s.label}
+            </button>
             {index < steps.length - 1 && (
               <span className="mx-2 text-gray-500">
                 <svg

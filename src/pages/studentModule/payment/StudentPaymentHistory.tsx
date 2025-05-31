@@ -1,6 +1,8 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Calendar, RefreshCcw, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { StudentRoute } from "../../../types/VarRoutes";
 
 const StudentPaymentHistory = () => {
   const transactionData = [
@@ -61,6 +63,10 @@ const StudentPaymentHistory = () => {
       invoice: "INV/20242/0008779",
     },
   ];
+  const navigate = useNavigate();
+  const detailTransaction = () => {
+    navigate(StudentRoute.payment.paymentDetailHistory);
+  };
   return (
     <MainLayout
       isGreeting={false}
@@ -119,7 +125,10 @@ const StudentPaymentHistory = () => {
               <ItemList title={"Metode Pembayaran"} data={item.metode} />
               <ItemList title={"Total Pembayaran"} data={item.total} />
               <div>
-                <button className="py-2 rounded px-4 cursor-pointer bg-[#00A65A] text-white">
+                <button
+                  onClick={detailTransaction}
+                  className="py-2 rounded px-4 cursor-pointer bg-[#00A65A] text-white"
+                >
                   Detail Transaksi
                 </button>
               </div>
