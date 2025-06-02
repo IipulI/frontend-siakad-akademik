@@ -19,13 +19,13 @@ const navItems = [
     hasDropdown: false,
   },
   {
-    id: "3",
+    id: "1",
     name: "Tagihan Mahasiswa",
     path: String(AdminFinanceRoute.studentBill),
     hasDropdown: false,
   },
   {
-    id: "4",
+    id: "1",
     name: "Komponen Tagihan",
     path: String(AdminFinanceRoute.componentBill),
     hasDropdown: false,

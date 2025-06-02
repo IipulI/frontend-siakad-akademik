@@ -93,8 +93,7 @@ export const AdminFinanceRoute: routeType = {
   componentBill: "/admin-keuangan/komponen-tagihan",
   createComponentBill:
     "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
-  editComponentBill:
-    "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan/:id",
+  editComponentBill: "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan",
 };
 
 export const LecturerRoute = {
@@ -105,15 +104,17 @@ export const LecturerRoute = {
     proposal: "/dosen/bimbingan/proposal",
     finalProject: "/dosen/bimbingan/tugas-akhir",
     supporter: "/dosen/bimbingan/kegiatan-pendukung",
-    advisor: "/dosen/bimbingan/pembimbing-akademik",
+    advisor: "/dosen/bimbingan/pembimbing-akademik"
   } as routeType,
-  announcement: {},
-  schedule: {
-    calendar: "/dosen/jadwal/kalender-akademik",
+  announcement: {
+
+  },
+  schedule:  {
+    calendar: "/dosen/jadwal/kalender-akademik"
   },
   courses: {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
-    stopStudy: "/dosen/perkuliahan/berhenti-studi",
-  },
+    stopStudy: "/dosen/perkuliahan/berhenti-studi"
+  }
 };

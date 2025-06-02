@@ -3,98 +3,52 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
-import { useState } from "react";
-import { Api } from "../../../api/Index";
 
 export default function CreateComponentBill() {
-  const [kodeKomponen, setKodeKomponen] = useState("");
-  const [nama, setNama] = useState("");
-  const [nominal, setNominal] = useState("");
-  const navigate = useNavigate();
-
-  async function handleSave() {
-    // Validasi input kosong
-    if (!kodeKomponen || !nama || !nominal || isNaN(parseInt(nominal))) {
-      alert("Semua kolom harus diisi");
-      return;
-    }
-
-    const token = localStorage.getItem("token"); // Ambil token dari localStorage
-
-    try {
-      const response = await Api.post(
-        "/keuangan/invoice-komponen-mahasiswa",
-        {
-          kodeKomponen,
-          nama,
-          nominal: parseInt(nominal),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      alert("Berhasil menyimpan data!");
-      navigate(AdminFinanceRoute.componentBill);
-    } catch (error: any) {
-      console.error("Gagal menyimpan komponen tagihan:", error);
-    }
+  const usenavigate = useNavigate();
+  function Back() {
+    usenavigate(AdminFinanceRoute.componentBill);
   }
 
-  function handleBack() {
-    navigate(AdminFinanceRoute.componentBill);
+  function Savee() {
+    alert("oke save");
   }
-
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
-        <div className="flex justify-end gap-4 mb-4">
+        <div className="flex justify-end gap-4">
           <ButtonClick
             text="Kembali ke Daftar"
             icon={<ChevronLeft size={16} strokeWidth={3} />}
             color="bg-primary-yellow"
-            onClick={handleBack}
+            onClick={Back}
             spacing="1"
           />
           <ButtonClick
             text="Simpan"
             icon={<Save size={16} />}
             color="bg-primary-blueSoft"
-            onClick={handleSave}
+            onClick={Savee}
             spacing="1"
           />
         </div>
 
-        <h1 className="text-lg sm:text-2xl font-semibold mb-6">
+        <h1 className="text-lg sm:text-2xl font-semibold">
           Tambah Komponen Tagihan
         </h1>
-
-        <div className="grid grid-cols-2 md:w-1/3 gap-2">
-          <label className="text-sm font-semibold">Kode Komponen</label>
-          <input
-            type="text"
-            value={kodeKomponen}
-            onChange={(e) => setKodeKomponen(e.target.value)}
-            className="p-1 border-2 rounded text-sm md:w-70"
-          />
-
-          <label className="text-sm font-semibold">Nama Komponen</label>
-          <input
-            type="text"
-            value={nama}
-            onChange={(e) => setNama(e.target.value)}
-            className="p-1 border-2 rounded text-sm md:w-70"
-          />
-
-          <label className="text-sm font-semibold">Nominal</label>
-          <input
-            type="number"
-            value={nominal}
-            onChange={(e) => setNominal(e.target.value)}
-            className="p-1 border-2 rounded text-sm md:w-70"
-          />
+        <div className="grid grid-cols-2 md:w-1/3 my-5 gap-2">
+          <label htmlFor="" className="text-sm font-semibold">
+            Kode Komponen
+          </label>
+          <input type="text" className="p-1 border-2 rounded text-sm md:w-70" />
+          <label htmlFor="" className="text-sm font-semibold">
+            Nama Komponen
+          </label>
+          <input type="text" className="p-1 border-2 rounded text-sm md:w-70" />
+          <label htmlFor="" className="text-sm font-semibold">
+            Nominal
+          </label>
+          <input type="text" className="p-1 border-2 rounded text-sm md:w-70" />
         </div>
       </div>
     </MainLayout>

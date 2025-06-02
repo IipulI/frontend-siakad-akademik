@@ -16,9 +16,9 @@ interface CaptchaResponseData {
 }
 
 export interface CaptchaElementInternals {
-    captchaCanvasRef: React.RefObject<HTMLCanvasElement>;
-    puzzlePieceImgRef: React.RefObject<HTMLImageElement>;
-    puzzleSliderRef: React.RefObject<HTMLInputElement>;
+    captchaCanvasRef: React.RefObject<HTMLCanvasElement | null>;
+    puzzlePieceImgRef: React.RefObject<HTMLImageElement |null>;
+    puzzleSliderRef: React.RefObject<HTMLInputElement | null>;
     currentPuzzlePieceXForSlider: number; // To reflect the slider's logical value
     puzzlePieceWidthStyle: number;       // For styling the img tag
     puzzlePieceHeightStyle: number;      // For styling the img tag
