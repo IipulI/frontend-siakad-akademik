@@ -1,10 +1,12 @@
 import React, { useState } from "react"
-import { Search, Plus, Trash, ChevronLeft, ChevronRight, ArrowLeft, Save, RefreshCw } from "lucide-react"
+import { Search, RefreshCw } from "lucide-react"
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import TableLecturer from "../../../components/lecturer/TableLecturer";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import DetailClassLecturer from "./DetailClassLecturer";
+import { useQuery } from "@tanstack/react-query";
+import { Api } from "../../../api/Index"
 
 const ClassLecturer = () => {
   const [id, setId] = useState<string | null>(null);
@@ -44,22 +46,31 @@ const ClassLecturer = () => {
 
   const tableHead = ["Nama Mahasiswa", "Judul Tugas Akhir", "Topik", "Nama Pembimbing", "Tanggal Pengajuan", "Status", "Aksi"]
 
-    const data = [
-        {
-          id: 1,
-          mahasiswa: "Ridho Fatan",
-          judul: "Tugas Akhir",
-          topik: "akademik",
-          pembimbing: "Fitrah Satrya",
-          tanggal: "18-05-2025",
-          status: "disetujui",
-          aksi: ""
-        }
-      ];
+  // const { isPending, data, isError } = useQuery({
+  //   queryKey: ['kelas-kuliah'],
+  //   queryFn: async () => {
+  //     // const separator = dateQuery ? "&" : ""
+  //     return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}`)
+  //   },
+  // })
+
+  const data = [
+    {
+      id: 1,
+      mahasiswa: "Ridho Fatan",
+      judul: "Tugas Akhir",
+      topik: "akademik",
+      pembimbing: "Fitrah Satrya",
+      tanggal: "18-05-2025",
+      status: "disetujui",
+      aksi: ""
+    }
+  ];
+
 
     const statusOptions = ["Semua Status", "Aktif", "Prioritas"]
 
-    const dataDetail = id ? data.find((item) => parseInt(id) === item.id) : null;
+    // const dataDetail = id ? data.find((item) => parseInt(id) === item.id) : null;
 
     return (
     <MainLayout
@@ -86,14 +97,14 @@ const ClassLecturer = () => {
                 <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green">
                     <div className="flex px-4 justify-between">
                         <div className="flex gap-4">
-                            <select className="rounded px-3 text-primary-brown border-primary-brown border p-1">
+                            <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
                                 <option value={"semua"}>-Semua-</option>
                             </select>
                             <div className="flex">
                                 <input
                                 type="search"
                                 placeholder="Cari Pengumuman"
-                                className="px-2 py-1 w-70 rounded shadow-md border border-black/50"
+                                className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-black/50"
                                 />
                                 <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
                                     <Search color="white" size={20} />
