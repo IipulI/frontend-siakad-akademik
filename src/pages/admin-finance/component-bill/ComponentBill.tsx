@@ -17,6 +17,15 @@ interface ComponentBillData {
 export default function ComponentBill() {
   const [data, setData] = useState<ComponentBillData[]>([]);
 
+  // Fungsi untuk format Rupiah
+  function formatToRupiah(amount: number): string {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  }
+
   // fetch data dari API
   async function fetchData() {
     try {
@@ -28,7 +37,8 @@ export default function ComponentBill() {
         },
       });
 
-      setData(response.data.data);
+      const reversedData = [...response.data.data].reverse();
+      setData(reversedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -152,7 +162,9 @@ export default function ComponentBill() {
                 <tr key={item.id}>
                   <td className={cellClassName}>{item.kodeKomponen}</td>
                   <td className={`${cellClassName} text-left`}>{item.nama}</td>
-                  <td className={cellClassName}>{item.nominal}</td>
+                  <td className={cellClassName}>
+                    {formatToRupiah(item.nominal)}
+                  </td>
                   <td className={cellClassName}>
                     <div className={` flex justify-center gap-2`}>
                       <ButtonClick
