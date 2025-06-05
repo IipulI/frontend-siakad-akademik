@@ -6,10 +6,16 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import { Api } from "../../../api/Index";
 
+interface InvoiceKomponenMahasiswa {
+  kodeKomponen: string;
+  nama: string;
+  nominal: number;
+}
+
 export default function CreateComponentBill() {
   const navigate = useNavigate();
 
-  const [kode, setKode] = useState("");
+  const [kodeKomponen, setKode] = useState("");
   const [nama, setNama] = useState("");
   const [nominal, setNominal] = useState("");
 
@@ -18,14 +24,14 @@ export default function CreateComponentBill() {
   }
 
   async function handleSave() {
-    if (!kode || !nama || !nominal) {
+    if (!kodeKomponen || !nama || !nominal) {
       alert("Mohon lengkapi semua field!");
       return;
     }
 
     try {
-      const payload = {
-        kode,
+      const payload: InvoiceKomponenMahasiswa = {
+        kodeKomponen,
         nama,
         nominal: Number(nominal),
       };
@@ -34,9 +40,7 @@ export default function CreateComponentBill() {
 
       const response = await Api.post(
         "/keuangan/invoice-komponen-mahasiswa",
-        {
-          payload,
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +84,7 @@ export default function CreateComponentBill() {
           <label className="text-sm font-semibold">Kode Komponen</label>
           <input
             type="text"
-            value={kode}
+            value={kodeKomponen}
             onChange={(e) => setKode(e.target.value)}
             className="p-1 border-2 rounded text-sm md:w-70"
           />
