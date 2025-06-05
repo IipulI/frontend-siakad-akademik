@@ -47,14 +47,14 @@ const CourseLecturer = () => {
                 <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-yellow">
                     <div className="flex px-4 justify-between">
                         <div className="flex gap-4">
-                            <select className="rounded px-3 text-primary-brown border-primary-brown border p-1">
+                            <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
                                 <option value={"semua"}>-Semua-</option>
                             </select>
                             <div className="flex">
                                 <input
                                 type="search"
                                 placeholder="Cari Pengumuman"
-                                className="px-2 py-1 w-70 rounded shadow-md border border-black/50"
+                                className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-black/50"
                                 />
                                 <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
                                     <Search color="white" size={20} />
@@ -64,7 +64,7 @@ const CourseLecturer = () => {
                                 </button>
                             </div>
                         </div>
-                        <button className="bg-primary-blueSoft text-white flex items-center rounded px-4 py-1">
+                        <button className="bg-primary-blueSoft text-white flex items-center text-xs lg:text-base rounded px-4 py-1">
                             <Printer size={16} className="mr-2" />
                             Cetak
                         </button>

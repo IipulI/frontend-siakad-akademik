@@ -238,15 +238,15 @@ export default function AdvisorLecturer() {
       <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
         <div className="flex justify-between">
             <div className="flex gap-8">
-                <select className="rounded px-3 text-primary-brown border-primary-brown border p-1">
-                        <option value={"Semua"}>Semua</option>
+                <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
+                  <option value={"Semua"}>Semua</option>
                 </select>
                 <div className="flex">
                     <input
                         type="search"
                         placeholder="Cari Pengumuman"
-                        className="px-2 py-1 w-70 rounded shadow-md border border-black/50"
-                    />
+                        className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-black/50"
+                        />
                     <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
                         <Search color="white" size={20} />
                     </button>
