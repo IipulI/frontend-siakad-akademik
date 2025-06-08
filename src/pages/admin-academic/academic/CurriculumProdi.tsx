@@ -3,6 +3,8 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { TableCurriculumProdi } from "../../../components/Table";
 import { RefreshCw, Search, Plus, Trash, Save } from "lucide-react";
 
+// --- Fetching Data ---
+
 interface CurriculumProdiData {
   id: number;
   no: number;

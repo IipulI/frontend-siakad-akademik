@@ -24,7 +24,7 @@ const fetchPeriodeAkademik = async (): Promise<PeriodeAkademik[]> => {
   if (Array.isArray(data)) {
     periodeData = data as PeriodeAkademik[];
   } else if (typeof data === "object" && data !== null) {
-    periodeData = Object.values(data).filter((item): item is PeriodeAkademik => item && typeof item === "object" && "id" in item) as PeriodeAkademik[];
+    periodeData = Object.values(data as Record<string, unknown>).filter((item): item is PeriodeAkademik => typeof item === "object" && item !== null && "id" in item);
   }
 
   console.log("🔍 Processed periode akademik data:", periodeData);
@@ -134,6 +134,7 @@ const CurriculumYear: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Queries
   const {
@@ -158,6 +159,8 @@ const CurriculumYear: React.FC = () => {
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  const filteredData = curriculumData.filter((item) => item.tahun.toLowerCase().includes(searchTerm.toLowerCase()));
 
   // Mutations
   const createMutation = useMutation({
@@ -223,6 +226,11 @@ const CurriculumYear: React.FC = () => {
   }, [periodeError, curriculumError]);
 
   // Event handlers
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   const handleEdit = (id: string) => {
     const selectedData = curriculumData.find((item) => item.id === id);
     if (selectedData) {
@@ -314,7 +322,7 @@ const CurriculumYear: React.FC = () => {
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow">
         <div className="flex flex-col sm:flex-row px-4 py-2 gap-2 sm:gap-4  border-b-2 w-full flex-wrap">
           <div className="flex w-full sm:w-auto sm:order-1">
-            <input type="search" placeholder="Cari Tahun Kurikulum" className="px-3 py-1 w-full sm:w-72 rounded-l-md border border-black/50" />
+            <input type="search" placeholder="Cari Tahun Kurikulum" className="px-3 py-1 w-full sm:w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
             <button className="bg-primary-yellow w-10 flex items-center justify-center">
               <Search color="white" size={20} />
             </button>
@@ -339,7 +347,7 @@ const CurriculumYear: React.FC = () => {
 
         <div className="mt-8">
           <TableCurriculumYear
-            data={paginatedData}
+            data={filteredData}
             tableHead={["Tahun", "Keterangan", "Mulai Berlaku", "Tanggal Awal", "Tanggal Akhir", "Aksi"]}
             error="Data tidak ditemukan."
             onEdit={handleEdit}
