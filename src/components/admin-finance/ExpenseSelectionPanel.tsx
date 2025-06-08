@@ -1,134 +1,91 @@
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
+import { Api } from "../../api/Index";
 
-export default function ExpenseSelectionPanel() {
-  // Available expenses
-  const [availableExpenses, setAvailableExpenses] = useState([
-    { id: 1, name: "Ujian", amount: 900000 },
-    { id: 2, name: "SKS", amount: 2000000 },
-  ]);
+interface DataKomponenTagihan {
+  id: string;
+  kodeKomponen: string;
+  nama: string;
+  nominal: number;
+  selected?: boolean;
+}
 
-  // Selected expenses
-  const [selectedExpenses, setSelectedExpenses] = useState([
-    { id: 3, name: "SPP", amount: 2000000 },
-  ]);
+export default function PanelPemilihanBiaya() {
+  const [biayaTersedia, setBiayaTersedia] = useState<DataKomponenTagihan[]>([]);
+  const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihan[]>([]);
+  const [totalTagihan, setTotalTagihan] = useState<number>(0);
 
-  // Total invoice price
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [pencarianTersedia, setPencarianTersedia] = useState<string>("");
+  const [pencarianDipilih, setPencarianDipilih] = useState<string>("");
 
-  // Search queries
-  const [availableSearchQuery, setAvailableSearchQuery] = useState("");
-  const [selectedSearchQuery, setSelectedSearchQuery] = useState("");
+  async function ambilData() {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  // Calculate total price whenever selected expenses change
+      const semuaData: DataKomponenTagihan[] = response.data.data;
+
+      const tersedia = semuaData.filter((item) => !item.selected);
+      const dipilih = semuaData.filter((item) => item.selected);
+
+      setBiayaTersedia(tersedia);
+      setBiayaDipilih(dipilih);
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+    }
+  }
+
   useEffect(() => {
-    const total = selectedExpenses.reduce(
-      (sum, expense) => sum + expense.amount,
-      0
-    );
-    setTotalPrice(total);
-  }, [selectedExpenses]);
+    ambilData();
+  }, []);
 
-  // Format the amount to Indonesian Rupiah format
-  const formatAmount = (amount) => {
-    return `Rp${amount.toLocaleString("id-ID")}`;
+  useEffect(() => {
+    const total = biayaDipilih.reduce((sum, item) => sum + item.nominal, 0);
+    setTotalTagihan(total);
+  }, [biayaDipilih]);
+
+  const formatRupiah = (angka: number) => {
+    return `Rp${angka.toLocaleString("id-ID")}`;
   };
 
-  // Filter available expenses based on search
-  const filteredAvailableExpenses = availableExpenses.filter((expense) =>
-    expense.name.toLowerCase().includes(availableSearchQuery.toLowerCase())
+  const biayaTersediaTerseleksi = biayaTersedia.filter((item) =>
+    item.nama.toLowerCase().includes(pencarianTersedia.toLowerCase())
   );
 
-  // Filter selected expenses based on search
-  const filteredSelectedExpenses = selectedExpenses.filter((expense) =>
-    expense.name.toLowerCase().includes(selectedSearchQuery.toLowerCase())
+  const biayaDipilihTerseleksi = biayaDipilih.filter((item) =>
+    item.nama.toLowerCase().includes(pencarianDipilih.toLowerCase())
   );
 
-  // Handle adding an expense to selected list
-  const handleAddExpense = (expense) => {
-    setAvailableExpenses((prev) =>
-      prev.filter((item) => item.id !== expense.id)
-    );
-    setSelectedExpenses((prev) => [...prev, expense]);
+  const tambahBiaya = (item: DataKomponenTagihan) => {
+    setBiayaTersedia((prev) => prev.filter((x) => x.id !== item.id));
+    setBiayaDipilih((prev) => [...prev, item]);
   };
 
-  // Handle removing an expense from selected list
-  const handleRemoveExpense = (expense) => {
-    setSelectedExpenses((prev) =>
-      prev.filter((item) => item.id !== expense.id)
-    );
-    setAvailableExpenses((prev) => [...prev, expense]);
+  const hapusBiaya = (item: DataKomponenTagihan) => {
+    setBiayaDipilih((prev) => prev.filter((x) => x.id !== item.id));
+    setBiayaTersedia((prev) => [...prev, item]);
   };
 
-  // Handle save action
-  const handleSave = () => {
-    alert("Total price:"+ totalPrice);
+  const simpanData = () => {
+    alert("Total tagihan: " + formatRupiah(totalTagihan));
   };
 
-  // Handle cancel action
-  const handleCancel = () => {
-    alert("ok cancell");
+  const batalkanData = () => {
+    alert("Pembatalan diproses");
   };
 
   return (
     <div className="flex flex-col w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mb-6">
-        {/* Available Expenses */}
+        {/* Biaya Tersedia */}
         <div className="w-full">
-          <div>
-            <h2 className="font-semibold text-center mb-4">
-              Biaya yang tersedia
-            </h2>
-
-            {/* Search Bar */}
-            <div className="relative mb-4">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Search..."
-                value={availableSearchQuery}
-                onChange={(e) => setAvailableSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96">
-              {/* Expense List */}
-              <div className=" rounded-md p-2 max-h-64 overflow-y-auto">
-                {filteredAvailableExpenses.length > 0 ? (
-                  filteredAvailableExpenses.map((expense) => (
-                    <div
-                      key={expense.id}
-                      className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
-                    >
-                      <span className="font-medium">{expense.name}</span>
-                      <div className="flex items-center space-x-3">
-                        <span>{formatAmount(expense.amount)}</span>
-                        <button
-                          className="text-blue-500 text-sm hover:underline"
-                          onClick={() => handleAddExpense(expense)}
-                        >
-                          Tambahkan
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-3 text-center text-gray-500">
-                    No expenses found
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Selected Expenses */}
-        <div className="w-full">
-          <h2 className="font-semibold text-center mb-4">Biaya yang Dipilih</h2>
-
-          {/* Search Bar */}
+          <h2 className="font-semibold text-center mb-4">
+            Biaya yang Tersedia
+          </h2>
           <div className="relative mb-4">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-gray-400" />
@@ -136,71 +93,106 @@ export default function ExpenseSelectionPanel() {
             <input
               type="text"
               className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Search..."
-              value={selectedSearchQuery}
-              onChange={(e) => setSelectedSearchQuery(e.target.value)}
+              placeholder="Cari biaya..."
+              value={pencarianTersedia}
+              onChange={(e) => setPencarianTersedia(e.target.value)}
+            />
+          </div>
+          <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96">
+            <div className="rounded-md p-2 max-h-64 overflow-y-auto">
+              {biayaTersediaTerseleksi.length > 0 ? (
+                biayaTersediaTerseleksi.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
+                  >
+                    <span className="font-medium">{item.nama}</span>
+                    <div className="flex items-center space-x-3">
+                      <span>{formatRupiah(item.nominal)}</span>
+                      <button
+                        className="text-blue-500 text-sm hover:underline"
+                        onClick={() => tambahBiaya(item)}
+                      >
+                        Tambahkan
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-3 text-center text-gray-500">
+                  Tidak ada biaya
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Biaya Dipilih */}
+        <div className="w-full">
+          <h2 className="font-semibold text-center mb-4">Biaya yang Dipilih</h2>
+          <div className="relative mb-4">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Cari biaya..."
+              value={pencarianDipilih}
+              onChange={(e) => setPencarianDipilih(e.target.value)}
             />
           </div>
           <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96 overflow-auto">
-            <div>
-              {/* Selected Expense List */}
-              <div className=" rounded-md p-2 max-h-64 overflow-y-auto">
-                {filteredSelectedExpenses.length > 0 ? (
-                  filteredSelectedExpenses.map((expense) => (
-                    <div
-                      key={expense.id}
-                      className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
-                    >
-                      <span className="font-medium">{expense.name}</span>
-                      <div className="flex items-center space-x-3">
-                        <span>{formatAmount(expense.amount)}</span>
-                        <button
-                          className="text-red-500 text-sm hover:underline"
-                          onClick={() => handleRemoveExpense(expense)}
-                        >
-                          Hapus
-                        </button>
-                      </div>
+            <div className="rounded-md p-2 max-h-64 overflow-y-auto">
+              {biayaDipilihTerseleksi.length > 0 ? (
+                biayaDipilihTerseleksi.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
+                  >
+                    <span className="font-medium">{item.nama}</span>
+                    <div className="flex items-center space-x-3">
+                      <span>{formatRupiah(item.nominal)}</span>
+                      <button
+                        className="text-red-500 text-sm hover:underline"
+                        onClick={() => hapusBiaya(item)}
+                      >
+                        Hapus
+                      </button>
                     </div>
-                  ))
-                ) : (
-                  <div className="py-3 text-center text-gray-500">
-                    No selected expenses
                   </div>
-                )}
-              </div>
+                ))
+              ) : (
+                <div className="py-3 text-center text-gray-500">
+                  Belum ada biaya dipilih
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Total and Action Buttons */}
+      {/* Total dan Tombol Aksi */}
       <div className="flex flex-col items-end mt-4">
-        {/* Total Price Display */}
         <div className="mb-4 text-right">
-          <p className="text-sm font-medium text-gray-600">
-            Total Invoice Price
-          </p>
-          <p className="text-xl font-bold">{formatAmount(totalPrice)}</p>
+          <p className="text-sm font-medium text-gray-600">Total Tagihan</p>
+          <p className="text-xl font-bold">{formatRupiah(totalTagihan)}</p>
         </div>
-
-        {/* Action Buttons */}
         <div className="flex gap-4 w-full md:w-1/2">
           <button
-            className="w-1/2 bg-red-400 hover:bg-red-400 text-white py-2 px-4 rounded transition-colors"
-            onClick={handleCancel}
+            className="w-1/2 bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded"
+            onClick={batalkanData}
           >
             Batalkan
           </button>
           <button
-            className="w-1/2 bg-primary-green hover:bg-teal-700 text-white py-2 px-4 rounded transition-colors"
-            onClick={handleSave}
+            className="w-1/2 bg-primary-green hover:bg-teal-700 text-white py-2 px-4 rounded"
+            onClick={simpanData}
           >
             Simpan
           </button>
         </div>
       </div>
     </div>
-    
   );
 }
