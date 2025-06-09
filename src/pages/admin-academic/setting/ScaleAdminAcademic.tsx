@@ -53,12 +53,14 @@ const ScaleAdminAcademic = () => {
                             Tambah
                     </button>
                 </div>
-                <TableSetting
-                    tableHead={tableHead}
-                    data={data}
-                    error={"error"}
-                    // setId={setId}
-                />
+                <div className="overflow-auto">
+                    <TableSetting
+                        tableHead={tableHead}
+                        data={data}
+                        error={"error"}
+                        // setId={setId}
+                    />
+                </div>
             </div>
         </MainLayout>
 
