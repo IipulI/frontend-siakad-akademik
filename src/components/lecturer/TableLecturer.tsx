@@ -9,12 +9,12 @@ interface TableProps {
 
 export default function TableLecturer ({ data, tableHead, error, setId }: TableProps) {
     return (
-      <table className="w-full my-4">
+      <table className="md:w-full my-4">
         <thead>
           <tr>
             {tableHead.map((head) => (
               <th key={head} 
-              className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+              className="text-xs md:p-2 lg:text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
               >
                 {head}
               </th>
@@ -33,7 +33,7 @@ export default function TableLecturer ({ data, tableHead, error, setId }: TableP
                         return (
                             <td
                                 key={idx}
-                                className="p-2 border text-center text-sm border-black/50"
+                                className="border p-2 text-center text-xs lg:text-sm border-black/50"
                             >
                                 <div className="flex items-center justify-center w-full">
                                     <div
