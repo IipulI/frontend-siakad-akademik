@@ -57,32 +57,32 @@ export const TableAnnouncement = ({
                 />
             </th>
                 <th
-                    className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+                    className="p-2 lg:text-sm text-xs font-normal bg-primary-green text-center text-white border border-gray-600"
                 >
                     Tanggal
                 </th>
             <th
-                className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+                className="p-2 lg:text-sm text-xs font-normal bg-primary-green text-center text-white border border-gray-600"
             >
                 Penulis
             </th>
             <th
-                className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+                className="p-2 lg:text-sm text-xs font-normal bg-primary-green text-center text-white border border-gray-600"
             >
                 Judul
             </th>
             <th
-                className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+                className="p-2 lg:text-sm text-xs font-normal bg-primary-green text-center text-white border border-gray-600"
             >
                 Aktif
             </th>
             <th
-                className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+                className="p-2 lg:text-sm text-xs font-normal bg-primary-green text-center text-white border border-gray-600"
             >
                 Prioritas
             </th>
             <th
-                className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+                className="p-2 lg:text-sm text-xs font-normal bg-primary-green text-center text-white border border-gray-600"
             >
                 Aksi
             </th>
@@ -93,34 +93,34 @@ export const TableAnnouncement = ({
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  <td className="p-2 border text-center lg:text-sm text-xs border-black/50">
                     <input
                       type="checkbox"
                       checked={selected.includes(row.id)}
                       onChange={() => handleSelectRow(row.id)}
                     />
                   </td>
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  <td className="p-2 border text-center lg:text-sm text-xs border-black/50">
                     {row.tanggal}
                   </td>
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  <td className="p-2 border text-center lg:text-sm text-xs border-black/50">
                     {row.penulis}
                   </td>
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  <td className="p-2 border text-center lg:text-sm text-xs border-black/50">
                     {row.judul}
                   </td>
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  <td className="p-2 border text-center lg:text-sm text-xs border-black/50">
                     <div className="flex items-center justify-center">
                       {row.aktif ? <Check color="green" size={16} /> : <X color="red" size={16} />}
                     </div>
                   </td>
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  <td className="p-2 border text-center lg:text-sm text-xs border-black/50">
                     <div className="flex items-center justify-center">
                       {row.prioritas ? <Check color="green" size={16} /> : <X color="red" size={16} />}
                     </div>
                   </td>
                   <td
-                    className="p-2 border text-center text-sm border-black/50"
+                    className="p-2 border text-center lg:text-sm text-xs border-black/50"
                   >
                     <div className="flex items-center justify-center w-full">
                       <div className="flex items-center justify-center space-x-2">

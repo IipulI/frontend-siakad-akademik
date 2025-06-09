@@ -54,20 +54,20 @@ const PeriodAdminAcademic = () => {
 
     return (
         <MainLayout
-            titlePage={"Tahun Ajaran"}
+            titlePage={"Periode Akademik"}
             isGreeting={false}
         >
             <div className="w-full mx-auto mt-2 bg-white py-2 rounded-sm border-t-2 border-primary-green">
                 <div className="flex justify-between">
                     <div className="flex gap-4 p-2">
-                        <select className="rounded px-3 appearance-none text-primary-brown border-slate-300 border p-1">
+                        <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-slate-300 border p-1">
                             <option value={"semua"}>-Semua-</option>
                         </select>
                         <div className="flex">
                             <input
                                 type="search"
                                 placeholder="Cari Pengumuman"
-                                className="px-2 py-1 w-60 text-sm rounded border border-slate-300"
+                                className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded border border-slate-300"
                             />
                             <button className="bg-primary-yellow mx-1 w-8 rounded flex items-center justify-center">
                                 <Search color="white" size={18} />
@@ -84,12 +84,14 @@ const PeriodAdminAcademic = () => {
                             Tambah
                     </button>
                 </div>
-                <TableSetting
-                    tableHead={tableHead}
-                    data={data}
-                    error={"error"}
-                    // setId={setId}
-                />
+                <div className="overflow-auto">
+                    <TableSetting
+                        tableHead={tableHead}
+                        data={data}
+                        error={"error"}
+                        // setId={setId}
+                    />
+                </div>
                 <Pagination
                     currentPage={currentPage}
                     totalPages={1000}

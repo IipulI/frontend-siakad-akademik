@@ -90,7 +90,7 @@ const AnnouncementAdminAcademic = () => {
                             <input
                                 type="search"
                                 placeholder="Cari Pengumuman"
-                                className="px-2 py-1 w-60 text-sm rounded shadow-md border border-slate-300"
+                                className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-slate-300"
                             />
                             <button className="ml-2 bg-primary-yellow w-8 rounded flex items-center justify-center">
                                 <Search color="white" size={18} />
@@ -110,11 +110,13 @@ const AnnouncementAdminAcademic = () => {
                             </button>
                         </div>
                     </div>
-                    <TableAnnouncement
-                        data={data}
-                        error={"error"}
-                        setId={setId}
-                    />
+                    <div className="overflow-auto">
+                        <TableAnnouncement
+                            data={data}
+                            error={"error"}
+                            setId={setId}
+                        />
+                    </div>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={1000}
