@@ -35,17 +35,9 @@ export default function CreateComponentBill() {
         nama,
         nominal: Number(nominal),
       };
-
-      const token = localStorage.getItem("token");
-
       const response = await Api.post(
         "/keuangan/invoice-komponen-mahasiswa",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        payload
       );
 
       alert("Data berhasil disimpan!");

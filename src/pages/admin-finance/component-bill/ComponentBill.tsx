@@ -29,14 +29,7 @@ export default function ComponentBill() {
   // fetch data dari API
   async function fetchData() {
     try {
-      const token = localStorage.getItem("token");
-
-      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa");
       const reversedData = [...response.data.data].reverse();
       setData(reversedData);
     } catch (error) {
@@ -80,14 +73,7 @@ export default function ComponentBill() {
     if (!confirmDelete) return;
 
     try {
-      const token = localStorage.getItem("token");
-
-      await Api.delete(`/keuangan/invoice-komponen-mahasiswa/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      await Api.delete(`/keuangan/invoice-komponen-mahasiswa/${id}`);
       // Setelah berhasil menghapus, perbarui data
       fetchData();
       alert("Data berhasil dihapus!");

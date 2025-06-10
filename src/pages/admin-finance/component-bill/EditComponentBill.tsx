@@ -43,21 +43,11 @@ export default function EditComponentBill() {
   // fungsi untuk menyimpan perubahan data komponen tagihan
   async function handleSave() {
     try {
-      const token = localStorage.getItem("token");
-
-      await Api.put(
-        `/keuangan/invoice-komponen-mahasiswa/${formData.id}`,
-        {
-          kodeKomponen: formData.kodeKomponen,
-          nama: formData.nama,
-          nominal: formData.nominal,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await Api.put(`/keuangan/invoice-komponen-mahasiswa/${formData.id}`, {
+        kodeKomponen: formData.kodeKomponen,
+        nama: formData.nama,
+        nominal: formData.nominal,
+      });
 
       alert("Data berhasil disimpan!");
       navigate(AdminFinanceRoute.componentBill);
