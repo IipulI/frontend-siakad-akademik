@@ -35,7 +35,7 @@ export default function TableSetting ({ data, tableHead, error }: TableProps) {
                         return (
                             <td
                                 key={idx}
-                                className="p-2 border text-center text-sm border-gray-300"
+                                className="p-2 border text-center lg:text-sm text-xs border-gray-300"
                             >
                                 <div className="flex items-center justify-center w-full">
                                 <div className="flex items-center justify-center space-x-2">
