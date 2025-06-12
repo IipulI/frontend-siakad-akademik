@@ -10,18 +10,18 @@ const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: LecturerRoute.dashboard,
+    path: String(LecturerRoute.dashboard),
     hasDropdown: false,
   },
   {
     id: "2",
     name: "Bimbingan Akademik",
-    path: LecturerRoute.guidance.advisor,
+    path: String(LecturerRoute.guidance.advisor),
     hasDropdown: false,
   },
   { id: "3",
     name: "Jadwal",
-    path: LecturerRoute.schedule.calendar,
+    path: String(LecturerRoute.schedule.calendar),
     hasDropdown: false
   },
   {
@@ -41,25 +41,25 @@ const dropdownMenus = {
         icon: "icon_annon.png",
         title: "Konsultasi",
         description: "Konsultasi dengan Mahasiswa",
-        to: LecturerRoute.guidance.consultation,
+        to: String(LecturerRoute.guidance.consultation),
       },
       {
         icon: "icon_week.png",
         title: "Proposal Tugas Akhir",
         description: "Pengajuan Tugas Akhir Mahasiswa",
-        to: LecturerRoute.guidance.proposal,
+        to: String(LecturerRoute.guidance.proposal),
       },
       {
         icon: "icon_calendar.png",
         title: "Daftar Tugas Akhir",
         description: "Progres Tugas Akhir Mahasiswa",
-        to: LecturerRoute.guidance.finalProject,
+        to: String(LecturerRoute.guidance.finalProject),
       },
       {
         icon: "icon_timetable.png",
         title: "Kegiatan Pendukung",
         description: "Monitoring Kegiatan Mahasiswa",
-        to: LecturerRoute.guidance.supporter,
+        to: String(LecturerRoute.guidance.supporter),
       },
     ],
   },
@@ -131,13 +131,6 @@ const HeaderAdminAcademic = () => {
             />
             <div className="flex space-x-5 items-center">
               <Bell size={30} color="#fff" />
-              <Link to="">
-                <img
-                    width={30}
-                    src="/img/profile_logo.png"
-                    className="rounded-full"
-                />
-              </Link>
             </div>
           </div>
         </div>

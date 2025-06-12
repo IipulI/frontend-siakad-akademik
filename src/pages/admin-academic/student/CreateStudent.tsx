@@ -254,15 +254,6 @@ export default function CreateStudent() {
           </div>
         </div>
       </div>
-
-      <select name="" id="">
-        <option value="data">
-          <a href="/portal/mahasiswa">data</a>
-        </option>
-        <option value="detail">
-          <a href="/portal/mahasiswa/detail-mahasiswa">detail</a>
-        </option>
-      </select>
     </MainLayout>
   );
 }
