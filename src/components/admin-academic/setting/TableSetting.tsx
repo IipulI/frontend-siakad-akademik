@@ -57,7 +57,7 @@ export default function TableSetting ({ data, tableHead, error }: TableProps) {
                         )
                     } else {
                         return (
-                            <td key={idx} className="p-2 border text-sm border-gray-300">
+                            <td key={idx} className="p-2 border lg:text-sm text-xs border-gray-300">
                                 {cell}
                             </td>
                         )
