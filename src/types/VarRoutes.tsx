@@ -41,10 +41,10 @@ export const AdminAcademicRoute = {
     detailClass: "/admin-akademik/detail-kelas",
   } as routeType,
   student: {
-    studentData: "  ",
-    createStudent: "/portal/mahasiswa/data-mahasiswa",
-    detailStudent: "/portal/mahasiswa/detail-mahasiswa",
-    academicAdvisor: "/mahasiswa/pembimbing-akademik",
+    studentData: "/admin-akademik/mahasiswa",
+    createStudent: "/admin-akademik/data-mahasiswa",
+    detailStudent: "/admin-akademik/detail-mahasiswa",
+    academicAdvisor: "/admin-akademik/pembimbing-akademik",
   },
   announcement: "/admin-akademik/pengumuman",
   curriculumYear: "/admin-akademik/tahun-kurikulum",
@@ -104,17 +104,15 @@ export const LecturerRoute = {
     proposal: "/dosen/bimbingan/proposal",
     finalProject: "/dosen/bimbingan/tugas-akhir",
     supporter: "/dosen/bimbingan/kegiatan-pendukung",
-    advisor: "/dosen/bimbingan/pembimbing-akademik"
+    advisor: "/dosen/bimbingan/pembimbing-akademik",
   } as routeType,
-  announcement: {
-
-  },
-  schedule:  {
-    calendar: "/dosen/jadwal/kalender-akademik"
+  announcement: {},
+  schedule: {
+    calendar: "/dosen/jadwal/kalender-akademik",
   },
   courses: {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
-    stopStudy: "/dosen/perkuliahan/berhenti-studi"
-  }
+    stopStudy: "/dosen/perkuliahan/berhenti-studi",
+  },
 };

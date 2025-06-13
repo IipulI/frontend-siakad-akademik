@@ -14,7 +14,7 @@ export default function PaymentSteps({ step, setStep }) {
           <div key={s.id} className="flex items-center">
             <button
               onClick={() => setStep(s.id)}
-              className={`py-5 px-4 border-b-2 transition-all duration-300 ${
+              className={`py-5 sm:px-4 border-b-2 transition-all duration-300 text-sm md:text-base ${
                 step === s.id
                   ? "border-primary-green text-primary-green font-semibold"
                   : "border-transparent text-primary-green opacity-60"

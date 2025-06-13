@@ -170,8 +170,9 @@ export default function History() {
             menghubungi Pembimbing Akademik terkait
           </h1>
         </div>
-
-        <TableHistory tableHead={tableHead} data={data} error="" />
+        <div className="overflow-auto">
+          <TableHistory tableHead={tableHead} data={data} error="" />
+        </div>
       </div>
     </MainLayout>
   );

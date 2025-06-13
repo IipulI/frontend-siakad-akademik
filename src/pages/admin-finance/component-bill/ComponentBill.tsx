@@ -1,47 +1,96 @@
-import { Plus, RefreshCw, Search } from "lucide-react";
+import { Pen, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../../components/layouts/MainLayout";
-import Table from "../../../components/admin-finance/Tabel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
+import { Api } from "../../../api/Index";
+
+interface ComponentBillData {
+  id: string;
+  kodeKomponen: string;
+  nama: string;
+  nominal: number;
+}
 
 export default function ComponentBill() {
-    const usenavigate = useNavigate()
+  const [data, setData] = useState<ComponentBillData[]>([]);
+
+  // Fungsi untuk format Rupiah
+  function formatToRupiah(amount: number): string {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  }
+
+  // fetch data dari API
+  async function fetchData() {
+    try {
+      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa");
+      const reversedData = [...response.data.data].reverse();
+      setData(reversedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const usenavigate = useNavigate();
+
+  // fungsi untuk submit pencarian
   function SearchSubmit() {
     alert("oke search");
   }
+
+  // fungsi untuk refresh halaman
   function Refres() {
     window.location.reload();
   }
+
+  // fungsi untuk membuat komponen tagihan baru
   function Create() {
-    usenavigate(AdminFinanceRoute.createComponentBill)
+    usenavigate(AdminFinanceRoute.createComponentBill);
   }
 
-  const headers = ["Kode Komponen", "Nama", "Nominal"];
-
-  const componentData = [
-    {
-      id: 1,
-      kodeKomponen: "INV/20242/0000001",
-      nama: "SPP",
-      nominal: "Rp 2.000.000",
-    },
-    {
-      id: 2,
-      kodeKomponen: "2211060642918",
-      nama: "Ujian Akhir Semester",
-      nominal: "Rp 900.000",
-    },
-  ];
-
-  function handleEdit() {
-    usenavigate(AdminFinanceRoute.editComponentBill)
+  // fungsi untuk mengedit komponen tagihan
+  function handleEdit(item: ComponentBillData) {
+    usenavigate(AdminFinanceRoute.editComponentBill, {
+      state: item,
+    });
   }
 
+  // fungsi untuk menghapus komponen tagihan
+  async function handleDelete(id: string) {
+    const confirmDelete = window.confirm(
+      "Apakah Anda yakin ingin menghapus data ini?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await Api.delete(`/keuangan/invoice-komponen-mahasiswa/${id}`);
+      // Setelah berhasil menghapus, perbarui data
+      fetchData();
+      alert("Data berhasil dihapus!");
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
+      alert("Terjadi kesalahan saat menghapus data.");
+    }
+  }
+
+  // state untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const headerClassName =
+    "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";
+  const cellClassName =
+    "border border-gray-500 font-semibold p-2 text-center text-sm md:text-base";
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
@@ -82,14 +131,45 @@ export default function ComponentBill() {
             spacing="1"
           />
         </div>
-        <Table
-          headers={headers}
-          data={componentData}
-          showCheckbox={false}
-          actions={{
-            edit: () => handleEdit(),
-          }}
-        />
+
+        {/* table */}
+        <div className={`overflow-x-auto`}>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <td className={headerClassName}>Kode Komponen</td>
+                <td className={headerClassName}>Nama</td>
+                <td className={headerClassName}>Nominal</td>
+                <td className={headerClassName}>Aksi</td>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item.id}>
+                  <td className={cellClassName}>{item.kodeKomponen}</td>
+                  <td className={`${cellClassName} text-left`}>{item.nama}</td>
+                  <td className={cellClassName}>
+                    {formatToRupiah(item.nominal)}
+                  </td>
+                  <td className={cellClassName}>
+                    <div className={` flex justify-center gap-2`}>
+                      <ButtonClick
+                        icon={<Pen size={16} />}
+                        color="bg-primary-yellow"
+                        onClick={() => handleEdit(item)}
+                      />
+                      <ButtonClick
+                        icon={<Trash2 size={16} />}
+                        color="bg-red-500"
+                        onClick={() => handleDelete(item.id)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <Pagination
           currentPage={currentPage}
@@ -100,6 +180,7 @@ export default function ComponentBill() {
           onRowsPerPageChange={setRowsPerPage}
         />
       </div>
+      <div className="py-10"></div>
     </MainLayout>
   );
 }

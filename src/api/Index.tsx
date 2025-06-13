@@ -26,7 +26,7 @@ Api.interceptors.response.use(
       // optional: hapus token dan redirect ke login
       localStorage.removeItem("token")
       localStorage.removeItem("user")
-      window.location.href = "/login"
+      window.location.href = "/"
     }
     return Promise.reject(error)
   }

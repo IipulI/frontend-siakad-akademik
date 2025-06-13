@@ -37,7 +37,7 @@ export default function Announcement() {
   return (
     <MainLayout isGreeting={false} titlePage={"Pengumuman"} className={""}>
       <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-yellow">
-        <div className="flex px-2 justify-start gap-16 border-2 p-2">
+        <div className="px-2 gap-3 lg:gap-16 border-2 p-2 grid grid-cols-1 lg:grid-cols-3">
           <select className="rounded px-3 text-primary-brown border-primary-brown border p-1">
             <option value={"semua"}>-Semua-</option>
           </select>

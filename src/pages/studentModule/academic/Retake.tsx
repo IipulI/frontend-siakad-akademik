@@ -31,11 +31,13 @@ export default function Retake() {
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow">
         <Biodata showLine={false} />
 
-        <Table
-          tableHead={tableHead}
-          data={data}
-          error={"Mahasiswa tidak pernah mengulang mata kuiah"}
-        />
+        <div className="overflow-auto">
+          <Table
+            tableHead={tableHead}
+            data={data}
+            error={"Mahasiswa tidak pernah mengulang mata kuiah"}
+          />
+        </div>
       </div>
     </MainLayout>
   );

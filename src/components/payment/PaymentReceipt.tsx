@@ -21,7 +21,7 @@ export default function PaymentReceipt() {
       </div>
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold">Bukti Pembayaran</h1>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-8 text-lg">
             <ReceiptAttribute
               className="text-primary-blueDark"
@@ -70,7 +70,7 @@ const ReceiptAttribute = ({
   credential,
 }: ReceiptAttributeProps) => {
   return (
-    <div className="flex items-center font-semibold space-x-4">
+    <div className="flex items-center font-semibold text-base space-x-4">
       <span className="text-primary-brown">{title}</span>
       <p className={className ? className : "text-primary-brown"}>
         {credential}
@@ -110,7 +110,7 @@ const ReceiptTable = () => {
   const total = "Rp3.300.000";
 
   return (
-    <div className="p-6 bg-white rounded-2xl shadow">
+    <div className="p-6 bg-white rounded-2xl shadow w-full overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-gray-200 text-primary-blueDark">

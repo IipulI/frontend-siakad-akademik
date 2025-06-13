@@ -160,6 +160,7 @@ export default function StudentBill() {
           onRowsPerPageChange={setRowsPerPage}
         />
       </div>
+      <div className="py-10"></div>
     </MainLayout>
   );
 }

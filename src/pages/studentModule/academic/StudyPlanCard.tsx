@@ -86,7 +86,7 @@ const StudyPlanCard = () => {
       className=""
     >
       <HorizontalLine />
-      <div className="flex justify-between p-4 bg-[#F4F4F4] mx-auto">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 p-4 bg-[#F4F4F4] mx-auto">
         <StudyPlanCardHeader
           title={"Semester Saat Ini"}
           subtitle={"Semester 5"}
@@ -114,8 +114,8 @@ const StudyPlanCard = () => {
 const StudyPlanCardHeader = ({ title, subtitle }) => {
   return (
     <div className="w-full">
-      <h1 className="font-semibold">{title}</h1>
-      <h1 className="text-sm">{subtitle}</h1>
+      <h1 className="font-semibold text-sm sm:text-base">{title}</h1>
+      <h1 className="text-xs sm:text-sm">{subtitle}</h1>
     </div>
   );
 };
@@ -152,8 +152,8 @@ const StudyPlanCardTable = ({ courses, krsValidated = true }) => {
   const notValidatedKRS = () => {
     return (
       <div className="mb-20">
-        <div className="overflow-x-auto">
-          <div className="flex items-center justify-between">
+        <div>
+          <div className="grid grid-cols-1">
             {/* Tombol navigasi tab */}
             <div className="flex items-center">
               <button
@@ -393,8 +393,8 @@ const StudyPlanCardTable = ({ courses, krsValidated = true }) => {
   const validatedKRS = () => {
     return (
       <div className="mb-20">
-        <div className="overflow-x-auto">
-          <div className="flex items-center justify-between">
+        <div className="">
+          <div className="grid grid-cols-1 gap-3 lg:flex lg:justify-between xl:grid-cols-3 items-center">
             {/* Tombol navigasi tab */}
             <div className="flex items-center">
               <button
@@ -423,8 +423,8 @@ const StudyPlanCardTable = ({ courses, krsValidated = true }) => {
               </button>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <button className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-semibold shadow">
+            <div className="lg:flex items-center space-x-2">
+              <button className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 mb-3 lg:mb-0 text-white px-4 py-2 rounded-md font-semibold shadow">
                 <SlidersHorizontal className="w-4 h-4" />
                 Filter dan Urutkan
               </button>
@@ -441,79 +441,81 @@ const StudyPlanCardTable = ({ courses, krsValidated = true }) => {
           </div>
 
           {/* Table Section */}
-          {activeButton === "pilihKelas" && (
-            <table className="min-w-full bg-white mt-4">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-3 py-2 border border-primary-green">
-                    <input
-                      type="checkbox"
-                      onChange={toggleSelectAll}
-                      checked={isAllSelected}
-                    />
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    Nama Matkul
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    Jadwal
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    Kurikulum
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    SKS
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    Semester
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    Dosen Pengajar
-                  </th>
-                  <th className="px-4 py-3 font-semibold border border-primary-green">
-                    Huruf Mutu
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="font-semibold">
-                {courses.map((course, index) => (
-                  <tr
-                    key={index}
-                    className="text-center hover:bg-gray-50 transition"
-                  >
-                    <td className="px-3 py-2 border border-primary-green">
+          <div className="overflow-auto">
+            {activeButton === "pilihKelas" && (
+              <table className="min-w-full bg-white mt-4">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="px-3 py-2 border border-primary-green">
                       <input
                         type="checkbox"
-                        checked={selectedCourses.includes(course.code)}
-                        onChange={() => handleCheckboxChange(course.code)}
+                        onChange={toggleSelectAll}
+                        checked={isAllSelected}
                       />
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green text-left">
-                      {course.name}
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green">
-                      {course.schedule}
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green">
-                      {course.curiculum}
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green">
-                      {course.sks}
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green">
-                      {course.semester}
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green">
-                      {course.lecturer}
-                    </td>
-                    <td className="px-4 py-2 border border-primary-green">
-                      {course.grade || "-"}
-                    </td>
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      Nama Matkul
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      Jadwal
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      Kurikulum
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      SKS
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      Semester
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      Dosen Pengajar
+                    </th>
+                    <th className="px-4 py-3 font-semibold border border-primary-green">
+                      Huruf Mutu
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody className="font-semibold">
+                  {courses.map((course, index) => (
+                    <tr
+                      key={index}
+                      className="text-center hover:bg-gray-50 transition"
+                    >
+                      <td className="px-3 py-2 border border-primary-green">
+                        <input
+                          type="checkbox"
+                          checked={selectedCourses.includes(course.code)}
+                          onChange={() => handleCheckboxChange(course.code)}
+                        />
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green text-left">
+                        {course.name}
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green">
+                        {course.schedule}
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green">
+                        {course.curiculum}
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green">
+                        {course.sks}
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green">
+                        {course.semester}
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green">
+                        {course.lecturer}
+                      </td>
+                      <td className="px-4 py-2 border border-primary-green">
+                        {course.grade || "-"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
 
           {activeButton === "krsTersimpan" && (
             <table className="min-w-full bg-white mt-4">

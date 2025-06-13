@@ -1,18 +1,53 @@
+import { useState } from "react";
 import { ChevronLeft, Save } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
+import { Api } from "../../../api/Index";
+
+interface InvoiceKomponenMahasiswa {
+  kodeKomponen: string;
+  nama: string;
+  nominal: number;
+}
 
 export default function CreateComponentBill() {
-  const usenavigate = useNavigate();
-  function Back() {
-    usenavigate(AdminFinanceRoute.componentBill);
+  const navigate = useNavigate();
+
+  const [kodeKomponen, setKode] = useState("");
+  const [nama, setNama] = useState("");
+  const [nominal, setNominal] = useState("");
+
+  function handleBack() {
+    navigate(AdminFinanceRoute.componentBill);
   }
 
-  function Savee() {
-    alert("oke save");
+  async function handleSave() {
+    if (!kodeKomponen || !nama || !nominal) {
+      alert("Mohon lengkapi semua field!");
+      return;
+    }
+
+    try {
+      const payload: InvoiceKomponenMahasiswa = {
+        kodeKomponen,
+        nama,
+        nominal: Number(nominal),
+      };
+      const response = await Api.post(
+        "/keuangan/invoice-komponen-mahasiswa",
+        payload
+      );
+
+      alert("Data berhasil disimpan!");
+      navigate(AdminFinanceRoute.componentBill);
+    } catch (error) {
+      console.error("Error saat menyimpan:", error);
+      alert("Terjadi kesalahan saat menyimpan.");
+    }
   }
+
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
@@ -21,34 +56,46 @@ export default function CreateComponentBill() {
             text="Kembali ke Daftar"
             icon={<ChevronLeft size={16} strokeWidth={3} />}
             color="bg-primary-yellow"
-            onClick={Back}
+            onClick={handleBack}
             spacing="1"
           />
           <ButtonClick
             text="Simpan"
             icon={<Save size={16} />}
             color="bg-primary-blueSoft"
-            onClick={Savee}
+            onClick={handleSave}
             spacing="1"
           />
         </div>
 
-        <h1 className="text-lg sm:text-2xl font-semibold">
+        <h1 className="text-lg sm:text-2xl font-semibold mt-4">
           Tambah Komponen Tagihan
         </h1>
+
         <div className="grid grid-cols-2 md:w-1/3 my-5 gap-2">
-          <label htmlFor="" className="text-sm font-semibold">
-            Kode Komponen
-          </label>
-          <input type="text" className="p-1 border-2 rounded text-sm md:w-70" />
-          <label htmlFor="" className="text-sm font-semibold">
-            Nama Komponen
-          </label>
-          <input type="text" className="p-1 border-2 rounded text-sm md:w-70" />
-          <label htmlFor="" className="text-sm font-semibold">
-            Nominal
-          </label>
-          <input type="text" className="p-1 border-2 rounded text-sm md:w-70" />
+          <label className="text-sm font-semibold">Kode Komponen</label>
+          <input
+            type="text"
+            value={kodeKomponen}
+            onChange={(e) => setKode(e.target.value)}
+            className="p-1 border-2 rounded text-sm md:w-70"
+          />
+
+          <label className="text-sm font-semibold">Nama Komponen</label>
+          <input
+            type="text"
+            value={nama}
+            onChange={(e) => setNama(e.target.value)}
+            className="p-1 border-2 rounded text-sm md:w-70"
+          />
+
+          <label className="text-sm font-semibold">Nominal</label>
+          <input
+            type="number"
+            value={nominal}
+            onChange={(e) => setNominal(e.target.value)}
+            className="p-1 border-2 rounded text-sm md:w-70"
+          />
         </div>
       </div>
     </MainLayout>

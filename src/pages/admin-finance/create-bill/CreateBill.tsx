@@ -1,85 +1,104 @@
-import {
-  Plus,
-  Printer,
-  RefreshCw,
-  Search,
-  Settings,
-  Trash2,
-} from "lucide-react";
+import { Plus, RefreshCw, Search } from "lucide-react";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import Table from "../../../components/admin-finance/Tabel";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
+import { Api } from "../../../api/Index";
+
+interface ComponentBillData {
+  id: string;
+  npm: string;
+  nama: string;
+  namaFakultas: string;
+  namaProgramStudi: string;
+  semester: string;
+  angkatan: string;
+}
 
 export default function CreateBill() {
+  const [data, setData] = useState<ComponentBillData[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<ComponentBillData[]>(
+    []
+  );
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // fetch data dari API
+  async function fetchData() {
+    try {
+      const response = await Api.get("/keuangan/invoice-mahasiswa/mahasiswa");
+      const reversedData = [...response.data.data].reverse();
+      setData(reversedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const angkatan = [{ value: "", label: "-- Pilih Angkatan --" }];
   const fakultas = [{ value: "", label: "-- Pilih Fakultas --" }];
   const semester = [{ value: "", label: "-- Pilih Semester --" }];
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
 
   const usenavigate = useNavigate();
+
   function SearchSubmit() {
     alert("oke search");
   }
+
   function Refres() {
     window.location.reload();
   }
+
+  // Handle individual checkbox selection
+  function handleCheckboxChange(
+    student: ComponentBillData,
+    isChecked: boolean
+  ) {
+    if (isChecked) {
+      setSelectedStudents((prev) => [...prev, student]);
+      setSelectedIds((prev) => [...prev, student.id]);
+    } else {
+      setSelectedStudents((prev) => prev.filter((s) => s.id !== student.id));
+      setSelectedIds((prev) => prev.filter((id) => id !== student.id));
+    }
+  }
+
+  // Handle select all checkbox
+  function handleSelectAll(isChecked: boolean) {
+    if (isChecked) {
+      setSelectedStudents([...data]);
+      setSelectedIds(data.map((student) => student.id));
+    } else {
+      setSelectedStudents([]);
+      setSelectedIds([]);
+    }
+  }
+
   function Create() {
-    usenavigate(AdminFinanceRoute.formCreateBill);
-  }
-  function Setting() {
-    alert("oke");
-  }
+    if (selectedStudents.length === 0) {
+      alert("Silakan pilih mahasiswa!");
+      return;
+    }
 
-  const headers: string[] = [
-    "NPM",
-    "Nama",
-    "Fakultas",
-    "Program Studi",
-    "Semester",
-  ];
-
-  const studentData = [
-    {
-      id: "1",
-      npm: "221106043035",
-      nama: "Maulana Ikhsan",
-      fakultas: "Fakultas Teknik dan Sains",
-      programStudi: "Teknik Informatika",
-      semester: 7,
-    },
-    {
-      id: "2",
-      npm: "221106042918",
-      nama: "Maraginda Pangabean",
-      fakultas: "Fakultas Teknik dan Sains",
-      programStudi: "Sistem Informasi",
-      semester: 7,
-    },
-    {
-      id: "3",
-      npm: "221106043035",
-      nama: "Alexander",
-      fakultas: "Fakultas Teknik dan Sains",
-      programStudi: "Teknik Informatika",
-      semester: 7,
-    },
-    {
-      id: "4",
-      npm: "221106042918",
-      nama: "Gabriella",
-      fakultas: "Fakultas Teknik dan Sains",
-      programStudi: "Sistem Informasi",
-      semester: 7,
-    },
-  ];
+    // Navigate dengan state berisi data mahasiswa yang dipilih
+    usenavigate(AdminFinanceRoute.formCreateBill, {
+      state: { selectedStudents },
+    });
+  }
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const headerClassName =
+    "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";
+  const cellClassName =
+    "border border-gray-500 font-semibold p-2 text-center text-sm md:text-base";
 
   return (
     <MainLayout isGreeting={false} titlePage="Buat Tagihan">
@@ -127,22 +146,60 @@ export default function CreateBill() {
               <ButtonClick
                 icon={<Plus size={15} strokeWidth={3} />}
                 color="bg-primary-green"
-                text="Tambah"
+                text={`Tambah`}
                 onClick={Create}
-                spacing="1"
-              />
-              <ButtonClick
-                icon={<Settings size={15} strokeWidth={2.5} />}
-                color="bg-primary-yellow"
-                text="Aksi"
-                onClick={Setting}
                 spacing="1"
               />
             </div>
           </div>
 
-          <Table headers={headers} data={studentData} showCheckbox={true} />
-
+          {/* table */}
+          <div className={`overflow-x-auto`}>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <td className={headerClassName}>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4"
+                      checked={
+                        selectedIds.length === data.length && data.length > 0
+                      }
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                    />
+                  </td>
+                  <td className={headerClassName}>NPM</td>
+                  <td className={headerClassName}>Nama</td>
+                  <td className={headerClassName}>Fakultas</td>
+                  <td className={headerClassName}>Program Studi</td>
+                  <td className={headerClassName}>Semester</td>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item) => (
+                  <tr key={item.id}>
+                    <td className={cellClassName}>
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4"
+                        checked={selectedIds.includes(item.id)}
+                        onChange={(e) =>
+                          handleCheckboxChange(item, e.target.checked)
+                        }
+                      />
+                    </td>
+                    <td className={cellClassName}>{item.npm}</td>
+                    <td className={`${cellClassName} text-left`}>
+                      {item.nama}
+                    </td>
+                    <td className={cellClassName}>{item.namaFakultas}</td>
+                    <td className={cellClassName}>{item.namaProgramStudi}</td>
+                    <td className={cellClassName}>{item.semester}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <Pagination
             currentPage={currentPage}
             totalPages={1000}
@@ -153,6 +210,7 @@ export default function CreateBill() {
           />
         </div>
       </div>
+      <div className="py-10"></div>
     </MainLayout>
   );
 }

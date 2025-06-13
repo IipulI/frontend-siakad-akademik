@@ -55,7 +55,7 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
   return (
     <div className="space-y-1">
       {showLine && <HorizontalLine />}
-      <div className="w-full flex justify-between items-center bg-[#F5FFF9] px-6 py-4 border-l-4 border-primary-green">
+      <div className="w-full grid grid-cols-2 lg:grid-cols-4 items-center bg-[#F5FFF9] px-6 py-4 border-l-4 border-primary-green">
         {sections.map((section, index) => (
           <Fragment key={index}>
             <BiodataSection

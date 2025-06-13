@@ -40,7 +40,7 @@ export default function PaymentConfirmation() {
   return (
     <div className="mx-auto container max-w-3xl space-y-4">
       <div className="flex items-center justify-center space-x-8">
-        <img src={LogoUika} width={200} alt="" />
+        <img src={LogoUika} className="w-26 sm:w-30 md:w-50" alt="" />
         <div className="flex flex-col space-y-2">
           <h1 className="font-semibold">Lakukan Pembayaran Sebelum</h1>
           <h1 className="font-semibold text-primary-brown">

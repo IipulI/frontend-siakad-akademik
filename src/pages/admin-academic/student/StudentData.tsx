@@ -14,6 +14,7 @@ import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useState } from "react";
 import Status from "../../../components/admin-academic/student-data/Status";
 import { useNavigate } from "react-router-dom";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 export default function StudentData() {
   const categoryOptions = [{ value: "", label: "Semua Kategori" }];
@@ -98,7 +99,7 @@ export default function StudentData() {
   // function buat tambah, hapus, cetak dan aksi
   const navigate = useNavigate();
   function Create() {
-    navigate("/portal/mahasiswa/data-mahasiswa");
+    navigate(AdminAcademicRoute.student.createStudent);
   }
   function Delete() {
     alert("delete");
