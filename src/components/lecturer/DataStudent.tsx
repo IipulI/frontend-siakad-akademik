@@ -20,7 +20,7 @@ const DataStudent: React.FC<DataStudentProps> = ({ data, columns = 2 }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 w-full">
-      <div className="grid grid-cols-4 gap-x-6 gap-y-2 w-full">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-2 w-full">
         {rows.map((row, rowIndex) =>
           row.map((item, colIndex) => (
             <React.Fragment key={rowIndex + '-' + colIndex}>

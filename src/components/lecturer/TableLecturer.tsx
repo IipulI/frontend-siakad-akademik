@@ -14,7 +14,7 @@ export default function TableLecturer ({ data, tableHead, error, setId }: TableP
           <tr>
             {tableHead.map((head) => (
               <th key={head} 
-              className="text-xs md:p-2 lg:text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
+              className="text-xs p-2 lg:text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
               >
                 {head}
               </th>

@@ -7,11 +7,14 @@ import { InputFilter } from "../../../components/admin-academic/student-data/Inp
 import DetailClassLecturer from "./DetailClassLecturer";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index"
+import TableCheckbox from "../../../components/lecturer/TableCheckbox";
+import TableClass from "../../../components/lecturer/TableClass";
 
 const ClassLecturer = () => {
   const [id, setId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
 
   const filterOptions = [
     {
@@ -19,53 +22,36 @@ const ClassLecturer = () => {
       label: "Periode Akademik"
     },
     {
-      options: [{ value: "", label: "-- Semua Status Pembimbing --" }],
-      label: "Status Pembimbing"
+      options: [{ value: "", label: "S1 Teknik Informatika" }],
+      label: "Prodi Pengampu"
     },
     {
       options: [{ value: "", label: "-- Semua Semester --" }],
-      label: "Semester"
+      label: "Prodi Sebaran"
     },
     {
-      options: [{ value: "", label: "Universitas Ibn Khaldun" }],
-      label: "Unit kerja"
+      options: [{ value: "", label: "-- Semua Kurikulum --" }],
+      label: "Kurikulum"
     },
     {
-      options: [{ value: "", label: "-- Semua Status KRS --" }],
-      label: "Status KRS"
+      options: [{ value: "", label: "-- Semua Sistem Kuliah --" }],
+      label: "Sistem Kuliah"
     },
     {
-      options: [{ value: "", label: "-- Semua Status Mahasiswa --" }],
-      label: "Status Mahasiswa"
+      options: [{ value: "", label: "-- Semua Jenis Status --" }],
+      label: "Jenis Status"
     },
-    {
-      options: [{ value: "", label: "-- Semua Angkatan --" }],
-      label: "Angkatan"
-    }
+
   ];
 
-  const tableHead = ["Nama Mahasiswa", "Judul Tugas Akhir", "Topik", "Nama Pembimbing", "Tanggal Pengajuan", "Status", "Aksi"]
+  const { isPending, data } = useQuery({
+    queryKey: ['dosen/kelas-kuliah'],
+    queryFn: async () => {
+      // const separator = dateQuery ? "&" : ""
+      return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}`)
+    },
+  })
 
-  // const { isPending, data, isError } = useQuery({
-  //   queryKey: ['kelas-kuliah'],
-  //   queryFn: async () => {
-  //     // const separator = dateQuery ? "&" : ""
-  //     return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}`)
-  //   },
-  // })
-
-  const data = [
-    {
-      id: 1,
-      mahasiswa: "Ridho Fatan",
-      judul: "Tugas Akhir",
-      topik: "akademik",
-      pembimbing: "Fitrah Satrya",
-      tanggal: "18-05-2025",
-      status: "disetujui",
-      aksi: ""
-    }
-  ];
 
 
     const statusOptions = ["Semua Status", "Aktif", "Prioritas"]
@@ -80,12 +66,12 @@ const ClassLecturer = () => {
 
         {id ? 
             (
-                <DetailClassLecturer setId={setId} />
+                <DetailClassLecturer id={id} setId={setId} />
             )
         :
         (
             <>
-                <div className="grid xl:grid-cols-3 mb-4 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
+                <div className="grid lg:grid-cols-2 mb-4 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
                     {filterOptions.map((filter, index) => (
                         <InputFilter 
                             key={index}
@@ -115,20 +101,29 @@ const ClassLecturer = () => {
                             </div>
                         </div>
                     </div>
-                    <TableLecturer
-                        tableHead={tableHead}
-                        data={data}
-                        error={"Data kosong"}
-                        setId={setId}
-                    />
+                    <div className="overflow-auto">
+                      <TableClass
+                          data={isPending ? [] : data?.data.data}
+                          error={"Data kosong"}
+                          setId={setId}
+                      />
+                    </div>
+                    {isPending ? (
+                        <div className="flex px-4 w-full items-center justify-between">
+                            <div className="h-8 w-1/4 bg-gray-300 rounded animate-pulse" />
+                            <div className="h-8 w-1/4 bg-gray-300 rounded animate-pulse" />
+                        </div>
+                    )
+                  : (
                     <Pagination
                         currentPage={currentPage}
-                        totalPages={1000}
+                        totalPages={data?.data.pagination.totalPages}
                         onPageChange={setCurrentPage}
                         rowsPerPage={rowsPerPage}
-                        totalRows={65}
+                        totalRows={data?.data.pagination.totalItems}
                         onRowsPerPageChange={setRowsPerPage}
                     />
+                  )}
                 </div>
             </>
         )
