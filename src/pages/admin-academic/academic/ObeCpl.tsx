@@ -1,44 +1,189 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { TableObeCPL } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus, Table } from "lucide-react";
+import { CplData } from "../../../components/types.ts";
+import { Api } from "../../../api/Index";
 
-interface CPLData {
-  id: number;
-  kodePl: string;
-  deskripsiCapaianPembelajaran: string;
-  kategori: string;
-  pemetaan: string;
-}
+// api
+
+const fetchCplData = async (page: number, size: number): Promise<CplData[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get(`/akademik/capaian-pembelajaran-lulusan?page=1&size=10&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
+
+  const apiData = response.data.data;
+
+  console.log("🔍 Raw graduate profile API data:", apiData);
+
+  const formattedData = Array.isArray(apiData)
+    ? apiData.map((item: any) => {
+        const formatted = {
+          id: item.id,
+          programStudi: item.programStudi,
+          tahunKurikulum: item.tahunKurikulum,
+          kodeCpl: item.kodeCpl,
+          deskripsiCpl: item.deskripsiCpl,
+          kategoriCpl: item.kategoriCpl,
+          pemetaan: item.pemetaan,
+        };
+
+        return formatted;
+      })
+    : [];
+
+  return formattedData;
+};
+
+const createCpl = async (data: Omit<CplData, "id">): Promise<CplData> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const payload = {
+    programStudi: data.programStudi,
+    tahunKurikulum: data.tahunKurikulum,
+    kodeCpl: data.kodeCpl,
+    deskripsiCpl: data.deskripsiCpl,
+    kategoriCpl: data.kategoriCpl,
+    pemetaan: data.pemetaan,
+  };
+
+  console.log("Payload dikirim:", payload);
+
+  const response = await Api.post("/akademik/capaian-pembelajaran-lulusan", payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  console.log("Response dari API:", response.data);
+
+  const newItemData = response.data?.data || response.data;
+  return {
+    id: newItemData.id,
+    programStudi: newItemData.programStudi,
+    tahunKurikulum: newItemData.tahunKurikulum,
+    kodeCpl: newItemData.kodeCpl,
+    deskripsiCpl: newItemData.deskripsiCpl,
+    kategoriCpl: newItemData.kategoriCpl,
+    pemetaan: newItemData.pemetaan,
+  };
+};
+
+const updateCpl = async ({ id, data }: { id: string; data: Omit<CplData, "id"> }): Promise<CplData> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const payload = {
+    programStudi: data.programStudi,
+    tahunKurikulum: data.tahunKurikulum,
+    kodeCpl: data.kodeCpl,
+    deskripsiCpl: data.deskripsiCpl,
+    kategoriCpl: data.kategoriCpl,
+    pemetaan: data.pemetaan,
+  };
+
+  await Api.put(`/akademik/capaian-pembelajaran-lulusan/${id}`, payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return { id, ...data };
+};
+
+const deleteCpl = async (id: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  await Api.delete(`/akademik/capaian-pembelajaran-lulusan/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
 
 const ObeCpl: React.FC = () => {
   const navigate = useNavigate();
-  const [cplData, setCplData] = useState<CPLData[]>([
-    { id: 1, kodePl: "PL001", deskripsiCapaianPembelajaran: "Pemrograman Dasar", kategori: "Algoritma", pemetaan: "PPL001" },
-    { id: 2, kodePl: "PL001", deskripsiCapaianPembelajaran: "Pemrograman Dasar", kategori: "Algoritma", pemetaan: "PPL001" },
-  ]);
+  const queryClient = useQueryClient();
 
+  // state
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [currentData, setCurrentData] = useState<CPLData | null>(null);
+  const [currentData, setCurrentData] = useState<CplData | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState("2024");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleEdit = (id: number) => {
-    const selectedData = cplData.find((item) => item.id === id);
-    if (selectedData) {
-      setCurrentData(selectedData);
-      setIsEditing(true);
-      setIsAdding(false);
+  // Queries
+  const {
+    data: cplData = [],
+    isLoading: loading,
+    error: cplError,
+    refetch: refetchCplData,
+  } = useQuery({
+    queryKey: ["cplData", currentPage, itemsPerPage],
+    queryFn: () => fetchCplData(currentPage, itemsPerPage),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Mutations
+  const createMutation = useMutation({
+    mutationFn: createCpl,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cplData"] });
+      handleReset();
       setErrorMessage("");
+    },
+    onError: (error: any) => {
+      console.error("Gagal menambah data:", error);
+      handleMutationError(error);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateCpl,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cplData"] });
+      handleReset();
+      setErrorMessage("");
+    },
+    onError: (error: any) => {
+      console.error("Gagal mengupdate data:", error);
+      handleMutationError(error);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteCpl,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cplData"] });
+      setErrorMessage("");
+    },
+    onError: (error: any) => {
+      console.error("Gagal menghapus data:", error);
+      handleMutationError(error);
+    },
+  });
+
+  // Helper function for error handling
+  const handleMutationError = (error: any) => {
+    if (error.response?.status === 400) {
+      setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
+    } else if (error.response?.status === 401) {
+      setErrorMessage("Token tidak valid. Silakan login ulang.");
+    } else if (error.response?.data?.message) {
+      setErrorMessage(`Error: ${error.response.data.message}`);
+    } else if (error.message) {
+      setErrorMessage(error.message);
+    } else {
+      setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
     }
   };
 
-  const handleDelete = (id: number) => {
-    setCplData(cplData.filter((item) => item.id !== id));
-    setErrorMessage("");
+  // Event handlers
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
 
   const handleBack = () => {
@@ -49,41 +194,54 @@ const ObeCpl: React.FC = () => {
     setIsAdding(true);
     setIsEditing(false);
     setCurrentData({
-      id: Date.now(),
-      kodePl: "",
-      deskripsiCapaianPembelajaran: "",
-      kategori: "",
+      id: "",
+      programStudi: "",
+      tahunKurikulum: "",
+      kodeCpl: "",
+      deskripsiCpl: "",
+      kategoriCpl: "",
       pemetaan: "",
     });
     setErrorMessage("");
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
+  const handleEdit = (id: string) => {
+    const selectedData = cplData.find((item) => item.id === id);
+    if (selectedData) {
+      setCurrentData(selectedData);
+      setIsEditing(true);
+      setIsAdding(false);
+      setErrorMessage("");
+    }
   };
 
-  const isFormValid = () => {
-    return !!(currentData?.kodePl && currentData?.deskripsiCapaianPembelajaran && currentData?.kategori && currentData?.pemetaan);
+  const handleDelete = (id: string) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+      deleteMutation.mutate(id);
+    }
   };
 
-  const handleSave = () => {
-    if (!currentData) return;
-
-    if (!isFormValid()) {
-      setErrorMessage("Semua kolom harus diisi sebelum menyimpan.");
+  const handleSave = async () => {
+    if (!currentData || !isFormValid()) {
+      setErrorMessage("Semua kolom harus diisi.");
       return;
     }
 
     setErrorMessage("");
 
-    if (isEditing) {
-      const updatedData = cplData.map((item) => (item.id === currentData.id ? currentData : item));
-      setCplData(updatedData);
-      setIsEditing(false);
+    const dataToSave = {
+      programStudi: currentData.programStudi,
+      tahunKurikulum: currentData.tahunKurikulum,
+      kodeCpl: currentData.kodeCpl,
+      deskripsiCpl: currentData.deskripsiCpl,
+      kategoriCpl: currentData.kategoriCpl,
+      pemetaan: currentData.pemetaan,
+    };
+
+    if (isEditing && currentData.id) {
+      updateMutation.mutate({ id: currentData.id, data: dataToSave });
     } else if (isAdding) {
-      setCplData([currentData, ...cplData]);
-      setIsAdding(false);
+      createMutation.mutate(dataToSave);
     }
 
     setCurrentData(null);
@@ -96,8 +254,13 @@ const ObeCpl: React.FC = () => {
     setErrorMessage("");
   };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
+  };
+
+  const isFormValid = () => {
+    return !!(currentData?.kodeCpl && currentData?.deskripsiCpl && currentData?.kategoriCpl && currentData?.pemetaan);
   };
 
   return (
@@ -182,7 +345,7 @@ const ObeCpl: React.FC = () => {
             <div className="mt-4 overflow-x-auto">
               <TableObeCPL
                 data={cplData}
-                tableHead={["Kode PL", "Deskripsi Capaian Pembelajaran Lulusan (CPL)", "Kategori", "Pemetaan PL ke CPL", "Aksi"]}
+                tableHead={["Kode CPL", "Deskripsi Capaian Pembelajaran Lulusan (CPL)", "Kategori", "Pemetaan PL ke CPL", "Aksi"]}
                 error="Data tidak ditemukan."
                 onEdit={handleEdit}
                 onDelete={handleDelete}

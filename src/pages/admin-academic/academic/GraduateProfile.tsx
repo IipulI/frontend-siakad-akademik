@@ -5,9 +5,55 @@ import { Api } from "../../../api/Index";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate } from "react-router-dom";
 import { TableGraduateProfile } from "../../../components/Table";
-import { GraduateProfileData } from "../../../components/types.ts";
+import { CurriculumData, GraduateProfileData, ProgramStudi } from "../../../components/types.ts";
 import { Search, ArrowLeft, Save, Plus } from "lucide-react";
-// import { set } from "date-fns";
+
+// Api functions
+const fetchProgramStudiData = async (): Promise<ProgramStudi[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/program-studi", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+
+  console.log("🔍 Raw program studi API data:", data);
+
+  let programStudiData: ProgramStudi[] = [];
+
+  if (Array.isArray(data)) {
+    programStudiData = data as ProgramStudi[];
+  } else if (typeof data === "object" && data !== null) {
+    programStudiData = Object.values(data as Record<string, unknown>).filter((item): item is ProgramStudi => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  return programStudiData;
+};
+
+const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/tahun-kurikulum", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+
+  console.log("🔍 Raw curriculum API data:", data);
+
+  let curriculumData: CurriculumData[] = [];
+
+  if (Array.isArray(data)) {
+    curriculumData = data as CurriculumData[];
+  } else if (typeof data === "object" && data !== null) {
+    curriculumData = Object.values(data as Record<string, unknown>).filter((item): item is CurriculumData => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  return curriculumData;
+};
 
 const fetchGraduateProfileData = async (page: number, size: number): Promise<GraduateProfileData[]> => {
   const token = localStorage.getItem("token");
@@ -16,27 +62,25 @@ const fetchGraduateProfileData = async (page: number, size: number): Promise<Gra
   const response = await Api.get(`/akademik/profil-lulusan?page=${page}&size=${size}&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
 
   const apiData = response.data.data;
-  console.log("🔍 Raw Profil API data:", apiData);
+
+  console.log("🔍 Raw graduate profile API data:", apiData);
 
   const formattedData = Array.isArray(apiData)
     ? apiData.map((item: any) => {
-        // Debug each item
-        console.log("🔍 Processing curriculum item:", item);
-
         const formatted = {
           id: item.id,
+          siakProgramStudiId: item.siakProgramStudiId,
+          siakTahunKurikulumId: item.siakTahunKurikulum,
           kodePl: item.kodePl,
-          profilLulusan: item.profil,
+          profil: item.profil,
           profesi: item.profesi,
-          deskripsi: item.deskripsiPl,
+          deskripsiPl: item.deskripsiPl,
         };
 
-        console.log("🔍 Formatted curriculum item:", formatted);
         return formatted;
       })
     : [];
 
-  console.log("🔍 Final formatted curriculum data:", formattedData);
   return formattedData;
 };
 
@@ -45,23 +89,31 @@ const createProfile = async (data: Omit<GraduateProfileData, "id">): Promise<Gra
   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   const payload = {
+    siakProgramStudiId: data.siakProgramStudiId,
+    siakTahunKurikulumId: data.siakTahunKurikulumId,
     kodePl: data.kodePl,
-    profil: data.profilLulusan,
+    profil: data.profil,
     profesi: data.profesi,
-    deskripsiPl: data.deskripsi,
+    deskripsiPl: data.deskripsiPl,
   };
+
+  console.log("Payload dikirim:", payload);
 
   const response = await Api.post("/akademik/profil-lulusan", payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  console.log("Response dari API:", response.data);
+
   const newItemData = response.data?.data || response.data;
   return {
-    id: newItemData.id || Date.now().toString(),
+    id: newItemData.id,
+    siakProgramStudiId: newItemData.siakProgramStudiId,
+    siakTahunKurikulumId: newItemData.siakTahunKurikulumId,
     kodePl: newItemData.kodePl,
-    profilLulusan: newItemData.profil,
+    profil: newItemData.profil,
     profesi: newItemData.profesi,
-    deskripsi: newItemData.deskripsiPl,
+    deskripsiPl: newItemData.deskripsiPl,
   };
 };
 
@@ -70,10 +122,12 @@ const updateProfile = async ({ id, data }: { id: string; data: Omit<GraduateProf
   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   const payload = {
+    siakProgramStudiId: data.siakProgramStudiId,
+    siakTahunKurikulumId: data.siakTahunKurikulumId,
     kodePl: data.kodePl,
-    profil: data.profilLulusan,
+    profil: data.profil,
     profesi: data.profesi,
-    deskripsiPl: data.deskripsi,
+    deskripsiPl: data.deskripsiPl,
   };
 
   await Api.put(`/akademik/profil-lulusan/${id}`, payload, {
@@ -97,15 +151,17 @@ const GraduateProfile: React.FC = () => {
   const navigate = useNavigate();
 
   // State
-  const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
+  const [programStudiData, setProgramStudiData] = useState<ProgramStudi[]>([]);
+  const [curriculumData, setCurriculumData] = useState<CurriculumData[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentData, setCurrentData] = useState<GraduateProfileData | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedYear, setSelectedYear] = useState("");
 
+  // Queries
   const {
     data: profileData = [],
     isLoading: loading,
@@ -114,6 +170,28 @@ const GraduateProfile: React.FC = () => {
   } = useQuery({
     queryKey: ["profileData", currentPage, itemsPerPage],
     queryFn: () => fetchGraduateProfileData(currentPage, itemsPerPage),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const {
+    data: programStudi = [],
+    isLoading: loadingProgramStudi,
+    error: programStudiError,
+  } = useQuery({
+    queryKey: ["programStudiData"],
+    queryFn: fetchProgramStudiData,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const {
+    data: curriculum = [],
+    isLoading: loadingCurriculum,
+    error: curriculumError,
+  } = useQuery({
+    queryKey: ["curriculumData"],
+    queryFn: fetchCurriculumData,
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -148,7 +226,7 @@ const GraduateProfile: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteProfile,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
+      queryClient.invalidateQueries({ queryKey: ["profileData"] });
       setErrorMessage("");
     },
     onError: (error: any) => {
@@ -194,16 +272,18 @@ const GraduateProfile: React.FC = () => {
     setIsEditing(false);
     setCurrentData({
       id: "",
+      siakProgramStudiId: "",
+      siakTahunKurikulumId: "",
       kodePl: "",
-      profilLulusan: "",
+      profil: "",
       profesi: "",
-      deskripsi: "",
+      deskripsiPl: "",
     });
     setErrorMessage("");
   };
 
   const isFormValid = () => {
-    return !!(currentData?.kodePl && currentData?.profilLulusan && currentData?.profesi && currentData?.deskripsi);
+    return !!(currentData?.kodePl && currentData?.profil && currentData?.profesi && currentData?.deskripsiPl);
   };
 
   const handleSave = async () => {
@@ -215,10 +295,12 @@ const GraduateProfile: React.FC = () => {
     setErrorMessage("");
 
     const dataToSave = {
+      siakProgramStudiId: currentData.siakProgramStudiId,
+      siakTahunKurikulumId: currentData.siakTahunKurikulumId,
       kodePl: currentData.kodePl,
-      profilLulusan: currentData.profilLulusan,
+      profil: currentData.profil,
       profesi: currentData.profesi,
-      deskripsi: currentData.deskripsi,
+      deskripsiPl: currentData.deskripsiPl,
     };
 
     if (isEditing && currentData.id) {
@@ -246,9 +328,11 @@ const GraduateProfile: React.FC = () => {
     setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ["profileData"] });
-  };
+  // const handleRefresh = () => {
+  //   queryClient.invalidateQueries({ queryKey: ["profileData"] });
+  //   queryClient.invalidateQueries({ queryKey: ["programStudiData"] });
+  //   queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
+  // };
 
   // Loading state
   const isLoading = loading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
@@ -306,7 +390,7 @@ const GraduateProfile: React.FC = () => {
             <div className="grid grid-cols-1 gap-2 bg-primary-green/10 p-4 md:grid-cols-2">
               <div className="flex justify-between">
                 <span className="font-semibold w-full text-left">Kode Prodi:</span>
-                <span className="w-full text-left ">MK001</span>
+                <span className="w-full text-left ">FF22</span>
               </div>
               <div className="flex justify-between ml-0 md:ml-8 ">
                 <span className="font-semibold w-full text-left">Tahun Kurikulum:</span>
@@ -325,9 +409,12 @@ const GraduateProfile: React.FC = () => {
             <div className="mt-4 flex flex-col  gap-2 md:flex-row md:items-center">
               <h2 className="text-lg font-semibold">Tahun Kurikulum</h2>
               <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="border border-black/50 rounded-md px-2 py-1 w-full md:w-40">
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
+                <option value="">Tahun Kurikulum</option>
+                {curriculum.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.tahun}
+                  </option>
+                ))}
               </select>
               <button
                 onClick={handleAdd}
@@ -341,6 +428,8 @@ const GraduateProfile: React.FC = () => {
 
             {errorMessage && <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>}
             {isLoading && <p className="text-blue-600 mt-2 mx-4">Loading...</p>}
+            {loadingCurriculum && <p className="text-blue-600 mt-2 mx-4">Loading periode curriculum...</p>}
+            {loadingProgramStudi && <p className="text-blue-600 mt-2 mx-4">Loading program studi...</p>}
 
             <div className="mt-4 overflow-x-auto">
               <TableGraduateProfile

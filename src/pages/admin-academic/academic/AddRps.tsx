@@ -1,10 +1,115 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
+import RichTextEditor from "../../../components/admin-academic/RichTextEditor";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { Api } from "../../../api/Index";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
+import { CourseData, CurriculumData, DosenData, RpsData } from "../../../components/types.ts";
 
-import RichTextEditor from "../../../components/admin-academic/RichTextEditor";
+// --- fetching data ---
+const fetchCourseData = async ({ queryKey }: { queryKey: [string, number, number] }): Promise<CourseData[]> => {
+  const [_, page, size] = queryKey;
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get(`/akademik/mata-kuliah?page=${page}&size=${size}&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
+
+  const apiData = response.data.data;
+  console.log("🔍 Raw matkul API data:", apiData);
+
+  const formattedData = Array.isArray(apiData)
+    ? apiData.map((item: any) => {
+        const formatted = {
+          id: item.id,
+          programStudi: item.programStudi,
+          tahunKurikulum: item.tahunKurikulum,
+          siakProgramStudiId: item.siakProgramStudiId,
+          siakTahunKurikulumId: item.siakTahunKurikulumId,
+          semester: item.semester,
+          nilaiMin: item.nilaiMin,
+          sksTatapMuka: item.sksTatapMuka,
+          sksPraktikum: item.sksPraktikum,
+          adaPraktikum: item.adaPraktikum,
+          opsiMataKuliah: item.opsiMataKuliah,
+          kodeMataKuliah: item.kodeMataKuliah,
+          namaMataKuliah: item.namaMataKuliah,
+          jenisMataKuliah: item.jenisMataKuliah,
+          prasyaratMataKuliah1: item.prasyaratMataKuliah1 || "",
+          prasyaratMataKuliah2: item.prasyaratMataKuliah2 || "",
+          prasyaratMataKuliah3: item.prasyaratMataKuliah3 || "",
+        };
+
+        return formatted;
+      })
+    : [];
+
+  return formattedData;
+};
+
+const fetchDosenData = async (): Promise<DosenData[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/dosen", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+
+  console.log("🔍 Raw dosen API data:", data);
+
+  let dosenData: DosenData[] = [];
+
+  if (Array.isArray(data)) {
+    dosenData = data as DosenData[];
+  } else if (typeof data === "object" && data !== null) {
+    dosenData = Object.values(data as Record<string, unknown>).filter((item): item is DosenData => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  return dosenData;
+};
+
+// --- create rps ---
+const createRps = async (data: Omit<RpsData, "id">): Promise<RpsData> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const payload = {
+    siakProgramStudiId: data.siakProgramStudiId,
+    siakPeriodeAkademikId: data.siakPeriodeAkademikId,
+    siakTahunKurikulumId: data.siakTahunKurikulumId,
+    siakMataKuliahId: data.siakMataKuliahId,
+    tanggalPenyusun: data.tanggalPenyusun,
+    deskripsiMataKuliah: data.deskripsiMataKuliah,
+    tujuanMataKuliah: data.tujuanMataKuliah,
+    materiPembelajaran: data.materiPembelajaran,
+    pustakaUtama: data.pustakaUtama,
+    pustakaPendukung: data.pustakaPendukung,
+    dosenIds: data.dosenIds,
+  };
+
+  const response = await Api.post("/akademik/mata-kuliah", payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const newItemData = response.data?.data || response.data;
+  return {
+    id: newItemData.id,
+    programStudi: data.programStudi,
+
+    periodeAkademik: data.periodeAkademik,
+    tahunKurikulum: data.tahunKurikulum,
+    mataKuliah: data.mataKuliah,
+    tanggalPenyusun: data.tanggalPenyusun,
+    deskripsiMataKuliah: data.deskripsiMataKuliah,
+    tujuanMataKuliah: data.tujuanMataKuliah,
+    materiPembelajaran: data.materiPembelajaran,
+    pustakaUtama: data.pustakaUtama,
+    pustakaPendukung: data.pustakaPendukung,
+    dosenIds: data.dosenIds,
+  };
+};
 
 const AddRps = () => {
   const navigate = useNavigate();

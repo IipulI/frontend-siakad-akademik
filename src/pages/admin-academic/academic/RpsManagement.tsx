@@ -1,62 +1,180 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Api } from "../../../api/Index";
 import { Search, Plus, CornerUpLeft } from "lucide-react";
 import { TableRpsManagement } from "../../../components/Table";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes.tsx";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
+import { CourseData, CurriculumData, DosenData, ProgramStudiData, RpsData, PeriodeAkademik } from "../../../components/types.ts";
 
-interface RPSData {
-  id: number;
-  kodeMk: string;
-  mataKuliah: string;
-  dosenPenyusun: string;
-  smt: string;
-  sks: string;
-  kelas: string;
-}
+// --- fetching api ---
+const fetchRpsData = async (): Promise<RpsData[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/rps", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+
+  console.log("🔍 Raw rps API data:", data);
+
+  let rpsData: RpsData[] = [];
+
+  if (Array.isArray(data)) {
+    rpsData = data as RpsData[];
+  } else if (typeof data === "object" && data !== null) {
+    rpsData = Object.values(data as Record<string, unknown>).filter((item): item is RpsData => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  return rpsData;
+};
+
+const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/tahun-kurikulum", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+
+  console.log("🔍 Raw curriculum API data:", data);
+
+  let curriculumData: CurriculumData[] = [];
+
+  if (Array.isArray(data)) {
+    curriculumData = data as CurriculumData[];
+  } else if (typeof data === "object" && data !== null) {
+    curriculumData = Object.values(data as Record<string, unknown>).filter((item): item is CurriculumData => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  return curriculumData;
+};
+
+const fetchProdiData = async (): Promise<ProgramStudiData[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/program-studi", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+
+  console.log("🔍 Raw prodi API data:", data);
+
+  let programStudiData: ProgramStudiData[] = [];
+
+  if (Array.isArray(data)) {
+    programStudiData = data as ProgramStudiData[];
+  } else if (typeof data === "object" && data !== null) {
+    programStudiData = Object.values(data as Record<string, unknown>).filter((item): item is ProgramStudiData => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  return programStudiData;
+};
+
+const fetchPeriodeAkademik = async (): Promise<PeriodeAkademik[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get("/akademik/periode-akademik", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = response.data?.data;
+  console.log("🔍 Raw periode akademik API data:", data);
+
+  let periodeData: PeriodeAkademik[] = [];
+
+  if (Array.isArray(data)) {
+    periodeData = data as PeriodeAkademik[];
+  } else if (typeof data === "object" && data !== null) {
+    periodeData = Object.values(data as Record<string, unknown>).filter((item): item is PeriodeAkademik => typeof item === "object" && item !== null && "id" in item);
+  }
+
+  console.log("🔍 Processed periode akademik data:", periodeData);
+  console.log(
+    "🔍 Periode IDs available:",
+    periodeData.map((p) => p.id)
+  );
+
+  return periodeData;
+};
+
+const deleteRps = async (id: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  await Api.delete(`/akademik/rps/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
 
 const RpsManagement: React.FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const [data, setData] = useState<RPSData[]>([
-    {
-      id: 1,
-      kodeMk: "IF101",
-      mataKuliah: "Algoritma dan Pemrograman",
-      dosenPenyusun: "Dr. Siti Aisyah",
-      smt: "1",
-      sks: "3",
-      kelas: "A",
-    },
-    {
-      id: 2,
-      kodeMk: "IF102",
-      mataKuliah: "Struktur Data",
-      dosenPenyusun: "Dr. Rahmat Hidayat",
-      smt: "2",
-      sks: "3",
-      kelas: "B",
-    },
-    {
-      id: 3,
-      kodeMk: "IF103",
-      mataKuliah: "Basis Data",
-      dosenPenyusun: "Dr. Budi Santoso",
-      smt: "3",
-      sks: "3",
-      kelas: "C",
-    },
-  ]);
+  // --- query data ---
+  const { data: rpsData = [], error: periodeError } = useQuery({
+    queryKey: ["rpsData"],
+    queryFn: fetchRpsData,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
 
+  const { data: curriculumData = [], error: curriculumError } = useQuery({
+    queryKey: ["curriculumData"],
+    queryFn: fetchCurriculumData,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  const { data: prodiData = [], error: prodiError } = useQuery({
+    queryKey: ["prodiData"],
+    queryFn: fetchProdiData,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  const { data: periodeData = [], error: periodeErrorData } = useQuery({
+    queryKey: ["periodeData"],
+    queryFn: fetchPeriodeAkademik,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  // --- states management ---
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(rpsData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = rpsData.slice(startIndex, startIndex + itemsPerPage);
 
   const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  // --- Mutation ---
+  const deleteMutation = useMutation({
+    mutationFn: deleteRps,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rpsData"] });
+    },
+    onError: (error: any) => {
+      console.error("Gagal menghapus data:", error);
+    },
+  });
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   const handleAdd = () => {
     navigate(AdminAcademicRoute.rpsManagement.addRps);
@@ -65,20 +183,54 @@ const RpsManagement: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Manajemen RPS">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-          {[
-            { label: "Tahun Kurikulum", value: "2021" },
-            { label: "Program Studi", value: "2025 Genap" },
-            { label: "Jenjang", value: "S1 - Teknik Informatika" },
-            { label: "Status Kelas", value: "-- Semua Status --" },
-          ].map((item, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <label className="w-36 text-gray-700">{item.label}</label>
-              <select className="flex-1 rounded px-2 py-1 border border-primary-brown">
-                <option value="all">{item.value}</option>
-              </select>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-4">
+          <div className="flex items-center gap-3">
+            <label className="w-36 text-gray-700">Tahun Kurikulum</label>
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
+              <option value="all">-- Tahun Kurikulum --</option>
+              {curriculumData.map((item) => (
+                <option key={item.id} value={item.tahun}>
+                  {item.tahun}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="w-36 text-gray-700">Periode Akademik</label>
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown ">
+              <option value="all">-- Periode --</option>
+              {periodeData.map((item) => (
+                <option key={item.id} value={item.namaPeriode}>
+                  {item.namaPeriode}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="w-36 text-gray-700">Program Studi</label>
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-36 ">
+              <option value="all">-- Program Studi --</option>
+              {prodiData.map((item) => (
+                <option key={item.id} value={item.namaProgramStudi}>
+                  {item.namaProgramStudi}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="w-36 text-gray-700">Program Studi</label>
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-36 ">
+              <option value="all">-- Program Studi --</option>
+              {prodiData.map((item) => (
+                <option key={item.id} value={item.namaProgramStudi}>
+                  {item.namaProgramStudi}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -99,7 +251,7 @@ const RpsManagement: React.FC = () => {
 
         {/* Tabel RPS */}
         <div className="mt-4">
-          <TableRpsManagement data={paginatedData} onEdit={(id) => console.log("Edit id:", id)} onDelete={(id) => setData((prev) => prev.filter((item) => item.id !== id))} />
+          <TableRpsManagement data={rpsData} error="Data tidak ditemukan." onEdit={(id) => console.log("Edit id:", id)} onDelete={handleDelete} />
         </div>
 
         {/* Pagination */}
