@@ -22,7 +22,7 @@ interface PaymentTableProps {
 export default function PaymentTable({ data, total }: PaymentTableProps) {
   return (
     <div className="grid grid-cols-5 gap-4">
-      <div className="bg-white rounded-md shadow-sm p-6 col-span-3">
+      <div className="bg-white rounded-md shadow-sm p-6 col-span-5 lg:col-span-3">
         <table className="w-full">
           <thead>
             <tr>
@@ -68,7 +68,7 @@ export default function PaymentTable({ data, total }: PaymentTableProps) {
           </tfoot>
         </table>
       </div>
-      <div className="col-span-2 space-y-4">
+      <div className="col-span-5 lg:col-span-2 space-y-4">
         <div className="bg-white rounded shadow-sm p-8 flex flex-col">
           <label className="font-semibold" htmlFor="">
             Pilih Metode Pembayaran

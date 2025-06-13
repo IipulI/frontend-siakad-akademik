@@ -61,6 +61,7 @@ export default function StudentPayment() {
         {step === 2 && <PaymentConfirmation />}
         {step === 3 && <PaymentReceipt />}
       </div>
+      <div className="py-5"></div>
     </MainLayout>
   );
 }

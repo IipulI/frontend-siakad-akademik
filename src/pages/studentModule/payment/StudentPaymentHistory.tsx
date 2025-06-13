@@ -75,7 +75,7 @@ const StudentPaymentHistory = () => {
     >
       <InfoAlert />
       <div className="p-4 border w-full">
-        <div className="flex justify-between items-center ">
+        <div className="grid grid-cols-1 gap-3 lg:flex lg:justify-between ">
           <div className="flex items-center ">
             <input
               type="text"
@@ -90,7 +90,7 @@ const StudentPaymentHistory = () => {
             </div>
           </div>
           <div className="flex items-center ">
-            <select className="text-[#444444] border-2 border-r-0 rounded text-sm w-[300px] py-1.5 px-3">
+            <select className="text-[#444444] border-2 rounded text-sm py-1.5 px-5">
               <option value="">Berdasarkan Tagihan</option>
             </select>
           </div>
@@ -100,7 +100,7 @@ const StudentPaymentHistory = () => {
               color="#FDA31B"
               size={36}
             />
-            <select className="text-[#444444] border-2 border-r-0 rounded text-sm w-[300px] py-1.5 px-3">
+            <select className="text-[#444444] border-2 border-r-0 rounded text-sm py-1.5 px-5">
               <option value="">Pilih Tanggal Transaksi</option>
             </select>
           </div>
@@ -111,7 +111,7 @@ const StudentPaymentHistory = () => {
           <>
             <div key={index} className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <h2 className="font-semibold">{item.nama}</h2>
+                <h2 className="font-semibold text-sm">{item.nama}</h2>
                 <span className="text-green-700 bg-green-100 text-xs px-3 py-1 rounded">
                   Berhasil
                 </span>
@@ -127,7 +127,7 @@ const StudentPaymentHistory = () => {
               <div>
                 <button
                   onClick={detailTransaction}
-                  className="py-2 rounded px-4 cursor-pointer bg-[#00A65A] text-white"
+                  className="py-2 text-sm rounded px-4 cursor-pointer bg-[#00A65A] text-white"
                 >
                   Detail Transaksi
                 </button>
@@ -152,8 +152,8 @@ const InfoAlert = () => {
 const ItemList = ({ title, data }) => {
   return (
     <div>
-      <h1 className="text-[#444] italic font-semibold">{title}</h1>
-      <h1 className="font-semibold">{data}</h1>
+      <h1 className="text-[#444] italic text-xs sm:text-sm font-semibold">{title}</h1>
+      <h1 className="font-semibold text-xs sm:text-sm">{data}</h1>
     </div>
   );
 };
