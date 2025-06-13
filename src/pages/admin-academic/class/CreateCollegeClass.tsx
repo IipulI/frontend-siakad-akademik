@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { ArrowLeft, CircleX, Plus, Save } from "lucide-react";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import {
@@ -11,9 +12,10 @@ import {
 } from "../../../components/admin-academic/student-data/Input";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import getAcademicPeriods from "../../../hooks/usePeriodeAkademik";
+import getProgramStudies from "../../../hooks/useProgramStudi";
 
 const CreateCollegeClass = () => {
-  const systemOptions = [{ value: "", label: "Semua Sistem Kuliah" }];
   const periodOptions = [{ value: "", label: "2025 Ganjil" }];
   const subjectOptions = [{ value: "", label: "Mata Kuliah" }];
   const yearOptions = [{ value: "", label: "2025" }];
@@ -51,6 +53,57 @@ const CreateCollegeClass = () => {
   const save = () => {
     alert("save");
   };
+
+  const {
+    data: academicPeriods,
+    isLoading: isLoadingAcademicPeriod,
+    error: isErrorAcademicPeriod,
+  } = getAcademicPeriods();
+
+  const {
+    data: programStudies,
+    isLoading: isLoadingProgramStudy,
+    error: isErrorProgramStudy,
+  } = getProgramStudies();
+
+  if (isLoadingAcademicPeriod || isLoadingProgramStudy) {
+    return <LoadingSpinner />;
+  }
+
+  if (isErrorAcademicPeriod || isErrorProgramStudy) {
+    return <div>Terjadi kesalahan saat mengambil data.</div>;
+  }
+  interface AcademicPeriod {
+    id: string;
+    namaPeriode: string;
+  }
+
+  interface SystemProps {
+    id: string;
+    type: string;
+  }
+
+  interface ProgramStudy {
+    id: string;
+    namaProgramStudi: string;
+    jenjang: {
+      id: string;
+      nama: string;
+      jenjang: string;
+    };
+  }
+
+  const systemOptions = [
+    {
+      id: "1",
+      type: "reguler",
+    },
+    {
+      id: "2",
+      type: "karyawan",
+    },
+  ];
+
   return (
     <MainLayout titlePage="Data Kelas" isGreeting={false}>
       <div className="space-y-4">
@@ -81,27 +134,37 @@ const CreateCollegeClass = () => {
               <h1 className="font-bold text-2xl">Informasi Kelas</h1>
             </div>
             <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
-              <SelectInput
-                required={true}
-                options={periodOptions}
+              <SelectInput<AcademicPeriod>
                 label="Periode Akademik"
+                options={academicPeriods}
+                defaultValue=""
+                required
+                getOptionLabel={(opt) => opt.namaPeriode}
+                getOptionValue={(opt) => opt.id}
               />
-              <SelectInput
-                required={true}
-                options={systemOptions}
+
+              <SelectInput<SystemProps>
                 label="Sistem Kuliah"
+                options={systemOptions}
+                defaultValue=""
+                required
+                getOptionLabel={(opt) => opt.type}
+                getOptionValue={(opt) => opt.id}
               />
-              <SelectInput
-                required={true}
-                options={prodiOptions}
+              <SelectInput<ProgramStudy>
                 label="Program Studi"
+                options={programStudies}
+                defaultValue=""
+                required
+                getOptionLabel={(opt) => opt.namaProgramStudi}
+                getOptionValue={(opt) => opt.id}
               />
               <TextInput label="Kapasitas" />
-              <SelectInput
+              {/* <SelectInput
                 options={yearOptions}
                 required={true}
                 label="Tahun Kurikulum"
-              />
+              /> */}
               <DateInput label="Tanggal Mulai" />
               <TextInput label="Mata Kuliah" />
               <DateInput label="Tanggal Selesai" />
