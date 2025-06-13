@@ -58,8 +58,13 @@ interface InputProps {
   placeHolder?: string;
 }
 
-interface SelectProps extends InputProps {
-  options: OptionProps[];
+interface SelectProps<T = any> {
+  label: string;
+  options: T[];
+  required?: boolean;
+  defaultValue?: string;
+  getOptionLabel: (option: T) => string;
+  getOptionValue: (option: T) => string;
 }
 
 export function TextInput({
@@ -83,26 +88,29 @@ export function TextInput({
   );
 }
 
-export function SelectInput({
+export function SelectInput<T>({
   label,
   options,
   required = false,
   defaultValue = "",
-}: SelectProps) {
+  getOptionLabel,
+  getOptionValue,
+}: SelectProps<T>) {
   return (
     <div className="grid grid-cols-2 items-center mb-3">
-      <label className=" w-fit font-medium text-sm sm:text-base">
+      <label className="w-fit font-medium text-sm sm:text-base">
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
       <select
-        className="bg-white border text-sm sm:text-base border-gray-300 text-black/60 font-semibold  rounded focus:ring-blue-500 focus:border-blue-500 p-1"
+        className="bg-white border text-sm sm:text-base border-gray-300 text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1"
         defaultValue={defaultValue}
+        required={required}
       >
         <option value="">{`-- Pilih ${label} --`}</option>
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
+          <option key={getOptionValue(option)} value={getOptionValue(option)}>
+            {getOptionLabel(option)}
           </option>
         ))}
       </select>
