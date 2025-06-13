@@ -1,28 +1,29 @@
 import React, { useState, useMemo } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { CourseData, CurriculumData, ProgramStudiData } from "../../../components/types.ts";
 import { TableCourseManagement } from "../../../components/Table";
-import { RefreshCw, Search, Plus, Trash, Settings } from "lucide-react";
+import { RefreshCw, Search, Plus, Trash } from "lucide-react";
 
-// --- Fetch Data ---
+// --- api functions ---
 const fetchCourseData = async (page: number, size: number): Promise<CourseData[]> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-  const response = await Api.get(`/akademik/mata-kuliah?page=${page}&size=${size}&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
+  const response = await Api.get(`/akademik/mata-kuliah?page=1&size=10&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
 
   const apiData = response.data.data;
-  console.log("🔍 Raw matkul API data:", apiData);
 
   const formattedData = Array.isArray(apiData)
     ? apiData.map((item: any) => {
         const formatted = {
           id: item.id,
+          programStudi: item.programStudi,
+          tahunKurikulum: item.tahunKurikulum,
           siakProgramStudiId: item.siakProgramStudiId,
           siakTahunKurikulumId: item.siakTahunKurikulumId,
           semester: item.semester,
@@ -34,6 +35,9 @@ const fetchCourseData = async (page: number, size: number): Promise<CourseData[]
           kodeMataKuliah: item.kodeMataKuliah,
           namaMataKuliah: item.namaMataKuliah,
           jenisMataKuliah: item.jenisMataKuliah,
+          prasyaratMataKuliah1Id: item.prasyaratMataKuliah1Id,
+          prasyaratMataKuliah2Id: item.prasyaratMataKuliah2Id,
+          prasyaratMataKuliah3Id: item.prasyaratMataKuliah3Id,
           prasyaratMataKuliah1: item.prasyaratMataKuliah1 || "",
           prasyaratMataKuliah2: item.prasyaratMataKuliah2 || "",
           prasyaratMataKuliah3: item.prasyaratMataKuliah3 || "",
@@ -56,8 +60,6 @@ const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
 
   const data = response.data?.data;
 
-  console.log("🔍 Raw curriculum API data:", data);
-
   let curriculumData: CurriculumData[] = [];
 
   if (Array.isArray(data)) {
@@ -79,8 +81,6 @@ const fetchProdiData = async (): Promise<ProgramStudiData[]> => {
 
   const data = response.data?.data;
 
-  console.log("🔍 Raw prodi API data:", data);
-
   let programStudiData: ProgramStudiData[] = [];
 
   if (Array.isArray(data)) {
@@ -101,6 +101,7 @@ const deleteCourse = async (id: string): Promise<void> => {
   });
 };
 
+// --- course management component ---
 const CourseManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -116,69 +117,64 @@ const CourseManagement: React.FC = () => {
   const [selectedCourseGroup, setSelectedCourseGroup] = useState("all");
   const [selectedProdi, setSelectedProdi] = useState("all");
 
-  // --- React Query Data Fetching ---
-  const {
-    data: courseData = [],
-    isLoading: loading,
-    error: courseDataError,
-    refetch: refetchCourseData,
-  } = useQuery({
+  // --- queries ---
+  const { data: courseData = [], error: courseDataError } = useQuery({
     queryKey: ["courseData", currentPage, itemsPerPage],
     queryFn: () => fetchCourseData(currentPage, itemsPerPage),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const {
-    data: curriculumData = [],
-    isLoading: loadingCurriculum,
-    error: curriculumError,
-  } = useQuery({
+  const { data: curriculumData = [], error: curriculumError } = useQuery({
     queryKey: ["curriculumData"],
     queryFn: fetchCurriculumData,
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const {
-    data: programStudiData = [],
-    isLoading: loadingProgramStudi,
-    error: programStudiError,
-  } = useQuery({
+  const { data: programStudiData = [], error: programStudiError } = useQuery({
     queryKey: ["programStudiData"],
     queryFn: fetchProdiData,
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  // --- Get unique values for dropdowns ---
+  const uniqueCourseTypes = useMemo(() => {
+    const types = courseData.map((item) => item.jenisMataKuliah).filter(Boolean);
+    return [...new Set(types)];
+  }, [courseData]);
+
+  // --- filtered function ---
   const filteredData = useMemo(() => {
     return courseData
       .filter((item) => {
-        // Curriculum Filter
-        return selectedCurriculum === "all" || item.siakTahunKurikulumId === selectedCurriculum;
+        // Curriculum Filter - menggunakan tahunKurikulum untuk matching
+        return selectedCurriculum === "all" || item.tahunKurikulum === selectedCurriculum;
       })
       .filter((item) => {
-        // Study Program Filter
-        return selectedProdi === "all" || item.siakProgramStudiId === selectedProdi;
+        // Study Program Filter - menggunakan programStudi untuk matching
+        return selectedProdi === "all" || item.programStudi === selectedProdi;
       })
       .filter((item) => {
-        // Search Term Filter (existing)
+        // Course Type Filter
+        return selectedCourseType === "all" || item.jenisMataKuliah === selectedCourseType;
+      })
+      .filter((item) => {
+        // Search Term Filter
         return item.namaMataKuliah.toLowerCase().includes(searchTerm.toLowerCase());
       });
   }, [courseData, selectedCurriculum, selectedCourseType, selectedCourseGroup, selectedProdi, searchTerm]);
 
-  // const filteredData = courseData.filter((item) => item.namaMataKuliah.toLowerCase().includes(searchTerm.toLowerCase()));
-
-  // Handler toggle select all checkbox di header
+  // --- select handler ---
   const toggleSelectAll = () => {
-    if (selectedIds.length === courseData.length) {
+    if (selectedIds.length === filteredData.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(courseData.map((item) => item.id));
+      setSelectedIds(filteredData.map((item) => item.id));
     }
   };
 
-  // Handler toggle checkbox per baris
   const toggleSelectOne = (id: string) => {
     if (selectedIds.includes(id)) {
       setSelectedIds(selectedIds.filter((selectedId) => selectedId !== id));
@@ -187,7 +183,7 @@ const CourseManagement: React.FC = () => {
     }
   };
 
-  // --- Mutation ---
+  // --- mutation ---
   const deleteMutation = useMutation({
     mutationFn: deleteCourse,
     onSuccess: () => {
@@ -200,7 +196,7 @@ const CourseManagement: React.FC = () => {
     },
   });
 
-  // Helper function for error handling
+  // --- error handling ---
   const handleMutationError = (error: any) => {
     if (error.response?.status === 400) {
       setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
@@ -230,14 +226,39 @@ const CourseManagement: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
+  // --- Filter Handlers ---
+  const handleCurriculumChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCurriculum(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const handleCourseTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCourseType(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const handleProdiChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedProdi(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const handleRefresh = () => {
+    setSearchTerm("");
+    setSelectedCurriculum("all");
+    setSelectedCourseType("all");
+    setSelectedProdi("all");
+    setCurrentPage(1);
+    queryClient.refetchQueries({ queryKey: ["courseData"] });
+  };
+
   const setData = (newData: CourseData[]) => {
     queryClient.setQueryData(["courseData", currentPage, itemsPerPage], newData);
   };
 
-  // Pagination logic
+  // --- Pagination ---
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = courseData.slice(startIndex, startIndex + itemsPerPage);
-  const totalPages = Math.ceil(courseData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
@@ -246,11 +267,11 @@ const CourseManagement: React.FC = () => {
         <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-3">
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown" value={selectedCurriculum} onChange={handleCurriculumChange}>
               <option value="all">-- Tahun Kurikulum --</option>
               {curriculumData.map((item) => (
-                <option key={item.id} value={item.tahun}>
-                  {item.tahun}
+                <option key={item.id} value={item.tahun || item.tahun}>
+                  {item.tahun || item.tahun}
                 </option>
               ))}
             </select>
@@ -258,22 +279,19 @@ const CourseManagement: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Jenis Mata Kuliah</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">Kuliah</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Kelompok Mata Kuliah</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-- Kelompok Mata Kuliah --</option>
-              <option value="wajib"></option>
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown" value={selectedCourseType} onChange={handleCourseTypeChange}>
+              <option value="all">-- Jenis Mata Kuliah --</option>
+              {uniqueCourseTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Unit / Prodi Pengampu</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-36 ">
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-50 lg:w-8" value={selectedProdi} onChange={handleProdiChange}>
               <option value="all">-- Prodi Pengampu --</option>
               {programStudiData.map((item) => (
                 <option key={item.id} value={item.namaProgramStudi}>
@@ -287,15 +305,12 @@ const CourseManagement: React.FC = () => {
 
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-green mt-8 ">
         <div className="flex flex-col md:flex-row px-4 py-2 gap-4 border-b-2">
-          <select className="rounded px-3 py-1 border border-primary-brown w-full md:w-36">
-            <option value="all">-Semua-</option>
-          </select>
           <div className="flex">
-            <input type="search" placeholder="Cari Kelas Kuliah" className="px-3 py-1 w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
+            <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-1 w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
             <button className="bg-primary-yellow w-10 flex items-center justify-center">
               <Search color="white" size={20} />
             </button>
-            <button className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
+            <button onClick={handleRefresh} className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
               <RefreshCw color="white" size={20} />
             </button>
           </div>
@@ -307,20 +322,24 @@ const CourseManagement: React.FC = () => {
 
             <button
               onClick={() => {
-                setData(courseData.filter((item) => !selectedIds.includes(item.id)));
-                setSelectedIds([]);
+                if (selectedIds.length > 0 && window.confirm(`Apakah Anda yakin ingin menghapus ${selectedIds.length} data yang dipilih?`)) {
+                  selectedIds.forEach((id) => deleteMutation.mutate(id));
+                  setSelectedIds([]);
+                }
               }}
-              className="bg-red-500 rounded py-2 px-4 text-white flex items-center"
+              className="bg-red-500 rounded py-2 px-4 text-white flex items-center cursor-pointer"
+              disabled={selectedIds.length === 0}
             >
               <Trash className="mr-2" size={16} />
               Hapus
+              {/* ({selectedIds.length}) */}
             </button>
           </div>
         </div>
 
         <div className="mt-8">
           <TableCourseManagement
-            data={filteredData}
+            data={paginatedData}
             tableHead={["Combo BOX", "Kurikulum", "Kode", "Mata Kuliah", "SKS", "Jenis MK", "Prodi Pengampu", "Aksi"]}
             error="Data tidak ditemukan."
             onDelete={handleDelete}
@@ -335,8 +354,22 @@ const CourseManagement: React.FC = () => {
           />
         </div>
 
-        {/* Pagination */}
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
+        {/* Show filter summary */}
+        <div className="px-4 py-2 text-sm text-gray-600">
+          Menampilkan {paginatedData.length} dari {filteredData.length} data
+          {filteredData.length !== courseData.length && ` (difilter dari ${courseData.length} total data)`}
+        </div>
+
+        {/* --- pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          onRowsPerPageChange={(newSize) => {
+            setItemsPerPage(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
     </MainLayout>
   );

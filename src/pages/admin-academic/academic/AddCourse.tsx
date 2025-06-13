@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Api } from "../../../api/Index";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,20 +7,22 @@ import { Search, ArrowLeft, Save } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { CourseData, CurriculumData, ProgramStudiData } from "../../../components/types.ts";
 
-// --- Fetch Data ---
-const fetchCourseData = async (page: number, size: number): Promise<CourseData[]> => {
+// --- api functions ---
+const fetchCourseData = async ({ queryKey }: { queryKey: [string, number, number] }): Promise<CourseData[]> => {
+  const [_, page, size] = queryKey;
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   const response = await Api.get(`/akademik/mata-kuliah?page=${page}&size=${size}&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
 
   const apiData = response.data.data;
-  console.log("🔍 Raw matkul API data:", apiData);
 
   const formattedData = Array.isArray(apiData)
     ? apiData.map((item: any) => {
         const formatted = {
           id: item.id,
+          programStudi: item.programStudi,
+          tahunKurikulum: item.tahunKurikulum,
           siakProgramStudiId: item.siakProgramStudiId,
           siakTahunKurikulumId: item.siakTahunKurikulumId,
           semester: item.semester,
@@ -32,6 +34,9 @@ const fetchCourseData = async (page: number, size: number): Promise<CourseData[]
           kodeMataKuliah: item.kodeMataKuliah,
           namaMataKuliah: item.namaMataKuliah,
           jenisMataKuliah: item.jenisMataKuliah,
+          prasyaratMataKuliah1Id: item.prasyaratMataKuliah1Id,
+          prasyaratMataKuliah2Id: item.prasyaratMataKuliah2Id,
+          prasyaratMataKuliah3Id: item.prasyaratMataKuliah3Id,
           prasyaratMataKuliah1: item.prasyaratMataKuliah1 || "",
           prasyaratMataKuliah2: item.prasyaratMataKuliah2 || "",
           prasyaratMataKuliah3: item.prasyaratMataKuliah3 || "",
@@ -54,8 +59,6 @@ const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
 
   const data = response.data?.data;
 
-  console.log("🔍 Raw curriculum API data:", data);
-
   let curriculumData: CurriculumData[] = [];
 
   if (Array.isArray(data)) {
@@ -77,8 +80,6 @@ const fetchProdiData = async (): Promise<ProgramStudiData[]> => {
 
   const data = response.data?.data;
 
-  console.log("🔍 Raw prodi API data:", data);
-
   let programStudiData: ProgramStudiData[] = [];
 
   if (Array.isArray(data)) {
@@ -90,7 +91,6 @@ const fetchProdiData = async (): Promise<ProgramStudiData[]> => {
   return programStudiData;
 };
 
-// --- Create ---
 const createCourse = async (data: Omit<CourseData, "id">): Promise<CourseData> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
@@ -98,18 +98,17 @@ const createCourse = async (data: Omit<CourseData, "id">): Promise<CourseData> =
   const payload = {
     siakProgramStudiId: data.siakProgramStudiId,
     siakTahunKurikulumId: data.siakTahunKurikulumId,
-    semester: data.semester,
-    nilaiMin: data.nilaiMin,
     sksTatapMuka: data.sksTatapMuka,
     sksPraktikum: data.sksPraktikum,
+    semester: data.semester,
     adaPraktikum: data.adaPraktikum,
-    opsiMataKuliah: data.opsiMataKuliah,
+    nilaiMin: data.nilaiMin,
     kodeMataKuliah: data.kodeMataKuliah,
     namaMataKuliah: data.namaMataKuliah,
     jenisMataKuliah: data.jenisMataKuliah,
-    prasyaratMataKuliah1: data.prasyaratMataKuliah1 || "",
-    prasyaratMataKuliah2: data.prasyaratMataKuliah2 || "",
-    prasyaratMataKuliah3: data.prasyaratMataKuliah3 || "",
+    prasyaratMataKuliah1Id: data.prasyaratMataKuliah1 || "",
+    prasyaratMataKuliah2Id: data.prasyaratMataKuliah2 || "",
+    prasyaratMataKuliah3Id: data.prasyaratMataKuliah3 || "",
   };
 
   const response = await Api.post("/akademik/mata-kuliah", payload, {
@@ -119,63 +118,73 @@ const createCourse = async (data: Omit<CourseData, "id">): Promise<CourseData> =
   const newItemData = response.data?.data || response.data;
   return {
     id: newItemData.id,
+    tahunKurikulum: data.tahunKurikulum,
+    programStudi: data.programStudi,
     siakProgramStudiId: newItemData.siakProgramStudiId,
     siakTahunKurikulumId: newItemData.siakTahunKurikulumId,
-    semester: newItemData.semester,
-    nilaiMin: newItemData.nilaiMin,
     sksTatapMuka: newItemData.sksTatapMuka,
     sksPraktikum: newItemData.sksPraktikum,
+    semester: newItemData.semester,
     adaPraktikum: newItemData.adaPraktikum,
-    opsiMataKuliah: newItemData.opsiMataKuliah,
+    nilaiMin: newItemData.nilaiMin,
     kodeMataKuliah: newItemData.kodeMataKuliah,
     namaMataKuliah: newItemData.namaMataKuliah,
     jenisMataKuliah: newItemData.jenisMataKuliah,
-    prasyaratMataKuliah1: newItemData.prasyaratMataKuliah1 || "",
-    prasyaratMataKuliah2: newItemData.prasyaratMataKuliah2 || "",
-    prasyaratMataKuliah3: newItemData.prasyaratMataKuliah3 || "",
+    opsiMataKuliah: newItemData.opsiMataKuliah,
+    prasyaratMataKuliah1Id: newItemData.prasyaratMataKuliah1Id,
+    prasyaratMataKuliah2Id: newItemData.prasyaratMataKuliah2Id,
+    prasyaratMataKuliah3Id: newItemData.prasyaratMataKuliah3Id,
   };
 };
 
+// --- add course component ---
 const AddCourse: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // --- State Management ---
   const [formData, setFormData] = useState<Omit<CourseData, "id">>({
+    tahunKurikulum: "",
+    programStudi: "",
     siakProgramStudiId: "",
     siakTahunKurikulumId: "",
-    kodeMataKuliah: "",
-    namaMataKuliah: "",
-    semester: "1",
     sksTatapMuka: 0,
     sksPraktikum: 0,
-    opsiMataKuliah: false, // Default value 'Wajib', false merepresentasikan pilihan
-    jenisMataKuliah: "Wajib",
+    semester: "",
     adaPraktikum: false,
-    nilaiMin: "C",
-    prasyaratMataKuliah1: "",
-    prasyaratMataKuliah2: "",
-    prasyaratMataKuliah3: "",
+    nilaiMin: "",
+    kodeMataKuliah: "",
+    namaMataKuliah: "",
+    jenisMataKuliah: "",
+    opsiMataKuliah: false,
+    prasyaratMataKuliah1Id: "",
+    prasyaratMataKuliah2Id: "",
+    prasyaratMataKuliah3Id: "",
   });
 
   const totalSks = formData.sksTatapMuka + formData.sksPraktikum;
   const [feedback, setFeedback] = useState<{ type: "error" | "success"; message: string } | null>(null);
 
-  // --- React Query Data Fetching ---
+  // --- queries ---
   const { data: courseData = [] } = useQuery({
-    queryKey: ["courseData"], // Fixed typo: was "couseData"
-    queryFn: () => fetchCourseData(1, 999),
-    staleTime: 5 * 60 * 1000,
+    queryKey: ["courseData", 1, 10],
+    queryFn: fetchCourseData,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const { data: curriculumData = [] } = useQuery({
     queryKey: ["curriculumData"],
     queryFn: fetchCurriculumData,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const { data: programStudiData = [] } = useQuery({
     queryKey: ["programStudiData"],
     queryFn: fetchProdiData,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // --- Mutation ---
@@ -193,6 +202,7 @@ const AddCourse: React.FC = () => {
     },
   });
 
+  // --- event handlers ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, type, value } = e.target;
 
@@ -201,7 +211,6 @@ const AddCourse: React.FC = () => {
       [name]: type === "number" ? Number(value) : value,
     }));
 
-    // Clear feedback when user starts typing
     if (feedback) {
       setFeedback(null);
     }
@@ -258,15 +267,12 @@ const AddCourse: React.FC = () => {
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
             </button>
-            <button onClick={handleSave} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center" disabled={createMutation.isPending}>
+            <button onClick={handleSave} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center cursor-pointer" disabled={createMutation.isPending}>
               <Save className="mr-2" size={16} />
               {createMutation.isPending ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
         </div>
-
-        {/* Feedback Message */}
-        {feedback && <div className={`mb-4 p-3 rounded ${feedback.type === "error" ? "bg-red-100 text-red-700 border border-red-300" : "bg-green-100 text-green-700 border border-green-300"}`}>{feedback.message}</div>}
 
         <div className="flex flex-col md:flex-row">
           {/* --- Sidebar Menu --- */}
@@ -292,7 +298,7 @@ const AddCourse: React.FC = () => {
                 <label className="w-full font-semibold md:w-1/2">
                   Tahun Kurikulum <span className="text-red-500">*</span>
                 </label>
-                <select name="tahunKurikulum" value={formData.siakTahunKurikulumId} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
+                <select name="siakTahunKurikulumId" value={formData.siakTahunKurikulumId} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">-- Tahun Kurikulum --</option>
                   {curriculumData.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -305,7 +311,7 @@ const AddCourse: React.FC = () => {
                 <label className=" w-full md:w-1/2 font-semibold">
                   Unit Pengampu <span className="text-red-500">*</span>
                 </label>
-                <select name="programStudi" value={formData.siakProgramStudiId} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
+                <select name="siakProgramStudiId" value={formData.siakProgramStudiId} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">-- Unit Pengampu --</option>
                   {programStudiData.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -348,7 +354,7 @@ const AddCourse: React.FC = () => {
               </div>
               <div className="flex items-center gap-4 w-full md:w-1/2">
                 <label className=" w-full md:w-1/2 font-semibold">Prasyarat 1</label>
-                <select name="prasyaratMataKuliah1" value={formData.prasyaratMataKuliah1} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
+                <select name="prasyaratMataKuliah1Id" value={formData.prasyaratMataKuliah1Id} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">Cari Mata Kuliah</option>
                   {courseData.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -368,7 +374,7 @@ const AddCourse: React.FC = () => {
               </div>
               <div className="flex items-center gap-4 w-full md:w-1/2">
                 <label className=" w-full md:w-1/2 font-semibold">Prasyarat 2</label>
-                <select name="prasyaratMataKuliah2" value={formData.prasyaratMataKuliah2} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
+                <select name="prasyaratMataKuliah2Id" value={formData.prasyaratMataKuliah2Id} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">Cari Mata Kuliah</option>
                   {courseData.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -388,7 +394,7 @@ const AddCourse: React.FC = () => {
               </div>
               <div className="flex items-center gap-4  w-full md:w-1/2">
                 <label className="w-full md:w-1/2 font-semibold">Prasyarat 3</label>
-                <select name="prasyaratMataKuliah3" value={formData.prasyaratMataKuliah3} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
+                <select name="prasyaratMataKuliah3Id" value={formData.prasyaratMataKuliah3Id} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">Cari Mata Kuliah</option>
                   {courseData.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -414,8 +420,8 @@ const AddCourse: React.FC = () => {
                   onChange={(e) => setFormData((prev) => ({ ...prev, opsiMataKuliah: e.target.value === "true" }))}
                   className="w-full px-3 py-2 border border-black/50 rounded"
                 >
-                  <option value="false">Wajib</option>
-                  <option value="true">Pilihan</option>
+                  <option value="false">Kuliah</option>
+                  <option value="true">Kerja Pratik</option>
                 </select>
               </div>
             </div>

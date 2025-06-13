@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
-import { CourseData, CplData, CurriculumData, PeriodeAkademik, CpmkData } from "../components/types.ts";
+import { CourseData, CplData, CurriculumData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData } from "../components/types.ts";
 import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil } from "lucide-react";
 
@@ -65,6 +65,18 @@ interface TableCourseManagementProps {
   onSelect?: (id: string) => void;
 }
 
+interface TableCplProps {
+  data: CplData[];
+  tableHead: string[];
+  error: string;
+}
+
+interface TableCpmkProps {
+  data: CpmkData[];
+  tableHead: string[];
+  error: string;
+}
+
 interface TableObeCplProps {
   data: CplData[];
   tableHead: string[];
@@ -86,7 +98,21 @@ interface TableObeCpmkProps {
   error: string;
 }
 
-// table
+interface TableRpsManagementProps {
+  data: RpsData[];
+  error: string;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onView?: (id: string) => void;
+}
+
+interface TableCurriculumProdiProps {
+  data: CurriculumProdiData[];
+  tableHead: string[];
+  error: string;
+}
+
+// --- table ---
 
 export const Table = ({ data, tableHead, error }: TableProps) => {
   return (
@@ -234,6 +260,7 @@ export const TableCurriculumYear = ({
   onInputChange,
   isFormValid,
   periodeAkademikList,
+
   selectedPeriodeId,
   setSelectedPeriodeId,
 }: TableCurriculumYearProps) => {
@@ -245,41 +272,31 @@ export const TableCurriculumYear = ({
     return new Date(dateString).toLocaleDateString("id-ID", options);
   };
 
-  const getPeriodeName = (periodeId: string) => {
-    // Debug logging
-    console.log("🔍 Debug getPeriodeName:");
-    console.log("periodeId:", periodeId);
-    console.log("periodeAkademikList:", periodeAkademikList);
-
-    if (!periodeId || periodeId.trim() === "") {
-      console.log("❌ No periode ID provided");
+  const getPeriodeName = (periodeId: string | number) => {
+    // 1. Langsung tangani jika ID tidak valid atau kosong
+    if (!periodeId) {
       return "Tidak ada periode";
     }
 
-    // Try to find exact match first
-    let periode = periodeAkademikList.find((p) => p.id === periodeId);
+    // 2. Ubah ID yang dicari menjadi string untuk memastikan konsistensi
+    const idToFind = String(periodeId).trim();
 
-    if (!periode) {
-      // Try string comparison in case of type mismatch
-      periode = periodeAkademikList.find((p) => String(p.id) === String(periodeId));
-    }
+    // 3. Cari periode dengan membandingkan keduanya sebagai string
+    const periode = periodeAkademikList.find((p) => String(p.id).trim() === idToFind);
 
-    if (!periode) {
-      // Try loose matching (trim whitespace)
-      periode = periodeAkademikList.find((p) => String(p.id).trim() === String(periodeId).trim());
-    }
-
+    // 4. Jika ditemukan, kembalikan nama periode. Jika tidak, kembalikan pesan error.
     if (periode) {
-      console.log("✅ Found periode:", periode);
       return periode.namaPeriode || "Nama periode tidak tersedia";
     }
 
-    console.log("❌ Periode not found for ID:", periodeId);
+    // Pesan debug ini sangat membantu
+    console.log("❌ Periode tidak ditemukan untuk ID:", idToFind);
     console.log(
-      "Available IDs:",
+      "🔍 ID yang tersedia di periodeAkademikList:",
       periodeAkademikList.map((p) => p.id)
     );
-    return `ID tidak ditemukan: ${periodeId}`;
+
+    return `ID tidak ditemukan: ${idToFind}`;
   };
 
   return (
@@ -321,10 +338,10 @@ export const TableCurriculumYear = ({
                 </select>
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
+                <input type="date" name="tanggalMulai" value={currentData.tanggalMulai} onChange={onInputChange} className="border p-2 w-full" />
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
+                <input type="date" name="tanggalSelesai" value={currentData.tanggalSelesai} onChange={onInputChange} className="border p-2 w-full" />
               </td>
               <td className="p-2 border text-sm border-black/50">
                 <div className="flex gap-2 justify-center">
@@ -362,10 +379,10 @@ export const TableCurriculumYear = ({
                       </select>
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
+                      <input type="date" name="tanggalMulai" value={currentData.tanggalMulai} onChange={onInputChange} className="border p-2 w-full" />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
+                      <input type="date" name="tanggalSelesai" value={currentData.tanggalSelesai} onChange={onInputChange} className="border p-2 w-full" />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
                       <div className="flex gap-2 justify-center">
@@ -383,10 +400,12 @@ export const TableCurriculumYear = ({
                     <td className="p-2 border text-sm border-black/50">{row.tahun}</td>
                     <td className="p-2 border text-sm border-black/50">{row.keterangan}</td>
                     <td className="p-2 border text-sm border-black/50">
-                      <span className={row.siakPeriodeAkademikId ? "" : "text-red-500 italic"}>{getPeriodeName(row.siakPeriodeAkademikId)}</span>
+                      {/* <span className={row.siakPeriodeAkademikId ? "" : "text-red-500 italic"}>{getPeriodeName(row.siakPeriodeAkademikId)}</span> */}
+
+                      {row.mulaiBerlaku}
                     </td>
-                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAwal)}</td>
-                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAkhir)}</td>
+                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalMulai)}</td>
+                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalSelesai)}</td>
                     <td className="p-2 border text-sm border-black/50">
                       <div className="flex gap-2 justify-center">
                         <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
@@ -438,7 +457,7 @@ export const TableCourseManagement: React.FC<TableCourseManagementProps> = ({ da
         <tbody className="font-semibold">
           {isDataAvailable ? (
             data.map((row) => {
-              const { id, tahunKurikulum, kodeMataKuliah, namaMataKuliah, sksTatapMuka, jenisMataKuliah, programStudi } = row;
+              const { id, siakTahunKurikulumId, kodeMataKuliah, namaMataKuliah, sksTatapMuka, sksPraktikum, jenisMataKuliah, siakProgramStudiId, programStudi, tahunKurikulum } = row;
               const isChecked = selectedIds?.includes(id) ?? false;
 
               return (
@@ -449,7 +468,7 @@ export const TableCourseManagement: React.FC<TableCourseManagementProps> = ({ da
                   <td className="p-2 border text-sm border-black/50">{tahunKurikulum}</td>
                   <td className="p-2 border text-sm border-black/50">{kodeMataKuliah}</td>
                   <td className="p-2 border text-sm border-black/50">{namaMataKuliah}</td>
-                  <td className="p-2 border text-sm border-black/50">{sksTatapMuka}</td>
+                  <td className="p-2 border text-sm border-black/50">{sksTatapMuka + sksPraktikum}</td>
                   <td className="p-2 border text-sm border-black/50">{jenisMataKuliah}</td>
                   <td className="p-2 border text-sm border-black/50">{programStudi}</td>
                   <td className="p-2 border text-sm border-black/50 text-center">
@@ -457,7 +476,9 @@ export const TableCourseManagement: React.FC<TableCourseManagementProps> = ({ da
                       <div onClick={() => navigate(`${AdminAcademicRoute.courseManagement.detailCourse}/${id}`)} className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="View">
                         <Eye className="text-white w-4 h-4" />
                       </div>
-
+                      <div onClick={() => navigate(`${AdminAcademicRoute.courseManagement.editCourse}/${id}`)} className="bg-primary-yellow cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Edit">
+                        <Pencil className="text-white w-4 h-4" />
+                      </div>
                       <div onClick={() => onDelete?.(id)} className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Hapus">
                         <Trash2 className="text-white w-4 h-4" />
                       </div>
@@ -479,7 +500,7 @@ export const TableCourseManagement: React.FC<TableCourseManagementProps> = ({ da
   );
 };
 
-export const TableCpl = ({ data, tableHead, error }: TableProps) => {
+export const TableCpl = ({ data, tableHead, error }: TableCplProps) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full my-4">
@@ -499,7 +520,7 @@ export const TableCpl = ({ data, tableHead, error }: TableProps) => {
                 <tr key={index} className="text-center">
                   <td className="p-2 border text-sm border-black/50 text-left align-top">{row.kodeCpl}</td>
                   <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpl}</td>
-                  <td className="p-2 border text-sm border-black/50 align-top text-left ">{row.kategori}</td>
+                  <td className="p-2 border text-sm border-black/50 align-top text-left ">{row.kategoriCpl}</td>
                 </tr>
               );
             })
@@ -516,7 +537,7 @@ export const TableCpl = ({ data, tableHead, error }: TableProps) => {
   );
 };
 
-export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
+export const TableCpmk = ({ data, tableHead, error }: TableCpmkProps) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full my-4">
@@ -534,8 +555,8 @@ export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-sm border-black/50">{row.kodeCpmk}</td>
-                  <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpmk}</td>
+                  <td className="p-2 border text-sm border-black/50">{row.kodeMataKuliah}</td>
+                  <td className="p-2 border text-sm border-black/50 text-left">tets</td>
                 </tr>
               );
             })
@@ -1042,10 +1063,11 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
   );
 };
 
-export const TableCurriculumProdi: React.FC<TableProps> = ({ data, onEdit, onDelete }) => {
-  const totalSKS = data.reduce((acc, item) => acc + parseInt(item.sks), 0);
-  const totalWajib = data.filter((item) => item.status === "Wajib").reduce((acc, item) => acc + parseInt(item.sks), 0);
-  const totalPilihan = data.filter((item) => item.status === "Pilihan").reduce((acc, item) => acc + parseInt(item.sks), 0);
+export const TableCurriculumProdi: React.FC<TableCurriculumProdiProps> = ({ data, tableHead, error }) => {
+  // Calculate totals
+  const totalSKS = data.reduce((acc, item) => acc + parseInt(String(item.totalSks || "0")), 0);
+  const totalWajib = data.filter((item) => item.mataKuliah.jenisMataKuliah === "Wajib").reduce((acc, item) => acc + parseInt(String(item.totalSks || "0")), 0);
+  const totalPilihan = data.filter((item) => item.mataKuliah.jenisMataKuliah === "Pilihan").reduce((acc, item) => acc + parseInt(String(item.totalSks || "0")), 0);
 
   return (
     <div className="w-full overflow-x-auto">
@@ -1053,76 +1075,79 @@ export const TableCurriculumProdi: React.FC<TableProps> = ({ data, onEdit, onDel
         <thead className="bg-primary-green">
           <tr>
             <th className="p-2 text-white border " colSpan={9}>
-              Semester 1
+              Kurikulum Program Studi
             </th>
           </tr>
           <tr>
-            <th className="p-2 text-white border font-medium">No</th>
-            <th className="p-2 text-white border font-medium">Kode</th>
-            <th className="p-2 text-white border font-medium">Mata Kuliah</th>
-            <th className="p-2 text-white border font-medium">SKS</th>
-            <th className="p-2 text-white border font-medium">Status</th>
-            <th className="p-2 text-white border font-medium">Nilai Min</th>
-            <th className="p-2 text-white border font-medium">Prasyarat</th>
-            <th className="p-2 text-white border font-medium">Konsentrasi</th>
-            <th className="p-2 text-white border font-medium">Aksi</th>
+            {tableHead.map((head, index) => (
+              <th key={index} className="p-2 text-white border font-medium">
+                {head}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {data.length > 0 ? (
-            data.map((item) => (
-              <tr key={item.id} className="text-center">
-                <td className="p-2 border">{item.no}</td>
-                <td className="p-2 border">{item.kode}</td>
-                <td className="p-2 border text-left">{item.mataKuliah}</td>
-                <td className="p-2 border">{item.sks}</td>
-                <td className="p-2 border text-center">
-                  <div
-                    className={`inline-block px-3 py-1 rounded font-semibold
-      ${item.status === "Wajib" ? "bg-primary-blueSoft text-white" : ""}
-      ${item.status === "Pilihan" ? "bg-yellow-400 text-black" : ""}
-    `}
-                  >
-                    {item.status}
-                  </div>
-                </td>
-                <td className="p-2 border">{item.nilaiMin}</td>
-                <td className="p-2 border">{item.prasyarat}</td>
-                <td className="p-2 border">{item.konsentrasiBidang}</td>
-                <td className="p-2 border flex justify-center gap-2">
-                  <button onClick={() => onEdit?.(item.id)} className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8">
-                    <Paperclip className="w-4 h-4" />
-                  </button>
+            <>
+              {data.map((item, index) => (
+                <tr key={item.id} className="text-center hover:bg-gray-50">
+                  <td className="p-2 border">{index + 1}</td>
+                  <td className="p-2 border">{item.mataKuliah.kodeMataKuliah}</td>
+                  <td className="p-2 border text-left">{item.mataKuliah.namaMataKuliah}</td>
+                  <td className="p-2 border">{item.totalSks}</td>
+                  <td className="p-2 border text-center">
+                    <div
+                      className={`inline-block px-3 py-1 rounded font-semibold text-sm
+                ${item.mataKuliah.jenisMataKuliah === "Wajib" ? "bg-primary-blueSoft text-white" : ""}
+                ${item.mataKuliah.jenisMataKuliah === "Pilihan" ? "bg-yellow-400 text-black" : ""}
+              `}
+                    >
+                      {item.mataKuliah.jenisMataKuliah}
+                    </div>
+                  </td>
+                  <td className="p-2 border">{item.mataKuliah.nilaiMin || "-"}</td>
+                  <td className="p-2 border">{item.mataKuliah.prasyaratMataKuliah1?.namaMataKuliah || "-"}</td>
+                  <td className="p-2 border">{item.mataKuliah.programStudi || "-"}</td>
+                  <td className="p-2 border">
+                    <div className="flex justify-center gap-2">
+                      <button className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8 hover:bg-yellow-600 transition duration-200" title="Lampiran">
+                        <Paperclip className="w-4 h-4" />
+                      </button>
+                      <button className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8 hover:bg-blue-600 transition duration-200" title="Lihat Detail">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8 hover:bg-red-600 transition duration-200" title="Hapus">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
 
-                  <button onClick={() => onEdit?.(item.id)} className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8">
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+              {/* Summary Row -- DENGAN KEY YANG SUDAH DITAMBAHKAN */}
+              <tr key="summary-row" className="bg-gray-100 font-semibold border-t-2">
+                <td className="p-2 border text-center" colSpan={3}>
+                  <strong>Total SKS</strong>
                 </td>
+                <td className="p-2 border text-center">
+                  <strong>{totalSKS}</strong>
+                </td>
+                <td className="p-2 border text-center">
+                  <span className="text-sm">
+                    Wajib: <strong>{totalWajib}</strong> | Pilihan: <strong>{totalPilihan}</strong>
+                  </span>
+                </td>
+                <td className="p-2 border text-center">D</td>
+                <td className="p-2 border" colSpan={3}></td>
               </tr>
-            ))
+            </>
           ) : (
             <tr>
-              <td colSpan={9} className="p-2 text-center">
-                Data tidak ditemukan.
+              <td colSpan={9} className="p-8 text-center text-gray-500">
+                {error}
               </td>
             </tr>
           )}
-
-          {/* Row for Total SKS and Summary */}
-          <tr className="bg-gray-100 font-semibold">
-            <td className="p-2 border text-center" colSpan={3}>
-              Total SKS
-            </td>
-            <td className="p-2 border text-center">{totalSKS}</td>
-            <td className="p-2 border text-center">
-              Wajib: {totalWajib} | Pilihan: {totalPilihan}
-            </td>
-            <td className="p-2 border text-center">D</td>
-            <td className="p-2 border" colSpan={3}></td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -1131,23 +1156,13 @@ export const TableCurriculumProdi: React.FC<TableProps> = ({ data, onEdit, onDel
 
 // rps
 
-interface RPSData {
-  id: number;
-  kodeMk: string;
-  mataKuliah: string;
-  dosenPenyusun: string;
-  smt: string;
-  sks: string;
-  kelas: string;
-}
-
-export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, onDelete }) => {
+export const TableRpsManagement: React.FC<TableRpsManagementProps> = ({ data = [], error, onEdit, onDelete, onView }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<RPSData | null>(null);
+  const [selectedItem, setSelectedItem] = useState<RpsData | null>(null);
 
   const navigate = useNavigate();
 
-  const handlePaperclipClick = (item: RPSData) => {
+  const handlePaperclipClick = (item: RpsData) => {
     setSelectedItem(item);
     setIsModalOpen(true);
   };
@@ -1178,12 +1193,12 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
             {data.length > 0 ? (
               data.map((item) => (
                 <tr key={item.id} className="text-center">
-                  <td className="p-2 border">{item.kodeMk}</td>
-                  <td className="p-2 border">{item.mataKuliah}</td>
-                  <td className="p-2 border">{item.dosenPenyusun}</td>
-                  <td className="p-2 border">{item.smt}</td>
-                  <td className="p-2 border">{item.sks}</td>
-                  <td className="p-2 border">{item.kelas}</td>
+                  <td className="p-2 border">{item.mataKuliah.namaMataKuliah}</td>
+                  <td className="p-2 border">{item.mataKuliah.namaMataKuliah}</td>
+                  <td className="p-2 border">{item.dosenPenyusun.nama}</td>
+                  <td className="p-2 border">{item.mataKuliah.semester}</td>
+                  <td className="p-2 border">{item.mataKuliah.sksTatapMuka}</td>
+                  <td className="p-2 border">{item.kelas.nama}</td>
                   <td className="p-2 border flex justify-center gap-2">
                     <button onClick={() => handlePaperclipClick(item)} className="bg-purple-500 text-white px-2 py-1 rounded" title="Edit">
                       <Paperclip className="w-4 h-4" />
@@ -1214,13 +1229,13 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
             <h3 className="text-center text-lg mb-6 font-medium">Memetakan RPS ke Kelas</h3>
             <div className="grid grid-cols-2 gap-y-2 gap-x-2 mb-4">
               <span>Mata Kuliah:</span>
-              <span className="text-gray-700">{selectedItem.mataKuliah}</span>
+              <span className="text-gray-700">{selectedItem.mataKuliah.namaMataKuliah}</span>
 
               <span>SKS:</span>
               <span className="text-gray-700">{selectedItem.sks}</span>
 
               <span>Semester:</span>
-              <span className="text-gray-700">{selectedItem.smt}</span>
+              <span className="text-gray-700">{selectedItem.mataKuliah.semester}</span>
 
               <label>Pilih Kelas:</label>
               <select className="border px-2 py-1 rounded">
