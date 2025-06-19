@@ -2,50 +2,35 @@ import { Plus, RefreshCw, Search } from "lucide-react";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
-import { Api } from "../../../api/Index";
-
-interface ComponentBillData {
-  id: string;
-  npm: string;
-  nama: string;
-  namaFakultas: string;
-  namaProgramStudi: string;
-  semester: string;
-  angkatan: string;
-}
+import {
+  StudentDataProps,
+  useCreateBill,
+} from "../../../hooks/admin-keuangan/useCreateBill";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function CreateBill() {
-  const [data, setData] = useState<ComponentBillData[]>([]);
-  const [selectedStudents, setSelectedStudents] = useState<ComponentBillData[]>(
+  const [selectedStudents, setSelectedStudents] = useState<StudentDataProps[]>(
     []
   );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const usenavigate = useNavigate();
+  const { data = [], isLoading, isError, refetch } = useCreateBill();
 
-  // fetch data dari API
-  async function fetchData() {
-    try {
-      const response = await Api.get("/keuangan/invoice-mahasiswa/mahasiswa");
-      const reversedData = [...response.data.data].reverse();
-      setData(reversedData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  if (isLoading) {
+    return <LoadingSpinner title="Data Mahasiswa" />;
   }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const angkatan = [{ value: "", label: "-- Pilih Angkatan --" }];
   const fakultas = [{ value: "", label: "-- Pilih Fakultas --" }];
   const semester = [{ value: "", label: "-- Pilih Semester --" }];
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
-
-  const usenavigate = useNavigate();
 
   function SearchSubmit() {
     alert("oke search");
@@ -57,7 +42,7 @@ export default function CreateBill() {
 
   // Handle individual checkbox selection
   function handleCheckboxChange(
-    student: ComponentBillData,
+    student: StudentDataProps,
     isChecked: boolean
   ) {
     if (isChecked) {
@@ -91,9 +76,6 @@ export default function CreateBill() {
       state: { selectedStudents },
     });
   }
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";

@@ -4,51 +4,44 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Api } from "../../../api/Index";
-
-interface StudentData {
-  id: string;
-  npm: string;
-  nama: string;
-  namaFakultas: string;
-  namaProgramStudi: string;
-  semester: string;
-  angkatan: string;
-}
-
-interface DataKomponenTagihan {
-  id: string;
-  kodeKomponen: string;
-  nama: string;
-  nominal: number;
-  selected?: boolean;
-}
-
-interface FormData {
-  tanggalTenggat: string;
-  tahap: string;
-}
+import {
+  DataKomponenTagihanProps,
+  StudentDataProps,
+  useCreateInvoiceData,
+  useGetComponentBill,
+  FormDataProps,
+} from "../../../hooks/admin-keuangan/useCreateBill";
+import { AdminFinanceRoute } from "../../../types/VarRoutes";
 
 export default function FormCreateBill() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [selectedStudents, setSelectedStudents] = useState<StudentData[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<StudentDataProps[]>(
+    []
+  );
 
-  const [biayaTersedia, setBiayaTersedia] = useState<DataKomponenTagihan[]>([]);
-  const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihan[]>([]);
+  const [biayaTersedia, setBiayaTersedia] = useState<
+    DataKomponenTagihanProps[]
+  >([]);
+  const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihanProps[]>(
+    []
+  );
   const [totalTagihan, setTotalTagihan] = useState<number>(0);
 
   const [pencarianTersedia, setPencarianTersedia] = useState<string>("");
   const [pencarianDipilih, setPencarianDipilih] = useState<string>("");
 
   // State untuk form data
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormDataProps>({
     tanggalTenggat: "",
     tahap: "",
   });
 
   // State untuk loading
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: semuaData } = useGetComponentBill();
+  const { mutateAsync } = useCreateInvoiceData();
 
   useEffect(() => {
     const stateData = location.state?.selectedStudents;
@@ -63,26 +56,18 @@ export default function FormCreateBill() {
   }, [location.state, navigate]);
 
   useEffect(() => {
-    const ambilData = async () => {
-      try {
-        const response = await Api.get("/keuangan/invoice-komponen-mahasiswa");
-        const semuaData: DataKomponenTagihan[] = response.data.data;
-        setBiayaTersedia(semuaData.filter((item) => !item.selected));
-        setBiayaDipilih(semuaData.filter((item) => item.selected));
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-      }
-    };
-    ambilData();
-  }, []);
+    if (semuaData) {
+      setBiayaTersedia(semuaData.filter((item) => !item.selected));
+      setBiayaDipilih(semuaData.filter((item) => item.selected));
+    }
+  }, [semuaData]);
 
   useEffect(() => {
     const total = biayaDipilih.reduce((sum, item) => sum + item.nominal, 0);
     setTotalTagihan(total);
   }, [biayaDipilih]);
 
-  // Function untuk handle perubahan input form
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof FormDataProps, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -98,22 +83,20 @@ export default function FormCreateBill() {
     }
   }
 
-  const tambahBiaya = (item: DataKomponenTagihan) => {
+  const tambahBiaya = (item: DataKomponenTagihanProps) => {
     setBiayaTersedia((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaDipilih((prev) => [...prev, item]);
   };
 
-  const hapusBiaya = (item: DataKomponenTagihan) => {
+  const hapusBiaya = (item: DataKomponenTagihanProps) => {
     setBiayaDipilih((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaTersedia((prev) => [...prev, item]);
   };
 
-  // Function untuk menyimpan data dengan API call
   const simpanData = async () => {
-    if (isLoading) return; // Prevent double submission
+    if (isLoading) return;
 
     try {
-      // Validasi input
       if (!formData.tanggalTenggat) {
         alert("Tanggal tenggat harus diisi!");
         return;
@@ -136,7 +119,6 @@ export default function FormCreateBill() {
 
       setIsLoading(true);
 
-      // Siapkan data untuk dikirim sesuai schema API
       const invoiceData = {
         siakMahasiswaIds: selectedStudents.map((student) => student.id),
         tanggalTenggat: formData.tanggalTenggat,
@@ -146,42 +128,20 @@ export default function FormCreateBill() {
         })),
       };
 
-      console.log("Data yang akan dikirim:", invoiceData);
+      await mutateAsync(invoiceData);
 
-      // Kirim data ke API
-      const response = await Api.post(
-        "/keuangan/invoice-mahasiswa",
-        invoiceData
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        alert(
-          `Tagihan berhasil dibuat!\n` +
-            `Total: ${formatRupiah(totalTagihan)}\n` +
-            `Mahasiswa: ${selectedStudents.length} orang\n` +
-            `Komponen biaya: ${biayaDipilih.length} item\n` +
-            `Tanggal tenggat: ${formData.tanggalTenggat}\n` +
-            `Tahap: ${formData.tahap}`
-        );
-
-        // Kembali ke halaman sebelumnya setelah berhasil
-        navigate(-1);
-      }
+      navigate(AdminFinanceRoute.studentBill);
     } catch (error) {
       console.error("Error saat menyimpan tagihan:", error);
 
-      // Handle different error types
       if (error.response) {
-        // Server responded with error status
         const errorMessage =
           error.response.data?.message ||
           "Terjadi kesalahan saat menyimpan data";
         alert(`Gagal menyimpan tagihan: ${errorMessage}`);
       } else if (error.request) {
-        // Request was made but no response
         alert("Gagal menghubungi server. Periksa koneksi internet Anda.");
       } else {
-        // Something else happened
         alert("Terjadi kesalahan tidak terduga. Silakan coba lagi.");
       }
     } finally {
@@ -291,9 +251,6 @@ export default function FormCreateBill() {
               <option value="">- Pilih Tahap Pembayaran -</option>
               <option value="1">Tahap 1</option>
               <option value="2">Tahap 2</option>
-              <option value="3">Tahap 3</option>
-              <option value="4">Tahap 4</option>
-              <option value="lunas">Lunas</option>
             </select>
           </div>
         </div>

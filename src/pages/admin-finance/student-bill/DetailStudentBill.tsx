@@ -1,51 +1,22 @@
 import MainLayout from "../../../components/layouts/MainLayout";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { ChevronLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { AdminFinanceRoute } from "../../../types/VarRoutes";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const DetailStudentBill = () => {
   const usenavigate = useNavigate();
   function handleBack() {
-    usenavigate(AdminFinanceRoute.studentBill);
+    usenavigate(-1);
   }
-  // Sample data - in a real app this would come from props or an API
-  const billData = {
-    academicPeriod: "2024/2025",
-    studentName: "Muhammad Syaifullah Nurrohman",
-    invoiceCode: "PAY/20242/0004809",
-    dueDateFull: "Senin, 28 April 2025",
-    paymentDateFull: "Jumat, 26 April 2025",
-    paymentMethod: "Amanah Ummah",
-    components: [
-      {
-        code: "INV/20242/0015550",
-        name: "Ujian Akhir Semester",
-        amount: 1500000,
-      },
-      {
-        code: "INV/20242/0015549",
-        name: "SPP",
-        amount: 500000,
-      },
-      {
-        code: "INV/20242/0015549",
-        name: "SKS",
-        amount: 0,
-      },
-    ],
-  };
-
-  // Calculate total amount
-  const totalAmount = billData.components.reduce(
-    (sum, component) => sum + component.amount,
-    0
-  );
 
   // Format currency
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("id-ID").format(amount);
   };
+
+  const { state } = useLocation();
+
+  console.log(state);
 
   return (
     <MainLayout isGreeting={false} titlePage="Tagihan Mahasiswa">
@@ -65,22 +36,22 @@ const DetailStudentBill = () => {
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4 md:gap-6 mb-8 text-sm">
           <h2 className="font-semibold">Periode Akademik</h2>
-          <p>{billData.academicPeriod}</p>
+          <p>-</p>
 
           <h2 className="font-semibold">Tanggal Tenggat</h2>
-          <p>{billData.dueDateFull}</p>
+          <p>{state.tanggalTenggat}</p>
 
           <h2 className="font-semibold">Mahasiswa</h2>
-          <p>{billData.studentName}</p>
+          <p>{state.nama}</p>
 
           <h2 className="font-semibold">Tanggal Bayar</h2>
-          <p>{billData.paymentDateFull}</p>
+          <p>{state.tanggalBayar}</p>
 
           <h2 className="font-semibold">Kode Invoice</h2>
-          <p>{billData.invoiceCode}</p>
+          <p>{state.kodeTagihan}</p>
 
           <h2 className="font-semibold">Metode Bayar</h2>
-          <p>{billData.paymentMethod}</p>
+          <p>{state.metodeBayar}</p>
         </div>
 
         {/* Bill Components Table */}
@@ -88,22 +59,32 @@ const DetailStudentBill = () => {
           <table className="w-full">
             <thead className="bg-gray-200">
               <tr>
-                <th className="py-3 px-4 text-left font-semibold text-sm sm:text-base text-black/70">Kode Komponen</th>
-                <th className="py-3 px-4 text-left font-semibold text-sm sm:text-base text-black/70">Nama Komponen</th>
-                <th className="py-3 px-4 text-left font-semibold text-sm sm:text-base text-black/70">Nominal</th>
+                <th className="py-3 px-4 text-left font-semibold text-sm sm:text-base text-black/70">
+                  Kode Komponen
+                </th>
+                <th className="py-3 px-4 text-left font-semibold text-sm sm:text-base text-black/70">
+                  Nama Komponen
+                </th>
+                <th className="py-3 px-4 text-left font-semibold text-sm sm:text-base text-black/70">
+                  Nominal
+                </th>
               </tr>
             </thead>
-            <tbody>
-              {billData.components.map((component, index) => (
+            {/* <tbody>
+              {state.komponen.map((komponen, index) => (
                 <tr key={index} className="border-t border-gray-200">
-                  <td className="py-3 px-4 text-sm sm:text-base">{component.code}</td>
-                  <td className="py-3 px-4 text-sm sm:text-base">{component.name}</td>
+                  <td className="py-3 px-4 text-sm sm:text-base">
+                    {komponen.kodeKomponen}
+                  </td>
+                  <td className="py-3 px-4 text-sm sm:text-base">
+                    {komponen.nama}
+                  </td>
                   <td className="py-3 px-4 text-sm sm:text-base text-left">
-                    Rp. {formatCurrency(component.amount)}
+                    Rp. {formatCurrency(komponen.nominal)}
                   </td>
                 </tr>
               ))}
-            </tbody>
+            </tbody> */}
           </table>
         </div>
       </div>

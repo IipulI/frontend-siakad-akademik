@@ -3,22 +3,17 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
-import { Api } from "../../../api/Index";
 import { useState } from "react";
-
-interface ComponentBillData {
-  id: string;
-  kodeKomponen: string;
-  nama: string;
-  nominal: number;
-}
+import {
+  useEditComponentBill,
+  ComponentBillData,
+} from "../../../hooks/admin-keuangan/useComponent";
 
 export default function EditComponentBill() {
-  // state untuk mengambil data
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { mutateAsync, status } = useEditComponentBill();
 
-  // inisialisasi form data dengan data dari state
   const [formData, setFormData] = useState<ComponentBillData>({
     id: state.id,
     kodeKomponen: state.kodeKomponen,
@@ -26,34 +21,33 @@ export default function EditComponentBill() {
     nominal: state.nominal,
   });
 
-  // fungsi untuk menangani perubahan input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: id === "nominal" ? Number(value) : value,
     }));
   };
 
-  // fungsi untuk kembali ke daftar komponen tagihan
   function handleBack() {
     navigate(AdminFinanceRoute.componentBill);
   }
 
-  // fungsi untuk menyimpan perubahan data komponen tagihan
   async function handleSave() {
-    try {
-      await Api.put(`/keuangan/invoice-komponen-mahasiswa/${formData.id}`, {
-        kodeKomponen: formData.kodeKomponen,
-        nama: formData.nama,
-        nominal: formData.nominal,
-      });
+    // Validate required fields
+    if (!formData.kodeKomponen || !formData.nama || !formData.nominal) {
+      alert("Mohon lengkapi semua field!");
+      return;
+    }
 
-      alert("Data berhasil disimpan!");
+    try {
+      await mutateAsync(formData);
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-      alert("Terjadi kesalahan saat menyimpan data");
-      console.error(error);
+      // Error is already handled in the hook
+      if (!error.message) {
+        alert("Terjadi kesalahan saat menyimpan data");
+      }
     }
   }
 
@@ -69,7 +63,7 @@ export default function EditComponentBill() {
             spacing="1"
           />
           <ButtonClick
-            text="Simpan"
+            text={status == "pending" ? "Menyimpan..." : "Simpan"}
             icon={<Save size={16} />}
             color="bg-primary-blueSoft"
             onClick={handleSave}

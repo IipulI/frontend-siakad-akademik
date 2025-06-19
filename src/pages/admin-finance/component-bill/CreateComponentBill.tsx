@@ -4,20 +4,14 @@ import { useNavigate } from "react-router-dom";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
-import { Api } from "../../../api/Index";
-
-interface InvoiceKomponenMahasiswa {
-  kodeKomponen: string;
-  nama: string;
-  nominal: number;
-}
+import { useCreateComponentBill } from "../../../hooks/admin-keuangan/useComponent";
 
 export default function CreateComponentBill() {
-  const navigate = useNavigate();
-
   const [kodeKomponen, setKode] = useState("");
   const [nama, setNama] = useState("");
   const [nominal, setNominal] = useState("");
+  const navigate = useNavigate();
+  const { mutateAsync, status } = useCreateComponentBill();
 
   function handleBack() {
     navigate(AdminFinanceRoute.componentBill);
@@ -30,21 +24,16 @@ export default function CreateComponentBill() {
     }
 
     try {
-      const payload: InvoiceKomponenMahasiswa = {
+      await mutateAsync({
         kodeKomponen,
         nama,
         nominal: Number(nominal),
-      };
-      const response = await Api.post(
-        "/keuangan/invoice-komponen-mahasiswa",
-        payload
-      );
-
-      alert("Data berhasil disimpan!");
+      });
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-      console.error("Error saat menyimpan:", error);
-      alert("Terjadi kesalahan saat menyimpan.");
+      if (!error.message) {
+        alert("Terjadi kesalahan saat menyimpan.");
+      }
     }
   }
 
@@ -60,7 +49,7 @@ export default function CreateComponentBill() {
             spacing="1"
           />
           <ButtonClick
-            text="Simpan"
+            text={status === "pending" ? "Menyimpan..." : "Simpan"}
             icon={<Save size={16} />}
             color="bg-primary-blueSoft"
             onClick={handleSave}
