@@ -5,7 +5,9 @@ import { AdminFinanceRoute } from "../../types/VarRoutes";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetStudentBill } from "../../hooks/admin-keuangan/useStudentBill";
-import { Api } from "../../api/Index";
+import { useDeleteStudentBill } from "../../hooks/admin-keuangan/useStudentBill";
+import { ToastNotif, showToast } from "./Toastify";
+import ConfirmModal from "./ConfirmModal";
 
 interface StudentBillData {
   id: string;
@@ -21,8 +23,19 @@ interface StudentBillData {
 export default function TableLast30BillData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  function openDeleteModal(id: string) {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  }
+
   const usenavigate = useNavigate();
   const { data, isLoading, error, refetch } = useGetStudentBill();
+
+  const deleteStudentBill = useDeleteStudentBill();
 
   // Fungsi untuk format Rupiah
   function formatToRupiah(amount: number): string {
@@ -44,25 +57,29 @@ export default function TableLast30BillData() {
     });
   }
 
-  // fungsi untuk menghapus komponen tagihan
-  async function Remove(id: string) {
-    const confirmDelete = window.confirm(
-      "Apakah Anda yakin ingin menghapus data ini?"
-    );
-    if (!confirmDelete) return;
+  // fungsi untuk menghapus komponen tagihan dengan hook
+  async function confirmDelete() {
+    if (!selectedId) return;
 
     try {
-      await Api.delete(`/keuangan/invoice-mahasiswa/tagihan-mahasiswa/${id}`);
-      // Setelah berhasil menghapus, perbarui data
-      refetch();
-      alert("Data berhasil dihapus!");
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      alert("Terjadi kesalahan saat menghapus data.");
+      await deleteStudentBill.mutateAsync(selectedId);
+      showToast.success("Data berhasil dihapus!");
+    } catch (err) {
+      showToast.error("Gagal menghapus data.");
+    } finally {
+      setIsModalOpen(false);
+      setSelectedId(null);
     }
   }
+
   return (
     <div className="border-2 p-2 shadow-sm">
+      <ToastNotif />
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onConfirm={confirmDelete}
+        onCancel={() => setIsModalOpen(false)}
+      />
       <h1 className="font-semibold text-lg sm:text-xl">
         Data Tagihan 30 Hari Terakhir
       </h1>
@@ -146,7 +163,7 @@ export default function TableLast30BillData() {
                     <ButtonClick
                       color="bg-red-500"
                       icon={<Trash2 size={16} />}
-                      onClick={() => Remove(data.id)}
+                      onClick={() => openDeleteModal(data.id)}
                     />
                   </div>
                 </td>

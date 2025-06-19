@@ -11,6 +11,10 @@ import {
   useCreateBill,
 } from "../../../hooks/admin-keuangan/useCreateBill";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import {
+  ToastNotif,
+  showToast,
+} from "../../../components/admin-finance/Toastify";
 
 export default function CreateBill() {
   const [selectedStudents, setSelectedStudents] = useState<StudentDataProps[]>(
@@ -41,10 +45,7 @@ export default function CreateBill() {
   }
 
   // Handle individual checkbox selection
-  function handleCheckboxChange(
-    student: StudentDataProps,
-    isChecked: boolean
-  ) {
+  function handleCheckboxChange(student: StudentDataProps, isChecked: boolean) {
     if (isChecked) {
       setSelectedStudents((prev) => [...prev, student]);
       setSelectedIds((prev) => [...prev, student.id]);
@@ -67,7 +68,7 @@ export default function CreateBill() {
 
   function Create() {
     if (selectedStudents.length === 0) {
-      alert("Silakan pilih mahasiswa!");
+      showToast.info("Silakan pilih mahasiswa!");
       return;
     }
 
@@ -84,6 +85,7 @@ export default function CreateBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Buat Tagihan">
+      <ToastNotif />
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 md:px-20 lg:px-40 md:gap-x-10 p-2 rounded-sm shadow-md gap-2 bg-white">
           <InputFilter options={angkatan} label="Angkatan" />

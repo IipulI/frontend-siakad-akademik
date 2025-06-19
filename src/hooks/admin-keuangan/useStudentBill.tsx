@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
 // get
@@ -26,6 +26,19 @@ export function useMarkStudentBillAsPaid() {
         }
       );
       return response.data;
+    },
+  });
+}
+
+// delete
+export function useDeleteStudentBill() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await Api.delete(`/keuangan/invoice-mahasiswa/tagihan-mahasiswa/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getStudentBill"] });
     },
   });
 }

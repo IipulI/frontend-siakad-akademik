@@ -20,6 +20,7 @@ import {
 } from "../../../hooks/admin-keuangan/useStudentBill";
 import { useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify";
 
 export interface StudentBillData {
   id: string;
@@ -56,7 +57,7 @@ export default function StudentBill() {
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
   async function markAsPaid() {
     if (selectedItems.length === 0) {
-      alert("Pilih minimal satu tagihan untuk ditandai lunas");
+      showToast.info("Pilih minimal satu tagihan untuk ditandai lunas");
       return;
     }
 
@@ -65,15 +66,12 @@ export default function StudentBill() {
         onSuccess: () => {
           // Invalidate dan refetch data
           queryClient.invalidateQueries({ queryKey: ["getStudentBill"] });
-
           // Reset selected items
           setSelectedItems([]);
-
-          alert("Tagihan berhasil ditandai lunas!");
+          showToast.success("Tagihan berhasil ditandai lunas!");
         },
         onError: (error: any) => {
-          console.error("Error marking as paid:", error);
-          alert("Gagal menandai tagihan sebagai lunas. Silakan coba lagi.");
+          showToast.error("Gagal menandai tagihan sebagai lunas. Silakan coba lagi.");
         },
       });
     } catch (error) {
@@ -133,6 +131,7 @@ export default function StudentBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Tagihan Mahasiswa">
+      <ToastNotif/>
       <div className="grid grid-cols-1 md:grid-cols-3 md:gap-x-10 p-5 rounded-sm shadow-md gap-2 bg-white">
         <h1 className="text-lg sm:text-2xl col-span-1 md:col-span-3 mb-2 font-semibold">
           Urutkan Berdasarkan

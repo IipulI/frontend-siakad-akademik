@@ -5,6 +5,7 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import MainLayout from "../../../components/layouts/MainLayout";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import { useCreateComponentBill } from "../../../hooks/admin-keuangan/useComponent";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify";
 
 export default function CreateComponentBill() {
   const [kodeKomponen, setKode] = useState("");
@@ -19,7 +20,7 @@ export default function CreateComponentBill() {
 
   async function handleSave() {
     if (!kodeKomponen || !nama || !nominal) {
-      alert("Mohon lengkapi semua field!");
+      showToast.info("Mohon lengkapi semua field!");
       return;
     }
 
@@ -32,13 +33,14 @@ export default function CreateComponentBill() {
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
       if (!error.message) {
-        alert("Terjadi kesalahan saat menyimpan.");
+        showToast.error("Terjadi kesalahan saat menyimpan.");
       }
     }
   }
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
+      <ToastNotif/>
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
         <div className="flex justify-end gap-4">
           <ButtonClick

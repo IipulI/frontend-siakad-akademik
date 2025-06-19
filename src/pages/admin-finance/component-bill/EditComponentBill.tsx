@@ -8,6 +8,10 @@ import {
   useEditComponentBill,
   ComponentBillData,
 } from "../../../hooks/admin-keuangan/useComponent";
+import {
+  ToastNotif,
+  showToast,
+} from "../../../components/admin-finance/Toastify";
 
 export default function EditComponentBill() {
   const { state } = useLocation();
@@ -36,7 +40,7 @@ export default function EditComponentBill() {
   async function handleSave() {
     // Validate required fields
     if (!formData.kodeKomponen || !formData.nama || !formData.nominal) {
-      alert("Mohon lengkapi semua field!");
+      showToast.info("Mohon lengkapi semua field!");
       return;
     }
 
@@ -46,13 +50,14 @@ export default function EditComponentBill() {
     } catch (error) {
       // Error is already handled in the hook
       if (!error.message) {
-        alert("Terjadi kesalahan saat menyimpan data");
+        showToast.error("Terjadi kesalahan saat menyimpan data");
       }
     }
   }
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
+      <ToastNotif />
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
         <div className="flex justify-end gap-4">
           <ButtonClick

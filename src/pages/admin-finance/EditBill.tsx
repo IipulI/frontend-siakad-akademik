@@ -5,6 +5,7 @@ import MainLayout from "../../components/layouts/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../types/VarRoutes";
 import { useEditStudentBill } from "../../hooks/admin-keuangan/useDashboardFinance";
+import { ToastNotif, showToast } from "../../components/admin-finance/Toastify";
 
 export default function EditBill() {
   const { state } = useLocation();
@@ -30,11 +31,11 @@ export default function EditBill() {
       });
 
       // Redirect atau show success message
-      alert("Tanggal tenggat berhasil diperbarui!");
+      showToast.success("Tanggal tenggat berhasil diperbarui!");
       navigate(AdminFinanceRoute.dashboardAdminFinance);
     } catch (error) {
       console.error("Error updating bill:", error);
-      alert("Gagal memperbarui tanggal tenggat");
+      showToast.error("Gagal memperbarui tanggal tenggat");
     }
   };
 

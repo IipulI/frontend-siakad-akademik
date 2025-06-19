@@ -11,11 +11,22 @@ import {
   useDeleteComponentBill,
   ComponentBillData,
 } from "../../../hooks/admin-keuangan/useComponent";
+import ConfirmModal from "../../../components/admin-finance/ConfirmModal";
+import { showToast, ToastNotif } from "../../../components/admin-finance/Toastify";
 
 export default function ComponentBill() {
   // state untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  
+  function openDeleteModal(id: string) {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  }
+  
 
   const navigate = useNavigate();
 
@@ -67,20 +78,20 @@ export default function ComponentBill() {
   }
 
   // fungsi untuk menghapus komponen tagihan dengan hook
-  async function handleDelete(id: string) {
-    const confirmDelete = window.confirm(
-      "Apakah Anda yakin ingin menghapus data ini?"
-    );
-    if (!confirmDelete) return;
+  async function confirmDelete() {
+    if (!selectedId) return;
 
     try {
-      await deleteComponentBill.mutateAsync(id);
-      alert("Data berhasil dihapus!");
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      alert("Terjadi kesalahan saat menghapus data.");
+      await deleteComponentBill.mutateAsync(selectedId);
+      showToast.success("Data berhasil dihapus!");
+    } catch (err) {
+      showToast.error("Gagal menghapus data.");
+    } finally {
+      setIsModalOpen(false);
+      setSelectedId(null);
     }
   }
+  
 
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";
@@ -89,6 +100,13 @@ export default function ComponentBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
+      <ToastNotif/>
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onConfirm={confirmDelete}
+        onCancel={() => setIsModalOpen(false)}
+      />
+
       <div className="bg-white shadow-md p-3 rounded-sm">
         <h1 className="text-lg sm:text-2xl font-semibold">
           Data Komponen Tagihan
@@ -160,7 +178,7 @@ export default function ComponentBill() {
                       <ButtonClick
                         icon={<Trash2 size={16} />}
                         color="bg-red-500"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => openDeleteModal(item.id)}
                       />
                     </div>
                   </td>

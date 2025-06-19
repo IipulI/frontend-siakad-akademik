@@ -12,6 +12,11 @@ import {
   FormDataProps,
 } from "../../../hooks/admin-keuangan/useCreateBill";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
+import {
+  ToastNotif,
+  showToast,
+} from "../../../components/admin-finance/Toastify";
+
 
 export default function FormCreateBill() {
   const location = useLocation();
@@ -48,7 +53,7 @@ export default function FormCreateBill() {
     if (stateData && stateData.length > 0) {
       setSelectedStudents(stateData);
     } else {
-      alert(
+      showToast.info(
         "Tidak ada mahasiswa yang dipilih. Silakan pilih mahasiswa terlebih dahulu."
       );
       navigate(-1);
@@ -78,7 +83,7 @@ export default function FormCreateBill() {
     const updated = selectedStudents.filter((s) => s.id !== studentId);
     setSelectedStudents(updated);
     if (updated.length === 0) {
-      alert("Semua mahasiswa telah dihapus. Silakan pilih mahasiswa kembali.");
+      showToast.warning("Semua mahasiswa telah dihapus. Silakan pilih mahasiswa kembali.");
       navigate(-1);
     }
   }
@@ -98,22 +103,22 @@ export default function FormCreateBill() {
 
     try {
       if (!formData.tanggalTenggat) {
-        alert("Tanggal tenggat harus diisi!");
+        showToast.info("Tanggal tenggat harus diisi!");
         return;
       }
 
       if (!formData.tahap) {
-        alert("Tahap pembayaran harus dipilih!");
+        showToast.info("Tahap pembayaran harus dipilih!");
         return;
       }
 
       if (selectedStudents.length === 0) {
-        alert("Pilih minimal satu mahasiswa!");
+        showToast.info("Pilih minimal satu mahasiswa!");
         return;
       }
 
       if (biayaDipilih.length === 0) {
-        alert("Pilih minimal satu komponen biaya!");
+        showToast.info("Pilih minimal satu komponen biaya!");
         return;
       }
 
@@ -138,11 +143,11 @@ export default function FormCreateBill() {
         const errorMessage =
           error.response.data?.message ||
           "Terjadi kesalahan saat menyimpan data";
-        alert(`Gagal menyimpan tagihan: ${errorMessage}`);
+        showToast.error(`Gagal menyimpan tagihan`);
       } else if (error.request) {
-        alert("Gagal menghubungi server. Periksa koneksi internet Anda.");
+        showToast.error("Gagal menghubungi server. Periksa koneksi internet Anda.");
       } else {
-        alert("Terjadi kesalahan tidak terduga. Silakan coba lagi.");
+        showToast.error("Terjadi kesalahan tidak terduga. Silakan coba lagi.");
       }
     } finally {
       setIsLoading(false);
@@ -168,6 +173,7 @@ export default function FormCreateBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Buat Tagihan">
+      <ToastNotif/>
       <div className="border-2 border-t-2 border-t-primary-green rounded-sm p-3 bg-white">
         <h1 className="text-lg sm:text-2xl font-semibold mb-2">
           Mahasiswa yang dipilih
