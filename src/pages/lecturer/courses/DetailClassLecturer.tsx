@@ -19,7 +19,7 @@ const tableHead = {
   nilai: ["No", "Nim", "Nama", "Hadir", "Tugas", "UTS", "UAS", "Kehadiran", "Nilai", "Grade", "Lulus", "Keterangan", "Aksi"]
 };
 
-const DetailClassLecturer = ({ id, setId }) => {
+const DetailClassLecturer = ({ id, setId, search, setSearch, debouncedSearch }) => {
   const [option, setOption] = useState("detail");
 
   const { data: detailData } = useQuery({
@@ -27,14 +27,14 @@ const DetailClassLecturer = ({ id, setId }) => {
     queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}`)).data.data,
   });
 
-  const { data: pesertaData } = useQuery({
-    queryKey: ['peserta-kelas', id],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/peserta-kelas`)).data.data,
+  const { data: pesertaData, isLoading } = useQuery({
+    queryKey: ['peserta-kelas', id, debouncedSearch],
+    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/peserta-kelas?keyword=${debouncedSearch}`)).data.data,
   });
 
   const { data: jadwalData } = useQuery({
-    queryKey: ['jadwal-kelas', id],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/jadwal-kelas`)).data.data,
+    queryKey: ['jadwal-kelas', id, debouncedSearch],
+    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/jadwal-kelas?keyword=${debouncedSearch}`)).data.data,
   });
 
   const getDataStudent = () => {
@@ -135,13 +135,15 @@ const DetailClassLecturer = ({ id, setId }) => {
             <input
               type="search"
               placeholder="Cari Pengumuman"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="px-2 py-1 text-sm w-40 md:w-64 lg:w-72 rounded shadow-md border border-black/50"
             />
             <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
               <Search color="white" size={20} />
             </button>
             <button className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
-              <RefreshCw color="white" size={20} />
+              <RefreshCw className={`${isLoading ? "animate-spin" : ""}`} color="white" size={20} />
             </button>
           </div>
         </div>

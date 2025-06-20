@@ -9,11 +9,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index"
 import TableCheckbox from "../../../components/lecturer/TableCheckbox";
 import TableClass from "../../../components/lecturer/TableClass";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 const ClassLecturer = () => {
   const [id, setId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [search, setSearch] = useState("");
+
+  const debouncedSearch = useDebounce(search, 1000);
 
 
   const filterOptions = [
@@ -45,10 +49,10 @@ const ClassLecturer = () => {
   ];
 
   const { isPending, data } = useQuery({
-    queryKey: ['dosen/kelas-kuliah'],
+    queryKey: ['dosen/kelas-kuliah', currentPage, debouncedSearch],
     queryFn: async () => {
       // const separator = dateQuery ? "&" : ""
-      return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}`)
+      return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}&keyword=${debouncedSearch}`)
     },
   })
 
@@ -66,7 +70,7 @@ const ClassLecturer = () => {
 
         {id ? 
             (
-                <DetailClassLecturer id={id} setId={setId} />
+                <DetailClassLecturer id={id} setId={setId} search={search} setSearch={setSearch} debouncedSearch={debouncedSearch} />
             )
         :
         (
@@ -90,13 +94,15 @@ const ClassLecturer = () => {
                                 <input
                                 type="search"
                                 placeholder="Cari Pengumuman"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-black/50"
                                 />
                                 <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
                                     <Search color="white" size={20} />
                                 </button>
                                 <button className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
-                                    <RefreshCw color="white" size={20} />
+                                    <RefreshCw className={`${isPending ? "animate-spin" : ""}`} color="white" size={20} />
                                 </button>
                             </div>
                         </div>
