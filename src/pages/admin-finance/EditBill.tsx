@@ -52,6 +52,7 @@ export default function EditBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Edit Tagihan">
+      <ToastNotif />
       <div className="border-t-2 border-t-primary-green border-2 h-lvh rounded-sm p-2">
         <h1 className="text-lg sm:text-2xl font-semibold">
           Mahasiswa yang dipilih
@@ -129,7 +130,8 @@ export default function EditBill() {
               text="Batal"
               onClick={handleBack}
               spacing="2"
-              icon={undefined}            />
+              icon={undefined}
+            />
           </div>
         </div>
       </div>
