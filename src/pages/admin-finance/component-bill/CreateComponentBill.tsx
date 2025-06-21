@@ -32,9 +32,8 @@ export default function CreateComponentBill() {
       });
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-      if (!error.message) {
         showToast.error("Terjadi kesalahan saat menyimpan.");
-      }
+      
     }
   }
 

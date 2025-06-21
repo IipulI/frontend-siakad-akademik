@@ -20,17 +20,34 @@ import {
 } from "../../../hooks/admin-keuangan/useStudentBill";
 import { useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify";
+import {
+  ToastNotif,
+  showToast,
+} from "../../../components/admin-finance/Toastify";
 
 export interface StudentBillData {
-  id: string;
-  kodeTagihan: string;
+  kodeInvoice: string;
+  periodeAkademik: string;
+  metodeBayar: string;
+  tanggalBayar: string;
+  totalBayar: number;
   npm: string;
   nama: string;
-  nominal: number;
-  tanggalTenggat: string;
-  tanggalBayar: string;
-  lunas: boolean;
+  programStudiResDto: {
+    id: string;
+    namaProgramStudi: string;
+    jenjang: {
+      id: string;
+      nama: string;
+      jenjang: string;
+    };
+  };
+  tagihanKomponenDtos: {
+    kodeKomponen: string;
+    namaKomponen: string;
+    tagihan: number;
+    tanggalTenggat: string;
+  }[];
 }
 
 export default function StudentBill() {
@@ -71,7 +88,9 @@ export default function StudentBill() {
           showToast.success("Tagihan berhasil ditandai lunas!");
         },
         onError: (error: any) => {
-          showToast.error("Gagal menandai tagihan sebagai lunas. Silakan coba lagi.");
+          showToast.error(
+            "Gagal menandai tagihan sebagai lunas. Silakan coba lagi."
+          );
         },
       });
     } catch (error) {
@@ -131,7 +150,7 @@ export default function StudentBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Tagihan Mahasiswa">
-      <ToastNotif/>
+      <ToastNotif />
       <div className="grid grid-cols-1 md:grid-cols-3 md:gap-x-10 p-5 rounded-sm shadow-md gap-2 bg-white">
         <h1 className="text-lg sm:text-2xl col-span-1 md:col-span-3 mb-2 font-semibold">
           Urutkan Berdasarkan

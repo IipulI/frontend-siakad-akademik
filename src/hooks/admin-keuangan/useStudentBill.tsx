@@ -1,6 +1,31 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
+export interface StudentBillData {
+  kodeInvoice: string;
+  periodeAkademik: string;
+  metodeBayar: string;
+  tanggalBayar: string;
+  totalBayar: number;
+  npm: string;
+  nama: string;
+  programStudiResDto: {
+    id: string;
+    namaProgramStudi: string;
+    jenjang: {
+      id: string;
+      nama: string;
+      jenjang: string;
+    };
+  };
+  tagihanKomponenDtos: {
+    kodeKomponen: string;
+    namaKomponen: string;
+    tagihan: number;
+    tanggalTenggat: string;
+  }[];
+}
+
 // get
 export function useGetStudentBill() {
   return useQuery({
@@ -8,6 +33,18 @@ export function useGetStudentBill() {
     queryFn: async () => {
       const response = await Api.get(
         "/keuangan/invoice-mahasiswa/tagihan-mahasiswa"
+      );
+      return response.data.data;
+    },
+  });
+}
+
+export function useGetStudentBillDetail(id: string) {
+  return useQuery<StudentBillData>({
+    queryKey: ["getStudentBillDetail", id], // Sertakan id dalam queryKey
+    queryFn: async () => {
+      const response = await Api.get(
+        `/keuangan/invoice-mahasiswa/tagihan-mahasiswa/${id}`
       );
       return response.data.data;
     },

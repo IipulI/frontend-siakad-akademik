@@ -2,9 +2,21 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { ChevronLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useGetStudentBillDetail } from "../../../hooks/admin-keuangan/useStudentBill";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const DetailStudentBill = () => {
+  const { state } = useLocation();
   const usenavigate = useNavigate();
+
+  const studentId = state.id;
+
+  const { data, isLoading, error } = useGetStudentBillDetail(studentId);
+
+    if (isLoading) {
+      return <LoadingSpinner title="Data Tagihan Mahasiswa" />;
+    }
+
   function handleBack() {
     usenavigate(-1);
   }
@@ -13,8 +25,6 @@ const DetailStudentBill = () => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("id-ID").format(amount);
   };
-
-  const { state } = useLocation();
 
   console.log(state);
 
@@ -36,22 +46,22 @@ const DetailStudentBill = () => {
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4 md:gap-6 mb-8 text-sm">
           <h2 className="font-semibold">Periode Akademik</h2>
-          <p>-</p>
+          <p>{data?.periodeAkademik}</p>
 
           <h2 className="font-semibold">Tanggal Tenggat</h2>
           <p>{state.tanggalTenggat}</p>
 
           <h2 className="font-semibold">Mahasiswa</h2>
-          <p>{state.nama}</p>
+          <p>{data?.nama}</p>
 
           <h2 className="font-semibold">Tanggal Bayar</h2>
-          <p>{state.tanggalBayar}</p>
+          <p>{data?.tanggalBayar || "-"}</p>
 
           <h2 className="font-semibold">Kode Invoice</h2>
-          <p>{state.kodeTagihan}</p>
+          <p>{data?.kodeInvoice}</p>
 
           <h2 className="font-semibold">Metode Bayar</h2>
-          <p>{state.metodeBayar}</p>
+          <p>{data?.metodeBayar || "-"}</p>
         </div>
 
         {/* Bill Components Table */}
@@ -70,21 +80,21 @@ const DetailStudentBill = () => {
                 </th>
               </tr>
             </thead>
-            {/* <tbody>
-              {state.komponen.map((komponen, index) => (
+            <tbody>
+              {data?.tagihanKomponenDtos.map((komponen, index) => (
                 <tr key={index} className="border-t border-gray-200">
                   <td className="py-3 px-4 text-sm sm:text-base">
                     {komponen.kodeKomponen}
                   </td>
                   <td className="py-3 px-4 text-sm sm:text-base">
-                    {komponen.nama}
+                    {komponen.namaKomponen}
                   </td>
                   <td className="py-3 px-4 text-sm sm:text-base text-left">
-                    Rp. {formatCurrency(komponen.nominal)}
+                    Rp. {formatCurrency(komponen.tagihan)}
                   </td>
                 </tr>
               ))}
-            </tbody> */}
+            </tbody>
           </table>
         </div>
       </div>
