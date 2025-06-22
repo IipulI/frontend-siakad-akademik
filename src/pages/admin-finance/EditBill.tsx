@@ -17,16 +17,16 @@ export default function EditBill() {
     state?.tanggalTenggat || ""
   );
 
-  console.log(state);
-
+  // fungsi untuk kembali
   function handleBack() {
     navigate(AdminFinanceRoute.dashboardAdminFinance);
   }
 
+  // fungsi untuk edit data dengan hook
   const handleSave = async () => {
     try {
       await editBillMutation.mutateAsync({
-        id: state.id, // pastikan state memiliki id
+        id: state.id,
         tanggalTenggat: tanggalTenggat,
       });
 

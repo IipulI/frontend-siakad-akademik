@@ -16,16 +16,18 @@ import {
   ToastNotif,
   showToast,
 } from "../../../components/admin-finance/Toastify";
+import { formatToRupiah } from "../../../components/admin-finance/FormatToRupiah";
 
 export default function FormCreateBill() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  // state mahasiswa yang dipilih
   const [selectedStudents, setSelectedStudents] = useState<StudentData[]>([]);
 
+  // state biaya
   const [biayaTersedia, setBiayaTersedia] = useState<DataKomponenTagihan[]>([]);
   const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihan[]>([]);
   const [totalTagihan, setTotalTagihan] = useState<number>(0);
 
+  // state pencaharian tagihan
   const [pencarianTersedia, setPencarianTersedia] = useState<string>("");
   const [pencarianDipilih, setPencarianDipilih] = useState<string>("");
 
@@ -38,6 +40,10 @@ export default function FormCreateBill() {
   // State untuk loading
   const [isLoading, setIsLoading] = useState(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // variabel diambil dari hook
   const { data: semuaData } = useGetComponentBill();
   const { mutateAsync } = useCreateInvoiceData();
 
@@ -72,6 +78,7 @@ export default function FormCreateBill() {
     }));
   };
 
+  // Handle untuk menghapus data mahasiswa yang telah dipilih
   function handleDelete(studentId: string) {
     const updated = selectedStudents.filter((s) => s.id !== studentId);
     setSelectedStudents(updated);
@@ -83,16 +90,19 @@ export default function FormCreateBill() {
     }
   }
 
+  // Handle untuk tambah tagihan
   const tambahBiaya = (item: DataKomponenTagihan) => {
     setBiayaTersedia((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaDipilih((prev) => [...prev, item]);
   };
 
+  // Handle untuk hapus tagihan
   const hapusBiaya = (item: DataKomponenTagihan) => {
     setBiayaDipilih((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaTersedia((prev) => [...prev, item]);
   };
 
+  // Handle untuk membuat tagihan mahasiswa dengan hook
   const simpanData = async () => {
     if (isLoading) return;
 
@@ -148,6 +158,7 @@ export default function FormCreateBill() {
     }
   };
 
+  // Handle untuk membatalkan tagihan mahasiswa
   const batalkanData = () => {
     if (
       confirm(
@@ -157,8 +168,6 @@ export default function FormCreateBill() {
       navigate(-1);
     }
   };
-
-  const formatRupiah = (angka: number) => `Rp${angka.toLocaleString("id-ID")}`;
 
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";
@@ -173,7 +182,7 @@ export default function FormCreateBill() {
           Mahasiswa yang dipilih
         </h1>
 
-        {/* TABEL MAHASISWA */}
+        {/* TABEL MAHASISWA YANG DIPILIH */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -289,7 +298,7 @@ export default function FormCreateBill() {
                     >
                       <span className="font-medium">{item.nama}</span>
                       <div className="flex items-center space-x-3">
-                        <span>{formatRupiah(item.nominal)}</span>
+                        <span>{formatToRupiah(item.nominal)}</span>
                         <button
                           className="text-blue-500 text-sm hover:underline disabled:opacity-50"
                           onClick={() => tambahBiaya(item)}
@@ -345,7 +354,7 @@ export default function FormCreateBill() {
                     >
                       <span className="font-medium">{item.nama}</span>
                       <div className="flex items-center space-x-3">
-                        <span>{formatRupiah(item.nominal)}</span>
+                        <span>{formatToRupiah(item.nominal)}</span>
                         <button
                           className="text-red-500 text-sm hover:underline disabled:opacity-50"
                           onClick={() => hapusBiaya(item)}
@@ -375,7 +384,7 @@ export default function FormCreateBill() {
           <div className="mb-4 text-right">
             <p className="text-sm font-medium text-gray-600">Total Tagihan</p>
             <p className="text-xl font-bold text-primary-green">
-              {formatRupiah(totalTagihan)}
+              {formatToRupiah(totalTagihan)}
             </p>
           </div>
           <div className="flex gap-4 w-full md:w-1/2">

@@ -16,9 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import {
   StudentBillData,
-  StudentBillDataDetail,
   useGetStudentBill,
-  useMarkStudentBillAsPaid,
+  useTandaiLunas,
 } from "../../../hooks/admin-keuangan/useStudentBill";
 import { useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -31,43 +30,53 @@ import { error } from "console";
 export default function StudentBill() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  // state pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const TandaiLunas = useTandaiLunas();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   // Gunakan hook dengan parameter pagination
-  const {
-    data: apiResponse,
-    isLoading,
-    isError,
-    refetch,
-    isFetching,
-  } = useGetStudentBill(currentPage, rowsPerPage);
+  const { data: apiResponse, isLoading, isError } = useGetStudentBill(
+    currentPage,
+    rowsPerPage
+  );
 
   // Extract data dari response
   const data = apiResponse?.data || [];
   const pagination = apiResponse?.pagination;
 
-  const markAsPaidMutation = useMarkStudentBillAsPaid();
   if (isLoading) {
     return <LoadingSpinner title="Data Tagihan Mahasiswa" />;
   }
 
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center py-4">
+        Gagal memuat data tagihan mahasiswa
+      </div>
+    );
+  }
+
+  // variabel untuk filter
   const periode = [{ value: "", label: "2025 Ganjil" }];
   const semester = [{ value: "", label: "7" }];
   const angkatan = [{ value: "", label: "-- Pilih Angkatan --" }];
   const fakultas = [{ value: "", label: "-- Pilih Fakultas --" }];
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
-  async function markAsPaid() {
+
+  // fungsi untuk tandai lunas tagihan mahasiswa
+  async function tandaiLunasTagihan() {
     if (selectedItems.length === 0) {
       showToast.info("Pilih minimal satu tagihan untuk ditandai lunas");
       return;
     }
 
     try {
-      await markAsPaidMutation.mutateAsync(selectedItems, {
+      await TandaiLunas.mutateAsync(selectedItems, {
         onSuccess: () => {
           // Invalidate dan refetch data
           queryClient.invalidateQueries({ queryKey: ["getStudentBill"] });
@@ -82,7 +91,6 @@ export default function StudentBill() {
         },
       });
     } catch (error) {
-      // Error sudah ditangani di onError callback
     }
   }
 
@@ -107,22 +115,24 @@ export default function StudentBill() {
     window.location.reload();
   }
 
+  // Fungsi untuk submit pencaharian
   function SearchSubmit() {
     alert("oke search");
   }
 
+  // Fungsi untuk kirm data tagihan mahasiwa
   function handleView(studentBill: StudentBillData) {
     navigate(AdminFinanceRoute.detailStudentBill, {
       state: studentBill,
     });
   }
 
-  // Handler untuk perubahan halaman
+  // Fungsi untuk perubahan halaman
   function handlePageChange(newPage: number) {
     setCurrentPage(newPage);
   }
 
-  // Handler untuk perubahan rows per page
+  // Fungsi untuk perubahan rows per page
   function handleRowsPerPageChange(newRowsPerPage: number) {
     setRowsPerPage(newRowsPerPage);
     setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
@@ -199,16 +209,16 @@ export default function StudentBill() {
             <div className="relative">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                disabled={isLoading || markAsPaidMutation.isPending}
+                disabled={isLoading || TandaiLunas.isPending}
                 className={`flex items-center rounded p-1 px-2 w-fit text-white font-semibold text-sm transition-colors ${
-                  isLoading || markAsPaidMutation.isPending
+                  isLoading || TandaiLunas.isPending
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-yellow-500 hover:bg-yellow-600"
                 }`}
               >
                 <Settings color="white" size={17} />
                 <span className="ml-1">
-                  {markAsPaidMutation.isPending ? "Processing..." : "Aksi"}
+                  {TandaiLunas.isPending ? "Processing..." : "Aksi"}
                 </span>
                 <ChevronDown
                   size={16}
@@ -218,10 +228,10 @@ export default function StudentBill() {
                 />
               </button>
 
-              {isOpen && !isLoading && !markAsPaidMutation.isPending && (
+              {isOpen && !isLoading && !TandaiLunas.isPending && (
                 <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-full">
                   <button
-                    onClick={markAsPaid}
+                    onClick={tandaiLunasTagihan}
                     disabled={selectedItems.length === 0}
                     className={`block w-full text-left px-3 py-2 text-xs transition-colors ${
                       selectedItems.length === 0

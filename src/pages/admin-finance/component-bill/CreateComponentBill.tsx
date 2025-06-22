@@ -14,16 +14,17 @@ export default function CreateComponentBill() {
   const navigate = useNavigate();
   const { mutateAsync, status } = useCreateComponentBill();
 
+  // Fungsi untuk kembali
   function handleBack() {
     navigate(AdminFinanceRoute.componentBill);
   }
 
+  // Fungsi untuk membuat komponen tagihan dengan hook
   async function handleSave() {
     if (!kodeKomponen || !nama || !nominal) {
       showToast.info("Mohon lengkapi semua field!");
       return;
     }
-
     try {
       await mutateAsync({
         kodeKomponen,
@@ -32,14 +33,13 @@ export default function CreateComponentBill() {
       });
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-        showToast.error("Terjadi kesalahan saat menyimpan.");
-      
+      showToast.error("Terjadi kesalahan saat menyimpan.");
     }
   }
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
-      <ToastNotif/>
+      <ToastNotif />
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
         <div className="flex justify-end gap-4">
           <ButtonClick

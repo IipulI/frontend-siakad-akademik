@@ -9,14 +9,21 @@ import TableLast30BillData from "../../components/admin-finance/TableLast30BillD
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 const DashboardAdminFinance = () => {
-
-  const { data, isLoading, error } = useGetAllbill();
-  console.log(data);
+  const { data, isLoading, isError } = useGetAllbill();
 
   if (isLoading) {
     return <LoadingSpinner title="" />;
   }
 
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center py-4">
+        Gagal memuat data
+      </div>
+    );
+  }
+
+  // format mata uang
   const formatCurrencyShort = (value) => {
     let numValue;
     if (typeof value === "string") {
@@ -62,10 +69,10 @@ const DashboardAdminFinance = () => {
     return result;
   };
 
+  // fungsi untuk submit pencaharian
   function SearchSubmit() {
     alert("oke");
   }
-
 
   return (
     <MainLayout titlePage={"Beranda"} isGreeting={false}>

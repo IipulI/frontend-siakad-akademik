@@ -33,22 +33,21 @@ export default function EditComponentBill() {
     }));
   };
 
+  // Fungsi untuk kembali
   function handleBack() {
     navigate(AdminFinanceRoute.componentBill);
   }
 
+  // Fungsi untuk edit komponen tagihan dengan hook
   async function handleSave() {
-    // Validate required fields
     if (!formData.kodeKomponen || !formData.nama || !formData.nominal) {
       showToast.info("Mohon lengkapi semua field!");
       return;
     }
-
     try {
       await mutateAsync(formData);
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-      // Error is already handled in the hook
       if (!error.message) {
         showToast.error("Terjadi kesalahan saat menyimpan data");
       }

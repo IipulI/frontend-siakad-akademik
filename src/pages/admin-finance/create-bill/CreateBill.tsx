@@ -17,20 +17,21 @@ import {
 } from "../../../components/admin-finance/Toastify";
 
 export default function CreateBill() {
+  // state untuk pilih mahasiswa
   const [selectedStudents, setSelectedStudents] = useState<StudentData[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   const usenavigate = useNavigate();
+
+  // state pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Gunakan hook dengan parameter pagination
-  const {
-    data: apiResponse,
-    isLoading,
-    isError,
-    refetch,
-    isFetching,
-  } = useCreateBill(currentPage, rowsPerPage);
+  // Hook dengan parameter pagination
+  const { data: apiResponse, isLoading, isError } = useCreateBill(
+    currentPage,
+    rowsPerPage
+  );
 
   // Extract data dari response
   const data = apiResponse?.data || [];
@@ -40,20 +41,31 @@ export default function CreateBill() {
     return <LoadingSpinner title="Data Mahasiswa" />;
   }
 
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center py-4">
+        Gagal memuat data mahasiswa
+      </div>
+    );
+  }
+
+  // variabel untuk filter
   const angkatan = [{ value: "", label: "-- Pilih Angkatan --" }];
   const fakultas = [{ value: "", label: "-- Pilih Fakultas --" }];
   const semester = [{ value: "", label: "-- Pilih Semester --" }];
   const programStudi = [{ value: "", label: "-- Pilih Program Studi --" }];
 
+  // Fungsi untuk submit pencaharian
   function SearchSubmit() {
     alert("oke search");
   }
 
+  // Fungsi untuk refres halaman
   function Refres() {
     window.location.reload();
   }
 
-  // Handle individual checkbox selection
+  // Fungsi individual checkbox selection
   function handleCheckboxChange(student: StudentData, isChecked: boolean) {
     if (isChecked) {
       setSelectedStudents((prev) => [...prev, student]);
@@ -64,7 +76,7 @@ export default function CreateBill() {
     }
   }
 
-  // Handle select all checkbox
+  // Fungsi select all checkbox
   function handleSelectAll(isChecked: boolean) {
     if (isChecked) {
       setSelectedStudents([...data]);
@@ -75,6 +87,7 @@ export default function CreateBill() {
     }
   }
 
+  // Fungsi untuk kirim data mahasiswa
   function Create() {
     if (selectedStudents.length === 0) {
       showToast.info("Silakan pilih mahasiswa!");
@@ -87,12 +100,12 @@ export default function CreateBill() {
     });
   }
 
-  // Handler untuk perubahan halaman
+  // Fungsi untuk perubahan halaman
   function handlePageChange(newPage: number) {
     setCurrentPage(newPage);
   }
 
-  // Handler untuk perubahan rows per page
+  // Fungsi untuk perubahan rows per page
   function handleRowsPerPageChange(newRowsPerPage: number) {
     setRowsPerPage(newRowsPerPage);
     setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
@@ -204,6 +217,7 @@ export default function CreateBill() {
               </tbody>
             </table>
           </div>
+
           {/* Pagination Section */}
           {pagination && (
             <Pagination

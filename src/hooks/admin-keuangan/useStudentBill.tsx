@@ -84,7 +84,7 @@ export function useGetStudentBillDetail(id: string) {
 }
 
 // put
-export function useMarkStudentBillAsPaid() {
+export function useTandaiLunas() {
   return useMutation({
     mutationKey: ["markStudentBillAsPaid"],
     mutationFn: async (ids: string[]) => {

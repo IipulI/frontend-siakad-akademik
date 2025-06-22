@@ -4,29 +4,34 @@ import { ChevronLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useGetStudentBillDetail } from "../../../hooks/admin-keuangan/useStudentBill";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { formatToRupiah } from "../../../components/admin-finance/FormatToRupiah";
 
 const DetailStudentBill = () => {
+  // ambil data tagihan mahasiswa
   const { state } = useLocation();
+
   const usenavigate = useNavigate();
 
   const studentId = state.id;
 
-  const { data, isLoading, error } = useGetStudentBillDetail(studentId);
+  const { data, isLoading, isError } = useGetStudentBillDetail(studentId);
 
-    if (isLoading) {
-      return <LoadingSpinner title="Data Tagihan Mahasiswa" />;
-    }
+  if (isLoading) {
+    return <LoadingSpinner title="Data Tagihan Mahasiswa" />;
+  }
 
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center py-4">
+        Gagal memuat data tagihan mahasiswa
+      </div>
+    );
+  }
+
+  // Fungsi untuk kembali
   function handleBack() {
     usenavigate(-1);
   }
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("id-ID").format(amount);
-  };
-
-  console.log(state);
 
   return (
     <MainLayout isGreeting={false} titlePage="Tagihan Mahasiswa">
@@ -64,7 +69,7 @@ const DetailStudentBill = () => {
           <p>{data?.metodeBayar || "-"}</p>
         </div>
 
-        {/* Bill Components Table */}
+        {/* tabel */}
         <div className="bg-gray-50 rounded-lg overflow-auto border-1">
           <table className="w-full">
             <thead className="bg-gray-200">
@@ -90,7 +95,7 @@ const DetailStudentBill = () => {
                     {komponen.namaKomponen}
                   </td>
                   <td className="py-3 px-4 text-sm sm:text-base text-left">
-                    Rp. {formatCurrency(komponen.tagihan)}
+                    {formatToRupiah(komponen.tagihan)}
                   </td>
                 </tr>
               ))}

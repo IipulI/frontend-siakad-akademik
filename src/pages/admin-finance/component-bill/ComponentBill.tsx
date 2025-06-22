@@ -16,30 +16,35 @@ import {
   showToast,
   ToastNotif,
 } from "../../../components/admin-finance/Toastify";
+import { formatToRupiah } from "../../../components/admin-finance/FormatToRupiah";
 
 export default function ComponentBill() {
   // State untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // state untuk modal konfirmasi delete
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   function openDeleteModal(id: string) {
     setSelectedId(id);
     setIsModalOpen(true);
   }
 
-  const navigate = useNavigate();
-
-  // Gunakan hook dengan parameter pagination
+  // Hook dengan parameter pagination
   const {
     data: apiResponse,
     isLoading,
     isError,
     refetch,
-    isFetching,
   } = useGetComponentBill(currentPage, rowsPerPage);
+
+  // Extract data dari response
+  const data = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
 
   // Hook untuk delete
   const deleteComponentBill = useDeleteComponentBill();
@@ -56,19 +61,6 @@ export default function ComponentBill() {
     );
   }
 
-  // Extract data dari response
-  const data = apiResponse?.data || [];
-  const pagination = apiResponse?.pagination;
-
-  // Fungsi untuk format Rupiah
-  function formatToRupiah(amount: number): string {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  }
-
   // Fungsi untuk submit pencarian
   function handleSearchSubmit() {
     // Reset ke halaman 1 saat melakukan pencarian
@@ -78,7 +70,7 @@ export default function ComponentBill() {
 
   // Fungsi untuk refresh halaman
   function handleRefresh() {
-    refetch();
+    window.location.reload();
   }
 
   // Fungsi untuk membuat komponen tagihan baru
@@ -100,8 +92,6 @@ export default function ComponentBill() {
     try {
       await deleteComponentBill.mutateAsync(selectedId);
       showToast.success("Data berhasil dihapus!");
-
-      // Jika halaman current kosong setelah delete, kembali ke halaman sebelumnya
       if (data.length === 1 && currentPage > 1) {
         setCurrentPage(currentPage - 1);
       }
@@ -121,7 +111,7 @@ export default function ComponentBill() {
   // Handler untuk perubahan rows per page
   function handleRowsPerPageChange(newRowsPerPage: number) {
     setRowsPerPage(newRowsPerPage);
-    setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
+    setCurrentPage(1);
   }
 
   const headerClassName =
