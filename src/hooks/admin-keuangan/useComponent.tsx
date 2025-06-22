@@ -9,25 +9,45 @@ export interface ComponentBillData {
   nama: string;
   nominal: number;
 }
+
 export interface CreateComponentBillData {
   kodeKomponen: string;
   nama: string;
   nominal: number;
 }
 
-// get
-export function useGetComponentBill() {
-  return useQuery({
-    queryKey: ["getComponentBill"],
+export interface PaginationResponse {
+  status: string;
+  message: string;
+  data: ComponentBillData[];
+  pagination: {
+    currentPage: number;
+    perPage: number;
+    totalPages: number;
+    totalItems: number;
+  };
+}
+
+// GET - dengan pagination
+export function useGetComponentBill(page: number = 1, size: number = 10) {
+  return useQuery<PaginationResponse>({
+    queryKey: ["getComponentBill", page, size],
     queryFn: async () => {
-      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa");
-      return response.data.data;
+      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
+        params: {
+          page,
+          size,
+        },
+      });
+      return response.data;
     },
   });
 }
 
-// post
+// POST
 export function useCreateComponentBill() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ["createComponentBill"],
     mutationFn: async (newClassData: CreateComponentBillData) => {
@@ -37,11 +57,17 @@ export function useCreateComponentBill() {
       );
       return response.data.data;
     },
+    onSuccess: () => {
+      // Invalidate pagination queries
+      queryClient.invalidateQueries({ queryKey: ["getComponentBill"] });
+    },
   });
 }
 
-// put
+// PUT
 export function useEditComponentBill() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ["editComponentBill"],
     mutationFn: async (data: ComponentBillData) => {
@@ -55,17 +81,23 @@ export function useEditComponentBill() {
       );
       return response.data.data;
     },
+    onSuccess: () => {
+      // Invalidate pagination queries
+      queryClient.invalidateQueries({ queryKey: ["getComponentBill"] });
+    },
   });
 }
 
-// delete
+// DELETE
 export function useDeleteComponentBill() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (id: string) => {
       await Api.delete(`/keuangan/invoice-komponen-mahasiswa/${id}`);
     },
     onSuccess: () => {
+      // Invalidate pagination queries
       queryClient.invalidateQueries({ queryKey: ["getComponentBill"] });
     },
   });

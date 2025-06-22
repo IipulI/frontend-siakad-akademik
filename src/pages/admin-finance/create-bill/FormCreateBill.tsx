@@ -5,11 +5,11 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
-  DataKomponenTagihanProps,
-  StudentDataProps,
+  DataKomponenTagihan,
+  StudentData,
   useCreateInvoiceData,
   useGetComponentBill,
-  FormDataProps,
+  FormData,
 } from "../../../hooks/admin-keuangan/useCreateBill";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import {
@@ -17,27 +17,20 @@ import {
   showToast,
 } from "../../../components/admin-finance/Toastify";
 
-
 export default function FormCreateBill() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [selectedStudents, setSelectedStudents] = useState<StudentDataProps[]>(
-    []
-  );
+  const [selectedStudents, setSelectedStudents] = useState<StudentData[]>([]);
 
-  const [biayaTersedia, setBiayaTersedia] = useState<
-    DataKomponenTagihanProps[]
-  >([]);
-  const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihanProps[]>(
-    []
-  );
+  const [biayaTersedia, setBiayaTersedia] = useState<DataKomponenTagihan[]>([]);
+  const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihan[]>([]);
   const [totalTagihan, setTotalTagihan] = useState<number>(0);
 
   const [pencarianTersedia, setPencarianTersedia] = useState<string>("");
   const [pencarianDipilih, setPencarianDipilih] = useState<string>("");
 
   // State untuk form data
-  const [formData, setFormData] = useState<FormDataProps>({
+  const [formData, setFormData] = useState<FormData>({
     tanggalTenggat: "",
     tahap: "",
   });
@@ -72,7 +65,7 @@ export default function FormCreateBill() {
     setTotalTagihan(total);
   }, [biayaDipilih]);
 
-  const handleInputChange = (field: keyof FormDataProps, value: string) => {
+  const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -83,17 +76,19 @@ export default function FormCreateBill() {
     const updated = selectedStudents.filter((s) => s.id !== studentId);
     setSelectedStudents(updated);
     if (updated.length === 0) {
-      showToast.warning("Semua mahasiswa telah dihapus. Silakan pilih mahasiswa kembali.");
+      showToast.warning(
+        "Semua mahasiswa telah dihapus. Silakan pilih mahasiswa kembali."
+      );
       navigate(-1);
     }
   }
 
-  const tambahBiaya = (item: DataKomponenTagihanProps) => {
+  const tambahBiaya = (item: DataKomponenTagihan) => {
     setBiayaTersedia((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaDipilih((prev) => [...prev, item]);
   };
 
-  const hapusBiaya = (item: DataKomponenTagihanProps) => {
+  const hapusBiaya = (item: DataKomponenTagihan) => {
     setBiayaDipilih((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaTersedia((prev) => [...prev, item]);
   };
@@ -140,12 +135,11 @@ export default function FormCreateBill() {
       console.error("Error saat menyimpan tagihan:", error);
 
       if (error.response) {
-        const errorMessage =
-          error.response.data?.message ||
-          "Terjadi kesalahan saat menyimpan data";
         showToast.error(`Gagal menyimpan tagihan`);
       } else if (error.request) {
-        showToast.error("Gagal menghubungi server. Periksa koneksi internet Anda.");
+        showToast.error(
+          "Gagal menyimpan tagihan. Periksa koneksi internet Anda."
+        );
       } else {
         showToast.error("Terjadi kesalahan tidak terduga. Silakan coba lagi.");
       }
@@ -173,7 +167,7 @@ export default function FormCreateBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Buat Tagihan">
-      <ToastNotif/>
+      <ToastNotif />
       <div className="border-2 border-t-2 border-t-primary-green rounded-sm p-3 bg-white">
         <h1 className="text-lg sm:text-2xl font-semibold mb-2">
           Mahasiswa yang dipilih
@@ -281,7 +275,7 @@ export default function FormCreateBill() {
               />
             </div>
             <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96">
-              <div className="p-2 max-h-64 overflow-y-auto">
+              <div className="p-2 max-h-90 overflow-y-auto">
                 {biayaTersedia
                   .filter((item) =>
                     item.nama
@@ -337,7 +331,7 @@ export default function FormCreateBill() {
               />
             </div>
             <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96 overflow-auto">
-              <div className="p-2 max-h-64 overflow-y-auto">
+              <div className="p-2 max-h-90 overflow-y-auto">
                 {biayaDipilih
                   .filter((item) =>
                     item.nama

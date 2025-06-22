@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
-export interface StudentBillData {
+export interface StudentBillDataDetail {
   kodeInvoice: string;
   periodeAkademik: string;
   metodeBayar: string;
@@ -26,21 +26,53 @@ export interface StudentBillData {
   }[];
 }
 
-// get
-export function useGetStudentBill() {
-  return useQuery({
-    queryKey: ["getStudentBill"],
+export interface StudentBillData {
+  id: string;
+  kodeTagihan: string;
+  tanggal: string;
+  jenisTagihan:string;
+  bayar:number;
+  npm: string;
+  nama: string;
+  nominal: number;
+  tanggalTenggat: string;
+  tanggalBayar: string;
+  lunas: boolean;
+}
+
+export interface PaginationResponse {
+  status: string;
+  message: string;
+  data: StudentBillData[];
+  pagination: {
+    currentPage: number;
+    perPage: number;
+    totalPages: number;
+    totalItems: number;
+  };
+}
+
+// GET - dengan pagination
+export function useGetStudentBill(page: number = 1, size: number = 10) {
+  return useQuery<PaginationResponse>({
+    queryKey: ["getStudentBill", page, size],
     queryFn: async () => {
       const response = await Api.get(
-        "/keuangan/invoice-mahasiswa/tagihan-mahasiswa"
+        "/keuangan/invoice-mahasiswa/tagihan-mahasiswa",
+        {
+          params: {
+            page,
+            size,
+          },
+        }
       );
-      return response.data.data;
+      return response.data;
     },
   });
 }
 
 export function useGetStudentBillDetail(id: string) {
-  return useQuery<StudentBillData>({
+  return useQuery<StudentBillDataDetail>({
     queryKey: ["getStudentBillDetail", id], // Sertakan id dalam queryKey
     queryFn: async () => {
       const response = await Api.get(

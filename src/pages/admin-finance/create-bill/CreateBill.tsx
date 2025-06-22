@@ -7,7 +7,7 @@ import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import {
-  StudentDataProps,
+  StudentData,
   useCreateBill,
 } from "../../../hooks/admin-keuangan/useCreateBill";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -17,15 +17,24 @@ import {
 } from "../../../components/admin-finance/Toastify";
 
 export default function CreateBill() {
-  const [selectedStudents, setSelectedStudents] = useState<StudentDataProps[]>(
-    []
-  );
+  const [selectedStudents, setSelectedStudents] = useState<StudentData[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const usenavigate = useNavigate();
-  const { data = [], isLoading, isError, refetch } = useCreateBill();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Gunakan hook dengan parameter pagination
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useCreateBill(currentPage, rowsPerPage);
+
+  // Extract data dari response
+  const data = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
 
   if (isLoading) {
     return <LoadingSpinner title="Data Mahasiswa" />;
@@ -45,7 +54,7 @@ export default function CreateBill() {
   }
 
   // Handle individual checkbox selection
-  function handleCheckboxChange(student: StudentDataProps, isChecked: boolean) {
+  function handleCheckboxChange(student: StudentData, isChecked: boolean) {
     if (isChecked) {
       setSelectedStudents((prev) => [...prev, student]);
       setSelectedIds((prev) => [...prev, student.id]);
@@ -76,6 +85,17 @@ export default function CreateBill() {
     usenavigate(AdminFinanceRoute.formCreateBill, {
       state: { selectedStudents },
     });
+  }
+
+  // Handler untuk perubahan halaman
+  function handlePageChange(newPage: number) {
+    setCurrentPage(newPage);
+  }
+
+  // Handler untuk perubahan rows per page
+  function handleRowsPerPageChange(newRowsPerPage: number) {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
   }
 
   const headerClassName =
@@ -184,14 +204,17 @@ export default function CreateBill() {
               </tbody>
             </table>
           </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={1000}
-            onPageChange={setCurrentPage}
-            rowsPerPage={rowsPerPage}
-            totalRows={65}
-            onRowsPerPageChange={setRowsPerPage}
-          />
+          {/* Pagination Section */}
+          {pagination && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              rowsPerPage={pagination.perPage}
+              totalRows={pagination.totalItems}
+              onRowsPerPageChange={handleRowsPerPageChange}
+            />
+          )}
         </div>
       </div>
       <div className="py-10"></div>

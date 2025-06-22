@@ -33,8 +33,18 @@ export default function TableLast30BillData() {
   }
 
   const usenavigate = useNavigate();
-  const { data, isLoading, error, refetch } = useGetStudentBill();
+  // Gunakan hook dengan parameter pagination
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useGetStudentBill(currentPage, rowsPerPage);
 
+  // Extract data dari response
+  const data = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
   const deleteStudentBill = useDeleteStudentBill();
 
   // Fungsi untuk format Rupiah
@@ -70,6 +80,17 @@ export default function TableLast30BillData() {
       setIsModalOpen(false);
       setSelectedId(null);
     }
+  }
+
+  // Handler untuk perubahan halaman
+  function handlePageChange(newPage: number) {
+    setCurrentPage(newPage);
+  }
+
+  // Handler untuk perubahan rows per page
+  function handleRowsPerPageChange(newRowsPerPage: number) {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
   }
 
   return (
@@ -119,7 +140,7 @@ export default function TableLast30BillData() {
             {data?.map((data) => (
               <tr key={data.kodeTagihan}>
                 <td className="border-1 border-gray-500 font-semibold p-2 text-center text-sm md:text-base">
-                  {data.tanggal}
+                  {data.tanggal}  
                 </td>
                 <td className="border-1 border-gray-500 font-semibold p-2 text-center text-sm md:text-base">
                   {data.kodeTagihan}
@@ -172,14 +193,17 @@ export default function TableLast30BillData() {
           </tbody>
         </table>
       </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={1000}
-        onPageChange={setCurrentPage}
-        rowsPerPage={rowsPerPage}
-        totalRows={65}
-        onRowsPerPageChange={setRowsPerPage}
-      />
+      {/* Pagination Section */}
+      {pagination && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={handlePageChange}
+          rowsPerPage={pagination.perPage}
+          totalRows={pagination.totalItems}
+          onRowsPerPageChange={handleRowsPerPageChange}
+        />
+      )}
     </div>
   );
 }

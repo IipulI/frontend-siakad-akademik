@@ -15,6 +15,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import {
+  StudentBillData,
+  StudentBillDataDetail,
   useGetStudentBill,
   useMarkStudentBillAsPaid,
 } from "../../../hooks/admin-keuangan/useStudentBill";
@@ -24,31 +26,7 @@ import {
   ToastNotif,
   showToast,
 } from "../../../components/admin-finance/Toastify";
-
-export interface StudentBillData {
-  kodeInvoice: string;
-  periodeAkademik: string;
-  metodeBayar: string;
-  tanggalBayar: string;
-  totalBayar: number;
-  npm: string;
-  nama: string;
-  programStudiResDto: {
-    id: string;
-    namaProgramStudi: string;
-    jenjang: {
-      id: string;
-      nama: string;
-      jenjang: string;
-    };
-  };
-  tagihanKomponenDtos: {
-    kodeKomponen: string;
-    namaKomponen: string;
-    tagihan: number;
-    tanggalTenggat: string;
-  }[];
-}
+import { error } from "console";
 
 export default function StudentBill() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -59,8 +37,18 @@ export default function StudentBill() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  // React Query hooks
-  const { data = [], isLoading, error } = useGetStudentBill();
+  // Gunakan hook dengan parameter pagination
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useGetStudentBill(currentPage, rowsPerPage);
+
+  // Extract data dari response
+  const data = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
 
   const markAsPaidMutation = useMarkStudentBillAsPaid();
   if (isLoading) {
@@ -129,24 +117,21 @@ export default function StudentBill() {
     });
   }
 
+  // Handler untuk perubahan halaman
+  function handlePageChange(newPage: number) {
+    setCurrentPage(newPage);
+  }
+
+  // Handler untuk perubahan rows per page
+  function handleRowsPerPageChange(newRowsPerPage: number) {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
+  }
+
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base";
   const cellClassName =
     "border border-gray-500 font-semibold p-2 text-center text-sm md:text-base";
-
-  // Handle error state
-  if (error) {
-    return (
-      <MainLayout isGreeting={false} titlePage="Tagihan Mahasiswa">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-600">
-            Error:{" "}
-            {error instanceof Error ? error.message : "Terjadi kesalahan"}
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
 
   return (
     <MainLayout isGreeting={false} titlePage="Tagihan Mahasiswa">
@@ -343,14 +328,17 @@ export default function StudentBill() {
           </table>
         </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={1000}
-          onPageChange={setCurrentPage}
-          rowsPerPage={rowsPerPage}
-          totalRows={65}
-          onRowsPerPageChange={setRowsPerPage}
-        />
+        {/* Pagination Section */}
+        {pagination && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            rowsPerPage={pagination.perPage}
+            totalRows={pagination.totalItems}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        )}
       </div>
       <div className="py-10"></div>
     </MainLayout>

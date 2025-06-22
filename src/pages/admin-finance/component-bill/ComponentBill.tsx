@@ -12,26 +12,34 @@ import {
   ComponentBillData,
 } from "../../../hooks/admin-keuangan/useComponent";
 import ConfirmModal from "../../../components/admin-finance/ConfirmModal";
-import { showToast, ToastNotif } from "../../../components/admin-finance/Toastify";
+import {
+  showToast,
+  ToastNotif,
+} from "../../../components/admin-finance/Toastify";
 
 export default function ComponentBill() {
-  // state untuk pagination
+  // State untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  
+
   function openDeleteModal(id: string) {
     setSelectedId(id);
     setIsModalOpen(true);
   }
-  
 
   const navigate = useNavigate();
 
-  // Gunakan hook dengan parameter pagination dan search
-  const { data, isLoading, isError } = useGetComponentBill();
+  // Gunakan hook dengan parameter pagination
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useGetComponentBill(currentPage, rowsPerPage);
 
   // Hook untuk delete
   const deleteComponentBill = useDeleteComponentBill();
@@ -48,6 +56,10 @@ export default function ComponentBill() {
     );
   }
 
+  // Extract data dari response
+  const data = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
+
   // Fungsi untuk format Rupiah
   function formatToRupiah(amount: number): string {
     return new Intl.NumberFormat("id-ID", {
@@ -57,33 +69,42 @@ export default function ComponentBill() {
     }).format(amount);
   }
 
-  // fungsi untuk submit pencarian
-  function handleSearchSubmit() {}
-
-  // fungsi untuk refresh halaman
-  function handleRefresh() {
-    window.location.reload();
+  // Fungsi untuk submit pencarian
+  function handleSearchSubmit() {
+    // Reset ke halaman 1 saat melakukan pencarian
+    setCurrentPage(1);
+    refetch();
   }
 
-  // fungsi untuk membuat komponen tagihan baru
+  // Fungsi untuk refresh halaman
+  function handleRefresh() {
+    refetch();
+  }
+
+  // Fungsi untuk membuat komponen tagihan baru
   function handleCreate() {
     navigate(AdminFinanceRoute.createComponentBill);
   }
 
-  // fungsi untuk mengedit komponen tagihan
-  function handleEdit(item: any) {
+  // Fungsi untuk mengedit komponen tagihan
+  function handleEdit(item: ComponentBillData) {
     navigate(AdminFinanceRoute.editComponentBill, {
       state: item,
     });
   }
 
-  // fungsi untuk menghapus komponen tagihan dengan hook
+  // Fungsi untuk menghapus komponen tagihan dengan hook
   async function confirmDelete() {
     if (!selectedId) return;
 
     try {
       await deleteComponentBill.mutateAsync(selectedId);
       showToast.success("Data berhasil dihapus!");
+
+      // Jika halaman current kosong setelah delete, kembali ke halaman sebelumnya
+      if (data.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
     } catch (err) {
       showToast.error("Gagal menghapus data.");
     } finally {
@@ -91,7 +112,17 @@ export default function ComponentBill() {
       setSelectedId(null);
     }
   }
-  
+
+  // Handler untuk perubahan halaman
+  function handlePageChange(newPage: number) {
+    setCurrentPage(newPage);
+  }
+
+  // Handler untuk perubahan rows per page
+  function handleRowsPerPageChange(newRowsPerPage: number) {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
+  }
 
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";
@@ -100,7 +131,7 @@ export default function ComponentBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
-      <ToastNotif/>
+      <ToastNotif />
       <ConfirmModal
         isOpen={isModalOpen}
         onConfirm={confirmDelete}
@@ -161,42 +192,54 @@ export default function ComponentBill() {
               </tr>
             </thead>
             <tbody>
-              {data?.map((item: ComponentBillData) => (
-                <tr key={item.id}>
-                  <td className={cellClassName}>{item.kodeKomponen}</td>
-                  <td className={`${cellClassName} text-left`}>{item.nama}</td>
-                  <td className={cellClassName}>
-                    {formatToRupiah(item.nominal)}
-                  </td>
-                  <td className={cellClassName}>
-                    <div className="flex justify-center gap-2">
-                      <ButtonClick
-                        icon={<Pen size={16} />}
-                        color="bg-primary-yellow"
-                        onClick={() => handleEdit(item)}
-                      />
-                      <ButtonClick
-                        icon={<Trash2 size={16} />}
-                        color="bg-red-500"
-                        onClick={() => openDeleteModal(item.id)}
-                      />
-                    </div>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className={`${cellClassName} text-gray-500`}>
+                    Tidak ada data yang ditemukan
                   </td>
                 </tr>
-              ))}
+              ) : (
+                data.map((item: ComponentBillData) => (
+                  <tr key={item.id}>
+                    <td className={cellClassName}>{item.kodeKomponen}</td>
+                    <td className={`${cellClassName} text-left`}>
+                      {item.nama}
+                    </td>
+                    <td className={cellClassName}>
+                      {formatToRupiah(item.nominal)}
+                    </td>
+                    <td className={cellClassName}>
+                      <div className="flex justify-center gap-2">
+                        <ButtonClick
+                          icon={<Pen size={16} />}
+                          color="bg-primary-yellow"
+                          onClick={() => handleEdit(item)}
+                        />
+                        <ButtonClick
+                          icon={<Trash2 size={16} />}
+                          color="bg-red-500"
+                          onClick={() => openDeleteModal(item.id)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination Section */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={1000}
-          onPageChange={setCurrentPage}
-          rowsPerPage={rowsPerPage}
-          totalRows={65}
-          onRowsPerPageChange={setRowsPerPage}
-        />
+        {pagination && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            rowsPerPage={pagination.perPage}
+            totalRows={pagination.totalItems}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        )}
       </div>
     </MainLayout>
   );

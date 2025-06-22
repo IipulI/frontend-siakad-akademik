@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
-export interface InvoiceDataProps {
+export interface InvoiceData {
   siakMahasiswaIds: string[];
   tanggalTenggat: string;
   tahap: string;
@@ -10,7 +10,7 @@ export interface InvoiceDataProps {
   }[];
 }
 
-export interface StudentDataProps {
+export interface StudentData {
   id: string;
   npm: string;
   nama: string;
@@ -20,7 +20,7 @@ export interface StudentDataProps {
   angkatan: string;
 }
 
-export interface DataKomponenTagihanProps {
+export interface DataKomponenTagihan {
   id: string;
   kodeKomponen: string;
   nama: string;
@@ -28,18 +28,35 @@ export interface DataKomponenTagihanProps {
   selected?: boolean;
 }
 
-export interface FormDataProps {
+export interface FormData {
   tanggalTenggat: string;
   tahap: string;
 }
 
-// get
-export function useCreateBill() {
-  return useQuery({
-    queryKey: ["getCreateBill"],
+export interface PaginationResponse {
+  status: string;
+  message: string;
+  data: StudentData[];
+  pagination: {
+    currentPage: number;
+    perPage: number;
+    totalPages: number;
+    totalItems: number;
+  };
+}
+
+// GET - dengan pagination
+export function useCreateBill(page: number = 1, size: number = 10) {
+  return useQuery<PaginationResponse>({
+    queryKey: ["getCreateBill", page, size],
     queryFn: async () => {
-      const response = await Api.get("/keuangan/invoice-mahasiswa/mahasiswa");
-      return response.data.data;
+      const response = await Api.get("/keuangan/invoice-mahasiswa/mahasiswa", {
+        params: {
+          page,
+          size,
+        },
+      });
+      return response.data;
     },
   });
 }
@@ -49,7 +66,12 @@ export function useGetComponentBill() {
   return useQuery({
     queryKey: ["getComponentBill"],
     queryFn: async () => {
-      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa");
+      const response = await Api.get("/keuangan/invoice-komponen-mahasiswa", {
+        params: {
+          page: 1,
+          size: 999999,
+        },
+      });
       return response.data.data;
     },
   });
@@ -59,7 +81,7 @@ export function useGetComponentBill() {
 export function useCreateInvoiceData() {
   return useMutation({
     mutationKey: ["createInvoiceData"],
-    mutationFn: async (newInvoiceData: InvoiceDataProps) => {
+    mutationFn: async (newInvoiceData: InvoiceData) => {
       const response = await Api.post(
         "/keuangan/invoice-mahasiswa",
         newInvoiceData
