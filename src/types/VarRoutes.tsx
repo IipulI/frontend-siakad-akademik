@@ -111,5 +111,6 @@ export const LecturerRoute = {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
     stopStudy: "/dosen/perkuliahan/berhenti-studi",
+    detailClass: "/dosen/perkuliahan/kelas-kuliah/detail"
   },
 };

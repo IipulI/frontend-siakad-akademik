@@ -2,23 +2,18 @@ import React, { useState } from "react"
 import { Search, RefreshCw } from "lucide-react"
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import TableLecturer from "../../../components/lecturer/TableLecturer";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
-import DetailClassLecturer from "./DetailClassLecturer";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index"
-import TableCheckbox from "../../../components/lecturer/TableCheckbox";
 import TableClass from "../../../components/lecturer/TableClass";
 import { useDebounce } from "../../../hooks/useDebounce";
 
 const ClassLecturer = () => {
-  const [id, setId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [search, setSearch] = useState("");
 
   const debouncedSearch = useDebounce(search, 1000);
-
 
   const filterOptions = [
     {
@@ -56,25 +51,13 @@ const ClassLecturer = () => {
     },
   })
 
-
-
     const statusOptions = ["Semua Status", "Aktif", "Prioritas"]
-
-    // const dataDetail = id ? data.find((item) => parseInt(id) === item.id) : null;
 
     return (
     <MainLayout
         titlePage={"Kelas Kuliah"}
         isGreeting={false}
     >
-
-        {id ? 
-            (
-                <DetailClassLecturer id={id} setId={setId} search={search} setSearch={setSearch} debouncedSearch={debouncedSearch} />
-            )
-        :
-        (
-            <>
                 <div className="grid lg:grid-cols-2 mb-4 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
                     {filterOptions.map((filter, index) => (
                         <InputFilter 
@@ -111,7 +94,6 @@ const ClassLecturer = () => {
                       <TableClass
                           data={isPending ? [] : data?.data.data}
                           error={"Data kosong"}
-                          setId={setId}
                       />
                     </div>
                     {isPending ? (
@@ -131,9 +113,6 @@ const ClassLecturer = () => {
                     />
                   )}
                 </div>
-            </>
-        )
-        }
     </MainLayout>
     )
 }
