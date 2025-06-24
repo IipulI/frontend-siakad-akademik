@@ -1,7 +1,7 @@
 import { Pen, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
@@ -23,9 +23,18 @@ export default function ComponentBill() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // state untuk filter dan search
+  const [filters, setFilters] = useState({
+    keyword: "",
+  });
+
+  const [searchKeyword, setSearchKeyword] = useState("");
+
   // state untuk modal konfirmasi delete
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const firstLoad = useRef(true);
 
   const navigate = useNavigate();
 
@@ -39,17 +48,22 @@ export default function ComponentBill() {
     data: apiResponse,
     isLoading,
     isError,
-    refetch,
-  } = useGetComponentBill(currentPage, rowsPerPage);
+  } = useGetComponentBill(currentPage, rowsPerPage, filters.keyword);
 
   // Extract data dari response
   const data = apiResponse?.data || [];
   const pagination = apiResponse?.pagination;
 
+  useEffect(() => {
+    if (!isLoading) {
+      firstLoad.current = false;
+    }
+  }, [isLoading]);
+
   // Hook untuk delete
   const deleteComponentBill = useDeleteComponentBill();
 
-  if (isLoading) {
+  if (isLoading && firstLoad.current) {
     return <LoadingSpinner title="Tagihan Komponen" />;
   }
 
@@ -61,16 +75,29 @@ export default function ComponentBill() {
     );
   }
 
+  // Handle Enter key pada search input
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit();
+    }
+  };
+
   // Fungsi untuk submit pencarian
   function handleSearchSubmit() {
-    // Reset ke halaman 1 saat melakukan pencarian
-    setCurrentPage(1);
-    refetch();
+    setFilters((prev) => ({
+      ...prev,
+      keyword: searchKeyword,
+    }));
+    setCurrentPage(1); // Reset ke halaman 1 saat search
   }
 
   // Fungsi untuk refresh halaman
   function handleRefresh() {
-    window.location.reload();
+    setFilters({
+      keyword: "",
+    });
+    setSearchKeyword("");
+    setCurrentPage(1);
   }
 
   // Fungsi untuk membuat komponen tagihan baru
@@ -147,6 +174,9 @@ export default function ComponentBill() {
                 type="text"
                 className="border-2 p-1 rounded text-xs w-50"
                 placeholder="Cari Tagihan Komponen"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
               />
               <ButtonClick
                 icon={<Search size={16} strokeWidth={3} />}
@@ -182,9 +212,15 @@ export default function ComponentBill() {
               </tr>
             </thead>
             <tbody>
-              {data.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={4} className={`${cellClassName} text-gray-500`}>
+                  <td colSpan={4} className="text-center py-4 text-gray-500">
+                    Memuat data...
+                  </td>
+                </tr>
+              ) : data.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-center py-4 text-gray-500">
                     Tidak ada data yang ditemukan
                   </td>
                 </tr>

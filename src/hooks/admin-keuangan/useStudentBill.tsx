@@ -52,22 +52,56 @@ export interface PaginationResponse {
   };
 }
 
-// GET - dengan pagination
-export function useGetStudentBill(page: number = 1, size: number = 10) {
+// GET - dengan pagination dan filter
+export function useGetStudentBill(
+  page: number = 1,
+  size: number = 10,
+  keyword: string = "",
+  semester: string = "",
+  angkatan: string = "",
+  fakultas: string = "",
+  programStudi: string = "",
+  periodeAkademik: string = "",
+) {
   return useQuery<PaginationResponse>({
-    queryKey: ["getStudentBill", page, size],
+    queryKey: [
+      "getStudentBill",
+      page,
+      size,
+      keyword,
+      semester,
+      angkatan,
+      fakultas,
+      programStudi,
+      periodeAkademik,
+    ],
     queryFn: async () => {
+      // Buat object params dan hanya tambahkan parameter yang tidak kosong
+      const params: any = {
+        page,
+        size,
+      };
+
+      // Tambahkan parameter filter hanya jika ada nilainya
+      if (keyword.trim()) params.keyword = keyword.trim();
+      if (semester.trim()) params.semester = semester.trim();
+      if (angkatan.trim()) params.angkatan = angkatan.trim();
+      if (fakultas.trim()) params.fakultas = fakultas.trim();
+      if (programStudi.trim()) params.programStudi = programStudi.trim();
+      if (periodeAkademik.trim())
+        params.periodeAkademik = periodeAkademik.trim();
+
       const response = await Api.get(
         "/keuangan/invoice-mahasiswa/tagihan-mahasiswa",
         {
-          params: {
-            page,
-            size,
-          },
+          params,
         }
       );
       return response.data;
     },
+    // Refetch ketika ada perubahan parameter
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 

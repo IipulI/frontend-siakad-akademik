@@ -46,18 +46,47 @@ export interface PaginationResponse {
 }
 
 // GET - dengan pagination
-export function useCreateBill(page: number = 1, size: number = 10) {
+export function useCreateBill(
+  page: number = 1,
+  size: number = 10,
+  keyword: string = "",
+  periodeMasuk: string = "",
+  fakultas: string = "",
+  semester: string = "",
+  programStudi: string = ""
+) {
   return useQuery<PaginationResponse>({
-    queryKey: ["getCreateBill", page, size],
+    queryKey: [
+      "getCreateBill",
+      page,
+      size,
+      keyword,
+      periodeMasuk,
+      fakultas,
+      semester,
+      programStudi,
+    ],
     queryFn: async () => {
+      // Buat object params dan hanya tambahkan parameter yang tidak kosong
+      const params: any = {
+        page,
+        size,
+      };
+
+      // Tambahkan parameter filter hanya jika ada nilainya
+      if (keyword.trim()) params.keyword = keyword.trim();
+      if (periodeMasuk.trim()) params.periodeMasuk = periodeMasuk.trim();
+      if (fakultas.trim()) params.fakultas = fakultas.trim();
+      if (semester.trim()) params.semester = semester.trim();
+      if (programStudi.trim()) params.programStudi = programStudi.trim();
+
       const response = await Api.get("/keuangan/invoice-mahasiswa/mahasiswa", {
-        params: {
-          page,
-          size,
-        },
+        params,
       });
       return response.data;
     },
+    // Refetch ketika ada perubahan parameter
+    refetchOnWindowFocus: false,
   });
 }
 
