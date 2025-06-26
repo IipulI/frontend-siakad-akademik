@@ -18,6 +18,7 @@ import FormDomicili from "../../../components/admin-academic/student-data/bio-da
 import FormParents from "../../../components/admin-academic/student-data/bio-data/FormParents";
 import FormGuardian from "../../../components/admin-academic/student-data/bio-data/FormGuardian";
 import FormSchool from "../../../components/admin-academic/student-data/bio-data/FormSchool";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 export default function CreateStudent() {
   function SearchSubmit() {
@@ -26,7 +27,7 @@ export default function CreateStudent() {
 
   const navigate = useNavigate();
   function Back() {
-    navigate("/portal/mahasiswa");
+    navigate(AdminAcademicRoute.student.studentData);
   }
 
   const programStudiOptions = [
