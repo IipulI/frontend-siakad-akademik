@@ -1,36 +1,13 @@
-import { Eye, Link2, Trash2 } from "lucide-react";
-import ButtonClick from "./ButtonClick";
 import { useNavigate } from "react-router-dom";
-
-export interface Student {
-  id: string;
-  name: string;
-  level: string;
-  program: string;
-  entryYear: string;
-  status: string;
-  semester: number;
-  credits: number;
-  gpa: number;
-}
+import { StudentData } from "../../../hooks/admin-akademik/useMahasiswa";
 
 interface TableProps {
-  data: Student[];
+  data: StudentData[];
+  children: React.ReactNode;
+  isLoading?: boolean;
 }
 
-export default function TableStudent({ data }: TableProps) {
-  const navigate = useNavigate();
-
-  function Link() {
-    alert("link");
-  }
-  function Detail() {
-    navigate("/portal/mahasiswa/detail-mahasiswa");
-  }
-  function Remove() {
-    alert("link");
-  }
-
+export default function TableStudent({ data, children, isLoading }: TableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -55,62 +32,54 @@ export default function TableStudent({ data }: TableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.map((student) => (
-            <tr key={student.id} className="hover:bg-gray-50">
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.id}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                {student.name}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.level}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.program}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.entryYear}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.status}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.semester}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.credits}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold text-center">
-                {student.gpa}
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <div className="flex justify-center space-x-2">
-                  {
-                    <ButtonClick
-                      icon={<Link2 size={15} />}
-                      color={"bg-primary-yellow"}
-                      onClick={Link}
-                    />
-                  }
-                  {
-                    <ButtonClick
-                      icon={<Eye size={15} />}
-                      color={"bg-primary-blueSoft"}
-                      onClick={Detail}
-                    />
-                  }
-                  {
-                    <ButtonClick
-                      icon={<Trash2 size={15} />}
-                      color={"bg-red-400"}
-                      onClick={Remove}
-                    />
-                  }
-                </div>
+          {isLoading ? (
+            <tr>
+              <td colSpan={10} className="text-center py-4 text-gray-500">
+                Memuat data...
               </td>
             </tr>
-          ))}
+          ) : data.length === 0 ? (
+            <tr>
+              <td colSpan={10} className="text-center py-4 text-gray-500">
+                Tidak ada data yang ditemukan
+              </td>
+            </tr>
+          ) : (
+            data.map((student) => (
+              <tr key={student.id} className="hover:bg-gray-50">
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.npm}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold">
+                  {student.nama}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.jenjang}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.namaProgramStudi}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.periodeMasuk}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.statusMahasiswa}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.semester}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.sks}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold text-center">
+                  {student.ipk}
+                </td>
+                <td className="p-2 border border-gray-300 font-semibold">
+                  {children}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

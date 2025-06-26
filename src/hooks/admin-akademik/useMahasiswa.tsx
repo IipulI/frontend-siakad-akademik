@@ -28,15 +28,24 @@ export interface PaginationResponse {
 }
 
 // GET - dengan pagination
-export function useStudentData(page: number = 1, size: number = 10) {
+export function useStudentData(
+  page: number = 1,
+  size: number = 10,
+  keyword: string = ""
+) {
   return useQuery<PaginationResponse>({
-    queryKey: ["getStudentData", page, size],
+    queryKey: ["getStudentData", page, size, keyword],
     queryFn: async () => {
+      // Buat object params dan hanya tambahkan parameter yang tidak kosong
+      const params: any = {
+        page,
+        size,
+      };
+
+      // Tambahkan parameter filter hanya jika ada nilainya
+      if (keyword.trim()) params.keyword = keyword.trim();
       const response = await Api.get("/akademik/mahasiswa", {
-        params: {
-          page,
-          size,
-        },
+        params,
       });
       return response.data;
     },

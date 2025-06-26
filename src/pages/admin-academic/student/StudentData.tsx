@@ -9,95 +9,87 @@ import {
   Search,
   Settings,
   Trash2,
+  Eye,
+  Link2,
 } from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Status from "../../../components/admin-academic/student-data/Status";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { useStudentData } from "../../../hooks/admin-akademik/useMahasiswa";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function StudentData() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // state untuk filter dan search
+  const [filters, setFilters] = useState({
+    keyword: "",
+  });
+
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const navigate = useNavigate();
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+  } = useStudentData(currentPage, rowsPerPage, filters.keyword);
+
+  const firstLoad = useRef(true);
+
   const categoryOptions = [{ value: "", label: "Semua Kategori" }];
 
-  const sampleData = [
-    {
-      id: "22110804305",
-      name: "Maulana Ikhsan",
-      level: "S1",
-      program: "TI",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 40,
-      gpa: 3.73,
-    },
-    {
-      id: "22110804291",
-      name: "Moraginda Pangabean",
-      level: "S1",
-      program: "MNJ",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 96,
-      gpa: 3.53,
-    },
-    {
-      id: "22110804201",
-      name: "Muhammad Virzha",
-      level: "S1",
-      program: "AK",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 36,
-      gpa: 3.78,
-    },
-    {
-      id: "22110804908",
-      name: "Muhammad Zikri",
-      level: "S1",
-      program: "TM",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 32,
-      gpa: 3.9,
-    },
-    {
-      id: "22110804032",
-      name: "Arka Fadilah Rahman",
-      level: "S1",
-      program: "SI",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 12,
-      gpa: 4,
-    },
-    {
-      id: "22110804018",
-      name: "Aufa Akhdan",
-      level: "S1",
-      program: "HKM",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 29,
-      gpa: 3.92,
-    },
-  ];
+  // Extract data dari response
+  const studentData = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
+
+  useEffect(() => {
+    if (!isLoading) {
+      firstLoad.current = false;
+    }
+  }, [isLoading]);
+
+  console.log(studentData);
+
+  if (isLoading && firstLoad.current) {
+    return <LoadingSpinner title="Mahasiswa" />;
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center py-4">
+        Gagal memuat data tagihan komponen
+      </div>
+    );
+  }
+
+  // Handle Enter key pada search input
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      SearchSubmit();
+    }
+  };
 
   // function buat search
   function SearchSubmit() {
-    alert("submit");
+    setFilters((prev) => ({
+      ...prev,
+      keyword: searchKeyword,
+    }));
+    setCurrentPage(1); // Reset ke halaman 1 saat search
   }
+
   function Refres() {
-    window.location.reload();
+    setFilters({
+      keyword: "",
+    });
+    setSearchKeyword("");
+    setCurrentPage(1);
   }
 
   // function buat tambah, hapus, cetak dan aksi
-  const navigate = useNavigate();
   function Create() {
     navigate(AdminAcademicRoute.student.createStudent);
   }
@@ -111,8 +103,26 @@ export default function StudentData() {
     alert("aksi");
   }
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  function Link() {
+    alert("link");
+  }
+  function Detail() {
+    navigate(AdminAcademicRoute.student.detailStudent);
+  }
+  function Remove() {
+    alert("link");
+  }
+
+  // Handler untuk perubahan halaman
+  function handlePageChange(newPage: number) {
+    setCurrentPage(newPage);
+  }
+
+  // Handler untuk perubahan rows per page
+  function handleRowsPerPageChange(newRowsPerPage: number) {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1);
+  }
 
   return (
     <MainLayout titlePage="Mahasiswa" isGreeting={false}>
@@ -146,6 +156,9 @@ export default function StudentData() {
                 type="text"
                 className="border-2 p-1 rounded text-xs w-50  "
                 placeholder="Cari Kelas Kuliah"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
               />
               <ButtonClick
                 icon={<Search size={16} strokeWidth={3} />}
@@ -187,16 +200,43 @@ export default function StudentData() {
             />
           </div>
         </div>
-        <TableStudent data={sampleData} />
+        <TableStudent data={studentData} isLoading={isLoading}>
+          <div className="flex justify-center space-x-2">
+            {
+              <ButtonClick
+                icon={<Link2 size={15} />}
+                color={"bg-primary-yellow"}
+                onClick={Link}
+              />
+            }
+            {
+              <ButtonClick
+                icon={<Eye size={15} />}
+                color={"bg-primary-blueSoft"}
+                onClick={Detail}
+              />
+            }
+            {
+              <ButtonClick
+                icon={<Trash2 size={15} />}
+                color={"bg-red-400"}
+                onClick={Remove}
+              />
+            }
+          </div>
+        </TableStudent>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={1000}
-          onPageChange={setCurrentPage}
-          rowsPerPage={rowsPerPage}
-          totalRows={65}
-          onRowsPerPageChange={setRowsPerPage}
-        />
+        {/* Pagination Section */}
+        {pagination && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            rowsPerPage={pagination.perPage}
+            totalRows={pagination.totalItems}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        )}
       </div>
       <Status />
       <div className="py-5"></div>
