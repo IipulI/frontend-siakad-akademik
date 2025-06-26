@@ -9,7 +9,6 @@ interface InputFilterProps {
   options?: OptionProps[];
   label: string;
   select?: boolean;
-  defaultValue?: string;
   placeholder?: string;
   value?: string; // Added for controlled component
   onChange?: (value: string) => void; // Added for controlled component
@@ -20,14 +19,13 @@ export function InputFilter({
   options = [],
   select = true,
   label,
-  defaultValue = "",
   placeholder,
   value,
   onChange,
 }: InputFilterProps) {
   // Use controlled value if provided, otherwise use defaultValue
   const isControlled = value !== undefined && onChange !== undefined;
-  const inputValue = isControlled ? value : defaultValue;
+  const inputValue = isControlled ? value : "";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -45,7 +43,6 @@ export function InputFilter({
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
           value={inputValue}
           onChange={isControlled ? handleChange : undefined}
-          defaultValue={isControlled ? undefined : defaultValue}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -59,7 +56,6 @@ export function InputFilter({
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
           value={inputValue}
           onChange={isControlled ? handleChange : undefined}
-          defaultValue={isControlled ? undefined : defaultValue}
         />
       )}
     </div>
