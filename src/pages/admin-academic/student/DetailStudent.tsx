@@ -28,6 +28,7 @@ import CollegeGrades from "../../../components/admin-academic/student-data/detai
 import FinantialHistory from "../../../components/admin-academic/student-data/detail/FinantialHistory";
 import Repeat from "../../../components/admin-academic/student-data/detail/Repeat";
 import EditKRS from "../../../components/admin-academic/student-data/detail/EditKRS";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 export default function DetailStudent() {
   function SearchSubmit() {
@@ -36,7 +37,7 @@ export default function DetailStudent() {
 
   const navigate = useNavigate();
   function Back() {
-    navigate("/portal/mahasiswa");
+    navigate(AdminAcademicRoute.student.studentData);
   }
 
   const [activeTab, setActiveTab] = useState("biodata");

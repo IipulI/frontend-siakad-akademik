@@ -32,7 +32,6 @@ export default function AcademikAdvisor() {
   });
 
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchTrigger, setSearchTrigger] = useState(0); // Trigger untuk memaksa refetch
   const firstLoad = useRef(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +132,6 @@ export default function AcademikAdvisor() {
       return newFilters;
     });
     setCurrentPage(1); // Reset ke halaman 1 saat search
-    setSearchTrigger((prev) => prev + 1); // Trigger refetch
   }
 
   // Fungsi untuk clear search
