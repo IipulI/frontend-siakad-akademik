@@ -1,4 +1,5 @@
 import Biodata from "../../../biodata/Biodata";
+import { BriefStudentData } from "./BriefStudentData";
 
 export default function CollegeGrades() {
   const courses = [
@@ -65,7 +66,7 @@ export default function CollegeGrades() {
   ];
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false}/>
 
       <div className="overflow-x-auto mt-4">
         <table className="w-full border-collapse border border-gray-500">

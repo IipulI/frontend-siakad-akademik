@@ -1,26 +1,18 @@
 import { Fragment } from "react";
-import BiodataSection from "./BiodataSection";
-import HorizontalLine from "../profile/HorizontalLine";
+import HorizontalLine from "../../../profile/HorizontalLine";
+import BiodataSection from "../../../biodata/BiodataSection";
+import { useStudentDetail } from "../../../../hooks/admin-akademik/useMahasiswa";
+import { useLocation } from "react-router-dom";
 
 interface BiodataProps {
   showLine?: boolean;
 }
 
-const Biodata = ({ showLine = true }: BiodataProps) => {
-  // tar data dari api
-  const data = {
-    id: 1,
-    nim: "2211060042807",
-    nama: "Muhammad Ridho Fatan",
-    prodi: "Teknik Informatika",
-    status: "Aktif",
-    angkatan: "2022",
-    kurikulum: "2021",
-    semester: "6",
-    pembimbing: "Berlina Wulandari S.T, M.Kom",
-    sksLulus: "103 / 3.78",
-    totalSks: "103 / 3.78",
-  };
+export const BriefStudentData = ({ showLine = true }: BiodataProps) => {
+
+  const { state } = useLocation();
+
+  const {data} = useStudentDetail(state);
 
   const sections = [
     {
@@ -31,7 +23,7 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
         "Status Mahasiswa",
         "Angkatan",
       ],
-      value: [data.nim, data.nama, data.prodi, data.status, data.angkatan],
+      value: [data?.npm, data?.nama, data?.namaProgramStudi, data?.statusMahasiswa, data?.angkatan],
     },
     {
       title: [
@@ -42,11 +34,11 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
         "Total SKS/IPK",
       ],
       value: [
-        data.kurikulum,
-        data.semester,
-        data.pembimbing,
-        data.sksLulus,
-        data.totalSks,
+        data?.kurikulum || "-",
+        data?.semester,
+        data?.pembimbingAkademik || "-",
+        data?.sks || "-",
+        data?.totalSks || "-",
       ],
     },
   ];
@@ -73,5 +65,3 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
     </div>
   );
 };
-
-export default Biodata;

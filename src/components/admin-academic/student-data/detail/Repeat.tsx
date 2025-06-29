@@ -1,20 +1,21 @@
 import Biodata from "../../../biodata/Biodata";
+import { BriefStudentData } from "./BriefStudentData";
 
 export default function Repeat() {
   const courses = [
-    // {
-    //   no: "1",
-    //   kodeMK: "TIF202",
-    //   namaMataKuliah: "IOT",
-    //   periode: "IOT",
-    //   nilai: "IOT",
-    //   smt: "IOT",
-    //   sks: "IOT",
-    // },
+    {
+      no: "1",
+      kodeMK: "TIF202",
+      namaMataKuliah: "IOT",
+      periode: "IOT",
+      nilai: "IOT",
+      smt: "IOT",
+      sks: "IOT",
+    },
   ];
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false}/>
 
       <div className="flex items-center space-x-2 mt-4">
         <label htmlFor="" className="text-sm font-medium">

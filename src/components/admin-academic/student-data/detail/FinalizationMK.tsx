@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import Biodata from "../../../biodata/Biodata";
+import { BriefStudentData } from "./BriefStudentData";
 
 export default function FinalizationMK() {
   const courses = [
@@ -204,7 +204,7 @@ export default function FinalizationMK() {
   const totalSKS = courses.reduce((acc, course) => acc + course.sks, 0);
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false}/>
 
       <div className="overflow-x-auto mt-4">
         <table className="w-full border-collapse border border-gray-300">

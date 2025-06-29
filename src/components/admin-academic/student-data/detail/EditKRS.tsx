@@ -1,6 +1,7 @@
 import { Eye, Trash2 } from "lucide-react";
 import Biodata from "../../../biodata/Biodata";
 import ButtonClick from "../ButtonClick";
+import { BriefStudentData } from "./BriefStudentData";
 
 export default function EditKRS() {
   const courses = [
@@ -108,7 +109,7 @@ export default function EditKRS() {
 
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false}/>
 
       <div className="flex items-center space-x-2 mt-4">
         <label htmlFor="" className="text-sm font-medium">

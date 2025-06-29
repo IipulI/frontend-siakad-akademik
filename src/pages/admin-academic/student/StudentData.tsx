@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useStudentData } from "../../../hooks/admin-akademik/useMahasiswa";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { getProgramStudi } from "../../../hooks/useFilter";
 
 export default function StudentData() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -64,6 +65,8 @@ export default function StudentData() {
     filters.periodeMasuk,
     filters.periodeKeluar
   );
+
+  const {data:programStudiDropdown} = getProgramStudi();
 
   const firstLoad = useRef(true);
 
@@ -139,16 +142,6 @@ export default function StudentData() {
   }
   function Setting() {
     alert("aksi");
-  }
-
-  function Link() {
-    alert("link");
-  }
-  function Detail() {
-    navigate(AdminAcademicRoute.student.detailStudent);
-  }
-  function Remove() {
-    alert("link");
   }
 
   // Handler untuk perubahan halaman
@@ -442,29 +435,6 @@ export default function StudentData() {
           </div>
         </div>
         <TableStudent data={studentData} isLoading={isLoading}>
-          <div className="flex justify-center space-x-2">
-            {
-              <ButtonClick
-                icon={<Link2 size={15} />}
-                color={"bg-primary-yellow"}
-                onClick={Link}
-              />
-            }
-            {
-              <ButtonClick
-                icon={<Eye size={15} />}
-                color={"bg-primary-blueSoft"}
-                onClick={Detail}
-              />
-            }
-            {
-              <ButtonClick
-                icon={<Trash2 size={15} />}
-                color={"bg-red-400"}
-                onClick={Remove}
-              />
-            }
-          </div>
         </TableStudent>
 
         {/* Pagination Section */}

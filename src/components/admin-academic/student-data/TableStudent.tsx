@@ -1,13 +1,33 @@
-import { useNavigate } from "react-router-dom";
 import { StudentData } from "../../../hooks/admin-akademik/useMahasiswa";
+import {
+  Trash2,
+  Eye,
+  Link2,
+} from "lucide-react";
+import ButtonClick from "./ButtonClick";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { useNavigate } from "react-router-dom";
 
 interface TableProps {
   data: StudentData[];
-  children: React.ReactNode;
   isLoading?: boolean;
 }
 
-export default function TableStudent({ data, children, isLoading }: TableProps) {
+export default function TableStudent({ data, isLoading }: TableProps) {
+    const navigate = useNavigate();
+
+    function Link() {
+    alert("link");
+  }
+  function Detail(item) {
+    navigate(AdminAcademicRoute.student.detailStudent, {
+      state: item,
+    })
+  }
+  function Remove() {
+    alert("link");
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -75,8 +95,30 @@ export default function TableStudent({ data, children, isLoading }: TableProps) 
                   {student.ipk}
                 </td>
                 <td className="p-2 border border-gray-300 font-semibold">
-                  {children}
-                </td>
+          <div className="flex justify-center space-x-2">
+            {
+              <ButtonClick
+                icon={<Link2 size={15} />}
+                color={"bg-primary-yellow"}
+                onClick={Link}
+              />
+            }
+            {
+              <ButtonClick
+                icon={<Eye size={15} />}
+                color={"bg-primary-blueSoft"}
+                onClick={()=>Detail(student.id)}
+              />
+            }
+            {
+              <ButtonClick
+                icon={<Trash2 size={15} />}
+                color={"bg-red-400"}
+                onClick={Remove}
+              />
+            }
+          </div>
+          </td>
               </tr>
             ))
           )}

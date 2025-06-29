@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useGetAcademicAdvisor } from "../../../hooks/admin-akademik/usePembimbingAkademik";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { getAcademicPeriodeDropdown, getPeriodeAcademicActive, getProgramStudi } from "../../../hooks/useFilter";
 
 export default function AcademikAdvisor() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +23,7 @@ export default function AcademikAdvisor() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [filters, setFilters] = useState({
-    periodeAkademik: "2025 Ganjil", // Set default value yang valid
+    periodeAkademik: "",
     programStudi: "",
     angkatan: "",
     statusKrs: "",
@@ -40,7 +41,6 @@ export default function AcademikAdvisor() {
     data: apiResponse,
     isLoading,
     isError,
-    refetch, // Tambahkan refetch dari useQuery
   } = useGetAcademicAdvisor({
     page: currentPage,
     size: rowsPerPage,
@@ -54,12 +54,11 @@ export default function AcademikAdvisor() {
     sort: "createdAt,desc",
   });
 
+  const {data:periodeAkademik} = getAcademicPeriodeDropdown();
+
   // Extract data dari response
   const studentRecords = apiResponse?.data || [];
   const pagination = apiResponse?.pagination;
-
-  console.log("Student Records:", studentRecords);
-  console.log("Current Filters:", filters);
 
   useEffect(() => {
     if (!isLoading) {
@@ -183,11 +182,11 @@ export default function AcademikAdvisor() {
     // Add your logic here for academic advisor assignment
   }
 
-  const periode = [
-    { value: "2025 Ganjil", label: "2025 Ganjil" },
-    { value: "2024 Genap", label: "2024 Genap" },
-    { value: "2024 Ganjil", label: "2024 Ganjil" },
-  ];
+  const periode =
+    periodeAkademik?.map((data) => ({
+      value: data.namaPeriode,
+      label: data.namaPeriode,
+    }));
 
   const statusPembimbing = [
     { value: "", label: "-- Semua Status Pembimbing --" },

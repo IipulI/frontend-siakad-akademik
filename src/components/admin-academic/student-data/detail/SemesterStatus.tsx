@@ -1,6 +1,9 @@
-import Biodata from "../../../biodata/Biodata";
+import { useLocation } from "react-router-dom";
+import { BriefStudentData } from "./BriefStudentData";
 
 export default function () {
+  const { state } = useLocation();
+
   const tableData = [
     {
       no: 1,
@@ -77,7 +80,7 @@ export default function () {
   ];
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false}/>
       <div className="mt-4 overflow-auto">
         <table className="w-full border-collapse border border-gray-300">
           <thead className="bg-primary-green text-white">

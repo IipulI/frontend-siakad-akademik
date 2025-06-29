@@ -73,7 +73,7 @@ export function useGetAcademicAdvisor({
       const params: any = {
         page,
         size,
-        periodeAkademik, // Always include this as it's required
+        periodeAkademik,
         sort,
       };
 

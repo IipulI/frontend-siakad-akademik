@@ -29,8 +29,13 @@ import FinantialHistory from "../../../components/admin-academic/student-data/de
 import Repeat from "../../../components/admin-academic/student-data/detail/Repeat";
 import EditKRS from "../../../components/admin-academic/student-data/detail/EditKRS";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { useLocation } from "react-router-dom";
 
 export default function DetailStudent() {
+  const { state } = useLocation();
+
+  console.log(state);
+
   function SearchSubmit() {
     alert("submit");
   }
