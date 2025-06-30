@@ -46,12 +46,11 @@ const ClassLecturer = () => {
   const { isPending, data } = useQuery({
     queryKey: ['dosen/kelas-kuliah', currentPage, debouncedSearch],
     queryFn: async () => {
-      // const separator = dateQuery ? "&" : ""
       return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}&keyword=${debouncedSearch}`)
     },
   })
 
-    const statusOptions = ["Semua Status", "Aktif", "Prioritas"]
+    const statusOptions = ["Semua Status"]
 
     return (
     <MainLayout
@@ -71,7 +70,9 @@ const ClassLecturer = () => {
                     <div className="flex px-4 justify-between">
                         <div className="flex gap-4">
                             <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
-                                <option value={"semua"}>-Semua-</option>
+                                {statusOptions.map(value => (
+                                  <option key={value} value={value}>{value}</option>
+                                ))}
                             </select>
                             <div className="flex">
                                 <input
