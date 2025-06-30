@@ -52,8 +52,6 @@ const CalendarLecturer = () => {
       }))
     : [];
 
-  console.log(jadwalData)
-    
 
   return (
     <MainLayout
@@ -73,13 +71,12 @@ const CalendarLecturer = () => {
           </div>
         </div>
         <div className="mt-10 md:mt-6">
-          {isPending && 
-            <div className="flex justify-center items-center w-full">
-              <div className="h-80 font-semibold w-full text-center bg-gray-300 animate-pulse rounded-lg mt-10"></div>
-            </div>}
-          {error && <div className="text-red-500">Error: {error.message}</div>}
-          {jadwalData.map((hari, idx) => (
-            <TableSchedule key={idx} hari={hari.hari} data={hari.dataKuliah} />
+          {hariList.map((hari, idx) => (
+            <TableSchedule
+              key={idx}
+              hari={hari.label}
+              data={isPending || error ? [] : (jadwalData[idx]?.dataKuliah || [])}
+            />
           ))}
         </div>
       </div>

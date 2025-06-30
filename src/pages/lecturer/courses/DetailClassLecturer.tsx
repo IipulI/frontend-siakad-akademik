@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import TableDetailClass from "../../../components/lecturer/TableDetailClass";
 import DataStudent from "../../../components/lecturer/DataStudent";
-import TableLecturer from "../../../components/lecturer/TableLecturer";
 import ButtonGroupOption from "../../../components/lecturer/ButtonGroupOption";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
 import { Link } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { Table } from "../../../components/Table";
 
 const selectOptions = [
   { value: "detail", text: "Detail Kelas" },
@@ -18,8 +18,8 @@ const selectOptions = [
 
 const tableHead = {
   detail: ["No", "Hari", "Jam mulai", "Jam selesai", "Jenis pertemuan", "Metode pembelajaran", "Ruang"],
-  peserta: ["No", "Nim", "Nama Mahasiswa", "Program Studi", "Angkatan", "Status KRS", "Aksi"],
-  nilai: ["No", "Nim", "Nama", "Hadir", "Tugas", "UTS", "UAS", "Kehadiran", "Nilai", "Grade", "Lulus", "Keterangan", "Aksi"]
+  peserta: ["No", "Nim", "Nama Mahasiswa", "Program Studi", "Angkatan", "Status KRS"],
+  nilai: ["No", "Nim", "Nama", "Hadir", "Tugas", "UTS", "UAS", "Kehadiran", "Nilai", "Grade", "Lulus", "Keterangan"]
 };
 
 const DetailClassLecturer = () => {
@@ -97,7 +97,6 @@ const DetailClassLecturer = () => {
     programStudi: item.programStudiResDto?.namaProgramStudi,
     angkatan: item.angkatan,
     status: item.status,
-    aksi: "",
   }));
 
   const dataNilai = pesertaData?.map((item, index) => ({
@@ -114,7 +113,6 @@ const DetailClassLecturer = () => {
     grade: item.hurufMutu,
     lulus: item.nilaiAkhir >= 60 ? "Lulus" : "Tidak",
     keterangan: item.nilaiAkhir >= 60 ? "Memenuhi" : "Tidak memenuhi",
-    aksi: "",
   }));
 
   const renderTable = () => {
@@ -122,9 +120,9 @@ const DetailClassLecturer = () => {
       case "detail":
         return <TableDetailClass tableHead={tableHead.detail} data={dataDetail} error="Data kosong" />;
       case "peserta":
-        return <TableLecturer tableHead={tableHead.peserta} data={dataPeserta} error="Data kosong" />;
+        return <Table tableHead={tableHead.peserta} data={dataPeserta} error="Data kosong" />;
       case "nilai":
-        return <TableLecturer tableHead={tableHead.nilai} data={dataNilai} error="Data kosong" />;
+        return <Table tableHead={tableHead.nilai} data={dataNilai} error="Data kosong" />;
       default:
         return null;
     }
@@ -157,7 +155,7 @@ const DetailClassLecturer = () => {
           <ButtonGroupOption options={selectOptions} selected={option} onChange={setOption} />
         </div>
         
-        <div className="w-full">
+        <div className="w-full overflow-x-auto">
             <DataStudent data={getDataStudent()} />
           <div className="w-full overflow-x-auto">
             {renderTable()}
