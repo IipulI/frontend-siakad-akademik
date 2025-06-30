@@ -102,6 +102,7 @@ export const LecturerRoute = {
     finalProject: "/dosen/bimbingan/tugas-akhir",
     supporter: "/dosen/bimbingan/kegiatan-pendukung",
     advisor: "/dosen/bimbingan/pembimbing-akademik",
+    detailAdvisor: "/dosen/bimbingan/pembimbing-akademik/detail"
   } as routeType,
   announcement: {},
   schedule: {
@@ -111,6 +112,7 @@ export const LecturerRoute = {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
     stopStudy: "/dosen/perkuliahan/berhenti-studi",
-    detailClass: "/dosen/perkuliahan/kelas-kuliah/detail"
+    detailClass: "/dosen/perkuliahan/kelas-kuliah/detail",
+    detailCourse: "/dosen/perkuliahan/mata-kuliah/detail"
   },
 };

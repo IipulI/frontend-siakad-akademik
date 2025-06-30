@@ -2,69 +2,113 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { Check, Eye, Pen, RefreshCw, Search, Settings, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import React from "react";
 import DetailAdvisorLecturer from "./DetailAdvisorLecturer";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { Api } from "../../../api/Index";
+import SelectOption from "../../../components/lecturer/SelectOption";
+import { useNavigate } from "react-router-dom";
+import { LecturerRoute } from "../../../types/VarRoutes";
 
 export default function AdvisorLecturer() {
-  const [id, setId] = useState<string | null>(null);
+  const navigate = useNavigate()
+
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [search, setSearch] = useState("");
+  const [selectedPeriode, setSelectedPeriode] = useState("");
+  const [selectedKRS, setSelectedKRS] = useState("");
+  const [selectedSemester, setSelectedSemester] = useState("");
+  const [selectedMahasiswa, setSelectedMahasiswa] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
 
   const debouncedSearch = useDebounce(search, 1000);
-
-  const { data: studentData, isPending } = useQuery({
-    queryKey: ["dosen/pembimbing-akademik/all", currentPage, debouncedSearch],
-    queryFn: () => Api.get(`/dosen/pembimbing-akademik/all?page=${currentPage}&keyword=${debouncedSearch}`),
+  
+  const { data: periodeAkademikDropdown } = useQuery({
+    queryKey: ["/periode-akademik/dropdown"],
+    queryFn: () => Api.get(`/periode-akademik/dropdown`),
   });
 
-  const filterOptions = [
-    {
-      label: "Periode Akademik",
-      options: [{ value: "", label: "2025 Ganjil" }],
-    },
-    {
-      label: "Status Pembimbing",
-      options: [{ value: "", label: "-- Semua Status Pembimbing --" }],
-    },
-    { label: "Semester", options: [{ value: "", label: "-- Semua Semester --" }] },
-    {
-      label: "Unit kerja",
-      options: [{ value: "", label: "Universitas Ibn Khaldun" }],
-    },
-    {
-      label: "Status KRS",
-      options: [{ value: "", label: "-- Semua Status KRS --" }],
-    },
-    {
-      label: "Status Mahasiswa",
-      options: [{ value: "", label: "-- Semua Status Mahasiswa --" }],
-    },
-    { label: "Angkatan", options: [{ value: "", label: "-- Semua Angkatan --" }] },
-  ];
+  useEffect(() => {
+    if (periodeAkademikDropdown?.data?.data?.length > 0 && !selectedPeriode) {
+      setSelectedPeriode(periodeAkademikDropdown?.data.data[0].namaPeriode);
+    }
+  }, [periodeAkademikDropdown, selectedPeriode]);
 
-  function Edit() {
-    alert("oke edit");
-  }
 
+
+  const { data: studentData, isPending } = useQuery({
+    queryKey: [
+      "dosen/pembimbing-akademik/all",
+      currentPage,
+      debouncedSearch,
+      selectedPeriode,
+    ],
+    queryFn: () =>
+      Api.get(
+        `/dosen/pembimbing-akademik/all?page=${currentPage}&keyword=${debouncedSearch}&periodeAkademik=${selectedPeriode}`
+      ),
+    enabled: !!selectedPeriode,
+  });
+
+  const periodeOptions = periodeAkademikDropdown?.data?.data?.map((item: any) => ({
+    value: item.namaPeriode,
+    label: item.namaPeriode,
+  })) || [];
+
+  const krsOptions = [{value: "Disetujui", label: "Disetujui"}, {value: "Tidak Disetujui", label: "Tidak Disetujui"}]
+  const mahasiswaOptions = [{value: "Aktif", label: "Aktif"}, {value: "Tidak Aktif", label: "Tidak Aktif"}]
+  const semesterOptions = [{value: "1", label: "1"}, {value: "2", label: "2"}, {value: "3", label: "3"}, {value: "4", label: "4"}, {value: "5", label: "5"}, {value: "6", label: "6"}, {value: "7", label: "7"}, {value: "8", label: "8"}, {value: "9", label: "9"}, {value: "10", label: "10"}, {value: "11", label: "11"}, {value: "12", label: "12"}, {value: "13", label: "13"}, {value: "14", label: "14"}]
+  const options = [{value: "Semua", label: "Semua"}]
 
   return (
     <MainLayout isGreeting={false} titlePage="Pembimbing Akademik">
-      {!id ? (
-        <>
-          <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
-            {filterOptions.map((filter, index) => (
-              <InputFilter
-                key={index}
-                options={filter.options}
-                label={filter.label}
-              />
-            ))}
+        <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
+          <SelectOption
+            label="Periode Akademik"
+            options={periodeOptions}
+            value={selectedPeriode}
+            onChange={setSelectedPeriode}
+          />
+          <SelectOption
+            label="Status Pembimbing"
+            options={options}
+            value={selectedOption}
+            onChange={setSelectedOption}
+          />
+          <SelectOption
+            label="Semester"
+            options={semesterOptions}
+            value={selectedSemester}
+            onChange={setSelectedSemester}
+          />
+          <SelectOption
+            label="Unit Kerja"
+            options={options}
+            value={selectedOption}
+            onChange={setSelectedOption}
+          />
+          <SelectOption
+            label="Status KRS"
+            options={krsOptions}
+            value={selectedKRS}
+            onChange={setSelectedKRS}
+          />
+          <SelectOption
+            label="Status Mahasiswa"
+            options={mahasiswaOptions}
+            value={selectedMahasiswa}
+            onChange={setSelectedMahasiswa}
+          />
+          <SelectOption
+            label="Angkatan"
+            options={options}
+            value={selectedOption}
+            onChange={setSelectedOption}
+          />
           </div>
 
           <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
@@ -96,27 +140,6 @@ export default function AdvisorLecturer() {
                 </div>
               </div>
 
-              <div className="flex bg-primary-yellow items-center rounded p-1 px-2">
-                <Settings color="white" size={17} />
-                <select
-                  name=""
-                  id=""
-                  className=" text-white rounded font-semibold text-sm w-16"
-                >
-                  <option value="" className="bg-white text-black">
-                    Aksi
-                  </option>
-                  <option value="" className="bg-white text-black">
-                    Setujui KRS
-                  </option>
-                  <option value="" className="bg-white text-black">
-                    Batalkan KRS
-                  </option>
-                  <option value="" className="bg-white text-black">
-                    Pembimbing Akademik
-                  </option>
-                </select>
-              </div>
             </div>
 
             <div className="overflow-x-auto my-4">
@@ -227,12 +250,7 @@ export default function AdvisorLecturer() {
                             <ButtonClick
                               icon={<Pen size={16} />}
                               color="bg-primary-yellow"
-                              onClick={Edit}
-                            />
-                            <ButtonClick
-                              icon={<Eye size={16} />}
-                              color="bg-primary-blueSoft"
-                              onClick={() => setId("1")}
+                              onClick={() => navigate(LecturerRoute.guidance.detailAdvisor)}
                             />
                           </div>
                         </td>
@@ -258,11 +276,6 @@ export default function AdvisorLecturer() {
               />
             )}
           </div>
-          <div className="py-10"></div>
-        </>
-      ) : (
-        <DetailAdvisorLecturer />
-      )}
     </MainLayout>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Search, RefreshCw } from "lucide-react"
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Pagination } from "../../../components/admin-academic/Pagination";
@@ -7,51 +7,44 @@ import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index"
 import TableClass from "../../../components/lecturer/TableClass";
 import { useDebounce } from "../../../hooks/useDebounce";
+import SelectOption from "../../../components/lecturer/SelectOption";
 
 const ClassLecturer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [search, setSearch] = useState("");
+  const [selectedPeriode, setSelectedPeriode] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const options = [{value: "Semua", label: "Semua"}]
+
 
   const debouncedSearch = useDebounce(search, 1000);
 
-  const filterOptions = [
-    {
-      options: [{ value: "", label: "2025 Ganjil" }],
-      label: "Periode Akademik"
-    },
-    {
-      options: [{ value: "", label: "S1 Teknik Informatika" }],
-      label: "Prodi Pengampu"
-    },
-    {
-      options: [{ value: "", label: "-- Semua Semester --" }],
-      label: "Prodi Sebaran"
-    },
-    {
-      options: [{ value: "", label: "-- Semua Kurikulum --" }],
-      label: "Kurikulum"
-    },
-    {
-      options: [{ value: "", label: "-- Semua Sistem Kuliah --" }],
-      label: "Sistem Kuliah"
-    },
-    {
-      options: [{ value: "", label: "-- Semua Jenis Status --" }],
-      label: "Jenis Status"
-    },
+  const { data: periodeAkademikDropdown } = useQuery({
+    queryKey: ["/periode-akademik/dropdown"],
+    queryFn: () => Api.get(`/periode-akademik/dropdown`),
+  });
 
-  ];
 
   const { isPending, data } = useQuery({
-    queryKey: ['dosen/kelas-kuliah', currentPage, debouncedSearch],
+    queryKey: ['dosen/kelas-kuliah', currentPage, debouncedSearch, selectedPeriode],
     queryFn: async () => {
-      // const separator = dateQuery ? "&" : ""
-      return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}&keyword=${debouncedSearch}`)
+      return await Api.get(`/dosen/kelas-kuliah?page=${currentPage}&keyword=${debouncedSearch}&periodeAkademik=${selectedPeriode}`)
     },
   })
 
-    const statusOptions = ["Semua Status", "Aktif", "Prioritas"]
+  const periodeOptions = periodeAkademikDropdown?.data?.data?.map((item: any) => ({
+    value: item.namaPeriode,
+    label: item.namaPeriode,
+  })) || [];
+
+  periodeOptions.unshift({
+    value: "",
+    label: "Semua"
+  })
+
+    const statusOptions = ["Semua Status"]
 
     return (
     <MainLayout
@@ -59,19 +52,50 @@ const ClassLecturer = () => {
         isGreeting={false}
     >
                 <div className="grid lg:grid-cols-2 mb-4 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
-                    {filterOptions.map((filter, index) => (
-                        <InputFilter 
-                            key={index}
-                            options={filter.options} 
-                            label={filter.label} 
-                        />
-                    ))}
+                    <SelectOption
+                      label="Periode Akademik"
+                      options={periodeOptions}
+                      value={selectedPeriode}
+                      onChange={setSelectedPeriode}
+                    />
+                    <SelectOption
+                      label="Prodi Pengampu"
+                      options={options}
+                      value={selectedOption}
+                      onChange={setSelectedOption}
+                    />
+                    <SelectOption
+                      label="Periode Sebaran"
+                      options={options}
+                      value={selectedOption}
+                      onChange={setSelectedOption}
+                    />
+                    <SelectOption
+                      label="Kurikulum"
+                      options={options}
+                      value={selectedOption}
+                      onChange={setSelectedOption}
+                    />
+                    <SelectOption
+                      label="Sistem Kuliah"
+                      options={options}
+                      value={selectedOption}
+                      onChange={setSelectedOption}
+                    />
+                    <SelectOption
+                      label="Jenis Status"
+                      options={options}
+                      value={selectedOption}
+                      onChange={setSelectedOption}
+                    />
                 </div>
                 <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green">
                     <div className="flex px-4 justify-between">
                         <div className="flex gap-4">
                             <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
-                                <option value={"semua"}>-Semua-</option>
+                                {statusOptions.map(value => (
+                                  <option key={value} value={value}>{value}</option>
+                                ))}
                             </select>
                             <div className="flex">
                                 <input

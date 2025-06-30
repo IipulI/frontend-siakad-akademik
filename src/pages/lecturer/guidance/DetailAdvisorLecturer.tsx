@@ -73,11 +73,11 @@ const DetailAdvisorLecturer = () => {
   ];
 
   return (
-    <>
+    <MainLayout isGreeting={false} titlePage="Detail Bimbingan Akademik">
       <HorizontalLine />
       <Biodata showLine={false} />
       <StudyPlanCardTable courses={courses} />
-    </>
+    </MainLayout>
   );
 };
 
