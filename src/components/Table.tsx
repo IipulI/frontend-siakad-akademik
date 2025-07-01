@@ -12,12 +12,12 @@ interface TableProps {
   setId?: (id: string | null) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  isEditing: boolean;
-  currentData: any | null;
-  onSave: () => void;
-  onReset: () => void;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;
-  isAdding: boolean;
+  isEditing?: boolean;
+  currentData?: any | null;
+  onSave?: () => void;
+  onReset?: () => void;
+  onInputChange?: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;
+  isAdding?: boolean;
   onSelect?: (id: number) => void;
   selectedIds?: number[];
 
