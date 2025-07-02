@@ -7,6 +7,7 @@ import { TableObeCPL } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus, Table } from "lucide-react";
 import { CplData } from "../../../components/types.ts";
 import { Api } from "../../../api/Index";
+import { id } from "date-fns/locale";
 
 // api
 

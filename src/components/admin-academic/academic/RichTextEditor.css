@@ -1,0 +1,52 @@
+/* RichTextEditor.css */
+
+/* Gaya untuk area konten editor utama */
+.draft-editor-wrapper .public-DraftEditor-content {
+  min-height: 120px;
+  padding-left: 5px; /* Sesuaikan padding agar penanda list tidak terpotong */
+}
+
+/* Styling untuk gaya blok kustom yang diterapkan melalui blockStyleFn */
+/* Kelas ini diterapkan pada elemen <div> yang membungkus <li> */
+.draft-editor-wrapper .custom-unordered-list-item,
+.draft-editor-wrapper .custom-ordered-list-item {
+  margin-left: 1.5rem; /* Indentasi item daftar */
+}
+
+/* PENTING: Targetkan elemen UL/OL yang dihasilkan oleh Draft.js */
+/* Ini adalah kunci agar penanda list (bullet/nomor) muncul dan terindentasi dengan benar */
+.draft-editor-wrapper .public-DraftStyleDefault-ul {
+  list-style-type: disc !important; /* Paksa bullet untuk daftar tak berurut */
+  margin-block-start: 1em; /* Margin atas untuk daftar */
+  margin-block-end: 1em; /* Margin bawah untuk daftar */
+  padding-inline-start: 40px; /* Indentasi standar untuk list */
+}
+
+.draft-editor-wrapper .public-DraftStyleDefault-ol {
+  list-style-type: decimal !important; /* Paksa nomor untuk daftar berurut */
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  padding-inline-start: 40px;
+}
+
+/* Styling untuk Heading (H1, H2, H3) */
+.draft-editor-wrapper .custom-header-one {
+  font-size: 1.875rem; /* Ukuran font H1 */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.draft-editor-wrapper .custom-header-two {
+  font-size: 1.5rem; /* Ukuran font H2 */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.draft-editor-wrapper .custom-header-three {
+  font-size: 1.25rem; /* Ukuran font H3 */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
