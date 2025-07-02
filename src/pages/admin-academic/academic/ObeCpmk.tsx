@@ -66,7 +66,7 @@ const ObeCpmk: React.FC = () => {
     navigate(path);
   };
   const handleBack = () => {
-    navigate(AdminAcademicRoute.courseManagement.courseManagement);
+    navigate(AdminAcademicRoute.obeManagement.obeManagement);
   };
 
   return (

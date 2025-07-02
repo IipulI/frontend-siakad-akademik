@@ -1,3 +1,4 @@
+import { id } from "date-fns/locale";
 export interface CurriculumData {
   id: string;
   mulaiBerlaku: string;
@@ -10,7 +11,7 @@ export interface CurriculumData {
 
 export interface PeriodeAkademik {
   id: string;
-  siakTahunAjaranId: "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+  siakTahunAjaranId: string;
   namaPeriode: string;
   kodePeriode: string;
   tanggalMulai: string;
@@ -112,7 +113,7 @@ export interface RpsData {
   siakMataKuliahId: string;
   dosenIds: string[];
   tahunKurikulum: CurriculumData;
-  PeriodeAkademik: PeriodeAkademik;
+  periodeAkademik: PeriodeAkademik;
   programStudi: ProgramStudiData;
   tanggalPenyusun: string;
   deskripsiMataKuliah: string;
@@ -120,10 +121,22 @@ export interface RpsData {
   materiPembelajaran: string;
   pustakaUtama: string;
   pustakaPendukung: string;
-  dosenPenyusun: DosenData;
+  dosenPenyusun: [
+    {
+      id: string;
+      nama: string;
+      nidn: string;
+    }
+  ];
   mataKuliah: CourseData;
-  kelas: KelasData;
+  kelas: [
+    {
+      id: string;
+      nama: string;
+    }
+  ];
   sks: number;
+  dokumenRps?: string;
 }
 
 export interface CurriculumProdiData {

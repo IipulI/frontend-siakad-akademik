@@ -1,13 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Edit, Save } from "lucide-react";
+import RichTextEditor from "../../../components/admin-academic/academic/RichTextEditor";
+import { EditorState, convertToRaw, convertFromHTML } from "draft-js";
+import { Api } from "../../../api/Index.tsx";
+import { RpsData } from "../../../components/types.ts";
+import { useQuery } from "@tanstack/react-query";
+import { getDosen } from "../../../hooks/academic/useDosen.ts";
+import { getCourseData } from "../../../hooks/academic/useCourseManagement.ts";
 
-import RichTextEditor from "../../../components/admin-academic/RichTextEditor";
+const fetchRpsDetail = async (id: string): Promise<RpsData> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+  const response = await Api.get(`/akademik/rps/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  console.log("🔍 Raw course detail API data:", response.data.data);
+
+  return response.data.data;
+};
 
 const EditRps = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const { data: dosenData = [], isLoading: isDosenLoading, error: dosenError } = getDosen();
+  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+
+  const emptyDraftState = convertToRaw(EditorState.createEmpty().getCurrentContent());
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.rpsManagement.rpsManagement);
@@ -17,13 +41,57 @@ const EditRps = () => {
     mataKuliah: "",
     tanggalPenyusunan: "",
     dosenPenyusun: "",
-    capaianMataKuliah: "",
-    topikMataKuliah: "",
-    materiPerkuliahan: "",
-    pustakaUtama: "",
-    pustakaPendukung: "",
-    dokumenRps: null,
+    deskripsiMataKuliah: emptyDraftState,
+    tujuanMataKuliah: emptyDraftState,
+    materiPembelajaran: emptyDraftState,
+    pustakaUtama: emptyDraftState,
+    pustakaPendukung: emptyDraftState,
+    dokumenRps: File | null,
   });
+
+  const {
+    data: rpsDetail,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["rpsDetail", id],
+    queryFn: () => fetchRpsDetail(id!),
+    enabled: !!id,
+    staleTime: 2 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+
+  const convertHtmlToDraft = (html: string | null | undefined) => {
+    if (!html) {
+      return emptyDraftState;
+    }
+    try {
+      const contentBlocks = convertFromHTML(html);
+      if (contentBlocks.contentBlocks) {
+        return convertToRaw(EditorState.createWithContent(contentBlocks).getCurrentContent());
+      }
+      return emptyDraftState;
+    } catch {
+      return emptyDraftState;
+    }
+  };
+
+  useEffect(() => {
+    if (rpsDetail) {
+      setFormData({
+        mataKuliah: rpsDetail.mataKuliah?.id || "",
+        tanggalPenyusunan: rpsDetail.tanggalPenyusun?.split("T")[0] || "",
+        dosenPenyusun: rpsDetail.dosenPenyusun[0]?.id || "",
+        // Konversi string HTML dari API ke format draft-js sebelum disimpan ke state
+        deskripsiMataKuliah: convertHtmlToDraft(rpsDetail.deskripsiMataKuliah),
+        tujuanMataKuliah: convertHtmlToDraft(rpsDetail.tujuanMataKuliah),
+        materiPembelajaran: convertHtmlToDraft(rpsDetail.materiPembelajaran),
+        pustakaUtama: convertHtmlToDraft(rpsDetail.pustakaUtama),
+        pustakaPendukung: convertHtmlToDraft(rpsDetail.pustakaPendukung),
+        dokumenRps: null,
+      });
+    }
+  }, [rpsDetail]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,7 +106,6 @@ const EditRps = () => {
   const handleEditorChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSave = () => {
     console.log("Data disimpan:", formData);
     // TODO: Simpan data ke backend di sini
@@ -71,7 +138,7 @@ const EditRps = () => {
             <div className="flex-1">
               <div className="flex justify-between gap-2 md:justify-normal">
                 <div className="font-semibold text-primary-green">Tahun Kurikulum:</div>
-                <div>2023</div>
+                <div>{rpsDetail?.tahunKurikulum.tahun}</div>
               </div>
             </div>
 
@@ -79,15 +146,15 @@ const EditRps = () => {
             <div className="flex-1">
               <div className="flex justify-between gap-2 md:justify-normal">
                 <div className="font-semibold text-primary-green">Periode Akademik:</div>
-                <div>2025 Genap</div>
+                <div>{rpsDetail?.periodeAkademik.namaPeriode}</div>
               </div>
             </div>
 
             {/* Kolom 3 */}
             <div className="flex-1">
               <div className="flex justify-between  md:justify-normal">
-                <div className="font-semibold text-primary-green">Program Studi:</div>
-                <div>SI - Teknik Informatika</div>
+                <div className="font-semibold text-primary-green">Program Studi: </div>
+                <div className="ml-4">{rpsDetail?.programStudi.namaProgramStudi}</div>
               </div>
             </div>
           </div>
@@ -104,9 +171,11 @@ const EditRps = () => {
               <option value="" disabled>
                 -- Pilih Mata Kuliah --
               </option>
-              <option value="MK001">Pemrograman Web</option>
-              <option value="MK002">Basis Data</option>
-              <option value="MK003">Algoritma dan Struktur Data</option>
+              {courseData.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.namaMataKuliah}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -127,17 +196,19 @@ const EditRps = () => {
               <option value="" disabled>
                 -- Pilih Dosen --
               </option>
-              <option value="DSN001">Prof. Dr. Bambang Sutejo</option>
-              <option value="DSN002">Dr. Siti Aminah</option>
-              <option value="DSN003">Ir. Hadi Santoso</option>
+              {dosenData.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.nama}
+                </option>
+              ))}
             </select>
           </div>
 
           {/* RichText Fields */}
           {[
-            { name: "capaianMataKuliah", label: "Deskripsi Mata Kuliah" },
-            { name: "topikMataKuliah", label: "Tujuan Mata Kuliah" },
-            { name: "materiPerkuliahan", label: "Materi Pembelajaran" },
+            { name: "deskripsiMataKuliah", label: "Deskripsi Mata Kuliah" },
+            { name: "tujuanMataKuliah", label: "Tujuan Mata Kuliah" },
+            { name: "materiPembelajaran", label: "Materi Pembelajaran" },
             { name: "pustakaUtama", label: "Pustaka Utama" },
             { name: "pustakaPendukung", label: "Pustaka Pendukung" },
           ].map((field) => (
@@ -159,7 +230,7 @@ const EditRps = () => {
             {/* Konten kanan */}
             <div className="flex flex-col flex-1">
               {/* Nama file muncul kalau ada */}
-              {formData.dokumenRps && <div className="text-primary-green text-sm font-semibold mb-1">{formData.dokumenRps}</div>}
+              {formData.dokumenRps && <div className="text-primary-green text-sm font-semibold mb-1">{formData.dokumenRps.name}</div>}
 
               {/* Input file dengan border */}
               <input id="dokumenRps" type="file" name="dokumenRps" accept=".pdf,.doc,.docx,.xls,.xlsx" onChange={handleFileChange} className="border border-gray-300 rounded px-3 py-2" />
