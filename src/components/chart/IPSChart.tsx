@@ -1,4 +1,3 @@
-// IPSChart.js
 import React from "react";
 import {
   Chart as ChartJS,
@@ -13,22 +12,43 @@ import {
 import { Line } from "react-chartjs-2";
 
 ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  CategoryScale,
-  Filler,
-  Tooltip,
-  Legend
+    LineElement,
+    PointElement,
+    LinearScale,
+    CategoryScale,
+    Filler,
+    Tooltip,
+    Legend
 );
 
-export default function IPSChart() {
+interface IPSChartProps {
+  ipsData: number[];
+}
+
+export default function IPSChart({ ipsData = [] }: IPSChartProps) {
+  // 1. Define the minimum number of semesters to display.
+  const MIN_SEMESTERS = 8;
+
+  // 2. Create a new "padded" data array.
+  let processedIpsData = [...ipsData];
+
+  // 3. Check if the incoming data is less than the minimum.
+  if (processedIpsData.length < MIN_SEMESTERS) {
+    // 4. If so, calculate how many zeros to add.
+    const paddingCount = MIN_SEMESTERS - processedIpsData.length;
+    const padding = Array(paddingCount).fill(0);
+
+    // Add the zeros to the end of the array.
+    processedIpsData.push(...padding);
+  }
+
   const data = {
-    labels: ["1", "2", "3", "4", "5", "6", "7", "8"],
+    // 5. Use the new processedData for the chart's labels and data.
+    labels: processedIpsData.map((_, index) => `${index + 1}`),
     datasets: [
       {
         label: "IPS",
-        data: [3.1, 3.4, 3.6, 3.3, 3.2, 0.0, 0.0, 0.0],
+        data: processedIpsData,
         fill: true,
         backgroundColor: "rgba(0, 200, 83, 0.2)",
         borderColor: "green",
@@ -57,11 +77,11 @@ export default function IPSChart() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h2 className="text-center mb-2 font-semibold text-[#939393]">
-        Grafik IPS (Semester)
-      </h2>
-      <Line data={data} options={options} />
-    </div>
+      <div className="bg-white rounded-lg shadow p-4">
+        <h2 className="text-center mb-2 font-semibold text-[#939393]">
+          Grafik IPS (Semester)
+        </h2>
+        <Line data={data} options={options} />
+      </div>
   );
 }
