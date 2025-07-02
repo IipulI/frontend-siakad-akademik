@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Api } from "../../../api/Index";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CourseData } from "../../../components/types.ts";
 import { TableCpl, TableCpmk } from "../../../components/Table";
@@ -16,8 +16,6 @@ const fetchCourseDetail = async (id: string): Promise<CourseData> => {
   const response = await Api.get(`/akademik/mata-kuliah/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-
-  console.log("🔍 Raw course detail API data:", response.data.data);
 
   return response.data.data;
 };

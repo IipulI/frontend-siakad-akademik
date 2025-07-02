@@ -7,7 +7,7 @@ import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, 
 import { getKelas, getRps, useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement.ts";
 import { Api } from "../api/Index.tsx";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
-import { cplCpmkCourse } from "../hooks/academic/useCplCpmkCourse.ts";
+import { CplCpmkCourseResponse } from "../hooks/academic/useCplCpmkCourse.ts";
 
 interface TableProps {
   data: Array<Record<string, any>>;
@@ -75,13 +75,13 @@ interface TableRpsProps {
 }
 
 interface TableCplProps {
-  data: cplCpmkCourse[];
+  data: CplCpmkCourseResponse[];
   tableHead: string[];
   error: string;
 }
 
 interface TableCpmkProps {
-  data: CpmkData[];
+  data: CplCpmkCourseResponse[];
   tableHead: string[];
   error: string;
 }
@@ -532,8 +532,8 @@ export const TableCpmk = ({ data, tableHead, error }: TableCpmkProps) => {
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-sm border-black/50">{row.kodeMataKuliah}</td>
-                  <td className="p-2 border text-sm border-black/50 text-left">{}</td>
+                  <td className="p-2 border text-sm border-black/50">{row.kodeCpmk}</td>
+                  <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpmk}</td>
                 </tr>
               );
             })
