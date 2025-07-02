@@ -4,40 +4,30 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Api } from "../../../api/Index";
-
-interface StudentData {
-  id: string;
-  npm: string;
-  nama: string;
-  namaFakultas: string;
-  namaProgramStudi: string;
-  semester: string;
-  angkatan: string;
-}
-
-interface DataKomponenTagihan {
-  id: string;
-  kodeKomponen: string;
-  nama: string;
-  nominal: number;
-  selected?: boolean;
-}
-
-interface FormData {
-  tanggalTenggat: string;
-  tahap: string;
-}
+import {
+  DataKomponenTagihan,
+  StudentData,
+  useCreateInvoiceData,
+  useGetComponentBill,
+  FormData,
+} from "../../../hooks/admin-keuangan/useCreateBill";
+import { AdminFinanceRoute } from "../../../types/VarRoutes";
+import {
+  ToastNotif,
+  showToast,
+} from "../../../components/admin-finance/Toastify";
+import { formatToRupiah } from "../../../components/admin-finance/FormatToRupiah";
 
 export default function FormCreateBill() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  // state mahasiswa yang dipilih
   const [selectedStudents, setSelectedStudents] = useState<StudentData[]>([]);
 
+  // state biaya
   const [biayaTersedia, setBiayaTersedia] = useState<DataKomponenTagihan[]>([]);
   const [biayaDipilih, setBiayaDipilih] = useState<DataKomponenTagihan[]>([]);
   const [totalTagihan, setTotalTagihan] = useState<number>(0);
 
+  // state pencaharian tagihan
   const [pencarianTersedia, setPencarianTersedia] = useState<string>("");
   const [pencarianDipilih, setPencarianDipilih] = useState<string>("");
 
@@ -50,12 +40,19 @@ export default function FormCreateBill() {
   // State untuk loading
   const [isLoading, setIsLoading] = useState(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // variabel diambil dari hook
+  const { data: semuaData } = useGetComponentBill();
+  const { mutateAsync } = useCreateInvoiceData();
+
   useEffect(() => {
     const stateData = location.state?.selectedStudents;
     if (stateData && stateData.length > 0) {
       setSelectedStudents(stateData);
     } else {
-      alert(
+      showToast.info(
         "Tidak ada mahasiswa yang dipilih. Silakan pilih mahasiswa terlebih dahulu."
       );
       navigate(-1);
@@ -63,25 +60,17 @@ export default function FormCreateBill() {
   }, [location.state, navigate]);
 
   useEffect(() => {
-    const ambilData = async () => {
-      try {
-        const response = await Api.get("/keuangan/invoice-komponen-mahasiswa");
-        const semuaData: DataKomponenTagihan[] = response.data.data;
-        setBiayaTersedia(semuaData.filter((item) => !item.selected));
-        setBiayaDipilih(semuaData.filter((item) => item.selected));
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-      }
-    };
-    ambilData();
-  }, []);
+    if (semuaData) {
+      setBiayaTersedia(semuaData.filter((item) => !item.selected));
+      setBiayaDipilih(semuaData.filter((item) => item.selected));
+    }
+  }, [semuaData]);
 
   useEffect(() => {
     const total = biayaDipilih.reduce((sum, item) => sum + item.nominal, 0);
     setTotalTagihan(total);
   }, [biayaDipilih]);
 
-  // Function untuk handle perubahan input form
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -89,54 +78,57 @@ export default function FormCreateBill() {
     }));
   };
 
+  // Handle untuk menghapus data mahasiswa yang telah dipilih
   function handleDelete(studentId: string) {
     const updated = selectedStudents.filter((s) => s.id !== studentId);
     setSelectedStudents(updated);
     if (updated.length === 0) {
-      alert("Semua mahasiswa telah dihapus. Silakan pilih mahasiswa kembali.");
+      showToast.warning(
+        "Semua mahasiswa telah dihapus. Silakan pilih mahasiswa kembali."
+      );
       navigate(-1);
     }
   }
 
+  // Handle untuk tambah tagihan
   const tambahBiaya = (item: DataKomponenTagihan) => {
     setBiayaTersedia((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaDipilih((prev) => [...prev, item]);
   };
 
+  // Handle untuk hapus tagihan
   const hapusBiaya = (item: DataKomponenTagihan) => {
     setBiayaDipilih((prev) => prev.filter((x) => x.id !== item.id));
     setBiayaTersedia((prev) => [...prev, item]);
   };
 
-  // Function untuk menyimpan data dengan API call
+  // Handle untuk membuat tagihan mahasiswa dengan hook
   const simpanData = async () => {
-    if (isLoading) return; // Prevent double submission
+    if (isLoading) return;
 
     try {
-      // Validasi input
       if (!formData.tanggalTenggat) {
-        alert("Tanggal tenggat harus diisi!");
+        showToast.info("Tanggal tenggat harus diisi!");
         return;
       }
 
       if (!formData.tahap) {
-        alert("Tahap pembayaran harus dipilih!");
+        showToast.info("Tahap pembayaran harus dipilih!");
         return;
       }
 
       if (selectedStudents.length === 0) {
-        alert("Pilih minimal satu mahasiswa!");
+        showToast.info("Pilih minimal satu mahasiswa!");
         return;
       }
 
       if (biayaDipilih.length === 0) {
-        alert("Pilih minimal satu komponen biaya!");
+        showToast.info("Pilih minimal satu komponen biaya!");
         return;
       }
 
       setIsLoading(true);
 
-      // Siapkan data untuk dikirim sesuai schema API
       const invoiceData = {
         siakMahasiswaIds: selectedStudents.map((student) => student.id),
         tanggalTenggat: formData.tanggalTenggat,
@@ -146,49 +138,27 @@ export default function FormCreateBill() {
         })),
       };
 
-      console.log("Data yang akan dikirim:", invoiceData);
+      await mutateAsync(invoiceData);
 
-      // Kirim data ke API
-      const response = await Api.post(
-        "/keuangan/invoice-mahasiswa",
-        invoiceData
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        alert(
-          `Tagihan berhasil dibuat!\n` +
-            `Total: ${formatRupiah(totalTagihan)}\n` +
-            `Mahasiswa: ${selectedStudents.length} orang\n` +
-            `Komponen biaya: ${biayaDipilih.length} item\n` +
-            `Tanggal tenggat: ${formData.tanggalTenggat}\n` +
-            `Tahap: ${formData.tahap}`
-        );
-
-        // Kembali ke halaman sebelumnya setelah berhasil
-        navigate(-1);
-      }
+      navigate(AdminFinanceRoute.studentBill);
     } catch (error) {
       console.error("Error saat menyimpan tagihan:", error);
 
-      // Handle different error types
       if (error.response) {
-        // Server responded with error status
-        const errorMessage =
-          error.response.data?.message ||
-          "Terjadi kesalahan saat menyimpan data";
-        alert(`Gagal menyimpan tagihan: ${errorMessage}`);
+        showToast.error(`Gagal menyimpan tagihan`);
       } else if (error.request) {
-        // Request was made but no response
-        alert("Gagal menghubungi server. Periksa koneksi internet Anda.");
+        showToast.error(
+          "Gagal menyimpan tagihan. Periksa koneksi internet Anda."
+        );
       } else {
-        // Something else happened
-        alert("Terjadi kesalahan tidak terduga. Silakan coba lagi.");
+        showToast.error("Terjadi kesalahan tidak terduga. Silakan coba lagi.");
       }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Handle untuk membatalkan tagihan mahasiswa
   const batalkanData = () => {
     if (
       confirm(
@@ -199,8 +169,6 @@ export default function FormCreateBill() {
     }
   };
 
-  const formatRupiah = (angka: number) => `Rp${angka.toLocaleString("id-ID")}`;
-
   const headerClassName =
     "bg-primary-green text-white p-2 border border-gray-500 font-semibold text-sm md:text-base text-center";
   const cellClassName =
@@ -208,12 +176,13 @@ export default function FormCreateBill() {
 
   return (
     <MainLayout isGreeting={false} titlePage="Buat Tagihan">
+      <ToastNotif />
       <div className="border-2 border-t-2 border-t-primary-green rounded-sm p-3 bg-white">
         <h1 className="text-lg sm:text-2xl font-semibold mb-2">
           Mahasiswa yang dipilih
         </h1>
 
-        {/* TABEL MAHASISWA */}
+        {/* TABEL MAHASISWA YANG DIPILIH */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -291,9 +260,6 @@ export default function FormCreateBill() {
               <option value="">- Pilih Tahap Pembayaran -</option>
               <option value="1">Tahap 1</option>
               <option value="2">Tahap 2</option>
-              <option value="3">Tahap 3</option>
-              <option value="4">Tahap 4</option>
-              <option value="lunas">Lunas</option>
             </select>
           </div>
         </div>
@@ -318,7 +284,7 @@ export default function FormCreateBill() {
               />
             </div>
             <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96">
-              <div className="p-2 max-h-64 overflow-y-auto">
+              <div className="p-2 max-h-90 overflow-y-auto">
                 {biayaTersedia
                   .filter((item) =>
                     item.nama
@@ -332,7 +298,7 @@ export default function FormCreateBill() {
                     >
                       <span className="font-medium">{item.nama}</span>
                       <div className="flex items-center space-x-3">
-                        <span>{formatRupiah(item.nominal)}</span>
+                        <span>{formatToRupiah(item.nominal)}</span>
                         <button
                           className="text-blue-500 text-sm hover:underline disabled:opacity-50"
                           onClick={() => tambahBiaya(item)}
@@ -374,7 +340,7 @@ export default function FormCreateBill() {
               />
             </div>
             <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96 overflow-auto">
-              <div className="p-2 max-h-64 overflow-y-auto">
+              <div className="p-2 max-h-90 overflow-y-auto">
                 {biayaDipilih
                   .filter((item) =>
                     item.nama
@@ -388,7 +354,7 @@ export default function FormCreateBill() {
                     >
                       <span className="font-medium">{item.nama}</span>
                       <div className="flex items-center space-x-3">
-                        <span>{formatRupiah(item.nominal)}</span>
+                        <span>{formatToRupiah(item.nominal)}</span>
                         <button
                           className="text-red-500 text-sm hover:underline disabled:opacity-50"
                           onClick={() => hapusBiaya(item)}
@@ -418,7 +384,7 @@ export default function FormCreateBill() {
           <div className="mb-4 text-right">
             <p className="text-sm font-medium text-gray-600">Total Tagihan</p>
             <p className="text-xl font-bold text-primary-green">
-              {formatRupiah(totalTagihan)}
+              {formatToRupiah(totalTagihan)}
             </p>
           </div>
           <div className="flex gap-4 w-full md:w-1/2">

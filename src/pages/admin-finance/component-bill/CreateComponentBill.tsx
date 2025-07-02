@@ -4,52 +4,42 @@ import { useNavigate } from "react-router-dom";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
-import { Api } from "../../../api/Index";
-
-interface InvoiceKomponenMahasiswa {
-  kodeKomponen: string;
-  nama: string;
-  nominal: number;
-}
+import { useCreateComponentBill } from "../../../hooks/admin-keuangan/useComponent";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify";
 
 export default function CreateComponentBill() {
-  const navigate = useNavigate();
-
   const [kodeKomponen, setKode] = useState("");
   const [nama, setNama] = useState("");
   const [nominal, setNominal] = useState("");
+  const navigate = useNavigate();
+  const { mutateAsync, status } = useCreateComponentBill();
 
+  // Fungsi untuk kembali
   function handleBack() {
     navigate(AdminFinanceRoute.componentBill);
   }
 
+  // Fungsi untuk membuat komponen tagihan dengan hook
   async function handleSave() {
     if (!kodeKomponen || !nama || !nominal) {
-      alert("Mohon lengkapi semua field!");
+      showToast.info("Mohon lengkapi semua field!");
       return;
     }
-
     try {
-      const payload: InvoiceKomponenMahasiswa = {
+      await mutateAsync({
         kodeKomponen,
         nama,
         nominal: Number(nominal),
-      };
-      const response = await Api.post(
-        "/keuangan/invoice-komponen-mahasiswa",
-        payload
-      );
-
-      alert("Data berhasil disimpan!");
+      });
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-      console.error("Error saat menyimpan:", error);
-      alert("Terjadi kesalahan saat menyimpan.");
+      showToast.error("Terjadi kesalahan saat menyimpan.");
     }
   }
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
+      <ToastNotif />
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
         <div className="flex justify-end gap-4">
           <ButtonClick
@@ -60,7 +50,7 @@ export default function CreateComponentBill() {
             spacing="1"
           />
           <ButtonClick
-            text="Simpan"
+            text={status === "pending" ? "Menyimpan..." : "Simpan"}
             icon={<Save size={16} />}
             color="bg-primary-blueSoft"
             onClick={handleSave}

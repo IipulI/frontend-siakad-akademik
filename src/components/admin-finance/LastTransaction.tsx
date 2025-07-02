@@ -1,58 +1,24 @@
 import { MoreVertical } from "lucide-react";
+import { useLastTransaction } from "../../hooks/admin-keuangan/useDashboardFinance";
 
 export default function LastTransaction() {
-  const transactions = [
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Bank account",
-      date: "2024/04/01",
-      amount: "+Rp2.000.000",
-    },
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Tokopedia",
-      date: "2024/03/29",
-      amount: "+Rp2.000.000",
-    },
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Shopee",
-      date: "2024/03/29",
-      amount: "+Rp2.000.000",
-    },
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Bank account",
-      date: "2024/03/27",
-      amount: "+Rp2.000.000",
-    },
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Tokopedia",
-      date: "2024/03/26",
-      amount: "+Rp2.000.000",
-    },
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Tokopedia",
-      date: "2024/03/24",
-      amount: "+Rp2.000.000",
-    },
-    {
-      name: "Muhammad Ridho Fatan",
-      method: "Shopee",
-      date: "2024/03/21",
-      amount: "+Rp2.000.000",
-    },
-  ];
+  const { data } = useLastTransaction();
 
+  // Fungsi untuk format Rupiah
+  function formatToRupiah(amount: number): string {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  }
   return (
     <div className=" rounded-lg overflow-hidden border-1 h-fit w-full col-span-7 lg:col-span-5">
       <div className="p-4">
-        <h2 className="text-md text-gray-800">
-          Transaksi Terakhir
-        </h2>
-        <p className="text-gray-500 mt-1 text-sm">Riwayat Pembayaran Terakhir</p>
+        <h2 className="text-md text-gray-800">Transaksi Terakhir</h2>
+        <p className="text-gray-500 mt-1 text-sm">
+          Riwayat Pembayaran Terakhir
+        </p>
       </div>
 
       <div className="overflow-x-auto">
@@ -65,7 +31,9 @@ export default function LastTransaction() {
               <th className="py-3 px-6 font-medium text-gray-500 text-sm">
                 Metode Pembayaran
               </th>
-              <th className="py-3 px-6 font-medium text-gray-500 text-sm">Tanggal</th>
+              <th className="py-3 px-6 font-medium text-gray-500 text-sm">
+                Tanggal
+              </th>
               <th className="py-3 px-6 font-medium text-gray-500 text-sm">
                 Jumlah Bayar
               </th>
@@ -73,15 +41,17 @@ export default function LastTransaction() {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction, index) => (
-              <tr key={index} className="border-1 text-sm">
-                <td className="py-3 px-6">{transaction.name}</td>
+            {data?.slice(0, 10).map((transaction) => (
+              <tr key={transaction.id} className="border-1 text-sm">
+                <td className="py-3 px-6">{transaction.namaMahasiswa}</td>
                 <td className="py-3 px-6 text-gray-600">
-                  {transaction.method}
+                  {transaction.metodePembayaran}
                 </td>
-                <td className="py-3 px-6 text-gray-600">{transaction.date}</td>
+                <td className="py-3 px-6 text-gray-600">
+                  {transaction.tanggal}
+                </td>
                 <td className="py-3 px-6 text-green-500 font-medium">
-                  {transaction.amount}
+                  {`+${formatToRupiah(transaction.jumlahBayar)}`}
                 </td>
                 <td className="py-3 px-6 text-right">
                   <button className="text-gray-500 hover:text-gray-700">

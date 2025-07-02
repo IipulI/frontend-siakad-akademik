@@ -3,19 +3,31 @@ import { Search,  ChevronLeft, Save, RefreshCw, Printer } from "lucide-react"
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import TableCheckbox from "../../../components/lecturer/TableCheckbox";
+import { useDebounce } from "../../../hooks/useDebounce";
+import { useQuery } from "@tanstack/react-query";
+import { Api } from "../../../api/Index";
+import TableCourseLecturer from "../../../components/lecturer/TableCourseLecturer";
 
 const CourseLecturer = () => {
-  const [id, setId] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [id, setId] = useState<string | null>(null)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [search, setSearch] = useState("");
 
-    const tableHead = ["", "Kurikulum", "Kode", "Nama", "SKS", "Jenis MK", "Prodi Pengampu", "Aksi"]
+    const debouncedSearch = useDebounce(search, 1000);
 
-    const data = [
-        
-      ];
+    const { isPending, data, error } = useQuery({
+      queryKey: ['dosen/mata-kuliah', currentPage, debouncedSearch],
+      queryFn: async () => {
+        return await Api.get(`/dosen/mata-kuliah?page=${currentPage}&keyword=${debouncedSearch}`)
+      },
+    })
 
-    // const dataDetail = id ? data.find((item) => parseInt(id) === item.id) : null;
+    // Extract data and pagination from API response
+    const tableData = isPending ? [] : data?.data.data || [];
+    const pagination = data?.data.pagination;
+    const totalPages = pagination?.totalPages || 1;
+    const totalRows = pagination?.totalItems || 0;
 
     return (
     <MainLayout
@@ -38,7 +50,6 @@ const CourseLecturer = () => {
                     <div className="w-full flex justify-center items-center">
                         <h1>DETAIL</h1>
                     </div>
-                    
                 </div>
             )
         :
@@ -53,36 +64,41 @@ const CourseLecturer = () => {
                             <div className="flex">
                                 <input
                                 type="search"
-                                placeholder="Cari Pengumuman"
+                                placeholder="Cari Mata Kuliah"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-black/50"
                                 />
                                 <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
                                     <Search color="white" size={20} />
                                 </button>
                                 <button className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
-                                    <RefreshCw color="white" size={20} />
+                                    <RefreshCw className={`${isPending ? "animate-spin" : ""}`} color="white" size={20} />
                                 </button>
                             </div>
                         </div>
-                        <button className="bg-primary-blueSoft text-white flex items-center text-xs lg:text-base rounded px-4 py-1">
-                            <Printer size={16} className="mr-2" />
-                            Cetak
-                        </button>
                     </div>
-                    <TableCheckbox
-                        tableHead={tableHead}
-                        data={data}
-                        error={"Data kosong"}
-                        setId={setId}
-                    />
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={1000}
-                        onPageChange={setCurrentPage}
-                        rowsPerPage={rowsPerPage}
-                        totalRows={65}
-                        onRowsPerPageChange={setRowsPerPage}
-                    />
+                    <div className="overflow-auto">
+                        <TableCourseLecturer
+                            data={tableData}
+                            error={error ? "Gagal memuat data" : "Data kosong"}
+                        />
+                    </div>
+                    {isPending ? (
+                        <div className="flex px-4 w-full items-center justify-between">
+                            <div className="h-8 w-1/4 bg-gray-300 rounded animate-pulse" />
+                            <div className="h-8 w-1/4 bg-gray-300 rounded animate-pulse" />
+                        </div>
+                    ) : (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            rowsPerPage={rowsPerPage}
+                            totalRows={totalRows}
+                            onRowsPerPageChange={setRowsPerPage}
+                        />
+                    )}
                 </div>
             </>
         )
