@@ -1,41 +1,26 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Api } from "../../../api/Index";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Search, ArrowLeft } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { CourseData } from "../../../components/types";
+import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
 
-// --- api function ---
-const fetchCourseDetail = async (id: string): Promise<CourseData> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+// const fetchCourseDetail = async (id: string): Promise<CourseData> => {
+//   const token = localStorage.getItem("token");
+//   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-  const response = await Api.get(`/akademik/mata-kuliah/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+//   const response = await Api.get(`/akademik/mata-kuliah/${id}`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
 
-  return response.data.data;
-};
+//   return response.data.data;
+// };
 
-//  --- detail course component ---
 const DetailCourse: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-  // --- query ---
-  const {
-    data: courseDetail,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["courseDetail", id],
-    queryFn: () => fetchCourseDetail(id!),
-    enabled: !!id, // Only run query if id exists
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: courseDetail, isLoading, error } = getCourseDataById(id!);
 
   // --- event handlers ---
   const handleBack = () => {
@@ -107,11 +92,11 @@ const DetailCourse: React.FC = () => {
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>RPS</p>
             </div>
@@ -191,7 +176,14 @@ const DetailCourse: React.FC = () => {
               </div>
               <div className="w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Jenis Mata Kuliah:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.jenisMataKuliah}</p>
+                <p className="px-3 py-2 rounded flex-1 md:ml-8">{courseDetail.opsiMataKuliah === null || courseDetail.opsiMataKuliah === undefined ? "" : courseDetail.opsiMataKuliah ? "Wajib" : "Pilihan"}</p>
+              </div>
+            </div>
+            <hr className="border-t-2 border-gray-200 " />
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="w-full md:w-1/2 flex items-center gap-3 md:pt-3">
+                <label className="font-semibold w-40">Nilai Minimum:</label>
+                <p className="px-3 py-2 rounded  flex-1">{courseDetail.nilaiMin}</p>
               </div>
             </div>
           </div>
