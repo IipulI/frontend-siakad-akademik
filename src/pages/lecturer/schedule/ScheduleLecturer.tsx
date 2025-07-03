@@ -1,41 +1,30 @@
 import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useQuery } from "@tanstack/react-query";
-import { Api } from "../../../api/Index";
 import { useEffect, useState } from "react";
 import SelectOption from "../../../components/lecturer/SelectOption";
 import TableSchedule from "../../../components/lecturer/TableSchedule";
+import { useAcademicPeriodDropdown } from "../../../hooks/lecturer/useFetchDropdown";
+import { useScheduleList } from "../../../hooks/lecturer/useFetchSchedule";
 
-const CalendarLecturer = () => {
+const ScheduleLecturer = () => {
 
   const [selectedPeriode, setSelectedPeriode] = useState("");
 
-  const { data: periodeAkademikDropdown } = useQuery({
-    queryKey: ["/periode-akademik/dropdown"],
-    queryFn: () => Api.get(`/periode-akademik/dropdown`),
-  });
-
+  const { data: periodeAkademikDropdown } = useAcademicPeriodDropdown()
+  const { data, isPending, error } = useScheduleList(selectedPeriode)
   
-  const { isPending, data, error } = useQuery({
-    queryKey: ['dosen/jadwal', selectedPeriode],
-    queryFn: async () => {
-      return await Api.get(`/dosen/jadwal/${selectedPeriode}`)
-    },
-    enabled: !!selectedPeriode
-  })
-
-  const periodeOptions = periodeAkademikDropdown?.data?.data?.map((item: any) => ({
+  const periodeOptions = periodeAkademikDropdown?.data?.map((item: any) => ({
     value: item.id,
     label: item.namaPeriode,
   })) || [];
-
+  
   useEffect(() => {
-    if (periodeAkademikDropdown?.data?.data?.length > 0 && !selectedPeriode) {
-      setSelectedPeriode(periodeAkademikDropdown?.data.data[0].id);
-    }
-  }, [periodeAkademikDropdown, selectedPeriode]);
+    if (periodeAkademikDropdown?.data?.length > 0) {
+      setSelectedPeriode(periodeAkademikDropdown?.data[0].id);
 
-  // Map API response to the format expected by JadwalHari
+    }
+  }, [periodeAkademikDropdown]);
+
   const hariList = [
     { key: "senin", label: "Senin" },
     { key: "selasa", label: "Selasa" },
@@ -45,10 +34,10 @@ const CalendarLecturer = () => {
     { key: "sabtu", label: "Sabtu" },
   ];
 
-  const jadwalData = data?.data?.data
+  const jadwalData = data?.data
     ? hariList.map((hari) => ({
         hari: hari.label,
-        dataKuliah: data.data.data[hari.key] || [],
+        dataKuliah: data.data[hari.key] || [],
       }))
     : [];
 
@@ -84,4 +73,4 @@ const CalendarLecturer = () => {
   );
 };
 
-export default CalendarLecturer;
+export default ScheduleLecturer;

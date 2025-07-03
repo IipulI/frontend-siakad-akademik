@@ -25,7 +25,7 @@ export default function TableStudent({ data }: TableProps) {
     alert("link");
   }
   function Detail() {
-    navigate("/portal/mahasiswa/detail-mahasiswa");
+    navigate("/admin-akademik/detail-mahasiswa");
   }
   function Remove() {
     alert("link");

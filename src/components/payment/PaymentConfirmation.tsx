@@ -1,117 +1,130 @@
 import React from "react";
 import LogoUika from "../../../public/img/logo_uika.png";
-import { ChevronDown, Clipboard, Copy, ShoppingCart } from "lucide-react";
+import { ChevronDown, Copy, ShoppingCart } from "lucide-react";
 
-export default function PaymentConfirmation() {
-  const steps = [
-    {
-      no: 1,
-      description: "Login ke aplikasi mobile Tokopedia.",
-    },
-    {
-      no: 2,
-      description: "Pilih 'Semua Kategori'.",
-    },
-    {
-      no: 3,
-      description: "Pada bagian 'Top-Up & Tagihan', pilih 'Biaya Pendidikan'.",
-    },
-    {
-      no: 4,
-      description:
-        "Pilih Institusi Pendidikan dan masukkan Nomor Pembayaran atau Nomor Mahasiswa, klik 'Bayar'.",
-    },
-    {
-      no: 5,
-      description: "Cek data tagihan, jika sudah sesuai klik LANJUT.",
-    },
-    {
-      no: 6,
-      description:
-        "Pilih Metode Pembayaran dan ikuti instruksi untuk menyelesaikan transaksi.",
-    },
-    {
-      no: 7,
-      description:
-        "Setelah pembayaran dilakukan status tagihan akan menjadi 'lunas'.",
-    },
-  ];
+// Definisikan data untuk setiap metode pembayaran
+const dataMetode = {
+  "amanahummah": {
+    nama: "Bank Ammanah Ummah",
+    icon: <ShoppingCart />, // Ganti dengan ikon yang sesuai
+    nomorVA: "8871234567890",
+    instruksi: [
+      { no: 1, description: "Login ke aplikasi mobile banking Ammanah Ummah." },
+      { no: 2, description: "Pilih menu 'Transfer' lalu 'Virtual Account'." },
+      { no: 3, description: "Masukkan nomor Virtual Account di atas dan lanjutkan." },
+      // ...tambahkan langkah lainnya
+    ],
+  },
+  "vabsi": {
+    nama: "Virtual Account BSI",
+    icon: <ShoppingCart />,
+    nomorVA: "9988765432109",
+    instruksi: [
+      { no: 1, description: "Login ke BSI Mobile." },
+      { no: 2, description: "Pilih menu 'Bayar' lalu 'Akademik'." },
+      { no: 3, description: "Pilih institusi 'Universitas Ibn Khaldun'." },
+      { no: 4, description: "Masukkan Nomor Virtual Account dan selesaikan transaksi." },
+      // ...tambahkan langkah lainnya
+    ],
+  },
+  "vamuamalat": {
+    nama: "Virtual Account Bank Muamalat",
+    icon: <ShoppingCart />,
+    nomorVA: "7766554433221",
+    instruksi: [
+      { no: 1, description: "Login ke Muamalat DIN." },
+      { no: 2, description: "Pilih menu 'Pembayaran' lalu 'Pendidikan'." },
+      { no: 3, description: "Masukkan kode institusi dan Nomor VA lalu lanjutkan." },
+      // ...tambahkan langkah lainnya
+    ],
+  },
+};
+
+interface PaymentConfirmationProps {
+  method: string;
+  total: number;
+  deadline: Date | null;
+}
+
+export default function PaymentConfirmation({ method, total, deadline }: PaymentConfirmationProps) {
+  const formattedDeadline = deadline
+      ? deadline.toLocaleString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
+      : 'Batas waktu tidak tersedia';
+
+  // Pilih data yang akan ditampilkan berdasarkan props 'method'
+  const detailMetode = dataMetode[method] || {
+    nama: "Metode Tidak Dikenali",
+    icon: <ShoppingCart />,
+    nomorVA: "Tidak Tersedia",
+    instruksi: [{ no: 1, description: "Pilih metode pembayaran yang valid." }],
+  };
 
   return (
-    <div className="mx-auto container max-w-3xl space-y-4">
-      <div className="flex items-center justify-center space-x-8">
-        <img src={LogoUika} className="w-26 sm:w-30 md:w-50" alt="" />
-        <div className="flex flex-col space-y-2">
-          <h1 className="font-semibold">Lakukan Pembayaran Sebelum</h1>
-          <h1 className="font-semibold text-primary-brown">
-            Batas Waktu Pembayaran :{" "}
-          </h1>
-          <h1 className="font-semibold text-red-500">
-            Minggu , 4 Mei 2025 , 23:59:59
-          </h1>
+      <div className="mx-auto container max-w-3xl space-y-6">
+        <div className="flex items-center justify-center space-x-8">
+          <img src={LogoUika} className="w-20" alt="" />
+          <div className="flex flex-col space-y-2">
+            <h1 className="font-semibold">Lakukan Pembayaran Sebelum</h1>
+            <h1 className="font-semibold text-primary-brown">Batas Waktu Pembayaran :</h1>
+            <h1 className="font-semibold text-red-500">
+              {/* Seharusnya data ini datang dari API */}
+              {formattedDeadline}
+            </h1>
+          </div>
         </div>
-      </div>
-      <div className="space-y-2">
-        <h1 className="font-semibold text-lg">Detail Informasi Pembayaran</h1>
-        <div className="p-6 rounded-md border-2">
-          <div className="flex flex-col space-y-4 items-center">
-            <div className="flex flex-col w-full space-y-2">
-              <h1 className="text-primary-brown text-base font-semibold">
-                Metode Pembayaran
-              </h1>
-              <div className="flex justify-between items-center">
-                <h1 className="font-semibold">Tokopedia</h1>
-                <ShoppingCart />
-              </div>
-            </div>
-            <div className="flex flex-col w-full space-y-2">
-              <h1 className="text-primary-brown text-base font-semibold">
-                Nomor Virtual Account
-              </h1>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <h1 className="font-semibold">221106043035</h1>
-                  <Copy color="#116E63" />
+        <div className="space-y-2">
+          <h1 className="font-semibold text-lg">Detail Informasi Pembayaran</h1>
+          <div className="p-6 rounded-md border-2">
+            <div className="flex flex-col space-y-4 items-center">
+              {/* --- Bagian Dinamis --- */}
+              <div className="flex flex-col w-full space-y-2">
+                <h1 className="text-primary-brown text-base font-semibold">Metode Pembayaran</h1>
+                <div className="flex justify-between items-center">
+                  <h1 className="font-semibold">{detailMetode.nama}</h1>
+                  {detailMetode.icon}
                 </div>
-                <button className="cursor-pointer text-sm border-2 border-primary-yellow py-1 px-2 rounded text-primary-yellow">
-                  Salin
-                </button>
               </div>
-            </div>
-            <div className="flex flex-col w-full space-y-2">
-              <div className="flex items-center space-x-2">
-                <h1 className="text-primary-brown text-base font-semibold">
-                  Total Pembayaran
-                </h1>
-                <ChevronDown />
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2 italic text-primary-brown">
-                    <input type="radio" name="" id="" />
-                    <span>Telah Diakumulasi</span>
+              <div className="flex flex-col w-full space-y-2">
+                <h1 className="text-primary-brown text-base font-semibold">Nomor Virtual Account</h1>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <h1 className="font-semibold">{detailMetode.nomorVA}</h1>
+                    <Copy color="#116E63" className="cursor-pointer" onClick={() => navigator.clipboard.writeText(detailMetode.nomorVA)}/>
                   </div>
                 </div>
-                <div className="text-base font-semibold flex items-center space-x-1">
-                  <span className="text-primary-yellow">Rp.3.300.000</span>
-                  <Copy color="#116e63" />
+              </div>
+              <div className="flex flex-col w-full space-y-2">
+                <h1 className="text-primary-brown text-base font-semibold">Total Pembayaran</h1>
+                <div className="flex justify-between items-center">
+                  <h1 className="text-base font-semibold">
+                    Rp{total.toLocaleString('id-ID')}
+                  </h1>
+                  <Copy color="#116e63" className="cursor-pointer" onClick={() => navigator.clipboard.writeText(total.toString())}/>
                 </div>
               </div>
+              {/* --- Akhir Bagian Dinamis --- */}
             </div>
           </div>
         </div>
+        <div className="space-y-2">
+          <h1 className="font-semibold text-lg">Cara Pembayaran Tagihan</h1>
+          <ul className="flex flex-col space-y-2">
+            {detailMetode.instruksi.map((step) => (
+                <li key={step.no} className="tracking-tight text-primary-brown flex space-x-2 font-semibold">
+                  <p>{step.no}.</p>
+                  <p>{step.description}</p>
+                </li>
+            ))}
+          </ul>
+        </div>
       </div>
-      <div className="space-y-2">
-        <h1 className="font-semibold text-lg">Cara Pembayaran Tagihan</h1>
-        <ul className="flex flex-col space-y-2">
-          {steps.map((step, key) => (
-            <li className="tracking-tight text-primary-brown flex space-x-2 font-semibold">
-              <p>{step.no}</p>
-              <p>{step.description}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
   );
 }

@@ -46,7 +46,7 @@ export default function TableClass ({
       <table className="w-full my-4">
         <thead>
           <tr>
-            <th
+            {/* <th
                 className="p-2 bg-primary-green text-white border border-gray-600"
             >
                 <input
@@ -55,7 +55,7 @@ export default function TableClass ({
                   onChange={handleSelectAll}
                   disabled={!data || data.length === 0}
                 />
-            </th>
+            </th> */}
                 <th
                     className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
                 >
@@ -118,13 +118,13 @@ export default function TableClass ({
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  {/* <td className="p-2 border text-center text-sm border-black/50">
                     <input
                       type="checkbox"
                       checked={selected.includes(row.id)}
                       onChange={() => handleSelectRow(row.id)}
                     />
-                  </td>
+                  </td> */}
                   <td className="p-2 border text-center text-sm border-black/50">
                     {row.mataKuliah.tahunKurikulum}
                   </td>
