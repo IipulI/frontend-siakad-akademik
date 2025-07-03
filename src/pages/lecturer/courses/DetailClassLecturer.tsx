@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import TableDetailClass from "../../../components/lecturer/TableDetailClass";
 import DataStudent from "../../../components/lecturer/DataStudent";
-import TableLecturer from "../../../components/lecturer/TableLecturer";
 import ButtonGroupOption from "../../../components/lecturer/ButtonGroupOption";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
 import { Link } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { Table } from "../../../components/Table";
+import { useClassParticipants, useClassDetail, useClassSchedule } from "../../../hooks/lecturer/useFetchClass";
 
 const selectOptions = [
   { value: "detail", text: "Detail Kelas" },
@@ -18,30 +19,18 @@ const selectOptions = [
 
 const tableHead = {
   detail: ["No", "Hari", "Jam mulai", "Jam selesai", "Jenis pertemuan", "Metode pembelajaran", "Ruang"],
-  peserta: ["No", "Nim", "Nama Mahasiswa", "Program Studi", "Angkatan", "Status KRS", "Aksi"],
-  nilai: ["No", "Nim", "Nama", "Hadir", "Tugas", "UTS", "UAS", "Kehadiran", "Nilai", "Grade", "Lulus", "Keterangan", "Aksi"]
+  peserta: ["No", "Nim", "Nama Mahasiswa", "Program Studi", "Angkatan", "Status KRS"],
+  nilai: ["No", "Nim", "Nama", "Hadir", "Tugas", "UTS", "UAS", "Kehadiran", "Nilai", "Grade", "Lulus", "Keterangan"]
 };
 
 const DetailClassLecturer = () => {
   const id = localStorage.getItem("id_kelas_kuliah")
 
-  
   const [option, setOption] = useState("detail");
   
-  const { data: detailData } = useQuery({
-    queryKey: ['kelas-detail'],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}`)).data.data,
-  });
-  
-  const { data: pesertaData, isLoading } = useQuery({
-    queryKey: ['peserta-kelas'],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/peserta-kelas`)).data.data,
-  });
-  
-  const { data: jadwalData } = useQuery({
-    queryKey: ['jadwal-kelas'],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/jadwal-kelas`)).data.data,
-  });
+  const { data: detailData } = useClassDetail(id)
+  const { data: pesertaData } = useClassParticipants(id)
+  const { data: jadwalData } = useClassSchedule(id)
   
   const getDataStudent = () => {
     if (!detailData) return [];
@@ -97,7 +86,6 @@ const DetailClassLecturer = () => {
     programStudi: item.programStudiResDto?.namaProgramStudi,
     angkatan: item.angkatan,
     status: item.status,
-    aksi: "",
   }));
 
   const dataNilai = pesertaData?.map((item, index) => ({
@@ -114,7 +102,6 @@ const DetailClassLecturer = () => {
     grade: item.hurufMutu,
     lulus: item.nilaiAkhir >= 60 ? "Lulus" : "Tidak",
     keterangan: item.nilaiAkhir >= 60 ? "Memenuhi" : "Tidak memenuhi",
-    aksi: "",
   }));
 
   const renderTable = () => {
@@ -122,9 +109,9 @@ const DetailClassLecturer = () => {
       case "detail":
         return <TableDetailClass tableHead={tableHead.detail} data={dataDetail} error="Data kosong" />;
       case "peserta":
-        return <TableLecturer tableHead={tableHead.peserta} data={dataPeserta} error="Data kosong" />;
+        return <Table tableHead={tableHead.peserta} data={dataPeserta} error="Data kosong" />;
       case "nilai":
-        return <TableLecturer tableHead={tableHead.nilai} data={dataNilai} error="Data kosong" />;
+        return <Table tableHead={tableHead.nilai} data={dataNilai} error="Data kosong" />;
       default:
         return null;
     }
@@ -136,12 +123,7 @@ const DetailClassLecturer = () => {
     isGreeting={false}
   >
     <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green px-4 max-w-screen-xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-4 justify-between">
-        <div className="flex flex-wrap gap-2">
-          <select className="rounded px-2 py-1 text-sm border border-primary-brown text-primary-brown">
-            <option value={"semua"}>-Semua-</option>
-          </select>
-        </div>
+      <div className="flex gap-4 justify-end">
         <Link
           to={LecturerRoute.courses.class}
           onClick={() => localStorage.removeItem("id_kelas_kuliah")}
@@ -151,13 +133,12 @@ const DetailClassLecturer = () => {
           Kembali ke daftar
         </Link>
       </div>
-
       <div className="w-full flex flex-col lg:flex-row gap-4 mt-4">
         <div className="lg:w-1/6 w-full flex lg:flex-col max-h-fit gap-2 rounded shadow shadow-gray-400 overflow-x-auto">
           <ButtonGroupOption options={selectOptions} selected={option} onChange={setOption} />
         </div>
         
-        <div className="w-full">
+        <div className="w-full overflow-x-auto">
             <DataStudent data={getDataStudent()} />
           <div className="w-full overflow-x-auto">
             {renderTable()}

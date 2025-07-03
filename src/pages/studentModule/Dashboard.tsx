@@ -1,157 +1,244 @@
 import React, { useEffect, useState } from "react";
+import MainLayout from "../../components/layouts/MainLayout";
+import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
+import { getPlainTextSummary } from "../../utils/textUtils"; // 1. Import the new helper function
+
+// --- Child Components ---
 import DashboardSubjectCard from "../../components/dashboard/DashboardSubjectCard";
 import DashboardBillCard from "../../components/dashboard/DashboardBillCard";
 import DashboardCardAcademic from "../../components/dashboard/DashboardCardAcademic";
 import DashboardAnnouncementCard from "../../components/dashboard/DashboardAnnouncementCard";
-import MainLayout from "../../components/layouts/MainLayout";
 import IPSChart from "../../components/chart/IPSChart";
-import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
-import axios from "axios";
+import ExamToggleButton from "../../components/ExamToggleButton";
+import ExamScheduleCard from "../../components/ExamScheduleCard";
+
+// --- Custom Hooks for Data Fetching ---
+import { useJadwal } from "../../hooks/mahasiswa/useJadwal";
+import { useGrafikAkademik } from "../../hooks/mahasiswa/useGrafikAkademik";
+import { useInfoTagihan } from "../../hooks/mahasiswa/useInfoTagihan";
+import { usePengumumanMahasiswa } from "../../hooks/usePengumuman";
 
 const Dashboard = () => {
+  // --- LOCAL UI STATE ---
+  const [activeView, setActiveView] = useState<'kuliah' | 'ujian'>('kuliah');
+  const [examType, setExamType] = useState<'UTS' | 'UAS'>('UTS');
   const [currentDate, setCurrentDate] = useState<string | undefined>();
-  const [subject, setSubject] = useState<String>();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // --- DATA FETCHING HOOKS ---
+  const {
+    data: jadwalKuliah,
+    isLoading: isLoadingJadwal,
+    isError: isErrorJadwal,
+  } = useJadwal({
+    type: 'daily',
+    namaPeriode: "2024 Genap", // This should be dynamic in a real app
+    hari: new Date().toLocaleDateString("id-ID", { weekday: 'long' }).toLowerCase()
+  });
+
+  const {
+    data: grafikData,
+    isLoading: isLoadingGrafik,
+    isError: isErrorGrafik,
+  } = useGrafikAkademik();
+
+  const {
+    data: tagihanData,
+    isLoading: isLoadingTagihan,
+    isError: isErrorTagihan,
+  } = useInfoTagihan();
+
+  const { data: pengumumanResponse, isLoading: isLoadingPengumuman, isError: isErrorPengumuman } = usePengumumanMahasiswa({
+    page: 1,
+    size: 5,
+    sort: 'createdAt,desc'
+  });
+
   useEffect(() => {
-    const token =
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbmFrYWRlbWlrdW5pdiIsInJvbGVzIjpbIlJPTEVfQUtBREVNSUtfVU5JViJdLCJpYXQiOjE3NDY1NDgzNTcsImV4cCI6MTc0NzE1MzE1N30.2pi9mNO4_7raPL-CQGVdNqMtK9ypKgDM5TSDMnGafi3nlKfIjhqzThtPgvH3csjhRFjvPtoyKU0lD1Mh53LQTQ";
     const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
     };
     const today = new Date().toLocaleDateString("id-ID", options);
     setCurrentDate(today);
-
-    const getSubject = async () => {
-      try {
-        const response = await axios.get(
-          "https://backend-simakad.azurewebsites.net/api/v1/akademik/mata-kuliah",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const { data } = response.data;
-        console.log(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getSubject();
   }, []);
+
+  const viewOptions = {
+    kuliah: 'Jadwal Kuliah',
+    ujian: 'Jadwal Ujian',
+  };
+
+  const handleOptionClick = (view: 'kuliah' | 'ujian') => {
+    setActiveView(view);
+    setIsDropdownOpen(false);
+  };
+
   return (
-    <>
       <MainLayout isGreeting={true} titlePage={""} className={""}>
         <div className="w-full">
           <div className="w-full grid md:grid-cols-5 grid-cols-1 gap-8">
+            {/* --- LEFT COLUMN (MAIN CONTENT) --- */}
             <div className="md:col-span-3 space-y-4">
               <h1 className="font-semibold md:text-start text-center md:text-base text-2xl">
                 Jadwal
               </h1>
               <div className="md:p-8 p-12 bg-white shadow-xl rounded-xl ">
-                <div className="flex md:flex-row flex-col justify-between items-center p-2">
-                  <div className="flex space-x-2 items-center">
-                    <h1 className="font-semibold text-primary-blue">
-                      Jadwal Kuliah
-                    </h1>
-                    <ChevronDown color="#001b36" size={18} />
+                <div className="flex md:flex-row flex-col justify-between items-center p-2 mb-4">
+                  <div className="relative">
+                    <div
+                        className="flex space-x-2 items-center cursor-pointer"
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    >
+                      <h1 className="font-semibold text-primary-blue">
+                        {viewOptions[activeView]}
+                      </h1>
+                      <ChevronDown color="#001b36" size={18} />
+                    </div>
+                    {isDropdownOpen && (
+                        <div className="absolute top-full mt-2 w-48 bg-white shadow-lg rounded-md border z-10">
+                          <div
+                              className="p-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => handleOptionClick('kuliah')}
+                          >
+                            Jadwal Kuliah
+                          </div>
+                          <div
+                              className="p-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => handleOptionClick('ujian')}
+                          >
+                            Jadwal Ujian
+                          </div>
+                        </div>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2">
                     <CalendarDays color="#001b36" size={18} />
-                    <h1 className="font-semibold text-primary-blue">
-                      {currentDate}
-                    </h1>
+                    <h1 className="font-semibold text-primary-blue">{currentDate}</h1>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <DashboardSubjectCard
-                    time="09.40 - 11.20"
-                    lecturer="Fitrah Satrya Fajar"
-                    room="Ruang 206"
-                    meet="Pertemuan ke 6"
-                    absent="Belum hadiran"
-                    sks="2 SKS"
-                    subject={"Pemrograman Perangkat Bergerak"}
-                    classes={"REG_B"}
-                  />
-                  <DashboardSubjectCard
-                    time="09.30 - 11.10"
-                    lecturer="Safarrudin Hidayat A. Ikhsan"
-                    room="Ruang 209"
-                    meet="Pertemuan ke 5"
-                    absent="Belum hadiran"
-                    sks="3 SKS"
-                    subject={"Pemrograman Web"}
-                    classes={"REG_A"}
-                  />
+                  {activeView === 'kuliah' && (
+                      <>
+                        {isLoadingJadwal && <p>Loading schedule...</p>}
+                        {isErrorJadwal && <p style={{ color: 'red' }}>Gagal memuat jadwal kuliah.</p>}
+                        {!isLoadingJadwal && !isErrorJadwal && (
+                            jadwalKuliah && jadwalKuliah.length > 0 ? (
+                                jadwalKuliah.map((item, index) => (
+                                    <DashboardSubjectCard
+                                        key={index}
+                                        time={`${item.jamMulai} - ${item.jamSelesai}`}
+                                        lecturer={item.dosen}
+                                        room={item.ruangan}
+                                        subject={item.namaMataKuliah}
+                                        classes={item.kelas}
+                                        meet={"-"}
+                                        absent={"-"}
+                                        sks={"-"}
+                                    />
+                                ))
+                            ) : (
+                                <p>Tidak ada jadwal kuliah hari ini.</p>
+                            )
+                        )}
+                      </>
+                  )}
+                  {activeView === 'ujian' && (
+                      <div>
+                        {/* The exam schedule components remain static for now */}
+                        <p>Exam schedule will be integrated next.</p>
+                      </div>
+                  )}
                 </div>
               </div>
+
               <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
-              <div className="w-full flex gap-4">
-                <DashboardBillCard title={"Total Tagihan"} price={46750000} />
-                <DashboardBillCard title={"Total Lunas"} price={45450000} />
-              </div>
-              <div>
-                <DashboardBillCard
-                  pay={true}
-                  title={"Total Tagihan"}
-                  price={3300000}
-                />
-              </div>
+              {isLoadingTagihan && <div>Loading financial status...</div>}
+              {isErrorTagihan && <div style={{ color: 'red' }}>Failed to load financial status.</div>}
+              {tagihanData && (
+                  <>
+                    <div className="w-full flex gap-4">
+                      <DashboardBillCard
+                          title={"Total Tagihan"}
+                          price={tagihanData.totalTagihan}
+                          status="info"
+                      />
+                      <DashboardBillCard
+                          title={"Total Lunas"}
+                          price={tagihanData.totalLunas}
+                          status="info"
+                      />
+                    </div>
+
+                    <div>
+                      {tagihanData.sisaTagihan > 0 ? (
+                          <DashboardBillCard
+                              title={"Sisa Tagihan"}
+                              price={tagihanData.sisaTagihan}
+                              status="payable" // Kirim status 'payable'
+                              date={tagihanData.tanggalTenggat}
+                          />
+                      ) : (
+                          <DashboardBillCard
+                              title={"Status Tagihan"}
+                              price={0}
+                              status="paid" // Kirim status 'paid'
+                          />
+                      )}
+                    </div>
+                  </>
+              )}
             </div>
+
+            {/* --- RIGHT COLUMN (SIDEBAR) --- */}
             <div className="md:col-span-2 space-y-4">
-              <div>
-                <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
-              </div>
-              <IPSChart />
-              <div className="space-y-4">
-                <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
-                <div className="grid grid-cols-2 gap-4">
-                  <DashboardCardAcademic
-                    title={"Jumlah IPS"}
-                    number={3.74}
-                    color={"text-red-700"}
-                  />
-                  <DashboardCardAcademic
-                    title={"Jumlah IPK"}
-                    number={3.78}
-                    color={""}
-                  />
-                  <DashboardCardAcademic
-                    title={"Jumlah Jumlah MK Kumulatif"}
-                    number={40}
-                    color=""
-                  />
-                  <DashboardCardAcademic
-                    title={"Jumlah SKS Kumulatif"}
-                    number={103}
-                    color=""
-                  />
-                </div>
-              </div>
+              {isLoadingGrafik && <div>Loading academic data...</div>}
+              {isErrorGrafik && <div style={{ color: 'red' }}>Failed to load academic data.</div>}
+              {grafikData && (
+                  <>
+                    <div>
+                      <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
+                    </div>
+                    <IPSChart ipsData={grafikData.ips} />
+                    <div className="space-y-4">
+                      <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
+                      <div className="grid grid-cols-2 gap-4">
+                        <DashboardCardAcademic title={"IPK"} number={grafikData.ipk} color={"text-red-700"} />
+                        <DashboardCardAcademic
+                            title={"IPS"}
+                            number={grafikData.ips[grafikData.ips.length - 1] || 0}
+                            color=""
+                        />
+                        <DashboardCardAcademic title={"Jumlah MK Komulatif"} number={grafikData.mataKuliahKumulatif} color="" />
+                        <DashboardCardAcademic title={"Jumlah SKS Komulatif"} number={grafikData.sksKumulatif} color="" />
+                      </div>
+                    </div>
+                  </>
+              )}
+
               <div className="space-y-4">
                 <h1 className="font-semibold md:p-0 p-2">Pengumuman</h1>
                 <div className="p-8 bg-white shadow-md rounded-md space-y-6">
-                  <DashboardAnnouncementCard
-                    title={"Cara Bayar Kuliah Melalui Shopee"}
-                    date={"Kamis , 06-03-2025"}
-                    description={"lorem ipsum dolor sit amet..."}
-                  />
-                  <DashboardAnnouncementCard
-                    title={"Cara Bayar Kuliah Melalui Tokopedia"}
-                    date={"Selasa , 19-11-2025"}
-                    description={"lorem ipsum dolor sit amet..."}
-                  />
+                  {/* 3. Add loading and error handling */}
+                  {isLoadingPengumuman && <div>Loading announcements...</div>}
+                  {isErrorPengumuman && <div style={{ color: 'red' }}>Failed to load announcements.</div>}
+
+                  {/* 4. Map over the fetched data */}
+                  {pengumumanResponse?.data.map((item) => (
+                      <DashboardAnnouncementCard
+                          key={item.id}
+                          title={item.judul}
+                          description={getPlainTextSummary(item.isi, 100)} // Truncate to 100 characters
+                          // Note: The API does not provide a date for each announcement.
+                          // You may need to adjust the DashboardAnnouncementCard component
+                          // or request this field from the backend.
+                          date={""}
+                      />
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </MainLayout>
-    </>
   );
 };
 

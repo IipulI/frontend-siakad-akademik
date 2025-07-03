@@ -1,70 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Api } from "../../../api/Index";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CplData, CourseData, CpmkData } from "../../../components/types.ts";
+import { CourseData } from "../../../components/types.ts";
 import { TableCpl, TableCpmk } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Edit } from "lucide-react";
-
-// --- api function ---
-const fetchCplData = async (page: number, size: number): Promise<CplData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(`/akademik/capaian-pembelajaran-lulusan?page=1&size=10&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
-
-  const apiData = response.data.data;
-
-  console.log("🔍 Raw cpl API data:", apiData);
-
-  const formattedData = Array.isArray(apiData)
-    ? apiData.map((item: any) => {
-        const formatted = {
-          id: item.id,
-          programStudi: item.programStudi,
-          tahunKurikulum: item.tahunKurikulum,
-          kodeCpl: item.kodeCpl,
-          deskripsiCpl: item.deskripsiCpl,
-          kategoriCpl: item.kategoriCpl,
-          pemetaan: item.pemetaan,
-        };
-
-        return formatted;
-      })
-    : [];
-
-  return formattedData;
-};
-
-const fetchCpmkData = async (page: number, size: number): Promise<CpmkData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(`/akademik/mata-kuliah/all`, { headers: { Authorization: `Bearer ${token}` } });
-
-  const apiData = response.data.data;
-
-  console.log("🔍 Raw graduate profile API data:", apiData);
-
-  const formattedData = Array.isArray(apiData)
-    ? apiData.map((item: any) => {
-        const formatted = {
-          id: item.id,
-          kodeMataKuliah: item.kodeMataKuliah,
-          namaMataKuliah: item.namaMataKuliah,
-          hasCpmk: item.hasCpmk ? "Yes" : "No",
-          mataKuliahId: item.mataKuliahId,
-          tahunKurikulum: item.tahunKurikulum,
-        };
-
-        return formatted;
-      })
-    : [];
-
-  return formattedData;
-};
+import { getCplCpmkCourse } from "../../../hooks/academic/useCplCpmkCourse.ts";
 
 const fetchCourseDetail = async (id: string): Promise<CourseData> => {
   const token = localStorage.getItem("token");
@@ -74,42 +17,18 @@ const fetchCourseDetail = async (id: string): Promise<CourseData> => {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  console.log("🔍 Raw course detail API data:", response.data.data);
-
   return response.data.data;
 };
 
-// --- cpl cpmk course component ---
 const CplCpmkCourse: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   // --- state ---
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // --- query ---
-  const {
-    data: cplData = [],
-    isLoading: loading,
-    error: cplError,
-    refetch: refetchCplData,
-  } = useQuery({
-    queryKey: ["cplData", currentPage, itemsPerPage],
-    queryFn: () => fetchCplData(currentPage, itemsPerPage),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const {
-    data: cpmkData = [],
-    isLoading: loadingCpmk,
-    error: cpmkError,
-  } = useQuery({
-    queryKey: ["cpmkData", currentPage, itemsPerPage],
-    queryFn: () => fetchCpmkData(currentPage, itemsPerPage),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: cplCpmkData, isLoading: isCplCpmkLoading, error: cplCpmkError } = getCplCpmkCourse(id!);
 
   const {
     data: courseDetail,
@@ -122,8 +41,6 @@ const CplCpmkCourse: React.FC = () => {
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
-
-  const navigate = useNavigate();
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.courseManagement.courseManagement);
@@ -162,15 +79,15 @@ const CplCpmkCourse: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Menu */}
           <div className="w-full  md:w-[20%] h-50 text-white p-3 space-y-2 mr-3">
-            <div className="flex items-center bg-[#116E63]/30  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
+            <div className="flex items-center bg-[#116E63]/30  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.detailCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
+            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p className="text-black font-semibold">CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>RPS</p>
             </div>
@@ -219,11 +136,11 @@ const CplCpmkCourse: React.FC = () => {
 
             <div className="mt-4 ml-[-10px]">
               <h2 className="font-semibold">Capaian Pembelajaran Lulusan</h2>
-              <TableCpl data={cplData} tableHead={tableHeadCpl} error="Data CPL tidak ditemukan." />
+              <TableCpl data={cplCpmkData?.capaianPembelajaranLulusan} tableHead={tableHeadCpl} error="Data CPL tidak ditemukan." />
             </div>
             <div className="mt-4 ml-[-10px]">
               <h2 className="font-semibold">CapaianMata Kuliah</h2>
-              <TableCpmk data={cpmkData} tableHead={tableHeadCpmk} error="Data CPMK tidak ditemukan." />
+              <TableCpmk data={cplCpmkData?.capaianMataKuliah} tableHead={tableHeadCpmk} error="Data CPMK tidak ditemukan." />
             </div>
           </div>
         </div>

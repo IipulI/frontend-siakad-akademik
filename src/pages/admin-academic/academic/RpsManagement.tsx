@@ -7,169 +7,92 @@ import { TableRpsManagement } from "../../../components/Table";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes.tsx";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
-import { CourseData, CurriculumData, DosenData, ProgramStudiData, RpsData, PeriodeAkademik } from "../../../components/types.ts";
-
-// --- fetching api ---
-const fetchRpsData = async (): Promise<RpsData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/rps", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  console.log("🔍 Raw rps API data:", data);
-
-  let rpsData: RpsData[] = [];
-
-  if (Array.isArray(data)) {
-    rpsData = data as RpsData[];
-  } else if (typeof data === "object" && data !== null) {
-    rpsData = Object.values(data as Record<string, unknown>).filter((item): item is RpsData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return rpsData;
-};
-
-const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/tahun-kurikulum", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  console.log("🔍 Raw curriculum API data:", data);
-
-  let curriculumData: CurriculumData[] = [];
-
-  if (Array.isArray(data)) {
-    curriculumData = data as CurriculumData[];
-  } else if (typeof data === "object" && data !== null) {
-    curriculumData = Object.values(data as Record<string, unknown>).filter((item): item is CurriculumData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return curriculumData;
-};
-
-const fetchProdiData = async (): Promise<ProgramStudiData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/program-studi", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  console.log("🔍 Raw prodi API data:", data);
-
-  let programStudiData: ProgramStudiData[] = [];
-
-  if (Array.isArray(data)) {
-    programStudiData = data as ProgramStudiData[];
-  } else if (typeof data === "object" && data !== null) {
-    programStudiData = Object.values(data as Record<string, unknown>).filter((item): item is ProgramStudiData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return programStudiData;
-};
-
-const fetchPeriodeAkademik = async (): Promise<PeriodeAkademik[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/periode-akademik", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-  console.log("🔍 Raw periode akademik API data:", data);
-
-  let periodeData: PeriodeAkademik[] = [];
-
-  if (Array.isArray(data)) {
-    periodeData = data as PeriodeAkademik[];
-  } else if (typeof data === "object" && data !== null) {
-    periodeData = Object.values(data as Record<string, unknown>).filter((item): item is PeriodeAkademik => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  console.log("🔍 Processed periode akademik data:", periodeData);
-  console.log(
-    "🔍 Periode IDs available:",
-    periodeData.map((p) => p.id)
-  );
-
-  return periodeData;
-};
-
-const deleteRps = async (id: string): Promise<void> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  await Api.delete(`/akademik/rps/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
+import { getRps, useDeleteRps } from "../../../hooks/academic/useRpsManagement.ts";
+import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
+import { getProdi } from "../../../hooks/academic/useProdi.ts";
+import { getPeriodeAkdemikCoba } from "../../../hooks/academic/usePeriodeAkademikCoba.ts";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const RpsManagement: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // --- query data ---
-  const { data: rpsData = [], error: periodeError } = useQuery({
-    queryKey: ["rpsData"],
-    queryFn: fetchRpsData,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-  });
-
-  const { data: curriculumData = [], error: curriculumError } = useQuery({
-    queryKey: ["curriculumData"],
-    queryFn: fetchCurriculumData,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-  });
-
-  const { data: prodiData = [], error: prodiError } = useQuery({
-    queryKey: ["prodiData"],
-    queryFn: fetchProdiData,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-  });
-
-  const { data: periodeData = [], error: periodeErrorData } = useQuery({
-    queryKey: ["periodeData"],
-    queryFn: fetchPeriodeAkademik,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-  });
-
-  // --- states management ---
+  // --- states management (pindahkan ke atas sebelum hooks lain) ---
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const totalPages = Math.ceil(rpsData.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = rpsData.slice(startIndex, startIndex + itemsPerPage);
+  // --- States for filters ---
+  const [selectedTahunKurikulum, setSelectedTahunKurikulum] = useState("");
+  const [selectedPeriodeAkademik, setSelectedPeriodeAkademik] = useState("");
+  const [selectedProgramStudi, setSelectedProgramStudi] = useState("");
+  const [selectedStatusRpsKelas, setSelectedStatusRpsKelas] = useState("");
 
-  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+  // --- Semua hooks harus dipanggil dalam urutan yang sama setiap render ---
+  const { data: rpsData = [], isLoading: isRpsLoading, error: rpsError } = getRps();
+  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
+  const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
+  const { data: periodeAkademikData = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba();
 
   // --- Mutation ---
-  const deleteMutation = useMutation({
-    mutationFn: deleteRps,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["rpsData"] });
-    },
-    onError: (error: any) => {
-      console.error("Gagal menghapus data:", error);
-    },
+  const deleteMutation = useDeleteRps();
+
+  // --- Conditional rendering setelah semua hooks ---
+  if (isRpsLoading || isCurriculumLoading || isProdiLoading || isPeriodeAkademikLoading) {
+    return <LoadingSpinner />;
+  }
+
+  // --- Error handling ---
+  if (rpsError) {
+    return <div className="text-red-500">Gagal memuat data RPS</div>;
+  }
+
+  if (curriculumError) {
+    return <div className="text-red-500">Gagal memuat tahun kurikulum</div>;
+  }
+
+  if (prodiError) {
+    return <div className="text-red-500">Gagal memuat data program studi</div>;
+  }
+
+  if (periodeAkademikError) {
+    return <div className="text-red-500">Gagal memuat data periode akademik</div>;
+  }
+
+  const getSafeValue = (obj: any, path: string, defaultValue: string = "-") => {
+    try {
+      const value = path.split(".").reduce((current, key) => {
+        return current && current[key] !== undefined ? current[key] : null;
+      }, obj);
+      return value !== null && value !== undefined && value !== "" ? String(value) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  };
+
+  const filteredRpsData = rpsData.filter((rpsItem) => {
+    // Filter berdasarkan Tahun Kurikulum
+    const matchesTahunKurikulum = selectedTahunKurikulum ? getSafeValue(rpsItem, "tahunKurikulum.id") === selectedTahunKurikulum : true;
+
+    // Filter berdasarkan Periode Akademik
+    const matchesPeriodeAkademik = selectedPeriodeAkademik ? getSafeValue(rpsItem, "periodeAkademik.id") === selectedPeriodeAkademik : true;
+
+    // Filter berdasarkan Program Studi
+    const matchesProgramStudi = selectedProgramStudi ? getSafeValue(rpsItem, "programStudi.id") === selectedProgramStudi : true;
+
+    // Filter berdasarkan Status RPS Kelas
+    const hasClasses = Array.isArray(rpsItem.kelas) && rpsItem.kelas.length > 0;
+    const matchesStatusRpsKelas = selectedStatusRpsKelas ? (selectedStatusRpsKelas === "punya-kelas" && hasClasses) || (selectedStatusRpsKelas === "belum-punya-kelas" && !hasClasses) : true;
+
+    return matchesTahunKurikulum && matchesPeriodeAkademik && matchesProgramStudi && matchesStatusRpsKelas;
   });
 
+  // --- Kalkulasi pagination ---
+  const totalPages = Math.ceil(filteredRpsData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredRpsData.slice(startIndex, startIndex + itemsPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  // --- Event handlers ---
   const handleDelete = (id: string) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
       deleteMutation.mutate(id);
@@ -177,7 +100,13 @@ const RpsManagement: React.FC = () => {
   };
 
   const handleAdd = () => {
-    navigate(AdminAcademicRoute.rpsManagement.addRps);
+    // Pass filter values as state to AddRps page
+    const queryParams = new URLSearchParams();
+    if (selectedTahunKurikulum) queryParams.set("tahunKurikulum", selectedTahunKurikulum);
+    if (selectedPeriodeAkademik) queryParams.set("periodeAkademik", selectedPeriodeAkademik);
+    if (selectedProgramStudi) queryParams.set("programStudi", selectedProgramStudi);
+
+    navigate(`${AdminAcademicRoute.rpsManagement.addRps}?${queryParams.toString()}`);
   };
 
   return (
@@ -186,10 +115,10 @@ const RpsManagement: React.FC = () => {
         <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-4">
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-- Tahun Kurikulum --</option>
+            <select value={selectedTahunKurikulum} onChange={(e) => setSelectedTahunKurikulum(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown w-10">
+              <option value="">-- Tahun Kurikulum --</option>
               {curriculumData.map((item) => (
-                <option key={item.id} value={item.tahun}>
+                <option key={item.id} value={item.id}>
                   {item.tahun}
                 </option>
               ))}
@@ -198,10 +127,10 @@ const RpsManagement: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Periode Akademik</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown ">
-              <option value="all">-- Periode --</option>
-              {periodeData.map((item) => (
-                <option key={item.id} value={item.namaPeriode}>
+            <select value={selectedPeriodeAkademik} onChange={(e) => setSelectedPeriodeAkademik(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown">
+              <option value="">-- Periode --</option>
+              {periodeAkademikData.map((item) => (
+                <option key={item.id} value={item.id}>
                   {item.namaPeriode}
                 </option>
               ))}
@@ -209,11 +138,11 @@ const RpsManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Program Studi</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-36 ">
-              <option value="all">-- Program Studi --</option>
+            <label className="w-36 text-gray-700 ">Program Studi</label>
+            <select value={selectedProgramStudi} onChange={(e) => setSelectedProgramStudi(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown md:w-18 w-10">
+              <option value="">-- Program Studi --</option>
               {prodiData.map((item) => (
-                <option key={item.id} value={item.namaProgramStudi}>
+                <option key={item.id} value={item.id}>
                   {item.namaProgramStudi}
                 </option>
               ))}
@@ -221,14 +150,11 @@ const RpsManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Program Studi</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown w-36 ">
-              <option value="all">-- Program Studi --</option>
-              {prodiData.map((item) => (
-                <option key={item.id} value={item.namaProgramStudi}>
-                  {item.namaProgramStudi}
-                </option>
-              ))}
+            <label className="w-36 text-gray-700">Status RPS Kelas</label>
+            <select value={selectedStatusRpsKelas} onChange={(e) => setSelectedStatusRpsKelas(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown w-36">
+              <option value="">-- Status Kelas --</option>
+              <option value="belum-punya-kelas">Rps Belum Memiliki Kelas</option>
+              <option value="punya-kelas">Rps Sudah Memiliki Kelas</option>
             </select>
           </div>
         </div>
@@ -243,7 +169,7 @@ const RpsManagement: React.FC = () => {
             </button>
           </div>
 
-          <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white ml-auto w-full md:w-36 flex items-center justify-center">
+          <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white ml-auto w-full md:w-36 flex items-center justify-center cursor-pointer">
             <Plus className="mr-2" size={16} />
             <span className="text-center w-full md:w-auto">Tambah</span>
           </button>
@@ -251,11 +177,11 @@ const RpsManagement: React.FC = () => {
 
         {/* Tabel RPS */}
         <div className="mt-4">
-          <TableRpsManagement data={rpsData} error="Data tidak ditemukan." onEdit={(id) => console.log("Edit id:", id)} onDelete={handleDelete} />
+          <TableRpsManagement data={paginatedData} error="Data tidak ditemukan." onEdit={(id) => console.log("Edit id:", id)} onDelete={handleDelete} />
         </div>
 
         {/* Pagination */}
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
+        <Pagination currentPage={currentPage} totalRows={rpsData.length} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
       </div>
     </MainLayout>
   );

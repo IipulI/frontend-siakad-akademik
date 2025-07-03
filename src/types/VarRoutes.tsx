@@ -14,6 +14,7 @@ export const StudentRoute = {
     exam: "/jadwal/ujian",
     calendar: "/jadwal/kalendar-akademik",
     announcement: "/jadwal/pengumuman",
+    announcementDetail: "/jadwal/pengumuman/detail/:id",
     thisWeek: "/jadwal/jadwal-minggu-ini",
   } as routeType,
   academic: {
@@ -96,21 +97,15 @@ export const AdminFinanceRoute: routeType = {
 export const LecturerRoute = {
   dashboard: "/dosen/dashboard",
   guidance: {
-    consultation: "/dosen/bimbingan/konsultasi",
-    academic: "/dosen/bimbingan/akademik",
-    proposal: "/dosen/bimbingan/proposal",
-    finalProject: "/dosen/bimbingan/tugas-akhir",
-    supporter: "/dosen/bimbingan/kegiatan-pendukung",
     advisor: "/dosen/bimbingan/pembimbing-akademik",
+    detailAdvisor: "/dosen/bimbingan/pembimbing-akademik/detail"
   } as routeType,
   announcement: {},
-  schedule: {
-    calendar: "/dosen/jadwal/kalender-akademik",
-  },
+  schedule: "/dosen/jadwal-akademik",
   courses: {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
-    stopStudy: "/dosen/perkuliahan/berhenti-studi",
-    detailClass: "/dosen/perkuliahan/kelas-kuliah/detail"
+    detailClass: "/dosen/perkuliahan/kelas-kuliah/detail",
+    detailCourse: "/dosen/perkuliahan/mata-kuliah/detail"
   },
 };
