@@ -1,3 +1,4 @@
+import { ProfilLulusan } from "./../hooks/academic/useCplCpmkCourse";
 import { id } from "date-fns/locale";
 export interface CurriculumData {
   id: string;
@@ -26,6 +27,7 @@ export interface ProgramStudiData {
 
 export interface GraduateProfileData {
   id: string;
+  programStudi: string;
   siakProgramStudiId: string;
   siakTahunKurikulumId: string;
   profil: string;
@@ -77,12 +79,14 @@ export interface CourseData {
 
 export interface CplData {
   id: string;
-  programStudi: string;
-  tahunKurikulum: string;
+  siakProgramStudiId: string;
+  siakTahunKurikulumId: string;
+  programStudi?: string;
+  tahunKurikulum?: string;
   kodeCpl: string;
   deskripsiCpl: string;
   kategoriCpl: string;
-  pemetaan: string;
+  profilLulusan: string[];
 }
 
 export interface CpmkData {

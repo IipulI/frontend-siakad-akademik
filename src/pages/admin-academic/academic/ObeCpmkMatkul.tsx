@@ -4,7 +4,6 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate } from "react-router-dom";
 import { TableObeCpmkMatkul } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus, Table } from "lucide-react";
-import { cp } from "fs";
 
 interface CpmkMatkulData {
   id: number;

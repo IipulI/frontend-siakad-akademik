@@ -4,11 +4,11 @@ import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
 import { CplData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "../components/types.ts";
 import { CurriculumData } from "../hooks/academic/useCurriculumYear.ts";
 import { useNavigate } from "react-router-dom";
-import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
-import { getKelas, getRps, useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement.ts";
+import { Eye, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
+import { useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement.ts";
 import { CourseData } from "../hooks/academic/useCourseManagement.ts";
 import { Api } from "../api/Index.tsx";
-import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CplCpmkCourseResponse } from "../hooks/academic/useCplCpmkCourse.ts";
 
 interface TableProps {
@@ -26,22 +26,7 @@ interface TableProps {
   isAdding?: boolean;
   onSelect?: (id: number) => void;
   selectedIds?: number[];
-
-  // curriculum year
   isFormValid?: () => boolean;
-
-  // graduate profile
-  newProfile?: any;
-  onSaveNewProfile?: () => void;
-  onCancelAdd?: () => void;
-
-  // ObeCPMK
-  onSaveNewCpmk?: () => void;
-  newCpmk?: any;
-
-  // ObeCpmkMatkul
-  onSaveNewCpmkMatkul?: () => void;
-  newCpmkMatkul?: any;
 }
 
 interface TableCurriculumYearProps {

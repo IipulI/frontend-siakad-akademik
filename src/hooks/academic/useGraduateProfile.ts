@@ -13,7 +13,6 @@ export interface GraduateProfileData {
 export interface GraduateProfilePayload {
   siakProgramStudiId: string;
   siakTahunKurikulumId: string;
-
   kodePl: string;
   profil: string;
   profesi: string;

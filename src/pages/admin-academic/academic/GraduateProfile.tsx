@@ -11,8 +11,8 @@ import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 const GraduateProfile: React.FC = () => {
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const location = useLocation();
   const obeDataFromState = location.state?.obeData;
 
@@ -117,6 +117,7 @@ const GraduateProfile: React.FC = () => {
     setIsEditing(false);
     setCurrentData({
       id: "",
+      programStudi: "",
       siakProgramStudiId: id || "",
       siakTahunKurikulumId: selectedYear || "",
       kodePl: "",
@@ -205,7 +206,7 @@ const GraduateProfile: React.FC = () => {
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path);
+    navigate(path, { state: { obeData: obeDataFromState } });
   };
 
   // Filter data based on search term
@@ -255,7 +256,7 @@ const GraduateProfile: React.FC = () => {
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Profil Lulusan</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpl)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => navigate(AdminAcademicRoute.obeManagement.cpl, { state: { obeData: obeDataFromState } })}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPL</p>
             </div>
