@@ -3,16 +3,17 @@ import HorizontalLine from "../../../profile/HorizontalLine";
 import BiodataSection from "../../../biodata/BiodataSection";
 import { useStudentDetail } from "../../../../hooks/admin-akademik/useMahasiswa";
 import { useLocation } from "react-router-dom";
+import { getStudentInfo } from "../../../../hooks/admin-akademik/useStudentDetail";
 
 interface BiodataProps {
   showLine?: boolean;
 }
 
 export const BriefStudentData = ({ showLine = true }: BiodataProps) => {
-
   const { state } = useLocation();
+  const { data } = getStudentInfo(state);
 
-  const {data} = useStudentDetail(state);
+  console.log("data", data);
 
   const sections = [
     {
@@ -23,7 +24,13 @@ export const BriefStudentData = ({ showLine = true }: BiodataProps) => {
         "Status Mahasiswa",
         "Angkatan",
       ],
-      value: [data?.npm, data?.nama, data?.namaProgramStudi, data?.statusMahasiswa, data?.angkatan],
+      value: [
+        data?.nim,
+        data?.namaMahasiswa,
+        data?.programStudi,
+        data?.statusMahasiwa,
+        data?.angkatan,
+      ],
     },
     {
       title: [
@@ -34,11 +41,11 @@ export const BriefStudentData = ({ showLine = true }: BiodataProps) => {
         "Total SKS/IPK",
       ],
       value: [
-        data?.kurikulum || "-",
+        data?.tahunKurikulum || "-",
         data?.semester,
-        data?.pembimbingAkademik || "-",
-        data?.sks || "-",
-        data?.totalSks || "-",
+        data?.pembimbingAkademik,
+        `${data?.sksLulus || 0}/${data?.ipkLulus || 0}`,
+        `${data?.totalSks || 0}/${data?.ipk || 0}`,
       ],
     },
   ];

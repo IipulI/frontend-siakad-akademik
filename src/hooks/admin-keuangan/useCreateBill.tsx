@@ -86,7 +86,7 @@ export function useCreateBill(
       return response.data;
     },
     // Refetch ketika ada perubahan parameter
-    refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false,
   });
 }
 

@@ -1,6 +1,8 @@
 // hooks/useFetchComponentBill.ts
+import { json } from "stream/consumers";
 import { Api } from "../../api/Index";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { request } from "http";
 
 export interface StudentData {
   id: string;
@@ -116,6 +118,21 @@ export interface KeluargaMahasiswa {
   email: string;
 }
 
+export interface CreateKeluargaMahasiswa {
+  hubungan: string;
+  nama: string;
+  nik: string;
+  tanggalLahir: string;
+  statusHidup: string;
+  statusKerabat: string;
+  pendidikan: string;
+  pekerjaan: string;
+  penghasilan: string;
+  alamat: string;
+  noTelepon: string;
+  email: string;
+}
+
 export interface StudentDetail {
   id: string;
   namaProgramStudi: string;
@@ -166,6 +183,77 @@ export interface StudentDetail {
   keluargaMahasiswaList: KeluargaMahasiswa[];
 }
 
+export interface CreateStudentData {
+  siakProgramStudiId: string;
+  nama: string;
+  angkatan: string;
+  kurikulum: string;
+  npm: string;
+  periodeMasuk: string;
+  sistemKuliah: string;
+  kelas: string;
+  jenisPendaftaran: string;
+  jalurPendaftaran: string;
+  gelombang: string;
+  jenisKelamin: string;
+  tempatLahir: string;
+  tanggalLahir: string;
+  noKk: string;
+  nik: string;
+  tanggalMasuk: string;
+  kebutuhanKhusus: boolean;
+  statusMahasiswa: string;
+  alamatKtp: string;
+  rtKtp: number;
+  rwKtp: number;
+  desaKtp: string;
+  provinsiKtp: string;
+  kodePosKtp: string;
+  statusTinggalKtp: string;
+  alamatDomisili: string;
+  rtDomisili: number;
+  rwDomisili: number;
+  desaDomisili: string;
+  provinsiDomisili: string;
+  kodePosDomisili: string;
+  statusTinggalDomisili: string;
+  noTelepon: string;
+  noHp: string;
+  emailPribadi: string;
+  emailKampus: string;
+  noTerdaftar: string;
+  pendidikanAsal: string;
+  provinsiSekolah: string;
+  kotaKabSekolah: string;
+  namaPendidikanAsal: string;
+  alamatSekolah: string;
+  teleponSekolah: string;
+  noIjazahSekolah: string;
+  semester: number;
+  dusunRt: string;
+  kotaRt: string;
+  kecamatanRt: string;
+  dusunDomisili: string;
+  kotaDomisili: string;
+  kecamatanDomisili: string;
+  agama: string;
+  beratBadan: string;
+  tinggiBadan: string;
+  golonganDarah: string;
+  transportasi: string;
+  kewarganegaraan: string;
+  paspor: string;
+  statusNikah: string;
+  ukuranJasAlmamater: string;
+  pekerjaan: string;
+  instansiPekerjaan: string;
+  penghasilan: string;
+  noRekening: string;
+  namaRekening: string;
+  namaBank: string;
+  nisn: string;
+}
+
 // GET - dengan pagination
 export function useStudentDetail(id: string) {
   return useQuery<StudentDetail>({
@@ -173,6 +261,71 @@ export function useStudentDetail(id: string) {
     queryFn: async () => {
       const response = await Api.get(`/akademik/mahasiswa/${id}`);
       return response.data.data;
+    },
+  });
+}
+
+// POST - Create Student Hook
+export function useCreateStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["createStudent"],
+    mutationFn: async (data: {
+      fotoProfil?: File;
+      ijazahSekolah?: File;
+      request: string; // JSON string as shown in the API
+      requestKeluarga: string; // JSON string as shown in the API
+    }) => {
+      const formData = new FormData();
+
+      // Append files if provided
+      if (data.fotoProfil) {
+        formData.append("fotoProfil", data.fotoProfil);
+      }
+
+      if (data.ijazahSekolah) {
+        formData.append("ijazahSekolah", data.ijazahSekolah);
+      }
+
+      // Append the request JSON string
+      formData.append("request", data.request);
+      formData.append("requestKeluarga", data.requestKeluarga);
+
+      console.log("REQUEST PAYLOAD:", data.request);
+      console.log("REQUEST PAYLOAD:", data.requestKeluarga);
+
+      // Send as multipart/form-data
+      const response = await Api.post("/akademik/mahasiswa", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      console.log("Student created successfully:", data);
+      // Invalidate pagination queries
+      queryClient.invalidateQueries({ queryKey: ["getStudent"] });
+    },
+    onError: (error) => {
+      console.error("Error creating student:", error);
+    },
+  });
+}
+
+// DELETE
+export function useDeleteStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await Api.delete(`/akademik/mahasiswa/${id}`);
+    },
+    onSuccess: () => {
+      // Invalidate pagination queries
+      queryClient.invalidateQueries({ queryKey: ["getStudent"] });
     },
   });
 }

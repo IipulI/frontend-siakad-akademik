@@ -1,24 +1,28 @@
 import MainLayout from "../../../components/layouts/MainLayout";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
-import TableStudent from "../../../components/admin-academic/student-data/TableStudent";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import {
   Plus,
-  Printer,
   RefreshCw,
   Search,
-  Settings,
   Trash2,
   Eye,
-  Link2,
 } from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useEffect, useRef, useState } from "react";
 import Status from "../../../components/admin-academic/student-data/Status";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { useStudentData } from "../../../hooks/admin-akademik/useMahasiswa";
+import {
+  useDeleteStudent,
+  useStudentData,
+} from "../../../hooks/admin-akademik/useMahasiswa";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import {
+  showToast,
+  ToastNotif,
+} from "../../../components/admin-finance/Toastify";
+import ConfirmModal from "../../../components/admin-finance/ConfirmModal";
 import { getProgramStudi } from "../../../hooks/useFilter";
 
 export default function StudentData() {
@@ -65,8 +69,12 @@ export default function StudentData() {
     filters.periodeMasuk,
     filters.periodeKeluar
   );
+  // state untuk modal konfirmasi delete
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const {data:programStudiDropdown} = getProgramStudi();
+  const deleteStudent = useDeleteStudent();
+  const { data: programStudiData } = getProgramStudi();
 
   const firstLoad = useRef(true);
 
@@ -80,8 +88,6 @@ export default function StudentData() {
     }
   }, [isLoading]);
 
-  console.log(studentData);
-
   if (isLoading && firstLoad.current) {
     return <LoadingSpinner title="Mahasiswa" />;
   }
@@ -89,7 +95,7 @@ export default function StudentData() {
   if (isError) {
     return (
       <div className="text-red-500 text-center py-4">
-        Gagal memuat data tagihan komponen
+        Gagal memuat data Mahasiswa
       </div>
     );
   }
@@ -140,9 +146,6 @@ export default function StudentData() {
   function Print() {
     alert("print");
   }
-  function Setting() {
-    alert("aksi");
-  }
 
   // Handler untuk perubahan halaman
   function handlePageChange(newPage: number) {
@@ -155,55 +158,45 @@ export default function StudentData() {
     setCurrentPage(1);
   }
 
+  function openDeleteModal(id: string) {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  }
+
+  function Link() {
+    alert("link");
+  }
+  function Detail(item) {
+    navigate(AdminAcademicRoute.student.detailStudent, {
+      state: item,
+    });
+  }
+
+  // Fungsi untuk menghapus komponen tagihan dengan hook
+  async function confirmDelete() {
+    if (!selectedId || deleteStudent.isPending) return;
+
+    try {
+      await deleteStudent.mutateAsync(selectedId);
+      if (studentData.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+      showToast.success("Data berhasil dihapus!");
+      Refres();
+    } catch (err) {
+      showToast.error("Gagal menghapus data.");
+    } finally {
+      setIsModalOpen(false);
+      setSelectedId(null);
+    }
+  }
+
   const programStudi = [
     { value: "", label: "-- Pilih Program Studi --" },
-    {
-      value: "Perbankan dan Keuangan Digital",
-      label: "Perbankan dan Keuangan Digital",
-    },
-    { value: "Pendidikan Bahasa Inggris", label: "Pendidikan Bahasa Inggris" },
-    { value: "Pendidikan Luar Sekolah", label: "Pendidikan Luar Sekolah" },
-    { value: "Teknologi Pendidikan", label: "Teknologi Pendidikan" },
-    {
-      value: "Pendidikan Vokasional Desain Fashion",
-      label: "Pendidikan Vokasional Desain Fashion",
-    },
-    { value: "Pendidikan Profesi Guru", label: "Pendidikan Profesi Guru" },
-    { value: "Pendidikan Matematika", label: "Pendidikan Matematika" },
-    { value: "Ilmu Hukum", label: "Ilmu Hukum" },
-    { value: "Manajemen", label: "Manajemen" },
-    { value: "Akuntansi", label: "Akuntansi" },
-    { value: "Bisnis Digital", label: "Bisnis Digital" },
-    { value: "Perdagangan Internasional", label: "Perdagangan Internasional" },
-    { value: "Hukum Keluarga Islam", label: "Hukum Keluarga Islam" },
-    { value: "Pendidikan Agama Islam", label: "Pendidikan Agama Islam" },
-    {
-      value: "Komunikasi dan Penyiaran Islam",
-      label: "Komunikasi dan Penyiaran Islam",
-    },
-    { value: "Ekonomi Syariah", label: "Ekonomi Syariah" },
-    {
-      value: "Pendidikan Guru Madrasah Ibtidaiyah",
-      label: "Pendidikan Guru Madrasah Ibtidaiyah",
-    },
-    {
-      value: "Bimbingan dan Konseling Pendidikan Islam",
-      label: "Bimbingan dan Konseling Pendidikan Islam",
-    },
-    { value: "Manajemen Haji dan Umrah", label: "Manajemen Haji dan Umrah" },
-    { value: "Ilmu Al-Qur'an dan Tafsir", label: "Ilmu Al-Qur'an dan Tafsir" },
-    { value: "Teknik Sipil", label: "Teknik Sipil" },
-    { value: "Teknik Mesin", label: "Teknik Mesin" },
-    { value: "Teknik Elektro", label: "Teknik Elektro" },
-    { value: "Teknik Informatika", label: "Teknik Informatika" },
-    { value: "Sistem Informasi", label: "Sistem Informasi" },
-    {
-      value: "Rekayasa Pertanian dan Biosistem",
-      label: "Rekayasa Pertanian dan Biosistem",
-    },
-    { value: "Ilmu Lingkungan", label: "Ilmu Lingkungan" },
-    { value: "Kesehatan Masyarakat", label: "Kesehatan Masyarakat" },
-    { value: "Gizi", label: "Gizi" },
+    ...(programStudiData?.map((item) => ({
+      value: item.namaProgramStudi,
+      label: item.namaProgramStudi,
+    })) || []),
   ];
 
   const jenisPendaftaran = [
@@ -345,12 +338,6 @@ export default function StudentData() {
           onChange={(value) => handleFilterChange("kurikulum", value)}
         />
         <InputFilter
-          options={kelasPerkuliahan}
-          label="Kelas Perkuliahan"
-          value={filters.kelasPerkuliahan}
-          onChange={(value) => handleFilterChange("kelasPerkuliahan", value)}
-        />
-        <InputFilter
           options={rangeIPK}
           label="Range IPK"
           value={filters.keyword}
@@ -389,7 +376,7 @@ export default function StudentData() {
               <input
                 type="text"
                 className="border-2 p-1 rounded text-xs w-50  "
-                placeholder="Cari Kelas Kuliah"
+                placeholder="Cari Data Mahasiswa"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
@@ -414,7 +401,7 @@ export default function StudentData() {
               text="Tambah"
               onClick={Create}
             />
-            <ButtonClick
+            {/* <ButtonClick
               icon={<Trash2 size={15} />}
               color="bg-red-400"
               text="Hapus"
@@ -425,17 +412,125 @@ export default function StudentData() {
               color="bg-primary-blueSoft"
               text="Cetak"
               onClick={Print}
-            />
-            <ButtonClick
-              icon={<Settings size={15} strokeWidth={2.5} />}
-              color="bg-primary-yellow"
-              text="Aksi"
-              onClick={Setting}
-            />
+            /> */}
           </div>
         </div>
-        <TableStudent data={studentData} isLoading={isLoading}>
-        </TableStudent>
+        <div className="overflow-x-auto">
+          <ConfirmModal
+            isOpen={isModalOpen}
+            onConfirm={confirmDelete}
+            onCancel={() => setIsModalOpen(false)}
+          />
+          <ToastNotif />
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-primary-green text-white">
+                <th className="p-2 border font-semibold border-gray-300">
+                  NPM
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Nama
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Jenjang
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Program Studi
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Masuk
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Status
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Semester
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  SKS
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  IPK
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={10} className="text-center py-4 text-gray-500">
+                    Memuat data...
+                  </td>
+                </tr>
+              ) : studentData.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="text-center py-4 text-gray-500">
+                    Tidak ada data yang ditemukan
+                  </td>
+                </tr>
+              ) : (
+                studentData.map((student, index) => (
+                  <tr key={student.id} className="hover:bg-gray-50">
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.npm}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold">
+                      {student.nama}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.jenjang}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.namaProgramStudi}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.periodeMasuk}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.statusMahasiswa}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.semester}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.sks}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.ipk}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold">
+                      <div className="flex justify-center space-x-2">
+                        {/* {
+              <ButtonClick
+                icon={<Link2 size={15} />}
+                color={"bg-primary-yellow"}
+                onClick={Link}
+              />
+            } */}
+                        {
+                          <ButtonClick
+                            icon={<Eye size={15} />}
+                            color={"bg-primary-blueSoft"}
+                            onClick={() => Detail(student.id)}
+                          />
+                        }
+                        {
+                          <ButtonClick
+                            icon={<Trash2 size={15} />}
+                            color={"bg-red-400"}
+                            onClick={() => openDeleteModal(student.id)}
+                          />
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* Pagination Section */}
         {pagination && (

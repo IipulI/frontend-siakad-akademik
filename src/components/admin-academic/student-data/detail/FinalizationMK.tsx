@@ -1,210 +1,16 @@
 import { Check } from "lucide-react";
 import { BriefStudentData } from "./BriefStudentData";
+import { useLocation } from "react-router-dom";
+import { getFinalisasiMk } from "../../../../hooks/admin-akademik/useStudentDetail";
 
 export default function FinalizationMK() {
-  const courses = [
-    {
-      no: 1,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF302",
-      namaMK: "Bahasa Inggris Teknik + Praktikum",
-      sks: 2,
-      wp: "W",
-      grade: "AB",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 2,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF304",
-      namaMK: "Keamanan Informasi + Praktikum",
-      sks: 3,
-      wp: "W",
-      grade: "AB",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 3,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF306",
-      namaMK: "Pemrograman Perangkat Bergerak + Praktikum",
-      sks: 3,
-      wp: "W",
-      grade: "A",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 4,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF322",
-      namaMK: "Sistem Pakar dan Penunjang Keputusan",
-      sks: 3,
-      wp: "W",
-      grade: "A",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 5,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF362",
-      namaMK: "User Interface and Experience",
-      sks: 2,
-      wp: "W",
-      grade: "AB",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 6,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF392",
-      namaMK: "Rekayasa Perangkat Lunak Lanjut + Praktikum",
-      sks: 3,
-      wp: "W",
-      grade: "A",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 7,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF394",
-      namaMK: "Verifikasi dan Validasi Perangkat Lunak",
-      sks: 3,
-      wp: "W",
-      grade: "B",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 8,
-      periode: "2024 Ganjil",
-      kurikulum: "2021",
-      kodeMK: "TIF394",
-      namaMK: "Komputer dan Masyarakat",
-      sks: 2,
-      wp: "W",
-      grade: "A",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 9,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF302",
-      namaMK: "Etika Profesi",
-      sks: 2,
-      wp: "W",
-      grade: "A",
-      status: "Lulus",
-      dipakai: true,
-      adaTranskrip: true,
-    },
-    {
-      no: 10,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF304",
-      namaMK: "Manajemen Proyek",
-      sks: 2,
-      wp: "W",
-      grade: "",
-      status: "Belum Dikonsi",
-      dipakai: false,
-      adaTranskrip: false,
-    },
-    {
-      no: 11,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF306",
-      namaMK: "Metode Penelitian",
-      sks: 2,
-      wp: "W",
-      grade: "",
-      status: "Belum Dikonsi",
-      dipakai: false,
-      adaTranskrip: false,
-    },
-    {
-      no: 12,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF322",
-      namaMK: "Teknologi Multimedia + Praktikum",
-      sks: 3,
-      wp: "W",
-      grade: "",
-      status: "Belum Dikonsi",
-      dipakai: false,
-      adaTranskrip: false,
-    },
-    {
-      no: 13,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF362",
-      namaMK: "E-Commerce (web)",
-      sks: 3,
-      wp: "W",
-      grade: "",
-      status: "Belum Dikonsi",
-      dipakai: false,
-      adaTranskrip: false,
-    },
-    {
-      no: 14,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF392",
-      namaMK: "Kerja Praktek (KP)",
-      sks: 3,
-      wp: "W",
-      grade: "",
-      status: "Belum Dikonsi",
-      dipakai: false,
-      adaTranskrip: false,
-    },
-    {
-      no: 15,
-      periode: "2024 Genap",
-      kurikulum: "2021",
-      kodeMK: "TIF394",
-      namaMK: "Proyek Perangkat Lunak Bidang Keilmuan",
-      sks: 6,
-      wp: "W",
-      grade: "",
-      status: "Belum Dikonsi",
-      dipakai: false,
-      adaTranskrip: false,
-    },
-  ];
+  const { state } = useLocation();
 
-  // Calculate total SKS
-  const totalSKS = courses.reduce((acc, course) => acc + course.sks, 0);
+  const { data: finalisasiMk } = getFinalisasiMk(state);
+
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <BriefStudentData showLine={false}/>
+      <BriefStudentData showLine={false} />
 
       <div className="overflow-x-auto mt-4">
         <table className="w-full border-collapse border border-gray-300">
@@ -240,28 +46,28 @@ export default function FinalizationMK() {
             </tr>
           </thead>
           <tbody>
-            {courses.map((course) => (
-              <tr key={course.no} className="hover:bg-gray-100">
+            {finalisasiMk?.map((course, index) => (
+              <tr key={index} className="hover:bg-gray-100">
                 <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.no}
+                  {index + 1}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.periode}
+                  {course.periodeAkademik}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
                   {course.kurikulum}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.kodeMK}
+                  {course.kodeMataKuliah}
                 </td>
                 <td className="border border-gray-500 p-2 font-semibold">
-                  {course.namaMK}
+                  {course.namaMatakuliah}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
                   {course.sks}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.wp}
+                  {course.opsiMataKuliah === true ? "W" : "P"}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
                   {course.grade}
@@ -273,20 +79,20 @@ export default function FinalizationMK() {
                     </span>
                   ) : (
                     <span className="bg-gray-400 text-black py-1 text-center block rounded text-xs">
-                      Belum Dikonsi
+                      Belum Dikonci
                     </span>
                   )}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
                   {course.dipakai ? (
-                      <Check className="mx-auto" size={20} color="green" />
+                    <Check className="mx-auto" size={20} color="green" />
                   ) : (
                     <span className="text-red-500">✗</span>
                   )}
                 </td>
                 <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.adaTranskrip ? (
-                      <Check className="mx-auto" size={20} color="green" />
+                  {course.transkip ? (
+                    <Check className="mx-auto" size={20} color="green" />
                   ) : (
                     <span className="text-red-500">✗</span>
                   )}

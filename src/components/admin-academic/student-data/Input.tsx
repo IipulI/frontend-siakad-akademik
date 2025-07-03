@@ -61,7 +61,6 @@ export function InputFilter({
   );
 }
 
-
 interface SelectOption {
   value: string;
   label: string;

@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { ChevronLeft, RefreshCw, Search } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronLeft } from "lucide-react";
 import TableDetailClass from "../../../components/lecturer/TableDetailClass";
 import DataStudent from "../../../components/lecturer/DataStudent";
 import TableLecturer from "../../../components/lecturer/TableLecturer";
 import ButtonGroupOption from "../../../components/lecturer/ButtonGroupOption";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
+import { Link } from "react-router-dom";
+import { LecturerRoute } from "../../../types/VarRoutes";
+import MainLayout from "../../../components/layouts/MainLayout";
 
 const selectOptions = [
   { value: "detail", text: "Detail Kelas" },
@@ -19,24 +22,27 @@ const tableHead = {
   nilai: ["No", "Nim", "Nama", "Hadir", "Tugas", "UTS", "UAS", "Kehadiran", "Nilai", "Grade", "Lulus", "Keterangan", "Aksi"]
 };
 
-const DetailClassLecturer = ({ id, setId }) => {
-  const [option, setOption] = useState("detail");
+const DetailClassLecturer = () => {
+  const id = localStorage.getItem("id_kelas_kuliah")
 
+  
+  const [option, setOption] = useState("detail");
+  
   const { data: detailData } = useQuery({
-    queryKey: ['kelas-detail', id],
+    queryKey: ['kelas-detail'],
     queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}`)).data.data,
   });
-
-  const { data: pesertaData } = useQuery({
-    queryKey: ['peserta-kelas', id],
+  
+  const { data: pesertaData, isLoading } = useQuery({
+    queryKey: ['peserta-kelas'],
     queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/peserta-kelas`)).data.data,
   });
-
+  
   const { data: jadwalData } = useQuery({
-    queryKey: ['jadwal-kelas', id],
+    queryKey: ['jadwal-kelas'],
     queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/jadwal-kelas`)).data.data,
   });
-
+  
   const getDataStudent = () => {
     if (!detailData) return [];
     return [
@@ -125,33 +131,25 @@ const DetailClassLecturer = ({ id, setId }) => {
   };
 
   return (
+  <MainLayout
+    titlePage={"Detail Kelas Kuliah"}
+    isGreeting={false}
+  >
     <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green px-4 max-w-screen-xl mx-auto">
       <div className="flex flex-col md:flex-row gap-4 justify-between">
         <div className="flex flex-wrap gap-2">
           <select className="rounded px-2 py-1 text-sm border border-primary-brown text-primary-brown">
             <option value={"semua"}>-Semua-</option>
           </select>
-          <div className="flex">
-            <input
-              type="search"
-              placeholder="Cari Pengumuman"
-              className="px-2 py-1 text-sm w-40 md:w-64 lg:w-72 rounded shadow-md border border-black/50"
-            />
-            <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
-              <Search color="white" size={20} />
-            </button>
-            <button className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
-              <RefreshCw color="white" size={20} />
-            </button>
-          </div>
         </div>
-        <button
-          onClick={() => setId(null)}
+        <Link
+          to={LecturerRoute.courses.class}
+          onClick={() => localStorage.removeItem("id_kelas_kuliah")}
           className="bg-primary-blueSoft flex rounded pl-2 pr-4 py-1 items-center text-white w-fit self-start md:self-auto"
         >
           <ChevronLeft size={16} className="mr-2" />
           Kembali ke daftar
-        </button>
+        </Link>
       </div>
 
       <div className="w-full flex flex-col lg:flex-row gap-4 mt-4">
@@ -167,6 +165,7 @@ const DetailClassLecturer = ({ id, setId }) => {
         </div>
       </div>
     </div>
+  </MainLayout>
   );
 };
 

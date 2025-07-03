@@ -25,6 +25,7 @@ import {
   ToastNotif,
   showToast,
 } from "../../../components/admin-finance/Toastify";
+import { getAcademicPeriodeDropdown, getProgramStudi } from "../../../hooks/useFilter";
 
 export default function StudentBill() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -79,6 +80,8 @@ export default function StudentBill() {
     filters.periodeAkademik
   );
 
+  const {data:periodeAkademikDropdown} = getAcademicPeriodeDropdown();
+
   useEffect(() => {
     if (!isLoading) {
       firstLoad.current = false;
@@ -103,12 +106,12 @@ export default function StudentBill() {
     );
   }
 
-  // variabel untuk filter options
   const periode = [
-    { value: "", label: "-- Pilih Periode --" },
-    { value: "2025 Ganjil", label: "2025 Ganjil" },
-    { value: "2024 Genap", label: "2024 Genap" },
-    { value: "2024 Ganjil", label: "2024 Ganjil" },
+    { value: "", label: "-- Pilih Periode Akademik --" },
+    ...(periodeAkademikDropdown?.map((data) => ({
+      value: data.namaPeriode,
+      label: data.namaPeriode,
+    })) || []),
   ];
 
   const semester = [

@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useGetAcademicAdvisor } from "../../../hooks/admin-akademik/usePembimbingAkademik";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { getAcademicPeriodeDropdown, getPeriodeAcademicActive, getProgramStudi } from "../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown, getPeriodeAcademicActive } from "../../../hooks/useFilter";
 
 export default function AcademikAdvisor() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +23,7 @@ export default function AcademikAdvisor() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [filters, setFilters] = useState({
-    periodeAkademik: "",
+    periodeAkademik: `${getPeriodeAcademicActive()?.data?.namaPeriode}`,
     programStudi: "",
     angkatan: "",
     statusKrs: "",
@@ -54,7 +54,7 @@ export default function AcademikAdvisor() {
     sort: "createdAt,desc",
   });
 
-  const {data:periodeAkademik} = getAcademicPeriodeDropdown();
+  const {data:periodeAkademikDropdown} = getAcademicPeriodeDropdown();
 
   // Extract data dari response
   const studentRecords = apiResponse?.data || [];
@@ -183,7 +183,7 @@ export default function AcademikAdvisor() {
   }
 
   const periode =
-    periodeAkademik?.map((data) => ({
+    periodeAkademikDropdown?.map((data) => ({
       value: data.namaPeriode,
       label: data.namaPeriode,
     }));

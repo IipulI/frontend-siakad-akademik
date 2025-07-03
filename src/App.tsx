@@ -73,6 +73,7 @@ import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
 import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
 import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetailTransaction";
+import DetailClassLecturer from "./pages/lecturer/courses/DetailClassLecturer";
 
 export default function App() {
   return (
@@ -193,6 +194,7 @@ export default function App() {
       <Route path={String(LecturerRoute.courses.course)} element={<CourseLecturer />} />
       <Route path={String(LecturerRoute.courses.stopStudy)} element={<StopStudyLecturer />} />
       <Route path={String(LecturerRoute.courses.class)} element={<ClassLecturer />} />
+      <Route path={String(LecturerRoute.courses.detailClass)} element={<DetailClassLecturer />} />
     </Routes>
   );
 }
