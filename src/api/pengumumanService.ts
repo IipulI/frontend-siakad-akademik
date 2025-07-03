@@ -1,5 +1,5 @@
 import { Api } from "./Index"; // Your main configured Axios instance
-import { IPaginatedResponse } from "../types/common.types"; // Your pagination interface
+import {IApiResponseWithData, IPaginatedResponse} from "../types/common.types"; // Your pagination interface
 import { IPengumuman } from "../types/common.types"; // Your announcement interface
 
 // Interface for the function's parameters for type safety
@@ -7,6 +7,7 @@ interface PengumumanParams {
     page?: number;
     size?: number;
     sort?: string;
+    keyword?: string;
 }
 
 /**
@@ -32,7 +33,37 @@ const getPengumuman = async (
     }
 };
 
+const getPengumumanById = async (id: string): Promise<IApiResponseWithData<IPengumuman>> => {
+    try {
+        const response = await Api.get<IApiResponseWithData<IPengumuman>>(
+            `/mahasiswa/pengumuman/${id}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching announcement with id ${id}:`, error);
+        // The error will be handled by React Query's error state
+        throw error;
+    }
+};
+
+const getPengumumanBanner = async (id: string): Promise<Blob> => {
+    try {
+        const response = await Api.get<Blob>(
+            `/mahasiswa/pengumuman/${id}/banner`,
+            {
+                responseType: 'blob', // This tells axios to expect binary data
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching banner for announcement id ${id}:`, error);
+        throw error;
+    }
+};
+
 // Export all functions related to announcements as a single service object
 export const pengumumanService = {
     getPengumuman,
+    getPengumumanById,
+    getPengumumanBanner,
 };

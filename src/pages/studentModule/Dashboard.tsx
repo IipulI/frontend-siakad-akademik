@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
+import { getPlainTextSummary } from "../../utils/textUtils"; // 1. Import the new helper function
 
 // --- Child Components ---
 import DashboardSubjectCard from "../../components/dashboard/DashboardSubjectCard";
@@ -208,7 +209,7 @@ const Dashboard = () => {
                       <DashboardAnnouncementCard
                           key={item.id}
                           title={item.judul}
-                          description={item.isi}
+                          description={getPlainTextSummary(item.isi, 100)} // Truncate to 100 characters
                           // Note: The API does not provide a date for each announcement.
                           // You may need to adjust the DashboardAnnouncementCard component
                           // or request this field from the backend.
