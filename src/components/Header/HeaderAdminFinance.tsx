@@ -153,7 +153,7 @@ const HeaderAdminFinance = () => {
                                     <HamburgerMenu navItems={navItems} dropdownMenus={dropdownMenus}/>
                                     {/* logo */}
                                     <Link
-                                        to={"/dashboard"}
+                                        to={"/admin-keuangan/dashboard"}
                                         className="hidden sm:block sm:w-12 xl:w-15"
                                     >
                                         <img width={60} src="/img/logo_uika.png" alt=""/>
