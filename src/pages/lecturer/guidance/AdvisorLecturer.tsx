@@ -24,7 +24,6 @@ export default function AdvisorLecturer() {
     semester: "",
     mahasiswa: "",
     angkatan: "",
-    hasPembimbing: true,
     prodi: "",
   });
   
@@ -34,7 +33,7 @@ export default function AdvisorLecturer() {
   const { data: periodeAkademikDropdown } = useAcademicPeriodDropdown()
   const { data: programStudiDropdown } = useStudyProgramDropdown()
   
-  const { data: studentData, isPending } = useAcademicGuidanceList(filters.periode, filters.prodi, filters.angkatan, filters.krs, debouncedSearch, filters.hasPembimbing, filters.mahasiswa, filters.semester, currentPage, rowsPerPage)
+  const { data: studentData, isPending } = useAcademicGuidanceList(filters.periode, filters.prodi, filters.angkatan, filters.krs, debouncedSearch, filters.mahasiswa, filters.semester, currentPage, rowsPerPage)
   
   const periodeOptions = periodeAkademikDropdown?.data?.map((item: IAcademicPeriod) => ({
     value: item.id,
@@ -68,14 +67,12 @@ export default function AdvisorLecturer() {
   
 
   const krsOptions = [{value: "", label: "Semua"}, {value: "Disetujui", label: "Disetujui"}, {value: "Ditolak", label: "Ditolak"}, {value: "Diajukan", label: "Diajukan"},]
-  const pembimbingOptions = [{value: true, label: "Ada"}, {value: false, label: "Tidak Ada"}]
   const mahasiswaOptions = [{value: "", label: "Semua"}, {value: "Aktif", label: "Aktif"}, {value: "Tidak Aktif", label: "Tidak Aktif"}]
   const semesterOptions = [{value: "", label: "Semua"}, {value: "1", label: "1"}, {value: "2", label: "2"}, {value: "3", label: "3"}, {value: "4", label: "4"}, {value: "5", label: "5"}, {value: "6", label: "6"}, {value: "7", label: "7"}, {value: "8", label: "8"}, {value: "9", label: "9"}, {value: "10", label: "10"}, {value: "11", label: "11"}, {value: "12", label: "12"}, {value: "13", label: "13"}, {value: "14", label: "14"}]
   const options = [{value: "Semua", label: "Semua"}]
 
   const filterOptions = [
     { label: "Periode Akademik", key: "periode", options: periodeOptions },
-    { label: "Status Pembimbing", key: "hasPembimbing", options: pembimbingOptions },
     { label: "Semester", key: "semester", options: semesterOptions },
     { label: "Unit Kerja", key: "prodi", options: unitKerjaOptions },
     { label: "Status KRS", key: "krs", options: krsOptions },
