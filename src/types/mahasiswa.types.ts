@@ -183,5 +183,35 @@ export interface IInfoTagihan {
     totalTagihan: number;
     totalLunas: number;
     sisaTagihan: number;
-    tanggalTenggat: string; // e.g., "2025-07-10"
+    tanggalTenggat: string;
+}
+
+export interface ITagihan {
+    kodeInvoice: string;
+    metodeBayar: string | null;
+    namaPeriode: string;
+    tanggalTenggat: string;
+    tanggalBayar: string | null;
+    kodeKomponen: string;
+    namaTagihan: string;
+    nominalTagihan: number;
+    lunas: 'lunas' | 'belum lunas';
+}
+
+export interface ITagihanDetail extends ITagihan {
+    // You can extend this with more specific student info if the API provides it
+    studentInfo: {
+        nim: string;
+        nama: string;
+        programStudi: string;
+    };
+}
+
+export interface PaginatedBillsResponse {
+    data: ITagihan[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+    };
 }

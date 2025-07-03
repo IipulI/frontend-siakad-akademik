@@ -156,16 +156,33 @@ const Dashboard = () => {
               {tagihanData && (
                   <>
                     <div className="w-full flex gap-4">
-                      <DashboardBillCard title={"Total Tagihan"} price={tagihanData.totalTagihan} />
-                      <DashboardBillCard title={"Total Lunas"} price={tagihanData.totalLunas} />
-                    </div>
-                    <div>
                       <DashboardBillCard
-                          pay={true}
-                          title={"Sisa Tagihan"}
-                          price={tagihanData.sisaTagihan}
-                          date={tagihanData.tanggalTenggat}
+                          title={"Total Tagihan"}
+                          price={tagihanData.totalTagihan}
+                          status="info"
                       />
+                      <DashboardBillCard
+                          title={"Total Lunas"}
+                          price={tagihanData.totalLunas}
+                          status="info"
+                      />
+                    </div>
+
+                    <div>
+                      {tagihanData.sisaTagihan > 0 ? (
+                          <DashboardBillCard
+                              title={"Sisa Tagihan"}
+                              price={tagihanData.sisaTagihan}
+                              status="payable" // Kirim status 'payable'
+                              date={tagihanData.tanggalTenggat}
+                          />
+                      ) : (
+                          <DashboardBillCard
+                              title={"Status Tagihan"}
+                              price={0}
+                              status="paid" // Kirim status 'paid'
+                          />
+                      )}
                     </div>
                   </>
               )}
