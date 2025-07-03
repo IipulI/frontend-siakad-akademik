@@ -243,7 +243,7 @@ const HeaderAdminAcademic = () => {
                                     {/* menu hamburger */}
                                     <HamburgerMenu navItems={navItems} dropdownMenus={dropdownMenus}/>
                                     {/* logo */}
-                                    <Link to={"/dashboard"} className="hidden sm:block sm:w-12 xl:w-15">
+                                    <Link to={"/admin-akademik/dashboard"} className="hidden sm:block sm:w-12 xl:w-15">
                                         <img width={60} src="/img/logo_uika.png" alt=""/>
                                     </Link>
                                     <div>

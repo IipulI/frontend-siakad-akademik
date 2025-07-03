@@ -216,7 +216,7 @@ const HeaderAdminAcademic = () => {
                                     />
                                     {/* logo */}
                                     <Link
-                                        to={"/dashboard"}
+                                        to={"/dosen/dashboard"}
                                         className="hidden sm:block sm:w-12 xl:w-15"
                                     >
                                         <img width={60} src="/img/logo_uika.png" alt=""/>
