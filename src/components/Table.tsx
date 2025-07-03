@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Api } from "../api";
+import { Api } from "../api/Index";
 import { AdminAcademicRoute } from "../types/VarRoutes";
 
 import { CourseData, CplData, CurriculumData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "./types";

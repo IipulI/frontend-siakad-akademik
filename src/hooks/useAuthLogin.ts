@@ -16,6 +16,11 @@ export interface UserLoginData {
         roles: string[];
         // Add other relevant user properties
     };
+    account_info: {
+        id: string;
+        nama: string;
+        code: string; // This is likely the NIM/Student ID
+    }
     // any other data returned on successful login
 }
 
@@ -52,6 +57,7 @@ export function useAuthLogin({
             // Core success actions (like saving to localStorage) can happen here
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("account_info", JSON.stringify(data.account_info));
 
             // Then call the provided onSuccess callback for component-specific actions
             if (onSuccess) {

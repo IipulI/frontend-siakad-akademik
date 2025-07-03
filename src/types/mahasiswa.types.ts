@@ -215,3 +215,78 @@ export interface PaginatedBillsResponse {
         totalItems: number;
     };
 }
+
+export interface KeluargaMahasiswa {
+    id: string;
+    hubungan: string;
+    nama: string;
+    nik: string;
+    tanggalLahir: string;
+    statusHidup: string;
+    statusKerabat: string;
+    pendidikan: string;
+    pekerjaan: string;
+    penghasilan: string;
+    alamat: string;
+    noTelepon: string;
+    email: string;
+}
+
+export interface MahasiswaProfile {
+    id: string;
+    namaProgramStudi: string;
+    nama: string;
+    npm: string;
+    periodeMasuk: string;
+    kurikulum: string | null;
+    sistemKuliah: string;
+    kelas: string;
+    jenisPendaftaran: string;
+    jalurPendaftaran: string;
+    gelombang: string;
+    jenisKelamin: string;
+    tempatLahir: string;
+    tanggalLahir: string;
+    noKk: string;
+    nik: string;
+    angkatan: string;
+    tanggalMasuk: string;
+    kebutuhanKhusus: boolean;
+    statusMahasiswa: string;
+    alamatKtp: string;
+    rtKtp: number;
+    rwKtp: number;
+    semester: number;
+    desaKtp: string;
+    provinsiKtp: string;
+    kodePosKtp: string;
+    statusTinggalKtp: string;
+    alamatDomisili: string;
+    rtDomisili: number;
+    rwDomisili: number;
+    desaDomisili: string;
+    provinsiDomisili: string;
+    kodePosDomisili: string;
+    statusTinggalDomisili: string;
+    noTelepon: string;
+    noHp: string;
+    emailPribadi: string;
+    emailKampus: string;
+    noTerdaftar: string;
+    pendidikanAsal: string;
+    provinsiSekolah: string;
+    kotaKabSekolah: string;
+    namaPendidikanAsal: string;
+    alamatSekolah: string;
+    teleponSekolah: string;
+    noIjazahSekolah: string;
+    jenjang: string;
+    agama: string | null;
+    beratBadan: number | null;
+    tinggiBadan: number | null;
+    golonganDarah: string | null;
+    nisn: string | null;
+    sks: number | null;
+    ipk: number | null;
+    keluargaMahasiswaList: KeluargaMahasiswa[];
+}
