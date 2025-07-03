@@ -1,13 +1,18 @@
 import React, { useMemo } from "react";
 import { useState } from "react";
-import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
-import { CourseData, CplData, CurriculumData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "../components/types.ts";
 import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
-import { getKelas, getRps, useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement.ts";
-import { Api } from "../api/Index.tsx";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CplCpmkCourseResponse } from "../hooks/academic/useCplCpmkCourse.ts";
+
+import { Api } from "../api";
+import { AdminAcademicRoute } from "../types/VarRoutes";
+
+import { CourseData, CplData, CurriculumData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "./types";
+import { IPengumuman } from '../types/common.types';
+
+import { CplCpmkCourseResponse } from '../hooks/academic/useCplCpmkCourse';
+import { getKelas, getRps, useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement";
+
 
 interface TableProps {
   data: Array<Record<string, any>>;
@@ -120,6 +125,14 @@ interface TableCurriculumProdiProps {
   tableHead: string[];
   error: string;
   onDelete?: (id: string) => void;
+}
+
+interface TableAnnouncementProps {
+  data: IPengumuman[];
+  tableHead: string[];
+  error: string;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 // --- table ---
@@ -237,43 +250,88 @@ export const TableHistory = ({
   );
 };
 
-export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps) => {
+export const TableAnnouncement = ({
+                                    data,
+                                    tableHead,
+                                    error,
+                                    isLoading,
+                                    isError,
+                                  }: TableAnnouncementProps) => {
+  const navigate = useNavigate();
+
   return (
-    <table className="w-full my-4">
-      <thead>
+      <table className="w-full my-4">
+        <thead>
         <tr>
           {tableHead.map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
-              <p className="font-semibold text-center">{head}</p>
-            </th>
+              <th
+                  key={head}
+                  className="p-4 bg-primary-green text-white border border-gray-600"
+              >
+                <p className="font-semibold text-center">{head}</p>
+              </th>
           ))}
         </tr>
-      </thead>
-      <tbody className="font-semibold">
-        {data && data.length > 0 ? (
-          data.map((row, index) => {
-            return (
-              <tr key={index} className="text-center">
-                <td className="p-2 border text-sm border-black/50">{row.tanggal}</td>
-                <td className="p-2 border text-sm border-black/50">{row.penulis}</td>
-                <td className="p-2 border text-sm border-black/50">{row.judul}</td>
-                <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
-                  <div onClick={() => setId && setId(row.id)} className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6">
-                    <Eye className="text-white w-4 h-4" />
-                  </div>
-                </td>
-              </tr>
-            );
-          })
-        ) : (
-          <tr>
-            <td colSpan={tableHead.length} className="text-center border-black border p-2">
-              {error}
-            </td>
-          </tr>
+        </thead>
+        <tbody className="font-semibold">
+        {isLoading && (
+            <tr>
+              <td
+                  colSpan={tableHead.length}
+                  className="text-center border-black border p-4"
+              >
+                <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+              </td>
+            </tr>
         )}
-      </tbody>
-    </table>
+        {isError && (
+            <tr>
+              <td
+                  colSpan={tableHead.length}
+                  className="text-center border-black border p-4 text-red-600"
+              >
+                {error}
+              </td>
+            </tr>
+        )}
+        {!isLoading && !isError && data && data.length > 0 ? (
+            data.map((row) => (
+                <tr key={row.id} className="text-center hover:bg-gray-50">
+                  <td className="p-2 border text-sm border-black/50">
+                    {new Date("2025-07-01").toLocaleDateString('id-ID')}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50 text-left">
+                    {row.judul}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">{row.user}</td>
+                  <td
+                      className="p-2 border text-sm border-black/50 text-center"
+                      style={{ verticalAlign: "middle" }}
+                  >
+                    {/* 2. onClick now navigates to the detail page URL */}
+                    <div
+                        onClick={() => navigate(`/jadwal/pengumuman/detail/${row.id}`)}
+                        className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6"
+                        title="Lihat Detail"
+                    >
+                      <Eye className="text-white w-4 h-4" />
+                    </div>
+                  </td>
+                </tr>
+            ))
+        ) : null}
+        {!isLoading && !isError && data.length === 0 && (
+            <tr>
+              <td
+                  colSpan={tableHead.length}
+                  className="text-center border-black border p-4"
+              >
+                Tidak ada pengumuman yang ditemukan.
+              </td>
+            </tr>
+        )}
+        </tbody>
+      </table>
   );
 };
 

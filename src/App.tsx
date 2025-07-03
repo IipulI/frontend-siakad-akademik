@@ -10,6 +10,7 @@ import ThisWeek from "./pages/studentModule/schedule/ThisWeek";
 import History from "./pages/studentModule/academic/History";
 import Retake from "./pages/studentModule/academic/Retake";
 import Announcement from "./pages/studentModule/schedule/Announcement";
+import AnnouncementDetailPage from "./pages/studentModule/schedule/AnnouncmentDetailPage";
 import ParentInformation from "./pages/studentModule/profile/ParentInformation";
 import StudentPayment from "./pages/studentModule/payment/StudentPayment";
 import ProgramStudy from "./pages/studentModule/profile/ProgramStudy";
@@ -90,6 +91,7 @@ export default function App() {
       <Route path={String(StudentRoute.schedule.exam)} element={<Exam />} />
       <Route path={String(StudentRoute.schedule.calendar)} element={<CalendarAcademic />} />
       <Route path={String(StudentRoute.schedule.announcement)} element={<Announcement />} />
+      <Route path={String(StudentRoute.schedule.announcementDetail)} element={<AnnouncementDetailPage />} />
       <Route path={String(StudentRoute.schedule.thisWeek)} element={<ThisWeek />} />
 
       {/* Route Profile */}
