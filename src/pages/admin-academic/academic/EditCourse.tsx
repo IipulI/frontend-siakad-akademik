@@ -1,116 +1,31 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Api } from "../../../api/Index";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { CourseData, CurriculumData, ProgramStudiData } from "../../../components/types";
-import { Search, ArrowLeft, Save } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Search, ArrowLeft, Save, CheckCircle, XCircle, X } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { getCourseData, getCourseDataById, useUpdateCourse } from "../../../hooks/academic/useCourseManagement.ts";
+import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
+import { getProdi } from "../../../hooks/academic/useProdi.ts";
 
-// --- api functons ---
-const fetchCourseEdit = async ({ queryKey }) => {
-  const [, id] = queryKey;
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(`/akademik/mata-kuliah/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return response.data.data;
+// Popup Component
+const NotificationPopup = ({ show, type, message, onClose }) => {
+  return (
+    <div className={`fixed top-5 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ${show ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
+      <div
+        className={`flex items-center gap-3 px-4 py-3 rounded-md shadow-lg border text-sm
+        ${type === "success" ? "bg-green-100 border-green-400 text-green-800" : "bg-red-100 border-red-400 text-red-800"}`}
+      >
+        {type === "success" ? <CheckCircle size={20} className="text-green-600" /> : <XCircle size={20} className="text-red-600" />}
+        <span>{message}</span>
+        <button onClick={onClose} className="ml-2 text-gray-500 hover:text-gray-700">
+          <X size={16} />
+        </button>
+      </div>
+    </div>
+  );
 };
 
-const fetchAllCourses = async (): Promise<CourseData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/mata-kuliah", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  let courseData: CourseData[] = [];
-
-  if (Array.isArray(data)) {
-    courseData = data as CourseData[];
-  } else if (typeof data === "object" && data !== null) {
-    courseData = Object.values(data as Record<string, unknown>).filter((item): item is CourseData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return courseData;
-};
-
-const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/tahun-kurikulum", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  let curriculumData: CurriculumData[] = [];
-
-  if (Array.isArray(data)) {
-    curriculumData = data as CurriculumData[];
-  } else if (typeof data === "object" && data !== null) {
-    curriculumData = Object.values(data as Record<string, unknown>).filter((item): item is CurriculumData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return curriculumData;
-};
-
-const fetchProdiData = async (): Promise<ProgramStudiData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/program-studi", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  let programStudiData: ProgramStudiData[] = [];
-
-  if (Array.isArray(data)) {
-    programStudiData = data as ProgramStudiData[];
-  } else if (typeof data === "object" && data !== null) {
-    programStudiData = Object.values(data as Record<string, unknown>).filter((item): item is ProgramStudiData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return programStudiData;
-};
-
-const updateCourse = async ({ id, data }) => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    siakProgramStudiId: data.siakProgramStudiId,
-    siakTahunKurikulumId: data.siakTahunKurikulumId,
-    sksTatapMuka: data.sksTatapMuka,
-    sksPraktikum: data.sksPraktikum,
-    semester: data.semester,
-    adaPraktikum: data.adaPraktikum,
-    nilaiMin: data.nilaiMin,
-    kodeMataKuliah: data.kodeMataKuliah,
-    namaMataKuliah: data.namaMataKuliah,
-    jenisMataKuliah: data.jenisMataKuliah,
-    prasyaratMataKuliah1Id: data.prasyaratMataKuliah1Id || "",
-    prasyaratMataKuliah2Id: data.prasyaratMataKuliah2Id || "",
-    prasyaratMataKuliah3Id: data.prasyaratMataKuliah3Id || "",
-  };
-
-  await Api.put(`/akademik/mata-kuliah/${id}`, payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return { id, ...data };
-};
-
-// --- edit course component ---
 const EditCourse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -121,8 +36,8 @@ const EditCourse = () => {
     programStudi: "",
     siakProgramStudiId: "",
     siakTahunKurikulumId: "",
-    sksTatapMuka: 0,
-    sksPraktikum: 0,
+    sksTatapMuka: "",
+    sksPraktikum: "",
     semester: "",
     adaPraktikum: false,
     nilaiMin: "",
@@ -136,41 +51,19 @@ const EditCourse = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const totalSks = formData.sksTatapMuka + formData.sksPraktikum;
+  const totalSks = (parseInt(formData.sksTatapMuka || "0", 10) || 0) + (parseInt(formData.sksPraktikum || "0", 10) || 0);
 
   // --queries ---
-  const {
-    data: courseEdit,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["courseEditData", id],
-    queryFn: fetchCourseEdit,
-    enabled: !!id,
-  });
-
-  const { data: curriculumData = [] } = useQuery({
-    queryKey: ["curriculumData"],
-    queryFn: fetchCurriculumData,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const { data: programStudiData = [] } = useQuery({
-    queryKey: ["programStudiData"],
-    queryFn: fetchProdiData,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const { data: allCoursesData = [] } = useQuery({
-    queryKey: ["allCoursesData"],
-    queryFn: fetchAllCourses,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: courseEdit, isLoading, error } = getCourseDataById(id!);
+  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
+  const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
+  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupConfig, setPopupConfig] = useState<{ type: "success" | "error"; message: string }>({ type: "success", message: "" });
 
   useEffect(() => {
+    console.log("Course edit data:", courseEdit);
+
     if (courseEdit) {
       setFormData({
         tahunKurikulum: courseEdit.tahunKurikulum || "",
@@ -195,8 +88,8 @@ const EditCourse = () => {
 
   // Update siakProgramStudiId ketika programStudi berubah
   useEffect(() => {
-    if (formData.programStudi && programStudiData.length > 0) {
-      const selectedProdi = programStudiData.find((prodi) => prodi.namaProgramStudi === formData.programStudi);
+    if (formData.programStudi && prodiData.length > 0) {
+      const selectedProdi = prodiData.find((prodi) => prodi.namaProgramStudi === formData.programStudi);
       if (selectedProdi) {
         setFormData((prev) => ({
           ...prev,
@@ -204,7 +97,7 @@ const EditCourse = () => {
         }));
       }
     }
-  }, [formData.programStudi, programStudiData]);
+  }, [formData.programStudi, prodiData]); // Fixed: changed programStudiData to prodiData
 
   // Update siakTahunKurikulumId ketika tahunKurikulum berubah
   useEffect(() => {
@@ -219,17 +112,7 @@ const EditCourse = () => {
     }
   }, [formData.tahunKurikulum, curriculumData]);
 
-  const mutation = useMutation({
-    mutationFn: updateCourse,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["courseUpdateData", id] });
-      alert("Data mata kuliah berhasil diperbarui!");
-      navigate(AdminAcademicRoute.courseManagement.courseManagement);
-    },
-    onError: (error) => {
-      alert(`Error: ${error.message}`);
-    },
-  });
+  const updateMutation = useUpdateCourse(); // Fixed: renamed from mutation to updateMutation
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -246,16 +129,55 @@ const EditCourse = () => {
     navigate(route);
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    if (popupConfig.type === "success") {
+      navigate(AdminAcademicRoute.courseManagement.courseManagement);
+    }
+  };
+
   const handleSave = () => {
+    console.log("Klik Simpan"); // Tambahkan ini
+
     if (!id) return;
 
-    // Validasi form
     if (!formData.kodeMataKuliah || !formData.namaMataKuliah) {
       alert("Kode Mata Kuliah dan Nama Mata Kuliah harus diisi!");
       return;
     }
 
-    mutation.mutate({ id, data: formData });
+    updateMutation.mutate(
+      {
+        id,
+        data: {
+          ...formData,
+          sksTatapMuka: parseInt(formData.sksTatapMuka || "0", 10),
+          sksPraktikum: parseInt(formData.sksPraktikum || "0", 10),
+        },
+      },
+      {
+        onSuccess: (data) => {
+          console.log("✅ Sukses update:", data); // Tambahkan ini
+          setPopupConfig({
+            type: "success",
+            message: "Mata kuliah berhasil disimpan!",
+          });
+          setShowPopup(true);
+          setTimeout(() => {
+            setShowPopup(false);
+            navigate(AdminAcademicRoute.courseManagement.courseManagement);
+          }, 2000);
+        },
+        onError: (error: any) => {
+          console.error("❌ Error update:", error);
+          setPopupConfig({
+            type: "error",
+            message: error?.response?.data?.message || error?.message || "Gagal menambahkan mata kuliah. Silakan coba lagi.",
+          });
+          setShowPopup(true);
+        },
+      }
+    );
   };
 
   const handleSearch = () => {
@@ -263,7 +185,8 @@ const EditCourse = () => {
   };
 
   // Filter mata kuliah untuk prasyarat (excludes mata kuliah yang sedang diedit)
-  const availableCoursesForPrerequisite = allCoursesData.filter((course) => course.id !== id);
+  // Fixed: changed allCoursesData to courseData
+  const availableCoursesForPrerequisite = courseData.filter((course) => course.id !== id);
 
   if (isLoading) {
     return (
@@ -291,6 +214,7 @@ const EditCourse = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage="Edit Mata Kuliah" className="">
+      <NotificationPopup show={showPopup} type={popupConfig.type} message={popupConfig.message} onClose={handleClosePopup} />
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
           <div className="flex items-center gap-4">
@@ -309,9 +233,9 @@ const EditCourse = () => {
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
             </button>
-            <button onClick={handleSave} disabled={mutation.isPending} className="bg-primary-green text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
+            <button onClick={handleSave} disabled={updateMutation.isPending} className="bg-primary-green text-white px-4 py-2 rounded flex items-center disabled:opacity-50 cursor-pointer">
               <Save className="mr-2" size={16} />
-              {mutation.isPending ? "Menyimpan..." : "Simpan"}
+              {updateMutation.isPending ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
         </div>
@@ -351,7 +275,7 @@ const EditCourse = () => {
                 <label className="block mb-2 font-medium">Unit Pengampu</label>
                 <select value={formData.programStudi} onChange={(e) => handleInputChange("programStudi", e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">Pilih Unit Pengampu</option>
-                  {programStudiData.map((prodi) => (
+                  {prodiData.map((prodi) => (
                     <option key={prodi.id} value={prodi.namaProgramStudi}>
                       {prodi.namaProgramStudi}
                     </option>
@@ -401,8 +325,10 @@ const EditCourse = () => {
 
             <div className="flex gap-4 mb-4 flex-col md:flex-row">
               <div className="md:w-1/2 w-full">
-                <label className="block mb-2 font-medium">SKS Tatap Muka*</label>
-                <input type="number" value={formData.sksTatapMuka} onChange={(e) => handleInputChange("sksTatapMuka", Number(e.target.value))} className="w-full px-3 py-2 border border-black/50 rounded" min="0" />
+                <label className="block mb-2 font-medium">
+                  SKS Tatap Muka<span className="text-red-500">*</span>
+                </label>
+                <input type="number" name="sksTatapMuka" value={formData.sksTatapMuka} onChange={(e) => handleInputChange("sksTatapMuka", e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded" min="0" />
               </div>
               <div className="md:w-1/2 w-full">
                 <label className="block mb-2 font-medium">Mata Kuliah Prasyarat 2</label>
@@ -419,8 +345,10 @@ const EditCourse = () => {
 
             <div className="flex gap-4 mb-4 flex-col md:flex-row">
               <div className="md:w-1/2 w-full">
-                <label className="block mb-2 font-medium">SKS Praktikum*</label>
-                <input type="number" value={formData.sksPraktikum} onChange={(e) => handleInputChange("sksPraktikum", Number(e.target.value))} className="w-full px-3 py-2 border border-black/50 rounded" min="0" />
+                <label className="block mb-2 font-medium">
+                  SKS Praktikum<span className="text-red-500">*</span>
+                </label>
+                <input type="number" value={formData.sksPraktikum} onChange={(e) => handleInputChange("sksPraktikum", e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded" min="0" />
               </div>
               <div className="md:w-1/2 w-full">
                 <label className="block mb-2 font-medium">Mata Kuliah Prasyarat 3</label>
@@ -453,16 +381,13 @@ const EditCourse = () => {
             <div className="flex gap-4 mb-4 flex-col md:flex-row">
               <div className="md:w-1/2 w-full">
                 <label className="block mb-2 font-medium">Nilai Minimum</label>
-                <input type="text" value={formData.nilaiMin} onChange={(e) => handleInputChange("nilaiMin", e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded" placeholder="Contoh: C" />
+                <select name="nilaiMin" value={formData.nilaiMin} onChange={(e) => handleInputChange("nilaiMin", e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded">
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
               </div>
-              {/* <div className="w-1/2">
-                <div className="flex items-center mt-8">
-                  <input type="checkbox" id="adaPraktikum" checked={formData.adaPraktikum} onChange={(e) => handleInputChange("adaPraktikum", e.target.checked)} className="mr-2" />
-                  <label htmlFor="adaPraktikum" className="font-medium">
-                    Ada Praktikum
-                  </label>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

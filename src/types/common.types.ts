@@ -30,3 +30,12 @@ export interface IAcademicActivePeriod {
     tanggalMulai: string;
     tanggalSelesai: string;
 }
+
+export interface IPengumuman {
+    id: string;
+    user: string;
+    judul: string;
+    isi: string;
+    isActive: boolean;
+    isPriority: boolean;
+}

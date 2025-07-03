@@ -10,6 +10,7 @@ import ThisWeek from "./pages/studentModule/schedule/ThisWeek";
 import History from "./pages/studentModule/academic/History";
 import Retake from "./pages/studentModule/academic/Retake";
 import Announcement from "./pages/studentModule/schedule/Announcement";
+import AnnouncementDetailPage from "./pages/studentModule/schedule/AnnouncmentDetailPage";
 import ParentInformation from "./pages/studentModule/profile/ParentInformation";
 import StudentPayment from "./pages/studentModule/payment/StudentPayment";
 import ProgramStudy from "./pages/studentModule/profile/ProgramStudy";
@@ -85,6 +86,7 @@ export default function App() {
       <Route path={String(StudentRoute.schedule.exam)} element={<Exam />} />
       <Route path={String(StudentRoute.schedule.calendar)} element={<CalendarAcademic />} />
       <Route path={String(StudentRoute.schedule.announcement)} element={<Announcement />} />
+      <Route path={String(StudentRoute.schedule.announcementDetail)} element={<AnnouncementDetailPage />} />
       <Route path={String(StudentRoute.schedule.thisWeek)} element={<ThisWeek />} />
 
       {/* Route Profile */}
@@ -142,14 +144,14 @@ export default function App() {
 
       <Route path={`${AdminAcademicRoute.courseManagement.detailCourse}/:id`} element={<DetailCourse />} />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.cplCpmkCourse)} element={<CplCpmkCourse />} />
+      <Route path={`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/:id`} element={<CplCpmkCourse />} />
 
-      <Route path={String(AdminAcademicRoute.courseManagement.rpsCourse)} element={<RpsCourse />} />
+      <Route path={`${AdminAcademicRoute.courseManagement.rpsCourse}/:id`} element={<RpsCourse />} />
 
       {/* Route untuk admin akademik - OBE Management */}
       <Route path={String(AdminAcademicRoute.obeManagement.obeManagement)} element={<OBEManagement />} />
 
-      <Route path={String(AdminAcademicRoute.obeManagement.graduateProfile)} element={<GraduateProfile />} />
+      <Route path={`${AdminAcademicRoute.obeManagement.graduateProfile}/:id`} element={<GraduateProfile />} />
 
       <Route path={String(AdminAcademicRoute.obeManagement.cpl)} element={<ObeCpl />} />
 
@@ -165,9 +167,9 @@ export default function App() {
 
       <Route path={String(AdminAcademicRoute.rpsManagement.addRps)} element={<AddRps />} />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.editRps)} element={<EditRps />} />
+      <Route path={`${AdminAcademicRoute.rpsManagement.editRps}/:id`} element={<EditRps />} />
 
-      <Route path={String(AdminAcademicRoute.rpsManagement.detailRps)} element={<DetailRps />} />
+      <Route path={`${AdminAcademicRoute.rpsManagement.detailRps}/:id`} element={<DetailRps />} />
 
       {/* Route Untuk Admin Keuangan */}
       <Route path={String(AdminFinanceRoute.dashboardAdminFinance)} element={<DashboardAdminFinance />} />

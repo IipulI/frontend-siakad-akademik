@@ -5,12 +5,14 @@ interface DashboardBillCardProps {
   title: string;
   price: number;
   pay?: boolean;
+  date?: string;
 }
 
 export default function DashboardBillCard({
   title,
   price,
   pay = false,
+  date
 }: DashboardBillCardProps) {
   return (
     <>
@@ -30,7 +32,7 @@ export default function DashboardBillCard({
                 Rp. {price.toLocaleString("id")}
               </span>
               <span>&nbsp;sebelum&nbsp;</span>
-              <span className="text-red-500">April 2025</span>
+              <span className="text-red-500">{new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             </div>
           </>
         )}

@@ -14,6 +14,7 @@ export const StudentRoute = {
     exam: "/jadwal/ujian",
     calendar: "/jadwal/kalendar-akademik",
     announcement: "/jadwal/pengumuman",
+    announcementDetail: "/jadwal/pengumuman/detail/:id",
     thisWeek: "/jadwal/jadwal-minggu-ini",
   } as routeType,
   academic: {

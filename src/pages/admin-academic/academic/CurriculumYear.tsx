@@ -1,121 +1,20 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Api } from "../../../api/Index";
+import { useQueryClient } from "@tanstack/react-query";
 import { TableCurriculumYear } from "../../../components/Table";
-import { CurriculumData, PeriodeAkademik } from "../../../components/types.ts";
+import { CurriculumData } from "../../../components/types.ts";
 import { RefreshCw, Search, Plus } from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
+import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
+import { getPeriodeAkdemikCoba } from "../../../hooks/academic/usePeriodeAkademikCoba.ts";
+import { getCurriculumYear, useAddCurriculumYear, useUpdateCurriculumYear, useDeleteCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
+import InfoAlert from "../../../components/InfoAlert.tsx";
 
-// --- api functions ---
-const fetchPeriodeAkademik = async (): Promise<PeriodeAkademik[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/periode-akademik", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  let periodeData: PeriodeAkademik[] = [];
-
-  if (Array.isArray(data)) {
-    periodeData = data as PeriodeAkademik[];
-  } else if (typeof data === "object" && data !== null) {
-    periodeData = Object.values(data as Record<string, unknown>).filter((item): item is PeriodeAkademik => typeof item === "object" && item !== null && "id" in item);
-  }
-  return periodeData;
-};
-
-const fetchCurriculumData = async (page: number, size: number): Promise<CurriculumData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(`/akademik/tahun-kurikulum?page=${page}&size=${size}&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
-
-  const apiData = response.data.data;
-  const formattedData = Array.isArray(apiData)
-    ? apiData.map((item: any) => {
-        const formatted = {
-          id: item.id,
-          mulaiBerlaku: item.mulaiBerlaku,
-          tahun: item.tahun,
-          keterangan: item.keterangan,
-          tanggalMulai: item.tanggalMulai,
-          tanggalSelesai: item.tanggalSelesai,
-          siakPeriodeAkademikId: item.siakPeriodeAkademikId,
-        };
-
-        return formatted;
-      })
-    : [];
-
-  return formattedData;
-};
-
-const createCurriculum = async (data: Omit<CurriculumData, "id">): Promise<CurriculumData> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    siakPeriodeAkademikId: data.siakPeriodeAkademikId,
-    tahun: data.tahun,
-    keterangan: data.keterangan,
-    tanggalMulai: data.tanggalMulai,
-    tanggalSelesai: data.tanggalSelesai,
-  };
-
-  const response = await Api.post("/akademik/tahun-kurikulum", payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const newItemData = response.data?.data || response.data;
-  return {
-    id: newItemData.id,
-    tahun: newItemData.tahun,
-    keterangan: newItemData.keterangan,
-    mulaiBerlaku: newItemData.mulaiBerlaku,
-    siakPeriodeAkademikId: newItemData.siakPeriodeAkademikId,
-    tanggalMulai: newItemData.tanggalMulai,
-    tanggalSelesai: newItemData.tanggalSelesai,
-  };
-};
-
-const updateCurriculum = async ({ id, data }: { id: string; data: Omit<CurriculumData, "id"> }): Promise<CurriculumData> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    siakPeriodeAkademikId: data.siakPeriodeAkademikId,
-    tahun: data.tahun,
-    keterangan: data.keterangan,
-    tanggalMulai: data.tanggalMulai,
-    tanggalSelesai: data.tanggalSelesai,
-  };
-
-  await Api.put(`/akademik/tahun-kurikulum/${id}`, payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return { id, ...data };
-};
-
-const deleteCurriculum = async (id: string): Promise<void> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  await Api.delete(`/akademik/tahun-kurikulum/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
-
-// --- curriculum year component ---
 const CurriculumYear: React.FC = () => {
   const queryClient = useQueryClient();
 
   // --- state ---
-  const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
+  // const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [currentData, setCurrentData] = useState<CurriculumData | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -123,69 +22,29 @@ const CurriculumYear: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // --- queries ---
-  const {
-    data: periodeAkademikList = [],
-    isLoading: loadingPeriode,
-    error: periodeError,
-  } = useQuery({
-    queryKey: ["periodeAkademik"],
-    queryFn: fetchPeriodeAkademik,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-  });
-
-  const {
-    data: curriculumData = [],
-    isLoading: loading,
-    error: curriculumError,
-    // refetch: refetchCurriculum,
-  } = useQuery({
-    queryKey: ["curriculumData", currentPage, itemsPerPage],
-    queryFn: () => fetchCurriculumData(currentPage, itemsPerPage),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  // --- data queries ---
+  const { data: periodeAkademikList = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba();
+  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
 
   // --- mutations ---
-  const createMutation = useMutation({
-    mutationFn: createCurriculum,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
-      handleReset();
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal menambah data:", error);
-      handleMutationError(error);
-    },
-  });
+  const createMutation = useAddCurriculumYear();
+  const updateMutation = useUpdateCurriculumYear();
+  const deleteMutation = useDeleteCurriculumYear();
 
-  const updateMutation = useMutation({
-    mutationFn: updateCurriculum,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
-      handleReset();
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal mengupdate data:", error);
-      handleMutationError(error);
-    },
-  });
+  // --- Conditional rendering ---
+  if (isPeriodeAkademikLoading || isCurriculumLoading) {
+    return <LoadingSpinner />;
+  }
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteCurriculum,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal menghapus data:", error);
-      handleMutationError(error);
-    },
-  });
+  if (periodeAkademikError) {
+    return <div className="text-red-500">Gagal memuat periode akademik</div>;
+  }
+
+  if (curriculumError) {
+    return <div className="text-red-500">Gagal memuat tahun kurikulum</div>;
+  }
 
   const filteredData = curriculumData.filter((item) => item.tahun.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -204,15 +63,6 @@ const CurriculumYear: React.FC = () => {
     }
   };
 
-  // --- set error messages from queries ---
-  React.useEffect(() => {
-    if (periodeError) {
-      setErrorMessage(periodeError.message || "Gagal mengambil data periode akademik.");
-    } else if (curriculumError) {
-      setErrorMessage(curriculumError.message || "Terjadi kesalahan saat mengambil data.");
-    }
-  }, [periodeError, curriculumError]);
-
   // --- event handlers ---
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -222,7 +72,7 @@ const CurriculumYear: React.FC = () => {
     const selectedData = curriculumData.find((item) => item.id === id);
     if (selectedData) {
       setCurrentData(selectedData);
-      setSelectedPeriodeId(selectedData.siakPeriodeAkademikId);
+      // setSelectedPeriodeId(selectedData.siakPeriodeAkademikId);
       setIsEditing(true);
       setIsAdding(false);
       setErrorMessage("");
@@ -231,7 +81,13 @@ const CurriculumYear: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-      deleteMutation.mutate(id);
+      try {
+        await deleteMutation.mutateAsync(id);
+        setErrorMessage("");
+      } catch (error: any) {
+        console.error("Gagal menghapus data:", error);
+        handleMutationError(error);
+      }
     }
   };
 
@@ -247,12 +103,12 @@ const CurriculumYear: React.FC = () => {
       tanggalMulai: "",
       tanggalSelesai: "",
     });
-    setSelectedPeriodeId("");
+    // setSelectedPeriodeId("");
     setErrorMessage("");
   };
 
   const isFormValid = () => {
-    return !!(currentData?.tahun && currentData?.keterangan && selectedPeriodeId && currentData?.tanggalMulai && currentData?.tanggalSelesai);
+    return !!(currentData?.tahun && currentData?.keterangan && currentData?.siakPeriodeAkademikId && currentData?.tanggalMulai && currentData?.tanggalSelesai);
   };
 
   const handleSave = async () => {
@@ -267,15 +123,27 @@ const CurriculumYear: React.FC = () => {
       tahun: currentData.tahun,
       keterangan: currentData.keterangan,
       mulaiBerlaku: currentData.mulaiBerlaku,
-      siakPeriodeAkademikId: selectedPeriodeId,
+      // siakPeriodeAkademikId: selectedPeriodeId,
+      siakPeriodeAkademikId: currentData.siakPeriodeAkademikId,
       tanggalMulai: currentData.tanggalMulai,
       tanggalSelesai: currentData.tanggalSelesai,
     };
 
-    if (isEditing && currentData.id) {
-      updateMutation.mutate({ id: currentData.id, data: dataToSave });
-    } else if (isAdding) {
-      createMutation.mutate(dataToSave);
+    try {
+      if (isEditing && currentData.id) {
+        await updateMutation.mutateAsync({ id: currentData.id, data: dataToSave });
+        setSuccessMessage("Data berhasil diperbarui.");
+      } else if (isAdding) {
+        await createMutation.mutateAsync(dataToSave);
+        setSuccessMessage("Data berhasil ditambahkan.");
+      }
+
+      handleReset();
+      setErrorMessage("");
+      setTimeout(() => setSuccessMessage(""), 5000);
+    } catch (error: any) {
+      console.error("Gagal menyimpan data:", error);
+      handleMutationError(error);
     }
   };
 
@@ -283,7 +151,7 @@ const CurriculumYear: React.FC = () => {
     setIsAdding(false);
     setIsEditing(false);
     setCurrentData(null);
-    setSelectedPeriodeId("");
+    // setSelectedPeriodeId("");
     setErrorMessage("");
   };
 
@@ -299,17 +167,19 @@ const CurriculumYear: React.FC = () => {
 
   // --- pagination logic ---
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = curriculumData.slice(startIndex, startIndex + itemsPerPage);
-  const totalPages = Math.ceil(curriculumData.length / itemsPerPage);
-  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   // Loading state
-  const isLoading = loading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+  const isLoading = isCurriculumLoading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
   return (
     <MainLayout isGreeting={false} titlePage="Tahun Kurikulum" className="">
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow">
-        <div className="flex flex-col sm:flex-row px-4 py-2 gap-2 sm:gap-4  border-b-2 w-full flex-wrap">
+        {/* Error message display */}
+        {errorMessage && <div className="mx-4 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>}
+
+        <div className="flex flex-col sm:flex-row px-4 py-2 gap-2 sm:gap-4 border-b-2 w-full flex-wrap">
           <div className="flex w-full sm:w-auto sm:order-1">
             <input type="search" placeholder="Cari Tahun Kurikulum" className="px-3 py-1 w-full sm:w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
             <button className="bg-primary-yellow w-10 flex items-center justify-center">
@@ -326,9 +196,11 @@ const CurriculumYear: React.FC = () => {
           </button>
         </div>
 
+        {successMessage && <InfoAlert title="" boldText={successMessage} />}
+
         <div className="mt-8">
           <TableCurriculumYear
-            data={filteredData}
+            data={paginatedData}
             tableHead={["Tahun", "Keterangan", "Mulai Berlaku", "Tanggal Awal", "Tanggal Akhir", "Aksi"]}
             error="Data tidak ditemukan."
             onEdit={handleEdit}
@@ -341,12 +213,12 @@ const CurriculumYear: React.FC = () => {
             isAdding={isAdding}
             isFormValid={isFormValid}
             periodeAkademikList={periodeAkademikList}
-            selectedPeriodeId={selectedPeriodeId}
-            setSelectedPeriodeId={setSelectedPeriodeId}
+            // selectedPeriodeId={selectedPeriodeId}
+            // setSelectedPeriodeId={setSelectedPeriodeId}
           />
         </div>
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
+        <Pagination currentPage={currentPage} totalRows={filteredData.length} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
       </div>
     </MainLayout>
   );
