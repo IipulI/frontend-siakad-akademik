@@ -28,18 +28,23 @@ import CollegeGrades from "../../../components/admin-academic/student-data/detai
 import FinantialHistory from "../../../components/admin-academic/student-data/detail/FinantialHistory";
 import Repeat from "../../../components/admin-academic/student-data/detail/Repeat";
 import EditKRS from "../../../components/admin-academic/student-data/detail/EditKRS";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { useLocation } from "react-router-dom";
+import { getProgramStudi } from "../../../hooks/useFilter";
 
 export default function DetailStudent() {
+  const [activeTab, setActiveTab] = useState("biodata");
+  const { state } = useLocation();
+
   function SearchSubmit() {
     alert("submit");
   }
 
   const navigate = useNavigate();
   function Back() {
-    navigate("/admin-akademik/mahasiswa");
+    navigate(AdminAcademicRoute.student.studentData);
   }
 
-  const [activeTab, setActiveTab] = useState("biodata");
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -171,13 +176,13 @@ export default function DetailStudent() {
 }
 
 export function BiodataStudent() {
-  const programStudiOptions = [
-    { value: "teknik_informatika", label: "Teknik Informatika" },
-    { value: "sistem_informasi", label: "Sistem Informasi" },
-    { value: "teknik_mesin", label: "Teknik Mesin" },
-    { value: "teknik_sipil", label: "Teknik Sipil" },
-    { value: "teknik_elektro", label: "Teknik Elektro" },
-  ];
+  const { data: programStudiDropdown } = getProgramStudi();
+
+  const programStudiOptions =
+    programStudiDropdown?.map((item) => ({
+      value: item.id,
+      label: item.namaProgramStudi,
+    })) || [];
 
   const konsentrasiOptions = [
     { value: "ai", label: "Artificial Intelligence" },

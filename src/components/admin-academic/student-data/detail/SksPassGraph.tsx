@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   LineChart,
   Line,
@@ -10,16 +11,15 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
+import { getLearningProgres } from "../../../../hooks/admin-akademik/useStudentDetail";
 
 export default function SksPassGraph() {
-  const data = [
-    { semester: 1, sks: 18 },
-    { semester: 2, sks: 39 },
-    { semester: 3, sks: 61 },
-    { semester: 4, sks: 82 },
-    { semester: 5, sks: 105 },
-    { semester: 6, sks: 105 },
-  ];
+
+  const { state } = useLocation();
+
+  const { data: studenLectureGraph } = getLearningProgres(state);
+
+  const data = studenLectureGraph?.progresSks;
 
   // Custom dot component to display SKS values
   const CustomizedDot = (props) => {
@@ -43,7 +43,7 @@ export default function SksPassGraph() {
       <div className="w-full h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={data}
+            data={data?.sksLulusKumulatif}
             margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
@@ -69,7 +69,7 @@ export default function SksPassGraph() {
             <Tooltip formatter={(value) => [`${value} SKS`, "SKS"]} />
             <ReferenceLine
               y={144}
-              label={{ value: "Batas Lulus: 144", position: "top" }}
+              label={{ value: `Batas Lulus: ${data?.batasLulus}`, position: "top" }}
               stroke="green"
               strokeDasharray="5 5"
             />

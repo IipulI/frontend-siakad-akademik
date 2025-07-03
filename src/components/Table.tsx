@@ -4,12 +4,16 @@ import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
 import { CplData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "../components/types.ts";
 import { CurriculumData } from "../hooks/academic/useCurriculumYear.ts";
 import { useNavigate } from "react-router-dom";
-import { Eye, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
-import { useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement.ts";
-import { CourseData } from "../hooks/academic/useCourseManagement.ts";
-import { Api } from "../api/Index.tsx";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CplCpmkCourseResponse } from "../hooks/academic/useCplCpmkCourse.ts";
+import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { Api } from "../api/Index";
+import { CourseData} from "./types";
+import { IPengumuman } from '../types/common.types';
+
+import { CplCpmkCourseResponse } from '../hooks/academic/useCplCpmkCourse';
+import { getKelas, getRps, useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement";
+
 
 interface TableProps {
   data: Array<Record<string, any>>;

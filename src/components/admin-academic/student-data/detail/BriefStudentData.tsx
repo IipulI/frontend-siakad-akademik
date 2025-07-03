@@ -1,26 +1,19 @@
 import { Fragment } from "react";
-import BiodataSection from "./BiodataSection";
-import HorizontalLine from "../profile/HorizontalLine";
+import HorizontalLine from "../../../profile/HorizontalLine";
+import BiodataSection from "../../../biodata/BiodataSection";
+import { useStudentDetail } from "../../../../hooks/admin-akademik/useMahasiswa";
+import { useLocation } from "react-router-dom";
+import { getStudentInfo } from "../../../../hooks/admin-akademik/useStudentDetail";
 
 interface BiodataProps {
   showLine?: boolean;
 }
 
-const Biodata = ({ showLine = true }: BiodataProps) => {
-  // tar data dari api
-  const data = {
-    id: 1,
-    nim: "2211060042807",
-    nama: "Muhammad Ridho Fatan",
-    prodi: "Teknik Informatika",
-    status: "Aktif",
-    angkatan: "2022",
-    kurikulum: "2021",
-    semester: "6",
-    pembimbing: "Berlina Wulandari S.T, M.Kom",
-    sksLulus: "103 / 3.78",
-    totalSks: "103 / 3.78",
-  };
+export const BriefStudentData = ({ showLine = true }: BiodataProps) => {
+  const { state } = useLocation();
+  const { data } = getStudentInfo(state);
+
+  console.log("data", data);
 
   const sections = [
     {
@@ -31,7 +24,13 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
         "Status Mahasiswa",
         "Angkatan",
       ],
-      value: [data.nim, data.nama, data.prodi, data.status, data.angkatan],
+      value: [
+        data?.nim,
+        data?.namaMahasiswa,
+        data?.programStudi,
+        data?.statusMahasiwa,
+        data?.angkatan,
+      ],
     },
     {
       title: [
@@ -42,11 +41,11 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
         "Total SKS/IPK",
       ],
       value: [
-        data.kurikulum,
-        data.semester,
-        data.pembimbing,
-        data.sksLulus,
-        data.totalSks,
+        data?.tahunKurikulum || "-",
+        data?.semester,
+        data?.pembimbingAkademik,
+        `${data?.sksLulus || 0}/${data?.ipkLulus || 0}`,
+        `${data?.totalSks || 0}/${data?.ipk || 0}`,
       ],
     },
   ];
@@ -73,5 +72,3 @@ const Biodata = ({ showLine = true }: BiodataProps) => {
     </div>
   );
 };
-
-export default Biodata;

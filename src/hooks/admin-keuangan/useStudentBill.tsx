@@ -101,7 +101,6 @@ export function useGetStudentBill(
     },
     // Refetch ketika ada perubahan parameter
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 

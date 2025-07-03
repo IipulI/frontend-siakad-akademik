@@ -1,82 +1,76 @@
 import LayoutForTabNavigation from "../../dashboard/LayoutForTabNavigation";
 import { DateInput, SelectInput, TextInput } from "./../Input";
+import { CreateStudentData } from "../../../../hooks/admin-akademik/useMahasiswa";
 
-export default function FormGeneralInformation() {
+interface FormGeneralInformationProps {
+  formData?: CreateStudentData;
+  onInputChange: (field: keyof CreateStudentData, value: any) => void;
+}
+
+export default function FormGeneralInformation({
+  formData,
+  onInputChange,
+}: FormGeneralInformationProps) {
   const jenisKelaminOptions = [
-    { value: "", label: "-- Pilih Status Hidup --" },
-    { value: "laki-laki", label: "Laki-laki" },
-    { value: "perempuan", label: "Perempuan" },
+    { value: "Laki-laki", label: "Laki-laki" },
+    { value: "Perempuan", label: "Perempuan" },
   ];
 
   const agamaOptions = [
-    { value: "", label: "-- Pilih Agama --" },
-    { value: "islam", label: "Islam" },
-    { value: "kristen", label: "Kristen" },
-    { value: "katolik", label: "Katolik" },
-    { value: "hindu", label: "Hindu" },
-    { value: "buddha", label: "Buddha" },
-    { value: "konghucu", label: "Konghucu" },
+    { value: "Islam", label: "Islam" },
+    { value: "Kristen", label: "Kristen" },
+    { value: "Katolik", label: "Katolik" },
+    { value: "Hindu", label: "Hindu" },
+    { value: "Buddha", label: "Buddha" },
+    { value: "Konghucu", label: "Konghucu" },
   ];
 
   const golonganDarahOptions = [
-    { value: "", label: "-- Pilih Golongan Darah --" },
-    { value: "a", label: "A" },
-    { value: "b", label: "B" },
-    { value: "ab", label: "AB" },
-    { value: "o", label: "O" },
+    { value: "A", label: "A" },
+    { value: "B", label: "B" },
+    { value: "AB", label: "AB" },
+    { value: "O", label: "O" },
   ];
 
   const transportasiOptions = [
-    { value: "", label: "-- Pilih Transportasi --" },
-    { value: "motor", label: "Motor" },
-    { value: "mobil", label: "Mobil" },
-    { value: "angkutan_umum", label: "Angkutan Umum" },
-    { value: "jalan_kaki", label: "Jalan Kaki" },
-  ];
-
-  const kepemilikanOptions = [
-    { value: "", label: "-- Pilih Kepemilikan --" },
-    { value: "sendiri", label: "Sendiri" },
-    { value: "orang_tua", label: "Orang Tua" },
-    { value: "saudara", label: "Saudara" },
+    { value: "Motor", label: "Motor" },
+    { value: "Mobil", label: "Mobil" },
+    { value: "Angkutan Umum", label: "Angkutan Umum" },
+    { value: "Jalan Kaki", label: "Jalan Kaki" },
   ];
 
   const kewarganegaraanOptions = [
-    { value: "", label: "-- Pilih Status Hidup --" },
-    { value: "wni", label: "WNI" },
-    { value: "wna", label: "WNA" },
+    { value: "Indonesia", label: "Indonesia" },
+    { value: "WNA", label: "WNA" },
   ];
 
   const statusNikahOptions = [
-    { value: "", label: "-- Pilih Status Nikah --" },
-    { value: "belum_menikah", label: "Belum Menikah" },
-    { value: "menikah", label: "Menikah" },
-    { value: "cerai", label: "Cerai" },
+    { value: "Belum Menikah", label: "Belum Menikah" },
+    { value: "Menikah", label: "Menikah" },
+    { value: "Cerai", label: "Cerai" },
   ];
 
   const ukuranJasOptions = [
-    { value: "", label: "-- Pilih Ukuran Jas Al... --" },
-    { value: "s", label: "S" },
-    { value: "m", label: "M" },
-    { value: "l", label: "L" },
-    { value: "xl", label: "XL" },
-    { value: "xxl", label: "XXL" },
+    { value: "S", label: "S" },
+    { value: "M", label: "M" },
+    { value: "L", label: "L" },
+    { value: "XL", label: "XL" },
+    { value: "XXL", label: "XXL" },
   ];
 
   const pekerjaanOptions = [
-    { value: "", label: "-- Pilih Pekerjaan --" },
-    { value: "pns", label: "PNS" },
-    { value: "swasta", label: "Karyawan Swasta" },
-    { value: "wiraswasta", label: "Wiraswasta" },
-    { value: "lainnya", label: "Lainnya" },
+    { value: "PNS", label: "PNS" },
+    { value: "Karyawan Swasta", label: "Karyawan Swasta" },
+    { value: "Wiraswasta", label: "Wiraswasta" },
+    { value: "Mahasiswa", label: "Mahasiswa" },
+    { value: "Lainnya", label: "Lainnya" },
   ];
 
   const penghasilanOptions = [
-    { value: "", label: "-- Pilih Penghasilan --" },
-    { value: "1", label: "< Rp. 1.000.000" },
-    { value: "2", label: "Rp. 1.000.000 - Rp. 3.000.000" },
-    { value: "3", label: "Rp. 3.000.000 - Rp. 5.000.000" },
-    { value: "4", label: "> Rp. 5.000.000" },
+    { value: "< 1000000", label: "< Rp. 1.000.000" },
+    { value: "1000000-3000000", label: "Rp. 1.000.000 - Rp. 3.000.000" },
+    { value: "3000000-5000000", label: "Rp. 3.000.000 - Rp. 5.000.000" },
+    { value: "> 5000000", label: "> Rp. 5.000.000" },
   ];
 
   return (
@@ -92,31 +86,79 @@ export default function FormGeneralInformation() {
               label="Jenis Kelamin"
               options={jenisKelaminOptions}
               required={true}
+              value={formData?.jenisKelamin}
+              onChange={(value) => onInputChange("jenisKelamin", value)}
             />
-            <TextInput label="Tempat Lahir" required={true} />
-            <DateInput label="Tanggal Lahir" required={true} />
-            <SelectInput label="Agama" options={agamaOptions} />
-            <TextInput label="Berat Badan (kg)" />
-            <TextInput label="Tinggi Badan (cm)" />
+            <TextInput
+              label="Tempat Lahir"
+              required={true}
+              value={formData?.tempatLahir}
+              onChange={(value) => onInputChange("tempatLahir", value)}
+            />
+            <DateInput
+              label="Tanggal Lahir"
+              required={true}
+              value={formData?.tanggalLahir}
+              onChange={(value) => onInputChange("tanggalLahir", value)}
+            />
+            <SelectInput
+              label="Agama"
+              options={agamaOptions}
+              value={formData?.agama}
+              onChange={(value) => onInputChange("agama", value)}
+            />
+            <TextInput
+              label="Berat Badan (kg)"
+              value={formData?.beratBadan}
+              onChange={(value) => onInputChange("beratBadan", value)}
+            />
+            <TextInput
+              label="Tinggi Badan (cm)"
+              value={formData?.tinggiBadan}
+              onChange={(value) => onInputChange("tinggiBadan", value)}
+            />
             <SelectInput
               label="Golongan Darah"
               options={golonganDarahOptions}
+              value={formData?.golonganDarah}
+              onChange={(value) => onInputChange("golonganDarah", value)}
             />
-            <SelectInput label="Transportasi" options={transportasiOptions} />
+            <SelectInput
+              label="Transportasi"
+              options={transportasiOptions}
+              value={formData?.transportasi}
+              onChange={(value) => onInputChange("transportasi", value)}
+            />
           </div>
         </div>
 
         {/* section kontak */}
-        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
+        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4 mt-6">
           Kontak
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-4">
-            <TextInput label="No. Telepon" />
-            <TextInput label="No. HP" />
-            <SelectInput label="Kepemilikan" options={kepemilikanOptions} />
-            <TextInput label="Email Kampus" />
-            <TextInput label="Email Pribadi" />
+            <TextInput
+              label="No. Telepon"
+              value={formData?.noTelepon}
+              onChange={(value) => onInputChange("noTelepon", value)}
+            />
+            <TextInput
+              label="No. HP"
+              value={formData?.noHp}
+              onChange={(value) => onInputChange("noHp", value)}
+            />
+            <TextInput
+              label="Email Kampus"
+              value={formData?.emailKampus}
+              onChange={(value) => onInputChange("emailKampus", value)}
+            />
+            <TextInput
+              label="Email Pribadi"
+              value={formData?.emailPribadi}
+              required
+              onChange={(value) => onInputChange("emailPribadi", value)}
+            />
           </div>
         </div>
       </div>
@@ -126,46 +168,88 @@ export default function FormGeneralInformation() {
         <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
           Administrasi
         </h2>
-        <SelectInput label="Kewarganegaraan" options={kewarganegaraanOptions} />
-        <TextInput label="Paspor" required={true} />
-        <TextInput label="No. KK" />
-        <TextInput label="No. KPS" />
-        <SelectInput label="Status Nikah" options={statusNikahOptions} />
-        <SelectInput label="Ukuran Jas Almamater" options={ukuranJasOptions} />
-
-        <div className=" w-full grid grid-cols-2 items-center">
-          <label className="text-sm font-medium mb-1">
-            File Akta Kelahiran
-          </label>
-          <div>
-            <input type="file" className="text-xs border-1 p-0.5 w-30" />
-            <div className="text-xs text-primary-green">
-              pdf, jpg (maxsize: 2 MB)
-            </div>
-          </div>
-        </div>
+        <SelectInput
+          label="Kewarganegaraan"
+          options={kewarganegaraanOptions}
+          value={formData?.kewarganegaraan}
+          onChange={(value) => onInputChange("kewarganegaraan", value)}
+        />
+        <TextInput
+          label="Paspor"
+          required={true}
+          value={formData?.paspor}
+          onChange={(value) => onInputChange("paspor", value)}
+        />
+        <TextInput
+          label="No. KK"
+          value={formData?.noKk}
+          onChange={(value) => onInputChange("noKk", value)}
+        />
+        <TextInput
+          label="NIK"
+          value={formData?.nik}
+          onChange={(value) => onInputChange("nik", value)}
+        />
+        <SelectInput
+          label="Status Nikah"
+          options={statusNikahOptions}
+          value={formData?.statusNikah}
+          onChange={(value) => onInputChange("statusNikah", value)}
+        />
+        <SelectInput
+          label="Ukuran Jas Almamater"
+          options={ukuranJasOptions}
+          value={formData?.ukuranJasAlmamater}
+          onChange={(value) => onInputChange("ukuranJasAlmamater", value)}
+        />
 
         {/* Section Pekerjaan */}
-        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
+        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4 mt-6">
           Pekerjaan
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-4">
-            <SelectInput label="Pekerjaan" options={pekerjaanOptions} />
-            <TextInput label="Instansi Pekerjaan" />
-            <SelectInput label="Penghasilan" options={penghasilanOptions} />
+            <SelectInput
+              label="Pekerjaan"
+              options={pekerjaanOptions}
+              value={formData?.pekerjaan}
+              onChange={(value) => onInputChange("pekerjaan", value)}
+            />
+            <TextInput
+              label="Instansi Pekerjaan"
+              value={formData?.instansiPekerjaan}
+              onChange={(value) => onInputChange("instansiPekerjaan", value)}
+            />
+            <SelectInput
+              label="Penghasilan"
+              options={penghasilanOptions}
+              value={formData?.penghasilan}
+              onChange={(value) => onInputChange("penghasilan", value)}
+            />
           </div>
         </div>
 
         {/* Section Bank */}
-        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
+        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4 mt-6">
           Bank
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-4">
-            <TextInput label="No. Rekening" />
-            <TextInput label="Nama Rekening" />
-            <TextInput label="Nama Bank" />
+            <TextInput
+              label="No. Rekening"
+              value={formData?.noRekening}
+              onChange={(value) => onInputChange("noRekening", value)}
+            />
+            <TextInput
+              label="Nama Rekening"
+              value={formData?.namaRekening}
+              onChange={(value) => onInputChange("namaRekening", value)}
+            />
+            <TextInput
+              label="Nama Bank"
+              value={formData?.namaBank}
+              onChange={(value) => onInputChange("namaBank", value)}
+            />
           </div>
         </div>
       </div>

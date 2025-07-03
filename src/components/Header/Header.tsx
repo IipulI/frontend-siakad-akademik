@@ -133,7 +133,7 @@ const dropdownMenus = {
 };
 
 // --- START: KOMPONEN PROFILE DROPDOWN BARU (Disesuaikan untuk tampilan akhir) ---
-const ProfileDropdown = ({profileData, onClose}) => {
+const ProfileDropdown = ({nama, profileData, onClose}) => {
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
@@ -167,7 +167,7 @@ const ProfileDropdown = ({profileData, onClose}) => {
                     className="w-12 h-12 rounded-full mr-3 border-2 border-gray-200"
                 />
                 <p className="font-semibold text-gray-900 text-base flex-grow">
-                    {profileData.userName}
+                    {nama}
                 </p>
             </div>
 
@@ -218,9 +218,18 @@ const Header = () => {
     const toggleProfileDropdown = () => {
         setIsProfileDropdownOpen(!isProfileDropdownOpen);
     };
+    const [userName, setUserName] = useState<string>("");
 
     // Tutup dropdown jika klik di luar
     useEffect(() => {
+        const accountInfoString = localStorage.getItem("account_info");
+
+        if(accountInfoString){
+            const accountInfo = JSON.parse(accountInfoString);
+
+            setUserName(accountInfo.nama);
+        }
+
         const handleClickOutside = (event) => {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
                 setIsProfileDropdownOpen(false);
@@ -286,6 +295,7 @@ const Header = () => {
                             </button>
                             {isProfileDropdownOpen && (
                                 <ProfileDropdown
+                                    nama={userName}
                                     profileData={dropdownMenus.profile}
                                     onClose={() => setIsProfileDropdownOpen(false)}
                                 />

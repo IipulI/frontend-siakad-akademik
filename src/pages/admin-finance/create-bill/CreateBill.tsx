@@ -15,6 +15,7 @@ import {
   ToastNotif,
   showToast,
 } from "../../../components/admin-finance/Toastify";
+import getAcademicPeriods from "../../../hooks/usePeriodeAkademik";
 
 export default function CreateBill() {
   // state untuk pilih mahasiswa
@@ -56,7 +57,7 @@ export default function CreateBill() {
   );
 
   // Extract data dari response
-  const data = apiResponse?.data || [];
+  const studentData = apiResponse?.data || [];
   const pagination = apiResponse?.pagination;
 
   useEffect(() => {
@@ -226,8 +227,8 @@ export default function CreateBill() {
   // Fungsi select all checkbox
   function handleSelectAll(isChecked: boolean) {
     if (isChecked) {
-      setSelectedStudents([...data]);
-      setSelectedIds(data.map((student) => student.id));
+      setSelectedStudents([...studentData]);
+      setSelectedIds(studentData.map((student) => student.id));
     } else {
       setSelectedStudents([]);
       setSelectedIds([]);
@@ -350,7 +351,8 @@ export default function CreateBill() {
                       type="checkbox"
                       className="w-4 h-4"
                       checked={
-                        selectedIds.length === data.length && data.length > 0
+                        selectedIds.length === studentData.length &&
+                        studentData.length > 0
                       }
                       onChange={(e) => handleSelectAll(e.target.checked)}
                     />
@@ -369,14 +371,14 @@ export default function CreateBill() {
                       Memuat data...
                     </td>
                   </tr>
-                ) : data.length === 0 ? (
+                ) : studentData.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-4 text-gray-500">
                       Tidak ada data mahasiswa
                     </td>
                   </tr>
                 ) : (
-                  data.map((item) => (
+                  studentData.map((item) => (
                     <tr key={item.id}>
                       <td className={cellClassName}>
                         <input

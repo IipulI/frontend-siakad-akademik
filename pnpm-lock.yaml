@@ -35,6 +35,9 @@ importers:
       draft-js:
         specifier: ^0.11.7
         version: 0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      draft-js-export-html:
+        specifier: ^1.4.1
+        version: 1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6)
       lucide-react:
         specifier: ^0.487.0
         version: 0.487.0(react@19.0.0)
@@ -972,6 +975,18 @@ packages:
 
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
+
+  draft-js-export-html@1.4.1:
+    resolution: {integrity: sha512-G4VGBSalPowktIE4wp3rFbhjs+Ln9IZ2FhXeHjsZDSw0a2+h+BjKu5Enq+mcsyVb51RW740GBK8Xbf7Iic51tw==}
+    peerDependencies:
+      draft-js: '>=0.10.0'
+      immutable: 3.x.x
+
+  draft-js-utils@1.4.1:
+    resolution: {integrity: sha512-xE81Y+z/muC5D5z9qWmKfxEW1XyXfsBzSbSBk2JRsoD0yzMGGHQm/0MtuqHl/EUDkaBJJLjJ2EACycoDMY/OOg==}
+    peerDependencies:
+      draft-js: '>=0.10.0'
+      immutable: 3.x.x
 
   draft-js@0.11.7:
     resolution: {integrity: sha512-ne7yFfN4sEL82QPQEn80xnADR8/Q6ALVworbC5UOSzOvjffmYfFsr3xSZtxbIirti14R7Y33EZC5rivpLgIbsg==}
@@ -2274,6 +2289,17 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.27.1
       csstype: 3.1.3
+
+  draft-js-export-html@1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6):
+    dependencies:
+      draft-js: 0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      draft-js-utils: 1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6)
+      immutable: 3.7.6
+
+  draft-js-utils@1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6):
+    dependencies:
+      draft-js: 0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      immutable: 3.7.6
 
   draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:

@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 import { KrsActionPayload } from "../../types/krsPayload";
 
-export const useAcademicGuidanceList = (periodeAkademikId: string, programStudi: string, angkatan: string, statusKrs: string, keyword: string, hasPembimbing: boolean, statusMahasiswa: string, semester: string, page: number, size: number) =>
+export const useAcademicGuidanceList = (periodeAkademikId: string, programStudi: string, angkatan: string, statusKrs: string, keyword: string, statusMahasiswa: string, semester: string, page: number, size: number) =>
     useQuery({
         queryKey: [
           "dosen/pembimbing-akademik/all",
@@ -11,14 +11,13 @@ export const useAcademicGuidanceList = (periodeAkademikId: string, programStudi:
           angkatan,
           statusKrs,
           keyword,
-          hasPembimbing,
           statusMahasiswa,
           semester,
           page,
           size
         ],
         queryFn: async () => {
-            const res = await Api.get(`/dosen/pembimbing-akademik/all?periodeAkademikId=${periodeAkademikId}&programStudi=${programStudi}&angkatan=${angkatan}&statusKrs=${statusKrs}&keyword=${keyword}&hasPembimbing=${hasPembimbing}&statusMahasiswa=${statusMahasiswa}&semester=${semester}&size=${size}`)
+            const res = await Api.get(`/dosen/pembimbing-akademik/all?periodeAkademikId=${periodeAkademikId}&programStudi=${programStudi}&angkatan=${angkatan}&statusKrs=${statusKrs}&keyword=${keyword}&statusMahasiswa=${statusMahasiswa}&semester=${semester}&size=${size}`)
             return res.data
         },
         enabled: !!periodeAkademikId

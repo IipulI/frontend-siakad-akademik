@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../Breadcrumb";
 import Header from "../Header/Header";
 import HeaderAdminAcademic from "../Header/HeaderAdminAcademic";
 import HeaderAdminFinance from "../Header/HeaderAdminFinance";
 import HeaderLecturer from "../Header/HeaderLecturer";
-import React from "react";
-import { useNavigate } from "react-router-dom";
 
-interface MainLayout {
+interface MainLayoutProps { // Renamed for clarity, a common convention
   children: React.ReactNode;
   isGreeting: boolean;
   titlePage: string;
@@ -15,27 +14,38 @@ interface MainLayout {
 }
 
 export default function MainLayout({
-  children,
-  isGreeting,
-  titlePage,
-  className,
-}: MainLayout) {
+                                     children,
+                                     isGreeting,
+                                     titlePage,
+                                     className,
+                                   }: MainLayoutProps) {
   const [greeting, setGreeting] = useState("");
   const [userRole, setUserRole] = useState<string>("");
+  // 1. Add state for the user's name
+  const [userName, setUserName] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    let message = ""; 
-    
-    const user = localStorage.getItem("user");
-    if (user) {
-      const userRole = JSON.parse(user).roles[0];
-      setUserRole(userRole);
+    // Retrieve both user and account info from localStorage
+    const userString = localStorage.getItem("user");
+    const accountInfoString = localStorage.getItem("account_info");
+
+    // 2. Check if both items exist before proceeding
+    if (userString && accountInfoString) {
+      const user = JSON.parse(userString);
+      const accountInfo = JSON.parse(accountInfoString);
+
+      setUserRole(user.roles[0]);
+      // Set the user's name from the 'nama' property
+      setUserName(accountInfo.nama);
     } else {
+      // If essential data is missing, redirect to login
       navigate("/");
     }
 
+    // --- Greeting Logic (unchanged) ---
+    const hour = new Date().getHours();
+    let message = "";
     if (hour >= 6 && hour <= 11) {
       message = "Selamat Pagi";
     } else if (hour >= 12 && hour <= 14) {
@@ -46,7 +56,9 @@ export default function MainLayout({
       message = "Selamat Malam";
     }
     setGreeting(message);
-  }, []);
+
+    // Add navigate to the dependency array as it's an external function used inside the effect
+  }, [navigate]);
 
   const renderHeader = () => {
     switch (userRole) {
@@ -62,24 +74,25 @@ export default function MainLayout({
   };
 
   return (
-    <div className={`bg-primary-white min-h-screen ${className}`}>
-      {renderHeader()}
-      <div className="px-5 md:px-10 xl:px-40">
-        {isGreeting ? (
-          <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
-            <h1>{greeting},&nbsp;</h1>
-            <h1 className="text-gray-text font-semibold">Someone</h1>
-          </div>
-        ) : (
-          <div className="py-4">
-            <Breadcrumb />
-            <div className="text-2xl flex">
-              <h1 className="text-gray-text font-semibold">{titlePage}</h1>
-            </div>
-          </div>
-        )}
-        {children}
+      <div className={`bg-primary-white min-h-screen ${className}`}>
+        {renderHeader()}
+        <div className="px-5 md:px-10 xl:px-40">
+          {isGreeting ? (
+              <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
+                <h1>{greeting},&nbsp;</h1>
+                {/* 3. Render the userName state variable instead of the hardcoded string */}
+                <h1 className="text-gray-text font-semibold">{userName}</h1>
+              </div>
+          ) : (
+              <div className="py-4">
+                <Breadcrumb />
+                <div className="text-2xl flex">
+                  <h1 className="text-gray-text font-semibold">{titlePage}</h1>
+                </div>
+              </div>
+          )}
+          {children}
+        </div>
       </div>
-    </div>
   );
 }
