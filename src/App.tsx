@@ -54,14 +54,8 @@ import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
-import ConsultationLecturer from "./pages/lecturer/guidance/ConsultationLecturer";
-import CalendarLecturer from "./pages/lecturer/schedule/CalendarLecturer";
 import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
-import ProposalLecturer from "./pages/lecturer/guidance/ProposalLecturer";
-import FinalProjectLecturer from "./pages/lecturer/guidance/FinalProjectLecturer";
-import SupporterLecturer from "./pages/lecturer/guidance/SupporterLecturer";
 import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
-import StopStudyLecturer from "./pages/lecturer/courses/StopStudyLecturer";
 import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
 import ClassLecturer from "./pages/lecturer/courses/ClassLecturer";
 import EditBill from "./pages/admin-finance/EditBill";
@@ -76,6 +70,7 @@ import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetai
 import DetailClassLecturer from "./pages/lecturer/courses/DetailClassLecturer";
 import DetailAdvisorLecturer from "./pages/lecturer/guidance/DetailAdvisorLecturer";
 import DetailCourseLecturer from "./pages/lecturer/courses/DetailCourseLecturer";
+import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
 
 export default function App() {
   return (
@@ -187,16 +182,11 @@ export default function App() {
 
       {/* Route untuk dosen */}
       <Route path={String(LecturerRoute.dashboard)} element={<DashboardLecturer />} />
-      <Route path={String(LecturerRoute.guidance.consultation)} element={<ConsultationLecturer />} />
-      <Route path={String(LecturerRoute.guidance.proposal)} element={<ProposalLecturer />} />
-      <Route path={String(LecturerRoute.schedule.calendar)} element={<CalendarLecturer />} />
-      <Route path={String(LecturerRoute.guidance.finalProject)} element={<FinalProjectLecturer />} />
-      <Route path={String(LecturerRoute.guidance.supporter)} element={<SupporterLecturer />} />
+      <Route path={String(LecturerRoute.schedule)} element={<ScheduleLecturer />} />
       <Route path={String(LecturerRoute.guidance.advisor)} element={<AdvisorLecturer />} />
       <Route path={String(LecturerRoute.guidance.detailAdvisor)} element={<DetailAdvisorLecturer />} />
       <Route path={String(LecturerRoute.courses.course)} element={<CourseLecturer />} />
       <Route path={String(LecturerRoute.courses.detailCourse)} element={<DetailCourseLecturer />} />
-      <Route path={String(LecturerRoute.courses.stopStudy)} element={<StopStudyLecturer />} />
       <Route path={String(LecturerRoute.courses.class)} element={<ClassLecturer />} />
       <Route path={String(LecturerRoute.courses.detailClass)} element={<DetailClassLecturer />} />
     </Routes>

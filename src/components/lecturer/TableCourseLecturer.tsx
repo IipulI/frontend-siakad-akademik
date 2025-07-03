@@ -66,14 +66,14 @@ export default function TableCourseLecturer ({
       <table className="w-full my-4">
         <thead>
           <tr>
-            <th className="p-2 bg-primary-green text-white border border-gray-600">
+            {/* <th className="p-2 bg-primary-green text-white border border-gray-600">
                 <input
                     type="checkbox"
                     ref={selectAllRef}
                     onChange={handleSelectAll}
                     disabled={!data || data.length === 0}
                 />
-            </th>
+            </th> */}
             <th className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600">
                 Kurikulum
             </th>
@@ -105,13 +105,13 @@ export default function TableCourseLecturer ({
             ) : (
                 data.map((row) => (
                     <tr key={row.id}>
-                        <td className="p-2 border text-center text-sm border-black/50">
+                        {/* <td className="p-2 border text-center text-sm border-black/50">
                             <input
                                 type="checkbox"
                                 checked={selected.includes(row.id)}
                                 onChange={() => handleSelectRow(row.id)}
                             />
-                        </td>
+                        </td> */}
                         <td className="p-2 border text-sm border-black/50">
                             {row.tahunKurikulum}
                         </td>

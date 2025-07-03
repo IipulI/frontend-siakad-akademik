@@ -1,38 +1,25 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useQuery } from "@tanstack/react-query";
-import { Api } from "../../../api/Index";
 import DataStudent from "../../../components/lecturer/DataStudent";
 import { Link } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
 import { ChevronLeft } from "lucide-react";
 import ButtonGroupOption from "../../../components/lecturer/ButtonGroupOption";
+import { useCourseDetail, useCourseRPS } from "../../../hooks/lecturer/useFetchCourse";
 
 export default function DetailCourseLecturer() {
     const id = localStorage.getItem("id_mata_kuliah")
 
     const selectOptions = [
-        { value: "detail", text: "Detail Kelas" },
+        { value: "detail", text: "Detail Mata Kuliah" },
         { value: "rps", text: "RPS" }
       ];
 
     const [option, setOption] = useState("detail");
 
-    const { isPending, data: detail, error } = useQuery({
-        queryKey: ['dosen/mata-kuliah/detail', id],
-        queryFn: async () => {
-          return await Api.get(`/dosen/mata-kuliah/${id}`)
-        },
-      })
+    const { isPending, data: detail, error } = useCourseDetail(id)
       
-    const { data: rps } = useQuery({
-        queryKey: ['dosen/mata-kuliah/detail/rps', id],
-        queryFn: async () => {
-          return await Api.get(`/dosen/mata-kuliah/${id}/rps`)
-        },
-      })
-
-      console.log(rps)
+    const { data: rps } = useCourseRPS(id)
 
       return (
         <MainLayout
@@ -62,36 +49,36 @@ export default function DetailCourseLecturer() {
                     <div>Loading...</div>
                   ) : error ? (
                     <div>Error loading data</div>
-                  ) : detail.data.data ? (
+                  ) : detail.data ? (
                     <DataStudent
                       data={[
-                        { label: 'Tahun Kurikulum', value: detail.data.data.tahunKurikulum },
-                        { label: 'Program Studi', value: detail.data.data.programStudi },
-                        { label: 'Kode Mata Kuliah', value: detail.data.data.kodeMataKuliah },
-                        { label: 'Semester', value: detail.data.data.semester },
-                        { label: 'Nama Mata Kuliah', value: detail.data.data.namaMataKuliah },
-                        { label: 'Prasyarat 1', value: detail.data.data.prasyaratMataKuliah1?.namaMataKuliah },
-                        { label: 'SKS Tatap Muka', value: detail.data.data.sksTatapMuka },
-                        { label: 'Prasyarat 2', value: detail.data.data.prasyaratMataKuliah2?.namaMataKuliah },
-                        { label: 'SKS Praktikum', value: detail.data.data.sksPraktikum },
-                        { label: 'Prasyarat 3', value: detail.data.data.prasyaratMataKuliah3?.namaMataKuliah },
-                        { label: 'Total SKS', value: (Number(detail.data.data.sksTatapMuka) + Number(detail.data.data.sksPraktikum)), bold: true },
-                        { label: 'Jenis Mata Kuliah', value: detail.data.data.jenisMataKuliah },
+                        { label: 'Tahun Kurikulum', value: detail.data.tahunKurikulum },
+                        { label: 'Program Studi', value: detail.data.programStudi },
+                        { label: 'Kode Mata Kuliah', value: detail.data.kodeMataKuliah },
+                        { label: 'Semester', value: detail.data.semester },
+                        { label: 'Nama Mata Kuliah', value: detail.data.namaMataKuliah },
+                        { label: 'Prasyarat 1', value: detail.data.prasyaratMataKuliah1?.namaMataKuliah },
+                        { label: 'SKS Tatap Muka', value: detail.data.sksTatapMuka },
+                        { label: 'Prasyarat 2', value: detail.data.prasyaratMataKuliah2?.namaMataKuliah },
+                        { label: 'SKS Praktikum', value: detail.data.sksPraktikum },
+                        { label: 'Prasyarat 3', value: detail.data.prasyaratMataKuliah3?.namaMataKuliah },
+                        { label: 'Total SKS', value: (Number(detail.data.sksTatapMuka) + Number(detail.data.sksPraktikum)), bold: true },
+                        { label: 'Jenis Mata Kuliah', value: detail.data.jenisMataKuliah },
                       ]}
                     />
                   ) : (
                     <div>Data tidak ditemukan</div>
                   )
                 ) : (
-                  rps?.data.data ? (
+                  rps?.data ? (
                     <DataStudent
                       data={[
-                        { label: 'Periode Akademik', value: rps.data.data.periodeAkademik.namaPeriode},
-                        { label: 'Jenjang', value: rps.data.data.programStudi.jenjang.jenjang},
-                        { label: 'Dosen Penyusun', value: rps.data.data.pustakaPendukung},
-                        { label: 'Tanggal Penyusun', value: rps.data.data.tanggalPenyusun},
-                        { label: 'Tujuan Mata Kuliah', value: rps.data.data.tujuanMataKuliah},
-                        { label: 'Deskripsi Mata Kuliah', value: rps.data.data.deskripsiMataKuliah},
+                        { label: 'Periode Akademik', value: rps.data.periodeAkademik.namaPeriode},
+                        { label: 'Jenjang', value: rps.data.programStudi.jenjang.jenjang},
+                        { label: 'Dosen Penyusun', value: rps.data.pustakaPendukung},
+                        { label: 'Tanggal Penyusun', value: rps.data.tanggalPenyusun},
+                        { label: 'Tujuan Mata Kuliah', value: rps.data.tujuanMataKuliah},
+                        { label: 'Deskripsi Mata Kuliah', value: rps.data.deskripsiMataKuliah},
                       ]}
                     />
                   ) : (

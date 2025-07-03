@@ -21,7 +21,7 @@ const navItems = [
   },
   { id: "3",
     name: "Jadwal",
-    path: String(LecturerRoute.schedule.calendar),
+    path: String(LecturerRoute.schedule),
     hasDropdown: false
   },
   {
