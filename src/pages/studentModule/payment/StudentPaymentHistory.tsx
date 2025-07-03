@@ -1,160 +1,98 @@
-import React from "react";
-import MainLayout from "../../../components/layouts/MainLayout";
-import { Calendar, RefreshCcw, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { StudentRoute } from "../../../types/VarRoutes";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import MainLayout from '../../../components/layouts/MainLayout';
+import { useHistoriTagihan } from '../../../hooks/mahasiswa/useKeuanganMahasiswa';
+import { Calendar, RefreshCcw, Search } from 'lucide-react';
+import { StudentRoute } from '../../../types/VarRoutes'; // Sesuaikan dengan path konstanta route Anda
 
 const StudentPaymentHistory = () => {
-  const transactionData = [
-    {
-      nama: "Praktikum Teknologi Multimedia",
-      tanggal: "11 April 2025, 16:42:34",
-      periode: "2024 Genap",
-      metode: "SevimaPay",
-      total: "Rp150.000",
-      invoice: "INV/20242/0008779",
-    },
-    {
-      nama: "SKS",
-      tanggal: "25 Maret 2025, 08:57:11",
-      periode: "2024 Genap",
-      metode: "SevimaPay",
-      total: "Rp2.100.000",
-      invoice: "INV/20242/0008779",
-    },
-    {
-      nama: "Ujian Akhir Semester",
-      tanggal: "25 Maret 2025, 08:57:11",
-      periode: "2024 Genap",
-      metode: "SevimaPay",
-      total: "Rp900.000",
-      invoice: "INV/20242/0008779",
-    },
-    {
-      nama: "Kerja Praktik",
-      tanggal: "25 Maret 2025, 08:57:11",
-      periode: "2024 Genap",
-      metode: "SevimaPay",
-      total: "Rp300.000",
-      invoice: "INV/20242/0008779",
-    },
-    {
-      nama: "SPP",
-      tanggal: "12 Februari 2025, 08:08:19",
-      periode: "2024 Genap",
-      metode: "SevimaPay",
-      total: "Rp2.000.000",
-      invoice: "INV/20242/0008779",
-    },
-    {
-      nama: "Praktikum Rekayasa Perangkat Lunak Lanjut",
-      tanggal: "19 Oktober 2024, 09:08:19",
-      periode: "2024 Ganjil",
-      metode: "Bank Amanah Ummah",
-      total: "Rp150.000",
-      invoice: "INV/20242/0008779",
-    },
-    {
-      nama: "Prak. Pemrograman Perangkat Bergerak",
-      tanggal: "19 Oktober 2024, 09:08:19",
-      periode: "2024 Ganjil",
-      metode: "Bank Amanah Ummah",
-      total: "Rp150.000",
-      invoice: "INV/20242/0008779",
-    },
-  ];
   const navigate = useNavigate();
-  const detailTransaction = () => {
-    navigate(StudentRoute.payment.paymentDetailHistory);
+  const [keyword, setKeyword] = useState('');
+  const [selectedPeriod, setSelectedPeriod] = useState('');
+
+  const { data: historiTagihan = [], isLoading, isError } = useHistoriTagihan({
+    keyword,
+    namaPeriode: selectedPeriod,
+  });
+
+  const detailTransaction = (invoiceId: string) => {
+    navigate(`${StudentRoute.payment.paymentDetailHistory}/${invoiceId}`);
   };
+
+  const ItemList = ({ title, data }: { title: string; data: string | null }) => (
+      <div>
+        <h1 className="text-[#444] italic text-xs sm:text-sm font-semibold">{title}</h1>
+        <h1 className="font-semibold text-xs sm:text-sm">{data || '-'}</h1>
+      </div>
+  );
+
   return (
-    <MainLayout
-      isGreeting={false}
-      titlePage={"Riwayat Keuangan Mahasiswa"}
-      className={""}
-    >
-      <InfoAlert />
-      <div className="p-4 border w-full">
-        <div className="grid grid-cols-1 gap-3 lg:flex lg:justify-between ">
-          <div className="flex items-center ">
-            <input
-              type="text"
-              className="text-[#444444] border-2 border-r-0 rounded text-sm w-[300px] py-1.5 px-3"
-              placeholder="Cari Histori Pembayaran Anda Disini"
-            />
-            <div className="p-1.5 flex rounded relative bg-primary-green right-7">
-              <Search className="cursor-pointer" color="#fff" size={22} />
+      <MainLayout isGreeting={false} titlePage="Riwayat Keuangan Mahasiswa">
+        {/* Bagian Filter */}
+        <div className="p-4 border w-full bg-white rounded-md">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex">
+              <input
+                  type="text"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  className="border-2 rounded text-sm py-1.5 px-3"
+                  placeholder="Cari histori..."
+              />
+              {/* Anda bisa menambahkan tombol search di sini jika diperlukan */}
             </div>
-            <div className="p-1.5 flex rounded relative bg-[#3850C9] right-7">
-              <RefreshCcw className="cursor-pointer" color="#fff" size={22} />
-            </div>
-          </div>
-          <div className="flex items-center ">
-            <select className="text-[#444444] border-2 rounded text-sm py-1.5 px-5">
-              <option value="">Berdasarkan Tagihan</option>
-            </select>
-          </div>
-          <div className="flex items-center">
-            <Calendar
-              className="border-2 border-r-0"
-              color="#FDA31B"
-              size={36}
-            />
-            <select className="text-[#444444] border-2 border-r-0 rounded text-sm py-1.5 px-5">
-              <option value="">Pilih Tanggal Transaksi</option>
+            <select
+                value={selectedPeriod}
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                className="border-2 rounded text-sm py-1.5 px-5"
+            >
+              <option value="">Semua Periode</option>
+              <option value="2024 Genap">2024 Genap</option>
+              <option value="2024 Ganjil">2024 Ganjil</option>
+              {/* Tambahkan periode lain jika ada */}
             </select>
           </div>
         </div>
-      </div>
-      <div className="p-6 bg-white space-y-6 mt-4">
-        {transactionData.map((item, index) => (
-          <>
-            <div key={index} className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <h2 className="font-semibold text-sm">{item.nama}</h2>
-                <span className="text-green-700 bg-green-100 text-xs px-3 py-1 rounded">
+
+        {/* Bagian Daftar Transaksi */}
+        <div className="p-6 bg-white space-y-6 mt-4 rounded-md">
+          {isLoading && <p className="text-center">Memuat riwayat...</p>}
+          {isError && <p className="text-center text-red-500">Gagal memuat riwayat.</p>}
+          {!isLoading && !isError && historiTagihan.length === 0 && (
+              <p className="text-center text-gray-500">Tidak ada riwayat transaksi ditemukan.</p>
+          )}
+          {historiTagihan.map((item) => (
+              <div key={item.kodeInvoice} className="border-b-2 border-dashed pb-6 last:border-b-0">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center space-x-4">
+                    <h2 className="font-semibold text-sm">{item.namaTagihan}</h2>
+                    <span className="text-green-700 bg-green-100 text-xs px-3 py-1 rounded-full">
                   Berhasil
                 </span>
+                  </div>
+                  <h2 className="text-gray-500 text-sm">{item.kodeInvoice}</h2>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center">
+                  <ItemList title={"Tanggal Pembayaran"} data={item.tanggalBayar} />
+                  <ItemList title={"Periode Pembayaran"} data={item.namaPeriode} />
+                  <ItemList title={"Metode Pembayaran"} data={item.metodeBayar} />
+                  <ItemList
+                      title={"Total Pembayaran"}
+                      data={new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.nominalTagihan)}
+                  />
+                  <div className="col-span-2 md:col-span-1 flex justify-end">
+                    <button
+                        onClick={() => detailTransaction(item.kodeInvoice)}
+                        className="py-2 text-sm rounded px-4 cursor-pointer bg-primary-green text-white"
+                    >
+                      Detail Transaksi
+                    </button>
+                  </div>
+                </div>
               </div>
-              <h2 className="text-[#444]">{item.invoice}</h2>
-            </div>
-            <div className="flex justify-between items-center">
-              {/* Item List Komponennya ada di bawah ya :) */}
-              <ItemList title={"Tanggal Pembayaran"} data={item.tanggal} />
-              <ItemList title={"Periode Pembayaran"} data={item.periode} />
-              <ItemList title={"Metode Pembayaran"} data={item.metode} />
-              <ItemList title={"Total Pembayaran"} data={item.total} />
-              <div>
-                <button
-                  onClick={detailTransaction}
-                  className="py-2 text-sm rounded px-4 cursor-pointer bg-[#00A65A] text-white"
-                >
-                  Detail Transaksi
-                </button>
-              </div>
-            </div>
-          </>
-        ))}
-      </div>
-    </MainLayout>
-  );
-};
-
-const InfoAlert = () => {
-  return (
-    <div className="bg-green-100 text-green-700 font-semibold p-4 rounded-md mt-4 mb-6 text-sm">
-      Yeay , Sekarang kamu bisa melihat riwayat pembayaran berdasarkan invoice
-      atau kategori pembayaran
-    </div>
-  );
-};
-
-const ItemList = ({ title, data }) => {
-  return (
-    <div>
-      <h1 className="text-[#444] italic text-xs sm:text-sm font-semibold">{title}</h1>
-      <h1 className="font-semibold text-xs sm:text-sm">{data}</h1>
-    </div>
+          ))}
+        </div>
+      </MainLayout>
   );
 };
 

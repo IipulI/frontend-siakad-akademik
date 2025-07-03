@@ -4,7 +4,7 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import TableSetting from "../../../components/admin-academic/setting/TableSetting";
 import { Plus } from "lucide-react";
 import { ILimitSKS, ILimitSKSPayload, ITableColumn, ILevel } from "../../../types/models";
-import { useLimitSKS } from "../../../hooks/admin-akademik/useLimitSKS";
+import { useLimitSKS } from "../../../hooks/admin-akademik/useLimitSks";
 import { useLevels } from "../../../hooks/admin-akademik/useLevels";
 
 const LimitSKSAdminAcademic: React.FC = () => {

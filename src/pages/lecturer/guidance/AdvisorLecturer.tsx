@@ -1,153 +1,190 @@
 import MainLayout from "../../../components/layouts/MainLayout";
-import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
-import { Check, Eye, Pen, RefreshCw, Search, Settings, X } from "lucide-react";
+import { Check, Pen, Settings, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import React from "react";
-import DetailAdvisorLecturer from "./DetailAdvisorLecturer";
-import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../../../hooks/useDebounce";
-import { Api } from "../../../api/Index";
 import SelectOption from "../../../components/lecturer/SelectOption";
 import { useNavigate } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
+import SearchBar from "../../../components/SearchBar";
+import { useAcademicGuidanceList, useAcceptKRS, useRejectKRS } from "../../../hooks/lecturer/useFetchGuidance";
+import { useAcademicPeriodDropdown, useStudyProgramDropdown } from "../../../hooks/lecturer/useFetchDropdown";
+import { IAcademicPeriod, IStudyProgram } from "../../../types/dropdown";
 
 export default function AdvisorLecturer() {
   const navigate = useNavigate()
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filters, setFilters] = useState({
+    periode: "",
+    krs: "",
+    semester: "",
+    mahasiswa: "",
+    angkatan: "",
+    hasPembimbing: true,
+    prodi: "",
+  });
+  
   const [search, setSearch] = useState("");
-  const [selectedPeriode, setSelectedPeriode] = useState("");
-  const [selectedKRS, setSelectedKRS] = useState("");
-  const [selectedSemester, setSelectedSemester] = useState("");
-  const [selectedMahasiswa, setSelectedMahasiswa] = useState("");
-  const [selectedOption, setSelectedOption] = useState("");
-
   const debouncedSearch = useDebounce(search, 1000);
   
-  const { data: periodeAkademikDropdown } = useQuery({
-    queryKey: ["/periode-akademik/dropdown"],
-    queryFn: () => Api.get(`/periode-akademik/dropdown`),
-  });
-
-  useEffect(() => {
-    if (periodeAkademikDropdown?.data?.data?.length > 0 && !selectedPeriode) {
-      setSelectedPeriode(periodeAkademikDropdown?.data.data[0].namaPeriode);
-    }
-  }, [periodeAkademikDropdown, selectedPeriode]);
-
-
-
-  const { data: studentData, isPending } = useQuery({
-    queryKey: [
-      "dosen/pembimbing-akademik/all",
-      currentPage,
-      debouncedSearch,
-      selectedPeriode,
-    ],
-    queryFn: () =>
-      Api.get(
-        `/dosen/pembimbing-akademik/all?page=${currentPage}&keyword=${debouncedSearch}&periodeAkademik=${selectedPeriode}`
-      ),
-    enabled: !!selectedPeriode,
-  });
-
-  const periodeOptions = periodeAkademikDropdown?.data?.data?.map((item: any) => ({
-    value: item.namaPeriode,
+  const { data: periodeAkademikDropdown } = useAcademicPeriodDropdown()
+  const { data: programStudiDropdown } = useStudyProgramDropdown()
+  
+  const { data: studentData, isPending } = useAcademicGuidanceList(filters.periode, filters.prodi, filters.angkatan, filters.krs, debouncedSearch, filters.hasPembimbing, filters.mahasiswa, filters.semester, currentPage, rowsPerPage)
+  
+  const periodeOptions = periodeAkademikDropdown?.data?.map((item: IAcademicPeriod) => ({
+    value: item.id,
     label: item.namaPeriode,
   })) || [];
 
-  const krsOptions = [{value: "Disetujui", label: "Disetujui"}, {value: "Tidak Disetujui", label: "Tidak Disetujui"}]
-  const mahasiswaOptions = [{value: "Aktif", label: "Aktif"}, {value: "Tidak Aktif", label: "Tidak Aktif"}]
-  const semesterOptions = [{value: "1", label: "1"}, {value: "2", label: "2"}, {value: "3", label: "3"}, {value: "4", label: "4"}, {value: "5", label: "5"}, {value: "6", label: "6"}, {value: "7", label: "7"}, {value: "8", label: "8"}, {value: "9", label: "9"}, {value: "10", label: "10"}, {value: "11", label: "11"}, {value: "12", label: "12"}, {value: "13", label: "13"}, {value: "14", label: "14"}]
+  const unitKerjaOptions = programStudiDropdown?.data?.map((item: IStudyProgram) => ({
+    value: item.namaProgramStudi,
+    label: item.namaProgramStudi,
+  })) || [];
+
+  unitKerjaOptions.unshift({
+    value: "",
+    label: "Semua"
+  })
+  
+  useEffect(() => {
+    if (periodeAkademikDropdown?.data?.length > 0) {
+      setFilters(prev => ({
+        ...prev,
+        periode: periodeAkademikDropdown?.data[0].id
+      }));
+    }
+  }, [periodeAkademikDropdown]);
+
+  useEffect(() => {
+    if(filters.periode !== "") {
+      localStorage.setItem("id_periode_akademik", filters.periode)
+    }
+  }, [filters.periode])
+  
+
+  const krsOptions = [{value: "", label: "Semua"}, {value: "Disetujui", label: "Disetujui"}, {value: "Ditolak", label: "Ditolak"}, {value: "Diajukan", label: "Diajukan"},]
+  const pembimbingOptions = [{value: true, label: "Ada"}, {value: false, label: "Tidak Ada"}]
+  const mahasiswaOptions = [{value: "", label: "Semua"}, {value: "Aktif", label: "Aktif"}, {value: "Tidak Aktif", label: "Tidak Aktif"}]
+  const semesterOptions = [{value: "", label: "Semua"}, {value: "1", label: "1"}, {value: "2", label: "2"}, {value: "3", label: "3"}, {value: "4", label: "4"}, {value: "5", label: "5"}, {value: "6", label: "6"}, {value: "7", label: "7"}, {value: "8", label: "8"}, {value: "9", label: "9"}, {value: "10", label: "10"}, {value: "11", label: "11"}, {value: "12", label: "12"}, {value: "13", label: "13"}, {value: "14", label: "14"}]
   const options = [{value: "Semua", label: "Semua"}]
+
+  const filterOptions = [
+    { label: "Periode Akademik", key: "periode", options: periodeOptions },
+    { label: "Status Pembimbing", key: "hasPembimbing", options: pembimbingOptions },
+    { label: "Semester", key: "semester", options: semesterOptions },
+    { label: "Unit Kerja", key: "prodi", options: unitKerjaOptions },
+    { label: "Status KRS", key: "krs", options: krsOptions },
+    { label: "Status Mahasiswa", key: "mahasiswa", options: mahasiswaOptions },
+    { label: "Angkatan", key: "angkatan", options },
+  ];
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  const { mutate: accept } = useAcceptKRS(
+    (data) => {
+      alert(data.message);
+      setSelectedIds([]);
+    },
+    (error) => {
+      alert(error);
+    }
+  );
+
+  const { mutate: reject } = useRejectKRS(
+    (data) => {
+      alert(data.message);
+      setSelectedIds([]);
+    },
+    (error) => {
+      alert(error);
+    }
+  );
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      const allIds = studentData?.data.map((record: any) => record.id) || [];
+      setSelectedIds(allIds);
+    } else {
+      setSelectedIds([]);
+    }
+  };
+  const handleSelectOne = (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
+  const handleAction = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === "setujui") {
+      if (selectedIds.length === 0) {
+        alert("Pilih mahasiswa terlebih dahulu.");
+        return;
+      }
+      accept({ mahasiswaIds: selectedIds, periodeAkademikId: filters.periode });
+    } else {
+      if (selectedIds.length === 0) {
+        alert("Pilih mahasiswa terlebih dahulu.");
+        return;
+      }
+      reject({ mahasiswaIds: selectedIds, periodeAkademikId: filters.periode });
+    }
+    e.target.value = ""
+  };
 
   return (
     <MainLayout isGreeting={false} titlePage="Pembimbing Akademik">
         <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
-          <SelectOption
-            label="Periode Akademik"
-            options={periodeOptions}
-            value={selectedPeriode}
-            onChange={setSelectedPeriode}
-          />
-          <SelectOption
-            label="Status Pembimbing"
-            options={options}
-            value={selectedOption}
-            onChange={setSelectedOption}
-          />
-          <SelectOption
-            label="Semester"
-            options={semesterOptions}
-            value={selectedSemester}
-            onChange={setSelectedSemester}
-          />
-          <SelectOption
-            label="Unit Kerja"
-            options={options}
-            value={selectedOption}
-            onChange={setSelectedOption}
-          />
-          <SelectOption
-            label="Status KRS"
-            options={krsOptions}
-            value={selectedKRS}
-            onChange={setSelectedKRS}
-          />
-          <SelectOption
-            label="Status Mahasiswa"
-            options={mahasiswaOptions}
-            value={selectedMahasiswa}
-            onChange={setSelectedMahasiswa}
-          />
-          <SelectOption
-            label="Angkatan"
-            options={options}
-            value={selectedOption}
-            onChange={setSelectedOption}
-          />
-          </div>
-
+          {filterOptions.map(({label, key, options}) => (
+            <SelectOption
+              key={key}
+              label={label}
+              options={options}
+              value={filters[key]}
+              onChange={(val) => setFilters(prev => ({ ...prev, [key]: val }))}
+            />
+          ))}
+        </div>
           <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
             <div className="flex justify-between">
               <div className="flex gap-8">
-                <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
+                {/* <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
                   <option value={"Semua"}>Semua</option>
-                </select>
-                <div className="flex">
-                  <input
-                    type="search"
-                    placeholder="Cari Mahasiswa"
-                    className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded shadow-md border border-black/50"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <button className="-ml-2 bg-[#00A65A] w-10 flex items-center justify-center">
-                    <Search color="white" size={20} />
-                  </button>
-                  <button
-                    className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center"
-                  >
-                    <RefreshCw
-                      color="white"
-                      size={20}
-                      className={isPending ? "animate-spin" : ""}
-                    />
-                  </button>
-                </div>
+                </select> */}
+                <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari Mahasiswa" />
               </div>
-
+              <div className="flex bg-primary-yellow items-center rounded p-1 px-2">
+                <Settings color="white" size={17} />
+                <select
+                  name="aksi"
+                  id="aksi"
+                  className=" text-white rounded font-semibold text-sm w-16"
+                  onChange={handleAction}
+                >
+                  <option value="" className="bg-white text-black">
+                    Aksi
+                  </option>
+                  <option value="setujui" className="bg-white text-black">
+                    Setujui KRS
+                  </option>
+                  <option value="tolak" className="bg-white text-black">
+                    Tolak KRS
+                  </option>
+                </select>
+              </div>
             </div>
-
             <div className="overflow-x-auto my-4">
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center w-6">
-                      <input type="checkbox" className="w-4 h-4" />
+                      <input type="checkbox" className="w-4 h-4" checked={selectedIds.length === (studentData?.data.length || 0) && studentData?.data.length > 0} onChange={handleSelectAll} />
                     </th>
                     <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
                       Nama Mahasiswa
@@ -195,10 +232,10 @@ export default function AdvisorLecturer() {
                       </td>
                     </tr>
                   ) : (
-                    studentData?.data.data.map((record: any, index: number) => (
+                    studentData?.data.map((record: any, index: number) => (
                       <tr key={index} className="hover:bg-gray-100">
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          <input type="checkbox" className="w-4 h-4" />
+                          <input type="checkbox" className="w-4 h-4" checked={selectedIds.includes(record.id)} onChange={handleSelectOne(record.id)} />
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-sm">
                           {record.mahasiswa}
@@ -250,7 +287,7 @@ export default function AdvisorLecturer() {
                             <ButtonClick
                               icon={<Pen size={16} />}
                               color="bg-primary-yellow"
-                              onClick={() => navigate(LecturerRoute.guidance.detailAdvisor)}
+                              onClick={() => navigate(LecturerRoute.guidance.detailAdvisor) || localStorage.setItem("id_mahasiswa", record.id)}
                             />
                           </div>
                         </td>
@@ -268,10 +305,10 @@ export default function AdvisorLecturer() {
             ) : (
               <Pagination
                 currentPage={currentPage}
-                totalPages={studentData?.data.pagination.totalPages}
+                totalPages={studentData?.pagination.totalPages}
                 onPageChange={setCurrentPage}
                 rowsPerPage={rowsPerPage}
-                totalRows={studentData?.data.pagination.totalItems}
+                totalRows={studentData?.pagination.totalItems}
                 onRowsPerPageChange={setRowsPerPage}
               />
             )}
