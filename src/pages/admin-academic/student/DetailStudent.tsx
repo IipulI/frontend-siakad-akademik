@@ -36,7 +36,7 @@ export default function DetailStudent() {
 
   const navigate = useNavigate();
   function Back() {
-    navigate("/portal/mahasiswa");
+    navigate("/admin-akademik/mahasiswa");
   }
 
   const [activeTab, setActiveTab] = useState("biodata");

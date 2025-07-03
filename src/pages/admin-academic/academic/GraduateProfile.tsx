@@ -1,158 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Api } from "../../../api/Index";
-import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TableGraduateProfile } from "../../../components/Table";
-import { CurriculumData, GraduateProfileData, ProgramStudi } from "../../../components/types.ts";
+import { GraduateProfileData } from "../../../components/types.ts";
 import { Search, ArrowLeft, Save, Plus } from "lucide-react";
-
-// Api functions
-const fetchProgramStudiData = async (): Promise<ProgramStudi[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/program-studi", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  console.log("🔍 Raw program studi API data:", data);
-
-  let programStudiData: ProgramStudi[] = [];
-
-  if (Array.isArray(data)) {
-    programStudiData = data as ProgramStudi[];
-  } else if (typeof data === "object" && data !== null) {
-    programStudiData = Object.values(data as Record<string, unknown>).filter((item): item is ProgramStudi => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return programStudiData;
-};
-
-const fetchCurriculumData = async (): Promise<CurriculumData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/tahun-kurikulum", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = response.data?.data;
-
-  console.log("🔍 Raw curriculum API data:", data);
-
-  let curriculumData: CurriculumData[] = [];
-
-  if (Array.isArray(data)) {
-    curriculumData = data as CurriculumData[];
-  } else if (typeof data === "object" && data !== null) {
-    curriculumData = Object.values(data as Record<string, unknown>).filter((item): item is CurriculumData => typeof item === "object" && item !== null && "id" in item);
-  }
-
-  return curriculumData;
-};
-
-const fetchGraduateProfileData = async (page: number, size: number): Promise<GraduateProfileData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(`/akademik/profil-lulusan?page=${page}&size=${size}&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
-
-  const apiData = response.data.data;
-
-  console.log("🔍 Raw graduate profile API data:", apiData);
-
-  const formattedData = Array.isArray(apiData)
-    ? apiData.map((item: any) => {
-        const formatted = {
-          id: item.id,
-          siakProgramStudiId: item.siakProgramStudiId,
-          siakTahunKurikulumId: item.siakTahunKurikulum,
-          kodePl: item.kodePl,
-          profil: item.profil,
-          profesi: item.profesi,
-          deskripsiPl: item.deskripsiPl,
-        };
-
-        return formatted;
-      })
-    : [];
-
-  return formattedData;
-};
-
-const createProfile = async (data: Omit<GraduateProfileData, "id">): Promise<GraduateProfileData> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    siakProgramStudiId: data.siakProgramStudiId,
-    siakTahunKurikulumId: data.siakTahunKurikulumId,
-    kodePl: data.kodePl,
-    profil: data.profil,
-    profesi: data.profesi,
-    deskripsiPl: data.deskripsiPl,
-  };
-
-  console.log("Payload dikirim:", payload);
-
-  const response = await Api.post("/akademik/profil-lulusan", payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  console.log("Response dari API:", response.data);
-
-  const newItemData = response.data?.data || response.data;
-  return {
-    id: newItemData.id,
-    siakProgramStudiId: newItemData.siakProgramStudiId,
-    siakTahunKurikulumId: newItemData.siakTahunKurikulumId,
-    kodePl: newItemData.kodePl,
-    profil: newItemData.profil,
-    profesi: newItemData.profesi,
-    deskripsiPl: newItemData.deskripsiPl,
-  };
-};
-
-const updateProfile = async ({ id, data }: { id: string; data: Omit<GraduateProfileData, "id"> }): Promise<GraduateProfileData> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    siakProgramStudiId: data.siakProgramStudiId,
-    siakTahunKurikulumId: data.siakTahunKurikulumId,
-    kodePl: data.kodePl,
-    profil: data.profil,
-    profesi: data.profesi,
-    deskripsiPl: data.deskripsiPl,
-  };
-
-  await Api.put(`/akademik/profil-lulusan/${id}`, payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return { id, ...data };
-};
-
-const deleteProfile = async (id: string): Promise<void> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  await Api.delete(`/akademik/profil-lulusan/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
+import { getProdi } from "../../../hooks/academic/useProdi.ts";
+import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
+import { getGraduateProfileData, useAddGraduateProfile, useDeleteGraduateProfile, useUpdateGraduateProfile } from "../../../hooks/academic/useGraduateProfile.ts";
+import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 const GraduateProfile: React.FC = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const obeDataFromState = location.state?.obeData;
 
   // State
-  const [programStudiData, setProgramStudiData] = useState<ProgramStudi[]>([]);
-  const [curriculumData, setCurriculumData] = useState<CurriculumData[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentData, setCurrentData] = useState<GraduateProfileData | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -160,99 +24,72 @@ const GraduateProfile: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedYear, setSelectedYear] = useState("");
+  const [filteredGraduateData, setFilteredGraduateData] = useState<GraduateProfileData[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Queries
-  const {
-    data: profileData = [],
-    isLoading: loading,
-    error: profileError,
-    refetch: refetchProfileData,
-  } = useQuery({
-    queryKey: ["profileData", currentPage, itemsPerPage],
-    queryFn: () => fetchGraduateProfileData(currentPage, itemsPerPage),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const {
-    data: programStudi = [],
-    isLoading: loadingProgramStudi,
-    error: programStudiError,
-  } = useQuery({
-    queryKey: ["programStudiData"],
-    queryFn: fetchProgramStudiData,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const {
-    data: curriculum = [],
-    isLoading: loadingCurriculum,
-    error: curriculumError,
-  } = useQuery({
-    queryKey: ["curriculumData"],
-    queryFn: fetchCurriculumData,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: programStudiData = [], isLoading: isProgramStudiLoading, error: programStudiError } = getProdi();
+  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
+  const { data: graduateProfileData = [], isLoading: isGraduateProfileLoading, error: graduateProfileError } = getGraduateProfileData(currentPage, itemsPerPage);
 
   // Mutations
-  const createMutation = useMutation({
-    mutationFn: createProfile,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profileData"] });
-      handleReset();
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal menambah data:", error);
-      handleMutationError(error);
-    },
-  });
+  const createMutation = useAddGraduateProfile();
+  const updateMutation = useUpdateGraduateProfile();
+  const deleteMutation = useDeleteGraduateProfile();
 
-  const updateMutation = useMutation({
-    mutationFn: updateProfile,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profileData"] });
-      handleReset();
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal mengupdate data:", error);
-      handleMutationError(error);
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteProfile,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profileData"] });
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal menghapus data:", error);
-      handleMutationError(error);
-    },
-  });
-
-  // Helper function for error handling
-  const handleMutationError = (error: any) => {
-    if (error.response?.status === 400) {
-      setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
-    } else if (error.response?.status === 401) {
-      setErrorMessage("Token tidak valid. Silakan login ulang.");
-    } else if (error.response?.data?.message) {
-      setErrorMessage(`Error: ${error.response.data.message}`);
-    } else if (error.message) {
-      setErrorMessage(error.message);
-    } else {
-      setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
-    }
+  // Get OBE info
+  const obeInfo = obeDataFromState || {
+    kodeProgramStudi: "Loading...",
+    programStudi: "Loading...",
+    tahunKurikulum: "Loading...",
   };
 
+  // Filter data berdasarkan program studi ID dari params
+  useEffect(() => {
+    if (graduateProfileData && obeInfo.programStudi) {
+      const filtered = graduateProfileData.filter((item: GraduateProfileData) => item.programStudi?.toLowerCase() === obeInfo.programStudi.toLowerCase());
+      setFilteredGraduateData(filtered);
+    }
+  }, [graduateProfileData, obeInfo.programStudi]);
+
+  // Update status di parent component (OBE) ketika ada perubahan data
+  useEffect(() => {
+    if (id) {
+      const hasData = filteredGraduateData.length > 0;
+
+      // Update localStorage
+      const existingStatuses = JSON.parse(localStorage.getItem("graduateProfileStatuses") || "{}");
+      existingStatuses[id] = hasData;
+      localStorage.setItem("graduateProfileStatuses", JSON.stringify(existingStatuses));
+
+      // Trigger custom event
+      window.dispatchEvent(
+        new CustomEvent("graduateProfileStatusUpdated", {
+          detail: { programStudiId: id, hasData },
+        })
+      );
+    }
+  }, [filteredGraduateData, id]);
+
+  // Loading states
+  if (isProgramStudiLoading || isCurriculumLoading || isGraduateProfileLoading) {
+    return <LoadingSpinner />;
+  }
+
+  // Error states
+  if (programStudiError) {
+    return <div className="text-red-500">Gagal memuat program studi</div>;
+  }
+  if (curriculumError) {
+    return <div className="text-red-500">Gagal memuat tahun kurikulum</div>;
+  }
+  if (graduateProfileError) {
+    return <div className="text-red-500">Gagal memuat profil lulusan</div>;
+  }
+
   // Event handlers
-  const handleEdit = (id: string) => {
-    const selectedData = profileData.find((item) => item.id === id);
+  const handleEdit = (editId: string) => {
+    const selectedData = filteredGraduateData.find((item) => item.id === editId);
     if (selectedData) {
       setCurrentData(selectedData);
       setIsEditing(true);
@@ -261,9 +98,17 @@ const GraduateProfile: React.FC = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (deleteId: string) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(deleteId, {
+        onSuccess: () => {
+          // Status akan otomatis terupdate melalui useEffect
+        },
+        onError: (error) => {
+          console.error("Delete error:", error);
+          setErrorMessage("Gagal menghapus data. Silakan coba lagi.");
+        },
+      });
     }
   };
 
@@ -272,8 +117,8 @@ const GraduateProfile: React.FC = () => {
     setIsEditing(false);
     setCurrentData({
       id: "",
-      siakProgramStudiId: "",
-      siakTahunKurikulumId: "",
+      siakProgramStudiId: id || "",
+      siakTahunKurikulumId: selectedYear || "",
       kodePl: "",
       profil: "",
       profesi: "",
@@ -283,33 +128,60 @@ const GraduateProfile: React.FC = () => {
   };
 
   const isFormValid = () => {
-    return !!(currentData?.kodePl && currentData?.profil && currentData?.profesi && currentData?.deskripsiPl);
+    return !!(currentData?.kodePl?.trim() && currentData?.profil?.trim() && currentData?.profesi?.trim() && currentData?.deskripsiPl?.trim() && currentData?.siakTahunKurikulumId);
   };
 
   const handleSave = async () => {
     if (!currentData || !isFormValid()) {
-      setErrorMessage("Semua kolom harus diisi.");
+      setErrorMessage("Semua kolom harus diisi, termasuk tahun kurikulum.");
       return;
     }
 
     setErrorMessage("");
 
     const dataToSave = {
-      siakProgramStudiId: currentData.siakProgramStudiId,
+      siakProgramStudiId: id || currentData.siakProgramStudiId,
       siakTahunKurikulumId: currentData.siakTahunKurikulumId,
-      kodePl: currentData.kodePl,
-      profil: currentData.profil,
-      profesi: currentData.profesi,
-      deskripsiPl: currentData.deskripsiPl,
+      kodePl: currentData.kodePl.trim(),
+      profil: currentData.profil.trim(),
+      profesi: currentData.profesi.trim(),
+      deskripsiPl: currentData.deskripsiPl.trim(),
+    };
+
+    const onSuccessCallback = () => {
+      setCurrentData(null);
+      setIsAdding(false);
+      setIsEditing(false);
+      setErrorMessage("");
+    };
+
+    const onErrorCallback = (error: any) => {
+      console.error("Save error:", error);
+      if (error.response?.status === 400) {
+        setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
+      } else if (error.response?.status === 401) {
+        setErrorMessage("Token tidak valid. Silakan login ulang.");
+      } else if (error.response?.data?.message) {
+        setErrorMessage(`Error: ${error.response.data.message}`);
+      } else {
+        setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
+      }
     };
 
     if (isEditing && currentData.id) {
-      updateMutation.mutate({ id: currentData.id, data: dataToSave });
+      updateMutation.mutate(
+        { id: currentData.id, data: dataToSave },
+        {
+          onSuccess: onSuccessCallback,
+          onError: onErrorCallback,
+        }
+      );
     } else if (isAdding) {
-      createMutation.mutate(dataToSave);
+      createMutation.mutate(dataToSave, {
+        onSuccess: onSuccessCallback,
+        onError: onErrorCallback,
+      });
     }
-
-    setCurrentData(null);
   };
 
   const handleReset = () => {
@@ -328,29 +200,32 @@ const GraduateProfile: React.FC = () => {
     setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
-  // const handleRefresh = () => {
-  //   queryClient.invalidateQueries({ queryKey: ["profileData"] });
-  //   queryClient.invalidateQueries({ queryKey: ["programStudiData"] });
-  //   queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
-  // };
-
-  // Loading state
-  const isLoading = loading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   const handleNavigation = (path: string) => {
     navigate(path);
   };
 
+  // Filter data based on search term
+  const displayData = filteredGraduateData.filter(
+    (item) => item.kodePl.toLowerCase().includes(searchTerm.toLowerCase()) || item.profil.toLowerCase().includes(searchTerm.toLowerCase()) || item.profesi.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Loading state for mutations
+  const isLoading = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+
   return (
-    <MainLayout isGreeting={false} titlePage="Profil Lulusan" className="">
+    <MainLayout isGreeting={false} titlePage="Profil Lulusan">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
-          <div className="flex items-center ">
+          <div className="flex items-center">
             <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50  w-64" />
+              <input type="search" placeholder="Cari Profil Lulusan" className="px-3 py-2 border border-black/50 w-64" value={searchTerm} onChange={handleSearchChange} />
               <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
                 <Search color="white" size={20} />
               </button>
@@ -361,26 +236,31 @@ const GraduateProfile: React.FC = () => {
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
             </button>
-            <button onClick={handleSave} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center">
-              <Save className="mr-2" size={16} />
-              Simpan
-            </button>
+            {(isAdding || isEditing) && (
+              <button onClick={handleSave} disabled={!isFormValid() || isLoading} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
+                <Save className="mr-2" size={16} />
+                {isLoading ? "Menyimpan..." : "Simpan"}
+              </button>
+            )}
           </div>
         </div>
+
+        {/* Error Message */}
+        {errorMessage && <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>}
 
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Menu */}
           <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/60  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.graduateProfile)}>
-              <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
+            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer">
+              <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Profil Lulusan</p>
             </div>
             <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpl)}>
-              <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p>CPL </p>
+              <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
+              <p>CPL</p>
             </div>
             <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpmk)}>
-              <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
+              <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPMK</p>
             </div>
           </div>
@@ -390,27 +270,23 @@ const GraduateProfile: React.FC = () => {
             <div className="grid grid-cols-1 gap-2 bg-primary-green/10 p-4 md:grid-cols-2">
               <div className="flex justify-between">
                 <span className="font-semibold w-full text-left">Kode Prodi:</span>
-                <span className="w-full text-left ">FF22</span>
+                <span className="w-full text-left">{obeInfo?.kodeProgramStudi}</span>
               </div>
-              <div className="flex justify-between ml-0 md:ml-8 ">
+              <div className="flex justify-between ml-0 md:ml-8">
                 <span className="font-semibold w-full text-left">Tahun Kurikulum:</span>
-                <span className="w-full text-left">{selectedYear}</span>
+                <span className="w-full text-left">{obeInfo?.tahunKurikulum}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold w-full text-left">Program Studi:</span>
-                <span className="w-full text-left">Pemrograman Lanjut</span>
-              </div>
-              <div className="flex justify-between  ml-0 md:ml-8">
-                <span className="font-semibold w-full text-left">Ketua Prodi:</span>
-                <span className="w-full text-left">1</span>
+                <span className="w-full text-left">{obeInfo?.programStudi}</span>
               </div>
             </div>
 
-            <div className="mt-4 flex flex-col  gap-2 md:flex-row md:items-center">
+            <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center">
               <h2 className="text-lg font-semibold">Tahun Kurikulum</h2>
               <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="border border-black/50 rounded-md px-2 py-1 w-full md:w-40">
-                <option value="">Tahun Kurikulum</option>
-                {curriculum.map((item) => (
+                <option value="">Pilih Tahun Kurikulum</option>
+                {curriculumData.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.tahun}
                   </option>
@@ -418,22 +294,17 @@ const GraduateProfile: React.FC = () => {
               </select>
               <button
                 onClick={handleAdd}
-                disabled={isAdding || isEditing}
-                className={`ml-auto w-full md:w-56 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding || isEditing ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={isAdding || isEditing || !selectedYear}
+                className={`ml-auto w-full md:w-56 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding || isEditing || !selectedYear ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <Plus className="mr-2" size={16} />
                 Tambah Profil Lulusan
               </button>
             </div>
 
-            {errorMessage && <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>}
-            {isLoading && <p className="text-blue-600 mt-2 mx-4">Loading...</p>}
-            {loadingCurriculum && <p className="text-blue-600 mt-2 mx-4">Loading periode curriculum...</p>}
-            {loadingProgramStudi && <p className="text-blue-600 mt-2 mx-4">Loading program studi...</p>}
-
             <div className="mt-4 overflow-x-auto">
               <TableGraduateProfile
-                data={profileData}
+                data={displayData}
                 tableHead={["Kode PL", "Profil Lulusan", "Profesi", "Deskripsi", "Aksi"]}
                 error="Data tidak ditemukan."
                 onEdit={handleEdit}
@@ -446,6 +317,13 @@ const GraduateProfile: React.FC = () => {
                 isAdding={isAdding}
                 isFormValid={isFormValid}
               />
+            </div>
+
+            {/* Info */}
+            <div className="mt-4 text-sm text-gray-600">
+              <p>Program Studi ID: {id}</p>
+              <p>Total Data: {filteredGraduateData.length}</p>
+              <p>Data Ditampilkan: {displayData.length}</p>
             </div>
           </div>
         </div>

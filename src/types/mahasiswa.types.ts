@@ -171,3 +171,17 @@ export interface IJadwalMingguan {
     jumat: IJadwalKuliah[];
     sabtu: IJadwalKuliah[];
 }
+
+export interface IGrafikAkademik {
+    ipk: number;
+    ips: number[];
+    mataKuliahKumulatif: number;
+    sksKumulatif: number;
+}
+
+export interface IInfoTagihan {
+    totalTagihan: number;
+    totalLunas: number;
+    sisaTagihan: number;
+    tanggalTenggat: string; // e.g., "2025-07-10"
+}
