@@ -141,7 +141,7 @@ const dropdownMenus = {
 };
 
 // --- START: KOMPONEN PROFILE DROPDOWN (Reusable, di-copy dari HeaderAdminFinance) ---
-const ProfileDropdown = ({profileData, onClose}) => {
+const ProfileDropdown = ({userName, profileData, onClose}) => {
     const navigate = useNavigate(); // Inisialisasi useNavigate
 
     const handleLogout = async () => { // Tambahkan 'async' di sini
@@ -176,7 +176,7 @@ const ProfileDropdown = ({profileData, onClose}) => {
                     className="w-12 h-12 rounded-full mr-3 border-2 border-gray-200"
                 />
                 <p className="font-semibold text-gray-900 text-base flex-grow">
-                    {profileData.userName}
+                    {userName}
                 </p>
             </div>
 
@@ -214,12 +214,22 @@ const HeaderAdminAcademic = () => {
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const profileRef = useRef(null); // Ref untuk elemen profile
 
+    const [userName, setUserName] = useState<string>("");
+
     const toggleProfileDropdown = () => {
         setIsProfileDropdownOpen(!isProfileDropdownOpen);
     };
 
     // Tutup dropdown jika klik di luar
     useEffect(() => {
+        const accountInfoString = localStorage.getItem("account_info");
+
+        if(accountInfoString){
+            const accountInfo = JSON.parse(accountInfoString);
+
+            setUserName(accountInfo.nama);
+        }
+
         const handleClickOutside = (event) => {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
                 setIsProfileDropdownOpen(false);
@@ -275,6 +285,7 @@ const HeaderAdminAcademic = () => {
                             </button>
                             {isProfileDropdownOpen && (
                                 <ProfileDropdown
+                                    nama={userName}
                                     profileData={dropdownMenus.profile}
                                     onClose={() => setIsProfileDropdownOpen(false)}
                                 />
