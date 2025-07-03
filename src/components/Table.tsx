@@ -1,10 +1,12 @@
 import React, { useMemo } from "react";
 import { useState } from "react";
 import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
-import { CourseData, CplData, CurriculumData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "../components/types.ts";
+import { CplData, PeriodeAkademik, CpmkData, RpsData, CurriculumProdiData, KelasData } from "../components/types.ts";
+import { CurriculumData } from "../hooks/academic/useCurriculumYear.ts";
 import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil, Loader2 } from "lucide-react";
 import { getKelas, getRps, useAddRps, useMapKelasToRps } from "../hooks/academic/useRpsManagement.ts";
+import { CourseData } from "../hooks/academic/useCourseManagement.ts";
 import { Api } from "../api/Index.tsx";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CplCpmkCourseResponse } from "../hooks/academic/useCplCpmkCourse.ts";
@@ -56,8 +58,6 @@ interface TableCurriculumYearProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;
   isFormValid: () => boolean;
   periodeAkademikList: PeriodeAkademik[];
-  // selectedPeriodeId: string;
-  // setSelectedPeriodeId: (id: string) => void;
 }
 
 interface TableCourseManagementProps {
@@ -172,49 +172,43 @@ interface TableHistoryProps {
   batasSks: number;
 }
 
-export const TableHistory = ({
-                               data,
-                               tableHead,
-                               error,
-                               totalSks,
-                               batasSks
-                             }: TableHistoryProps) => {
+export const TableHistory = ({ data, tableHead, error, totalSks, batasSks }: TableHistoryProps) => {
   const isDataAvailable = data && data.length > 0;
 
   return (
-      <table className="w-full my-4">
-        <thead>
+    <table className="w-full my-4">
+      <thead>
         <tr>
           {tableHead.map((head) => (
-              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
-                <p className="font-semibold text-center">{head}</p>
-              </th>
+            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+              <p className="font-semibold text-center">{head}</p>
+            </th>
           ))}
         </tr>
-        </thead>
-        <tbody className="font-semibold">
+      </thead>
+      <tbody className="font-semibold">
         {isDataAvailable ? (
-            data.map((row, index) => {
-              // Gunakan row.kodeMataKuliah atau ID unik lain jika tersedia sebagai key
-              const uniqueKey = row.kodeMataKuliah ? `${row.kodeMataKuliah}-${index}` : index;
-              const { id, ...rowWithoutId } = row;
-              const rowData = Object.values(rowWithoutId);
-              return (
-                  <tr key={uniqueKey} className="text-center">
-                    {rowData.map((cell, idx) => (
-                        <td key={idx} className="p-2 border text-sm border-black/50">
-                          {String(cell ?? '-')} {/* Tampilkan '-' jika data null */}
-                        </td>
-                    ))}
-                  </tr>
-              );
-            })
+          data.map((row, index) => {
+            // Gunakan row.kodeMataKuliah atau ID unik lain jika tersedia sebagai key
+            const uniqueKey = row.kodeMataKuliah ? `${row.kodeMataKuliah}-${index}` : index;
+            const { id, ...rowWithoutId } = row;
+            const rowData = Object.values(rowWithoutId);
+            return (
+              <tr key={uniqueKey} className="text-center">
+                {rowData.map((cell, idx) => (
+                  <td key={idx} className="p-2 border text-sm border-black/50">
+                    {String(cell ?? "-")} {/* Tampilkan '-' jika data null */}
+                  </td>
+                ))}
+              </tr>
+            );
+          })
         ) : (
-            <tr>
-              <td colSpan={tableHead.length} className="text-center border-black border p-2">
-                {error || "Data riwayat KRS untuk periode ini tidak ditemukan."}
-              </td>
-            </tr>
+          <tr>
+            <td colSpan={tableHead.length} className="text-center border-black border p-2">
+              {error || "Data riwayat KRS untuk periode ini tidak ditemukan."}
+            </td>
+          </tr>
         )}
 
         {/* Baris Total dan Batas SKS sekarang menggunakan props dinamis */}
@@ -232,8 +226,8 @@ export const TableHistory = ({
           <td className="border-black/50 text-center p-2 text-sm border">{batasSks}</td>
           <td colSpan={4} className="border-black/50 text-sm border text-center p-2"></td>
         </tr>
-        </tbody>
-      </table>
+      </tbody>
+    </table>
   );
 };
 
@@ -277,23 +271,7 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
   );
 };
 
-export const TableCurriculumYear = ({
-  data,
-  tableHead = [],
-  error,
-  onEdit,
-  onDelete,
-  isEditing,
-  isAdding,
-  currentData,
-  onSave,
-  onReset,
-  onInputChange,
-  isFormValid,
-  periodeAkademikList,
-}: // selectedPeriodeId,
-// setSelectedPeriodeId,
-TableCurriculumYearProps) => {
+export const TableCurriculumYear = ({ data, tableHead = [], error, onEdit, onDelete, isEditing, isAdding, currentData, onSave, onReset, onInputChange, isFormValid, periodeAkademikList }: TableCurriculumYearProps) => {
   const isDataAvailable = data && data.length > 0;
 
   const renderDate = (dateString: string) => {
@@ -467,7 +445,7 @@ export const TableCourseManagement: React.FC<TableCourseManagementProps> = ({ da
                   <td className="p-2 border text-sm border-black/50">{kodeMataKuliah}</td>
                   <td className="p-2 border text-sm border-black/50">{namaMataKuliah}</td>
                   <td className="p-2 border text-sm border-black/50">{sksTatapMuka + sksPraktikum}</td>
-                  <td className="p-2 border text-sm border-black/50">{opsiMataKuliah === true ? "Wajib" : opsiMataKuliah === false ? "Pilihan" : ""}</td>
+                  <td className="p-2 border text-sm border-black/50">{opsiMataKuliah === true ? "Wajib" : opsiMataKuliah === false ? "Pilihan" : "-"}</td>
                   <td className="p-2 border text-sm border-black/50">{programStudi}</td>
                   <td className="p-2 border text-sm border-black/50 text-center">
                     <div className="flex justify-center gap-2">
@@ -1347,33 +1325,31 @@ export const TableRpsManagement: React.FC<TableRpsManagementProps> = ({ data = [
             </tr>
           </thead>
           <tbody>
-              {data.length > 0 ? (
-
-                data.map((item, index) => (
-                  <tr key={item.id || index} className="text-center">
-                    <td className="p-2 border">{getCourseCode(item)}</td>
-                    <td className="p-2 border text-left">{getCourseName(item)}</td>
-                    <td className="p-2 border">{getLecturerName(item)}</td>
-                    <td className="p-2 border">{getSemester(item)}</td>
-                    <td className="p-2 border">{getSKS(item)}</td>
-                    <td className="p-2 border">{getClassName(item)}</td>
-                    <td className="p-2 border">
-                      <div className="flex justify-center gap-2">
-                        <button onClick={() => handlePaperclipClick(item)} className="bg-purple-500 text-white px-2 py-1 rounded cursor-pointer hover:bg-purple-600 transition-colors" title="Pemetaan Kelas">
-                          <Paperclip className="w-4 h-4" />
-                        </button>
-                        <div onClick={() => navigate(`${AdminAcademicRoute.rpsManagement.editRps}/${item.id}`)} className="bg-primary-yellow cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Edit">
-                          <Pencil className="text-white w-4 h-4" />
-                        </div>
-                        <div onClick={() => navigate(`${AdminAcademicRoute.rpsManagement.detailRps}/${item.id}`)} className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="View">
-                          <Eye className="text-white w-4 h-4" />
-                        </div>
-                        <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded cursor-pointer hover:bg-red-600 transition-colors" title="Hapus">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+            {data.length > 0 ? (
+              data.map((item, index) => (
+                <tr key={item.id || index} className="text-center">
+                  <td className="p-2 border">{getCourseCode(item)}</td>
+                  <td className="p-2 border text-left">{getCourseName(item)}</td>
+                  <td className="p-2 border">{getLecturerName(item)}</td>
+                  <td className="p-2 border">{getSemester(item)}</td>
+                  <td className="p-2 border">{getSKS(item)}</td>
+                  <td className="p-2 border">{getClassName(item)}</td>
+                  <td className="p-2 border">
+                    <div className="flex justify-center gap-2">
+                      <button onClick={() => handlePaperclipClick(item)} className="bg-purple-500 text-white px-2 py-1 rounded cursor-pointer hover:bg-purple-600 transition-colors" title="Pemetaan Kelas">
+                        <Paperclip className="w-4 h-4" />
+                      </button>
+                      <div onClick={() => navigate(`${AdminAcademicRoute.rpsManagement.editRps}/${item.id}`)} className="bg-primary-yellow cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Edit">
+                        <Pencil className="text-white w-4 h-4" />
                       </div>
-
-                    </td>
+                      <div onClick={() => navigate(`${AdminAcademicRoute.rpsManagement.detailRps}/${item.id}`)} className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="View">
+                        <Eye className="text-white w-4 h-4" />
+                      </div>
+                      <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded cursor-pointer hover:bg-red-600 transition-colors" title="Hapus">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (

@@ -39,7 +39,15 @@ const AddRps = () => {
   const periodeAkademikParam = searchParams.get("periodeAkademik");
   const programStudiParam = searchParams.get("programStudi");
 
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const {
+    data: courseData = [],
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = getCourseData({
+    tahunKurikulum: "",
+    programStudi: "",
+    jenisMataKuliah: "",
+  });
   const { data: dosenData = [], isLoading: isDosenLoading, error: dosenError } = getDosen();
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();

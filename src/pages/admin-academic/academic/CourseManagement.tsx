@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TableCourseManagement } from "../../../components/Table";
-import { RefreshCw, Search, Plus, Trash } from "lucide-react";
+import { RefreshCw, Search, Plus, Trash } from "lucide-react"; // Make sure Eye and Pencil are imported if used in TableCourseManagement
+import { Eye, Pencil, Trash2 } from "lucide-react"; // Add these imports
 import { getCourseData, useDeleteCourse } from "../../../hooks/academic/useCourseManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
 import FilterDropdown from "../../../components/admin-academic/FilterDropdown.tsx";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify.tsx";
 
 const CourseManagement: React.FC = () => {
   const queryClient = useQueryClient();
@@ -26,11 +28,18 @@ const CourseManagement: React.FC = () => {
   const [selectedProdi, setSelectedProdi] = useState("all");
 
   // --- queries ---
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const {
+    data: courseData = [],
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = getCourseData({
+    tahunKurikulum: selectedCurriculum,
+    jenisMataKuliah: selectedCourseType,
+    programStudi: selectedProdi,
+  });
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: programStudiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
 
-  // --- mutation ---
   const deleteMutation = useDeleteCourse();
 
   // --- filtered function ---
@@ -44,8 +53,8 @@ const CourseManagement: React.FC = () => {
       })
       .filter((item) => {
         if (selectedCourseType === "all") return true;
-        if (selectedCourseType === "Wajib") return item.opsiMataKuliah !== null;
-        if (selectedCourseType === "Pilihan") return item.opsiMataKuliah === null;
+        if (selectedCourseType === "Wajib") return item.opsiMataKuliah === true;
+        if (selectedCourseType === "Pilihan") return item.opsiMataKuliah === false;
         return true;
       })
 
@@ -87,9 +96,66 @@ const CourseManagement: React.FC = () => {
   };
 
   // --- Event Handlers ---
-  const handleDelete = (id: string) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-      deleteMutation.mutate(id);
+  const handleDelete = async (id: string) => {
+    if (!id) {
+      showToast.error("ID tidak valid.");
+      return;
+    }
+
+    const confirm = window.confirm("Yakin ingin menghapus data ini?");
+    if (!confirm) return;
+
+    try {
+      const toastId = showToast.loading("Menghapus data...");
+
+      await deleteMutation.mutateAsync(id);
+
+      showToast.update(toastId, {
+        render: "Berhasil menghapus data.",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      // Refresh data setelah delete
+      queryClient.invalidateQueries({ queryKey: ["courseData"] });
+    } catch (error) {
+      showToast.dismiss();
+      showToast.error("Gagal menghapus data.");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) {
+      showToast.info("Tidak ada data yang dipilih untuk dihapus.");
+      return;
+    }
+
+    const confirm = window.confirm(`Apakah Anda yakin ingin menghapus ${selectedIds.length} data yang dipilih?`);
+    if (!confirm) return;
+
+    const toastId = showToast.loading(`Menghapus ${selectedIds.length} data...`);
+    try {
+      // Create an array of promises for each deletion
+      const deletePromises = selectedIds.map((id) => deleteMutation.mutateAsync(id));
+
+      // Wait for all promises to resolve
+      await Promise.all(deletePromises);
+
+      showToast.update(toastId, {
+        render: `Berhasil menghapus ${selectedIds.length} data.`,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      setSelectedIds([]); // Clear selection after successful deletion
+      queryClient.invalidateQueries({ queryKey: ["courseData"] }); // Refresh data
+    } catch (error: any) {
+      showToast.dismiss();
+      handleMutationError(error); // Use your existing error handler for better messages
+      showToast.error("Gagal menghapus beberapa data. Periksa konsol untuk detail.");
+      // You might want to invalidate queries even on partial failure or show a specific error
+      queryClient.invalidateQueries({ queryKey: ["courseData"] });
     }
   };
 
@@ -133,6 +199,7 @@ const CourseManagement: React.FC = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage="Mata Kuliah" className="">
+      <ToastNotif />
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
         <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-3">
           <div className="flex items-center gap-3">
@@ -190,12 +257,7 @@ const CourseManagement: React.FC = () => {
             </button>
 
             <button
-              onClick={() => {
-                if (selectedIds.length > 0 && window.confirm(`Apakah Anda yakin ingin menghapus ${selectedIds.length} data yang dipilih?`)) {
-                  selectedIds.forEach((id) => deleteMutation.mutate(id));
-                  setSelectedIds([]);
-                }
-              }}
+              onClick={handleBulkDelete} // Call the new handler
               className="bg-red-500 rounded py-2 px-4 text-white flex items-center cursor-pointer disabled:opacity-50"
               disabled={selectedIds.length === 0}
             >

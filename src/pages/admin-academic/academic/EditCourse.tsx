@@ -7,24 +7,7 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseData, getCourseDataById, useUpdateCourse } from "../../../hooks/academic/useCourseManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
-
-// Popup Component
-const NotificationPopup = ({ show, type, message, onClose }) => {
-  return (
-    <div className={`fixed top-5 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ${show ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
-      <div
-        className={`flex items-center gap-3 px-4 py-3 rounded-md shadow-lg border text-sm
-        ${type === "success" ? "bg-green-100 border-green-400 text-green-800" : "bg-red-100 border-red-400 text-red-800"}`}
-      >
-        {type === "success" ? <CheckCircle size={20} className="text-green-600" /> : <XCircle size={20} className="text-red-600" />}
-        <span>{message}</span>
-        <button onClick={onClose} className="ml-2 text-gray-500 hover:text-gray-700">
-          <X size={16} />
-        </button>
-      </div>
-    </div>
-  );
-};
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify.tsx";
 
 const EditCourse = () => {
   const { id } = useParams();
@@ -57,9 +40,15 @@ const EditCourse = () => {
   const { data: courseEdit, isLoading, error } = getCourseDataById(id!);
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupConfig, setPopupConfig] = useState<{ type: "success" | "error"; message: string }>({ type: "success", message: "" });
+  const {
+    data: courseData = [],
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = getCourseData({
+    tahunKurikulum: "",
+    jenisMataKuliah: "",
+    programStudi: "",
+  });
 
   useEffect(() => {
     console.log("Course edit data:", courseEdit);
@@ -86,7 +75,6 @@ const EditCourse = () => {
     }
   }, [courseEdit]);
 
-  // Update siakProgramStudiId ketika programStudi berubah
   useEffect(() => {
     if (formData.programStudi && prodiData.length > 0) {
       const selectedProdi = prodiData.find((prodi) => prodi.namaProgramStudi === formData.programStudi);
@@ -97,9 +85,8 @@ const EditCourse = () => {
         }));
       }
     }
-  }, [formData.programStudi, prodiData]); // Fixed: changed programStudiData to prodiData
+  }, [formData.programStudi, prodiData]);
 
-  // Update siakTahunKurikulumId ketika tahunKurikulum berubah
   useEffect(() => {
     if (formData.tahunKurikulum && curriculumData.length > 0) {
       const selectedCurriculum = curriculumData.find((curriculum) => curriculum.tahun === formData.tahunKurikulum);
@@ -112,7 +99,7 @@ const EditCourse = () => {
     }
   }, [formData.tahunKurikulum, curriculumData]);
 
-  const updateMutation = useUpdateCourse(); // Fixed: renamed from mutation to updateMutation
+  const updateMutation = useUpdateCourse();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -129,16 +116,7 @@ const EditCourse = () => {
     navigate(route);
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    if (popupConfig.type === "success") {
-      navigate(AdminAcademicRoute.courseManagement.courseManagement);
-    }
-  };
-
   const handleSave = () => {
-    console.log("Klik Simpan"); // Tambahkan ini
-
     if (!id) return;
 
     if (!formData.kodeMataKuliah || !formData.namaMataKuliah) {
@@ -157,24 +135,11 @@ const EditCourse = () => {
       },
       {
         onSuccess: (data) => {
-          console.log("✅ Sukses update:", data); // Tambahkan ini
-          setPopupConfig({
-            type: "success",
-            message: "Mata kuliah berhasil disimpan!",
-          });
-          setShowPopup(true);
-          setTimeout(() => {
-            setShowPopup(false);
-            navigate(AdminAcademicRoute.courseManagement.courseManagement);
-          }, 2000);
+          showToast.success("Mata kuliah berhasil diperbarui.");
         },
         onError: (error: any) => {
-          console.error("❌ Error update:", error);
-          setPopupConfig({
-            type: "error",
-            message: error?.response?.data?.message || error?.message || "Gagal menambahkan mata kuliah. Silakan coba lagi.",
-          });
-          setShowPopup(true);
+          showToast.error(`Gagal memperbarui mata kuliah: ${error.message}`);
+          console.error("Error updating course:", error);
         },
       }
     );
@@ -184,8 +149,6 @@ const EditCourse = () => {
     console.log("Searching for:", searchTerm);
   };
 
-  // Filter mata kuliah untuk prasyarat (excludes mata kuliah yang sedang diedit)
-  // Fixed: changed allCoursesData to courseData
   const availableCoursesForPrerequisite = courseData.filter((course) => course.id !== id);
 
   if (isLoading) {
@@ -214,11 +177,11 @@ const EditCourse = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage="Edit Mata Kuliah" className="">
-      <NotificationPopup show={showPopup} type={popupConfig.type} message={popupConfig.message} onClose={handleClosePopup} />
+      <ToastNotif />
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
           <div className="flex items-center gap-4">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded">
+            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded mr-[-18px]">
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
@@ -247,11 +210,11 @@ const EditCourse = () => {
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>RPS</p>
             </div>

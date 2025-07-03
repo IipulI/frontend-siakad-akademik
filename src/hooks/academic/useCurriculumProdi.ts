@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index.tsx";
+import { showToast } from "../../components/admin-finance/Toastify.tsx";
 
 interface CurriculumProdiData {
   siakProgramStudiId: string;
@@ -27,8 +28,6 @@ export function useAddCurriculumProdi() {
         nilaiMin: data.nilaiMin,
       };
 
-      console.log("Final Payload:", payload);
-
       try {
         const response = await Api.put(`/akademik/kurikulum-prodi/add/${id}`, payload, {
           headers: {
@@ -37,7 +36,6 @@ export function useAddCurriculumProdi() {
           },
         });
 
-        console.log("✅ API Response:", response.data);
         return response.data;
       } catch (error: any) {
         console.error("❌ API Error:", error);
@@ -57,8 +55,6 @@ export function useAddCurriculumProdi() {
       }
     },
     onSuccess: (data) => {
-      console.log("✅ Mutation Success:", data);
-
       // Invalidate queries untuk refresh data
       queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
       queryClient.invalidateQueries({ queryKey: ["curriculumProdi"] });
@@ -90,10 +86,6 @@ export function useUpdateCurriculumProdi() {
         throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
       }
 
-      console.log("=== DEBUG UPDATE CURRICULUM PRODI ===");
-      console.log("Course ID:", id);
-      console.log("Update Data:", data);
-
       const response = await Api.put(`/akademik/kurikulum-prodi/${id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,11 +93,9 @@ export function useUpdateCurriculumProdi() {
         },
       });
 
-      console.log("✅ Update Response:", response.data);
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("✅ Update Success:", data);
       queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
     },
     onError: (error: any) => {
@@ -125,22 +115,66 @@ export function useDeleteCurriculumProdi() {
         throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
       }
 
-      console.log("=== DEBUG DELETE CURRICULUM PRODI ===");
-      console.log("Course ID:", id);
-
       const response = await Api.put(`/akademik/kurikulum-prodi/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Delete Response:", response.data);
       return response.data;
     },
-    onSuccess: (data) => {
-      console.log("✅ Delete Success:", data);
-      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
+    onMutate: async (idToDelete) => {
+      const toastId = showToast.loading("Menghapus data kurikulum prodi...");
+      return toastId;
     },
-    onError: (error: any) => {
+    onSuccess: (data, variables, context) => {
+      const toastId = context as string;
+
+      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
+      showToast.update(toastId, {
+        render: "Data kurikulum prodi berhasil dihapus.",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    },
+    onError: (error: any, variables, context) => {
+      const toastId = context as string;
+
       console.error("❌ Delete Error:", error);
+      let errorMessage = "Gagal menghapus data kurikulum prodi.";
+
+      if (error.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+
+        switch (status) {
+          case 400:
+            errorMessage = `Gagal menghapus: ${data.message || "Data tidak valid."}`;
+            break;
+          case 401:
+            errorMessage = "Sesi berakhir. Silakan login kembali.";
+            break;
+          case 403:
+            errorMessage = "Tidak memiliki akses untuk menghapus data ini.";
+            break;
+          case 404:
+            errorMessage = "Data tidak ditemukan.";
+            break;
+          case 500:
+            errorMessage = "Terjadi kesalahan server saat menghapus.";
+            break;
+          default:
+            errorMessage = `Error ${status}: ${data.message || "Terjadi kesalahan tidak diketahui."}`;
+        }
+      } else if (error.message) {
+        errorMessage = `Terjadi kesalahan: ${error.message}`;
+      }
+
+      showToast.update(toastId, {
+        render: errorMessage,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     },
   });
 }

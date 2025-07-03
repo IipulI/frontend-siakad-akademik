@@ -1,11 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
 export interface PeriodeAkademik {
   id: string;
-  siakTahunAjaranId: "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+  tahun: string;
   namaPeriode: string;
   kodePeriode: string;
+  status: string;
   tanggalMulai: string;
   tanggalSelesai: string;
 }

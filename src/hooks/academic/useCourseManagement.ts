@@ -36,14 +36,40 @@ export interface CourseData {
   };
 }
 
-export function getCourseData() {
+interface CourseFilters {
+  tahunKurikulum: string;
+  jenisMataKuliah: string;
+  programStudi: string;
+}
+
+export function getCourseData(filters: CourseFilters) {
   return useQuery({
-    queryKey: ["courseData"],
+    queryKey: ["courseData", filters],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await Api.get(`/akademik/mata-kuliah?page=1&size=10&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
+      const params = new URLSearchParams();
+
+      if (filters.tahunKurikulum && filters.tahunKurikulum !== "all") {
+        params.append("tahunKurikulum", filters.tahunKurikulum);
+      }
+      if (filters.programStudi && filters.programStudi !== "all") {
+        params.append("programStudi", filters.programStudi);
+      }
+      if (filters.jenisMataKuliah && filters.jenisMataKuliah !== "all") {
+        params.append("jenisMataKuliah", filters.jenisMataKuliah);
+      }
+
+      params.append("page", "1");
+      params.append("size", "100");
+      params.append("sort", "createdAt,desc");
+
+      const response = await Api.get(`/akademik/mata-kuliah?${params}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
       return response.data.data;
     },
+
+    enabled: true,
   });
 }
 
@@ -84,9 +110,9 @@ export function useAddCourse() {
         kodeMataKuliah: newCourseData.kodeMataKuliah,
         namaMataKuliah: newCourseData.namaMataKuliah,
         jenisMataKuliah: newCourseData.jenisMataKuliah,
-        prasyaratMataKuliah1Id: newCourseData.prasyaratMataKuliah1 || "",
-        prasyaratMataKuliah2Id: newCourseData.prasyaratMataKuliah2 || "",
-        prasyaratMataKuliah3Id: newCourseData.prasyaratMataKuliah3 || "",
+        prasyaratMataKuliah1Id: newCourseData.prasyaratMataKuliah1Id || "",
+        prasyaratMataKuliah2Id: newCourseData.prasyaratMataKuliah2Id || "",
+        prasyaratMataKuliah3Id: newCourseData.prasyaratMataKuliah3Id || "",
       };
 
       const response = await Api.post("/akademik/mata-kuliah", payload, {

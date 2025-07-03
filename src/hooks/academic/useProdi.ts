@@ -1,4 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+// hooks/academic/useProdi.ts
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
 export interface ProgramStudiData {
@@ -7,12 +8,13 @@ export interface ProgramStudiData {
   jenjang: string;
 }
 
-export function getProdi() {
-  return useQuery({
+export function getProdi(options?: Omit<UseQueryOptions<ProgramStudiData[]>, "queryKey" | "queryFn">) {
+  return useQuery<ProgramStudiData[]>({
     queryKey: ["prodiData"],
     queryFn: async () => {
       const response = await Api.get("/akademik/program-studi");
       return response.data.data;
     },
+    ...options,
   });
 }

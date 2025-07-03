@@ -6,6 +6,7 @@ import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import { getObe } from "../../../hooks/academic/useObeManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
+import { getJenjang } from "../../../hooks/academic/useJenjang.ts";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const OBEManagement: React.FC = () => {
@@ -14,11 +15,21 @@ const OBEManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("all");
   const [selectedCurriculum, setSelectedCurriculum] = useState("all");
+  const [selectedJenjang, setJenjang] = useState("all");
   const [graduateProfileStatuses, setGraduateProfileStatuses] = useState<{ [key: string]: boolean }>({});
 
-  const { data: ObeData = [], isLoading: isObeLoading, error: obeError } = getObe();
+  const {
+    data: ObeData = [],
+    isLoading: isObeLoading,
+    error: obeError,
+  } = getObe({
+    tahunKurikulum: selectedCurriculum,
+    programStudi: selectedProdi,
+    jenjang: selectedJenjang,
+  });
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: ProgramStudiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
+  const { data: jenjangData = [] } = getJenjang();
 
   useEffect(() => {
     const savedStatuses = JSON.parse(localStorage.getItem("graduateProfileStatuses") || "{}");
@@ -46,7 +57,6 @@ const OBEManagement: React.FC = () => {
     };
   }, []);
 
-  // Enhanced filtered data with status information
   const filteredData = useMemo(() => {
     return ObeData.map((item) => ({
       ...item,
@@ -73,17 +83,17 @@ const OBEManagement: React.FC = () => {
 
   const handleProdiChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedProdi(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1);
   };
 
   const handleCurriculumChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCurriculum(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
   return (
@@ -116,8 +126,13 @@ const OBEManagement: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Jenjang</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
+            <select className="flex-1 rounded px-3 py-2 border border-primary-brown" value={selectedJenjang} onChange={(e) => setJenjang(e.target.value)}>
               <option value="all">-- Semua --</option>
+              {jenjangData.map((jenjang) => (
+                <option key={jenjang.id} value={jenjang.nama}>
+                  {jenjang.nama}
+                </option>
+              ))}
             </select>
           </div>
         </div>

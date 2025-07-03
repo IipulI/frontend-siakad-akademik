@@ -28,7 +28,18 @@ const RpsManagement: React.FC = () => {
   const [selectedStatusRpsKelas, setSelectedStatusRpsKelas] = useState("");
 
   // --- Semua hooks harus dipanggil dalam urutan yang sama setiap render ---
-  const { data: rpsData = [], isLoading: isRpsLoading, error: rpsError } = getRps();
+  const {
+    data: rpsData = [],
+    isLoading: isRpsLoading,
+    error: rpsError,
+  } = getRps({
+    tahunKurikulum: "",
+    periodeAkademik: "",
+    programStudi: "",
+    statusRpsKelas: "",
+    page: currentPage,
+    size: itemsPerPage,
+  });
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
   const { data: periodeAkademikData = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba();

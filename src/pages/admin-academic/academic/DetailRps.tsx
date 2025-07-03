@@ -77,20 +77,17 @@ const DetailRps = () => {
 
       const response = await Api.get(`/akademik/rps/${id}/dokumen-rps`, {
         headers: { Authorization: `Bearer ${token}` },
-        responseType: "blob", // Tetap gunakan 'blob'
+        responseType: "blob",
       });
 
-      // Buat Blob dengan tipe konten yang benar (asumsi PDF)
-      // Ini penting agar browser tahu cara menampilkannya
-      const fileBlob = new Blob([response.data], { type: "application/pdf" });
+      // Ambil Content-Type dari header respons API
+      const contentType = response.headers["content-type"] || "application/octet-stream";
 
-      // Buat URL sementara untuk blob file
+      // Gunakan contentType yang didapat dari API
+      const fileBlob = new Blob([response.data], { type: contentType });
+
       const url = window.URL.createObjectURL(fileBlob);
-
-      // Buka URL tersebut di tab baru
       window.open(url, "_blank");
-
-      // Opsional: revoke URL setelah beberapa saat untuk membersihkan memori
       setTimeout(() => window.URL.revokeObjectURL(url), 100);
     } catch (error) {
       console.error("Gagal membuka dokumen RPS:", error);

@@ -8,24 +8,21 @@ import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
 import { getPeriodeAkdemikCoba } from "../../../hooks/academic/usePeriodeAkademikCoba.ts";
 import { getCurriculumYear, useAddCurriculumYear, useUpdateCurriculumYear, useDeleteCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
-import InfoAlert from "../../../components/InfoAlert.tsx";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify.tsx";
 
 const CurriculumYear: React.FC = () => {
   const queryClient = useQueryClient();
 
   // --- state ---
-  // const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [currentData, setCurrentData] = useState<CurriculumData | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   // --- data queries ---
-  const { data: periodeAkademikList = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba();
+  const { data: periodeAkademikList = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba(isAdding || isEditing);
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
 
   // --- mutations ---
@@ -34,15 +31,12 @@ const CurriculumYear: React.FC = () => {
   const deleteMutation = useDeleteCurriculumYear();
 
   // --- Conditional rendering ---
-  if (isPeriodeAkademikLoading || isCurriculumLoading) {
+  if (isCurriculumLoading) {
     return <LoadingSpinner />;
   }
 
-  if (periodeAkademikError) {
-    return <div className="text-red-500">Gagal memuat periode akademik</div>;
-  }
-
   if (curriculumError) {
+    showToast.error("Gagal memuat data tahun kurikulum:" + curriculumError.message);
     return <div className="text-red-500">Gagal memuat tahun kurikulum</div>;
   }
 
@@ -50,17 +44,18 @@ const CurriculumYear: React.FC = () => {
 
   // --- error handling ---
   const handleMutationError = (error: any) => {
+    let message = "Terjadi kesalahan. Silakan coba lagi.";
     if (error.response?.status === 400) {
-      setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
+      message = "Data tidak valid. Periksa kembali input Anda.";
     } else if (error.response?.status === 401) {
-      setErrorMessage("Token tidak valid. Silakan login ulang.");
+      message = "Token tidak valid. Silakan login ulang.";
     } else if (error.response?.data?.message) {
-      setErrorMessage(`Error: ${error.response.data.message}`);
+      message = `Error: ${error.response.data.message}`;
     } else if (error.message) {
-      setErrorMessage(error.message);
-    } else {
-      setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
+      message = error.message;
     }
+
+    showToast.error(message);
   };
 
   // --- event handlers ---
@@ -72,10 +67,8 @@ const CurriculumYear: React.FC = () => {
     const selectedData = curriculumData.find((item) => item.id === id);
     if (selectedData) {
       setCurrentData(selectedData);
-      // setSelectedPeriodeId(selectedData.siakPeriodeAkademikId);
       setIsEditing(true);
       setIsAdding(false);
-      setErrorMessage("");
     }
   };
 
@@ -83,7 +76,7 @@ const CurriculumYear: React.FC = () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
       try {
         await deleteMutation.mutateAsync(id);
-        setErrorMessage("");
+        showToast.success("Data berhasil dihapus.");
       } catch (error: any) {
         console.error("Gagal menghapus data:", error);
         handleMutationError(error);
@@ -103,8 +96,6 @@ const CurriculumYear: React.FC = () => {
       tanggalMulai: "",
       tanggalSelesai: "",
     });
-    // setSelectedPeriodeId("");
-    setErrorMessage("");
   };
 
   const isFormValid = () => {
@@ -113,17 +104,14 @@ const CurriculumYear: React.FC = () => {
 
   const handleSave = async () => {
     if (!currentData || !isFormValid()) {
-      setErrorMessage("Semua kolom harus diisi.");
+      showToast.error("Semua field harus diisi.");
       return;
     }
-
-    setErrorMessage("");
 
     const dataToSave = {
       tahun: currentData.tahun,
       keterangan: currentData.keterangan,
       mulaiBerlaku: currentData.mulaiBerlaku,
-      // siakPeriodeAkademikId: selectedPeriodeId,
       siakPeriodeAkademikId: currentData.siakPeriodeAkademikId,
       tanggalMulai: currentData.tanggalMulai,
       tanggalSelesai: currentData.tanggalSelesai,
@@ -132,15 +120,13 @@ const CurriculumYear: React.FC = () => {
     try {
       if (isEditing && currentData.id) {
         await updateMutation.mutateAsync({ id: currentData.id, data: dataToSave });
-        setSuccessMessage("Data berhasil diperbarui.");
+        showToast.success("Data berhasil diperbarui.");
       } else if (isAdding) {
         await createMutation.mutateAsync(dataToSave);
-        setSuccessMessage("Data berhasil ditambahkan.");
+        showToast.success("Data berhasil ditambahkan.");
       }
 
       handleReset();
-      setErrorMessage("");
-      setTimeout(() => setSuccessMessage(""), 5000);
     } catch (error: any) {
       console.error("Gagal menyimpan data:", error);
       handleMutationError(error);
@@ -151,8 +137,6 @@ const CurriculumYear: React.FC = () => {
     setIsAdding(false);
     setIsEditing(false);
     setCurrentData(null);
-    // setSelectedPeriodeId("");
-    setErrorMessage("");
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -163,6 +147,7 @@ const CurriculumYear: React.FC = () => {
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["periodeAkademik"] });
     queryClient.invalidateQueries({ queryKey: ["curriculumData"] });
+    showToast.info("Data sedang direfresh.");
   };
 
   // --- pagination logic ---
@@ -175,10 +160,8 @@ const CurriculumYear: React.FC = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage="Tahun Kurikulum" className="">
+      <ToastNotif />
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow">
-        {/* Error message display */}
-        {errorMessage && <div className="mx-4 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>}
-
         <div className="flex flex-col sm:flex-row px-4 py-2 gap-2 sm:gap-4 border-b-2 w-full flex-wrap">
           <div className="flex w-full sm:w-auto sm:order-1">
             <input type="search" placeholder="Cari Tahun Kurikulum" className="px-3 py-1 w-full sm:w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
@@ -196,8 +179,6 @@ const CurriculumYear: React.FC = () => {
           </button>
         </div>
 
-        {successMessage && <InfoAlert title="" boldText={successMessage} />}
-
         <div className="mt-8">
           <TableCurriculumYear
             data={paginatedData}
@@ -213,10 +194,11 @@ const CurriculumYear: React.FC = () => {
             isAdding={isAdding}
             isFormValid={isFormValid}
             periodeAkademikList={periodeAkademikList}
-            // selectedPeriodeId={selectedPeriodeId}
-            // setSelectedPeriodeId={setSelectedPeriodeId}
           />
         </div>
+
+        {(isAdding || isEditing) && isPeriodeAkademikLoading && <LoadingSpinner />}
+        {(isAdding || isEditing) && periodeAkademikError && <div className=" mx-4 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">Gagal memuat periode akademik: {periodeAkademikError.message}</div>}
 
         <Pagination currentPage={currentPage} totalRows={filteredData.length} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
       </div>

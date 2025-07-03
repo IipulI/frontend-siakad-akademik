@@ -42,16 +42,56 @@ export interface AddRpsPayload {
   pustakaPendukung: string;
 }
 
-export function getRps() {
-  return useQuery({
-    queryKey: ["rps"],
-    queryFn: async () => {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+interface RpsFilters {
+  tahunKurikulum: string;
+  programStudi: string;
+  periodeAkademik: string;
+  statusRpsKelas?: string;
+  page: number;
+  size: number;
+}
 
-      const response = await Api.get("/akademik/rps", {
-        headers: { Authorization: `Bearer ${token}` },
+export function getRps(filters: RpsFilters) {
+  return useQuery({
+    queryKey: ["rps", filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+
+      // Add filter parameters to the URL params
+      if (filters.tahunKurikulum && filters.tahunKurikulum !== "all") {
+        params.append("tahunKurikulum", filters.tahunKurikulum);
+      }
+      if (filters.programStudi && filters.programStudi !== "all") {
+        params.append("programStudi", filters.programStudi);
+      }
+      if (filters.periodeAkademik && filters.periodeAkademik !== "all") {
+        params.append("periodeAkademik", filters.periodeAkademik);
+      }
+
+      // Handle hasKelas parameter based on statusRpsKelas
+      if (filters.statusRpsKelas) {
+        if (filters.statusRpsKelas === "punya-kelas") {
+          params.append("hasKelas", "true");
+        } else if (filters.statusRpsKelas === "belum-punya-kelas") {
+          params.append("hasKelas", "false");
+        }
+      }
+
+      // Add pagination parameters
+      params.append("page", filters.page.toString());
+      params.append("size", filters.size.toString());
+      params.append("sort", "createdAt,desc");
+
+      // Build the complete URL with query parameters
+      const url = `/akademik/rps?${params.toString()}`;
+
+      console.log("🔍 API URL with params:", url);
+      console.log("🔍 Query parameters:", Object.fromEntries(params.entries()));
+
+      const response = await Api.get(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+
       console.log("🔍 Raw RPS API data:", response.data.data);
       return response.data.data;
     },

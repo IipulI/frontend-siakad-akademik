@@ -8,6 +8,7 @@ import { getCourseData } from "../../../hooks/academic/useCourseManagement.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { useDeleteCurriculumProdi } from "../../../hooks/academic/useCurriculumProdi.ts";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify.tsx";
 
 type CurriculumQueryParams = {
   programStudi: string;
@@ -56,7 +57,6 @@ const fetchCurriculumProdiData = async ({ queryKey }: { queryKey: [string, Curri
   });
 
   const data = response.data?.data;
-  console.log("🔍 Raw kurikulum prodi API data:", data);
 
   return Array.isArray(data) ? data : [];
 };
@@ -77,8 +77,6 @@ const useAddCurriculumProdi = () => {
         nilaiMin: data.nilaiMin,
       };
 
-      console.log("Final payload:", payload);
-
       const response = await Api.put(`/akademik/kurikulum-prodi/add/${id}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -87,16 +85,6 @@ const useAddCurriculumProdi = () => {
       });
 
       return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
-    },
-    onError: (error: any) => {
-      console.error("❌ Mutation error:", error);
-      if (error.response) {
-        console.error("Error status:", error.response.status);
-        console.error("Error data:", error.response.data);
-      }
     },
   });
 };
@@ -113,7 +101,15 @@ const CurriculumProdi: React.FC = () => {
   // Get query client for cache invalidation
   const queryClient = useQueryClient();
 
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const {
+    data: courseData = [],
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = getCourseData({
+    tahunKurikulum: "",
+    jenisMataKuliah: "",
+    programStudi: "",
+  });
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
 
@@ -154,7 +150,7 @@ const CurriculumProdi: React.FC = () => {
 
   const addCurriculumProdi = useAddCurriculumProdi();
 
-  const handleTambahData = () => {
+  const handleTambahData = async () => {
     const selectedCourse = courseData.find((course) => course.namaMataKuliah === selectedMataKuliah);
     const selectedKurikulum = curriculumData.find((item) => item.tahun.toString() === selectedTahunKurikulum);
     const selectedProdi = prodiData.find((prodi) => prodi.namaProgramStudi === selectedProgramStudi);
@@ -172,50 +168,57 @@ const CurriculumProdi: React.FC = () => {
       nilaiMin: selectedNilaiMin,
     };
 
-    addCurriculumProdi.mutate(
-      { id: selectedCourse.id, data: newData },
-      {
-        onSuccess: () => {
-          setSelectedMataKuliah("all");
-          setSelectedSemester("all");
-          setSelectedNilaiMin("all");
-          setOpsiMataKuliah(null);
-          queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
-        },
-        onError: (error: any) => {
-          console.error("❌ Gagal menambahkan data:", error);
+    const toastId = showToast.loading("Menambahkan data kurikulum prodi..."); // Show loading toast
 
-          let errorMessage = "❌ Gagal menambahkan data.";
+    try {
+      await addCurriculumProdi.mutateAsync({ id: selectedCourse.id, data: newData }); // Use mutateAsync to await the result
 
-          if (error.response) {
-            const status = error.response.status;
-            const data = error.response.data;
+      showToast.update(toastId, {
+        render: "Data kurikulum prodi berhasil ditambahkan.",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
 
-            switch (status) {
-              case 400:
-                errorMessage = `❌ Data tidak valid: ${data.message || "Periksa kembali data yang diinput"}`;
-                break;
-              case 401:
-                errorMessage = "❌ Sesi telah berakhir. Silakan login kembali.";
-                break;
-              case 403:
-                errorMessage = "❌ Anda tidak memiliki akses untuk melakukan operasi ini.";
-                break;
-              case 409:
-                errorMessage = "❌ Data sudah ada atau terjadi konflik data.";
-                break;
-              case 500:
-                errorMessage = "❌ Terjadi kesalahan server. Silakan hubungi admin.";
-                break;
-              default:
-                errorMessage = `❌ Error ${status}: ${data.message || "Terjadi kesalahan"}`;
-            }
-          }
+      // Reset form fields
+      setSelectedMataKuliah("all");
+      setSelectedSemester("all");
+      setSelectedNilaiMin("all");
+      setOpsiMataKuliah(null);
+      // Invalidate and refetch data after successful addition
+      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
+    } catch (error: any) {
+      showToast.dismiss(toastId); // Dismiss loading toast on error
+      console.error("❌ Gagal menambahkan data:", error);
 
-          alert(errorMessage);
-        },
+      let errorMessage = "❌ Gagal menambahkan data.";
+
+      if (error.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+
+        switch (status) {
+          case 400:
+            errorMessage = `❌ Data tidak valid: ${data.message || "Periksa kembali data yang diinput"}`;
+            break;
+          case 401:
+            errorMessage = "❌ Sesi telah berakhir. Silakan login kembali.";
+            break;
+          case 403:
+            errorMessage = "❌ Anda tidak memiliki akses untuk melakukan operasi ini.";
+            break;
+          case 409:
+            errorMessage = "❌ Data sudah ada atau terjadi konflik data.";
+            break;
+          case 500:
+            errorMessage = "❌ Terjadi kesalahan server. Silakan hubungi admin.";
+            break;
+          default:
+            errorMessage = `❌ Error ${status}: ${data.message || "Terjadi kesalahan"}`;
+        }
       }
-    );
+      showToast.error(errorMessage);
+    }
   };
 
   // Get unique semesters for dropdown
@@ -261,6 +264,9 @@ const CurriculumProdi: React.FC = () => {
 
   return (
     <MainLayout isGreeting={false} titlePage="Kurikulum Prodi" className="">
+      <ToastNotif />
+
+      {/* Header Section */}
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5 flex flex-col items-center justify-between gap-4 md:flex-row md:mb-6">
         <div className="flex flex-col gap-4 mb-4 md:flex-row md:mb-0 w-full">
           <div className="flex items-center gap-2 w-full md:w-96">
