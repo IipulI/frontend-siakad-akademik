@@ -7,33 +7,32 @@ import {LecturerRoute} from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
-    {
-        id: "1",
-        name: "Beranda",
-        path: String(LecturerRoute.dashboard),
-        hasDropdown: false,
-    },
-    {
-        id: "2",
-        name: "Bimbingan Akademik",
-        path: String(LecturerRoute.guidance.advisor),
-        hasDropdown: false,
-    },
-    {
-        id: "3",
-        name: "Jadwal",
-        path: String(LecturerRoute.schedule.calendar),
-        hasDropdown: false,
-    },
-    {
-        id: "4",
-        name: "Perkuliahan",
-        dropdownKey: "perkuliahan",
-        hasDropdown: true,
-    },
+  {
+    id: "1",
+    name: "Beranda",
+    path: String(LecturerRoute.dashboard),
+    hasDropdown: false,
+  },
+  {
+    id: "2",
+    name: "Bimbingan Akademik",
+    path: String(LecturerRoute.guidance.advisor),
+    hasDropdown: false,
+  },
+  { id: "3",
+    name: "Jadwal",
+    path: String(LecturerRoute.schedule),
+    hasDropdown: false
+  },
+  {
+    id: "4",
+    name: "Perkuliahan",
+    dropdownKey: "perkuliahan",
+    hasDropdown: true,
+  },
 ];
 
-// Define menu data
+
 const dropdownMenus = {
     bimbingan: {
         title: "KONSULTASI",

@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Table } from "../../../components/Table";
+import { useClassParticipants, useClassDetail, useClassSchedule } from "../../../hooks/lecturer/useFetchClass";
 
 const selectOptions = [
   { value: "detail", text: "Detail Kelas" },
@@ -25,23 +26,11 @@ const tableHead = {
 const DetailClassLecturer = () => {
   const id = localStorage.getItem("id_kelas_kuliah")
 
-  
   const [option, setOption] = useState("detail");
   
-  const { data: detailData } = useQuery({
-    queryKey: ['kelas-detail'],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}`)).data.data,
-  });
-  
-  const { data: pesertaData, isLoading } = useQuery({
-    queryKey: ['peserta-kelas'],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/peserta-kelas`)).data.data,
-  });
-  
-  const { data: jadwalData } = useQuery({
-    queryKey: ['jadwal-kelas'],
-    queryFn: async () => (await Api.get(`/dosen/kelas-kuliah/${id}/jadwal-kelas`)).data.data,
-  });
+  const { data: detailData } = useClassDetail(id)
+  const { data: pesertaData } = useClassParticipants(id)
+  const { data: jadwalData } = useClassSchedule(id)
   
   const getDataStudent = () => {
     if (!detailData) return [];
@@ -134,12 +123,7 @@ const DetailClassLecturer = () => {
     isGreeting={false}
   >
     <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green px-4 max-w-screen-xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-4 justify-between">
-        <div className="flex flex-wrap gap-2">
-          <select className="rounded px-2 py-1 text-sm border border-primary-brown text-primary-brown">
-            <option value={"semua"}>-Semua-</option>
-          </select>
-        </div>
+      <div className="flex gap-4 justify-end">
         <Link
           to={LecturerRoute.courses.class}
           onClick={() => localStorage.removeItem("id_kelas_kuliah")}
@@ -149,7 +133,6 @@ const DetailClassLecturer = () => {
           Kembali ke daftar
         </Link>
       </div>
-
       <div className="w-full flex flex-col lg:flex-row gap-4 mt-4">
         <div className="lg:w-1/6 w-full flex lg:flex-col max-h-fit gap-2 rounded shadow shadow-gray-400 overflow-x-auto">
           <ButtonGroupOption options={selectOptions} selected={option} onChange={setOption} />
