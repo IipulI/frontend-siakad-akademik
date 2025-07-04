@@ -23,7 +23,7 @@ export default function DetailAnnouncementAdminAcademic() {
                                 </Link>
                             </div>
                         </div>
-                        <DetailAnnouncement data={[]}/>
+                        <DetailAnnouncement />
                     </div>
         </MainLayout>
     )
