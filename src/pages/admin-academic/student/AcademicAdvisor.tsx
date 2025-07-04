@@ -1,322 +1,270 @@
 import MainLayout from "../../../components/layouts/MainLayout";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
-import {
-  Check,
-  ChevronDown,
-  Eye,
-  Pen,
-  Search,
-  Settings,
-  Trash2,
-  X,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Check, ChevronDown, Eye, Pen, Search, Settings, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import { useGetAcademicAdvisor } from "../../../hooks/admin-akademik/usePembimbingAkademik";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { getAcademicPeriodeDropdown, getPeriodeAcademicActive } from "../../../hooks/useFilter";
+import { useGetAllPeriode, useGetActivePeriode, useApproveKrs, useCancelKrs, useAssignAdvisor, useGetAcademicAdvisor } from "../../../hooks/admin-akademik/usePembimbingAkademik";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import AssignAdvisorModal from "../../../components/AsignAdvisorModal";
+
+// --- Tipe data untuk props & state ---
+const statusPembimbing = [
+  { value: "", label: "Semua" },
+  { value: "true", label: "Sudah Ada" },
+  { value: "false", label: "Belum Ada" },
+];
+const statusKRS = [
+  { value: "", label: "Semua" },
+  { value: "submitted", label: "Diajukan" },
+  { value: "approved", label: "Disetujui" },
+];
+
+interface AdvisorDetails {
+  lecturerId: string;
+  noSk: string;
+  tanggalSk: string;
+}
 
 export default function AcademikAdvisor() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [isOpen, setIsOpen] = useState(false);
-
+  const [isActionOpen, setIsActionOpen] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: async () => {},
+  });
   const [filters, setFilters] = useState({
-    periodeAkademik: `${getPeriodeAcademicActive()?.data?.namaPeriode}`,
-    programStudi: "",
+    periodeAkademik: "", // State ini akan menyimpan ID periode
+    namaMahasiswa: "",
     angkatan: "",
     statusKrs: "",
-    namaMahasiswa: "",
     hasPembimbing: undefined as boolean | undefined,
     statusMahasiswa: "",
   });
-
   const [searchKeyword, setSearchKeyword] = useState("");
-  const firstLoad = useRef(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Hook with updated parameters
+  // 1. Ambil semua data periode terlebih dahulu
+  const { data: allPeriode, isLoading: isLoadingAllPeriode } = useGetAllPeriode();
+  const { activePeriode, isLoadingPeriode } = useGetActivePeriode();
+
+  // 2. Hitung/Cari NAMA periode berdasarkan ID yang ada di state filter
+  const selectedPeriodName = useMemo(() => {
+    if (!filters.periodeAkademik || !allPeriode) return "";
+    return allPeriode.find((p) => p.id === filters.periodeAkademik)?.namaPeriode || "";
+  }, [filters.periodeAkademik, allPeriode]);
+
+  // 3. Panggil data tabel dengan NAMA periode dan filter lainnya
   const {
     data: apiResponse,
     isLoading,
     isError,
+    refetch,
   } = useGetAcademicAdvisor({
+    ...filters,
     page: currentPage,
     size: rowsPerPage,
-    periodeAkademik: filters.periodeAkademik,
-    programStudi: filters.programStudi,
-    angkatan: filters.angkatan,
-    statusKrs: filters.statusKrs,
-    namaMahasiswa: filters.namaMahasiswa,
-    hasPembimbing: filters.hasPembimbing,
-    statusMahasiswa: filters.statusMahasiswa,
-    sort: "createdAt,desc",
+    periodeAkademik: selectedPeriodName, // Kirim NAMA ke API untuk GET request
   });
 
-  const {data:periodeAkademikDropdown} = getAcademicPeriodeDropdown();
+  const approveKrsMutation = useApproveKrs();
+  const cancelKrsMutation = useCancelKrs();
+  const assignAdvisorMutation = useAssignAdvisor();
 
-  // Extract data dari response
-  const studentRecords = apiResponse?.data || [];
-  const pagination = apiResponse?.pagination;
-
+  // Atur filter ke ID periode aktif saat komponen pertama kali dimuat
   useEffect(() => {
-    if (!isLoading) {
-      firstLoad.current = false;
+    if (activePeriode) {
+      setFilters((prev) => ({ ...prev, periodeAkademik: activePeriode.id }));
     }
-  }, [isLoading]);
+  }, [activePeriode]);
 
-  // Close dropdown when clicking outside
+  // Efek untuk menutup dropdown jika klik di luar
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsActionOpen(false);
       }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (isLoading && firstLoad.current) {
-    return <LoadingSpinner title="Pembimbing Akademik" />;
-  }
+  // Opsi dropdown harus menggunakan ID sebagai 'value' agar konsisten dengan state
+  const periodeOptions = useMemo(() => {
+    if (!allPeriode) return [];
+    return allPeriode.map((p) => ({ value: p.id, label: p.namaPeriode }));
+  }, [allPeriode]);
 
-  if (isError) {
-    return (
-      <div className="text-red-500 text-center py-4">
-        Gagal memuat data pembimbing akademik
-      </div>
-    );
-  }
+  // Sisa dari komponen (return JSX, etc.) tetap sama...
 
-  // Handle filter change
-  const handleFilterChange = (field: string, value: string) => {
-    console.log(`Filter changed: ${field} = ${value}`);
+  if (isError) return <div className="text-red-500 text-center py-4">Gagal memuat data. Silakan coba lagi.</div>;
+  const isDataLoading = isLoading || isLoadingPeriode || isLoadingAllPeriode;
+  const isMutationLoading = approveKrsMutation.isPending || cancelKrsMutation.isPending || assignAdvisorMutation.isPending;
+  const studentRecords = apiResponse?.data || [];
 
-    setFilters((prev) => {
-      const newFilters = {
-        ...prev,
-        [field]: value,
-      };
-      console.log("New filters:", newFilters);
-      return newFilters;
-    });
-    setCurrentPage(1); // Reset ke halaman 1 saat filter berubah
+  const handleFilterChange = (field: string, value: any) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
+    setCurrentPage(1);
   };
 
-  // Handle Enter key pada search input
-  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      SearchSubmit();
+  const handleSearchSubmit = () => handleFilterChange("namaMahasiswa", searchKeyword.trim());
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSearchSubmit();
+  };
+  const clearSearch = () => {
+    setSearchKeyword("");
+    handleFilterChange("namaMahasiswa", "");
+  };
+
+  const handleRowCheckboxChange = (rowId: string) => {
+    setSelectedRows((prev) => (prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]));
+  };
+
+  const handleSelectAllRows = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      const allRowIds = (apiResponse?.data || []).map((record) => record.id);
+      setSelectedRows(allRowIds);
+    } else {
+      setSelectedRows([]);
     }
   };
 
-  // Fungsi untuk submit pencarian
-  function SearchSubmit() {
-    console.log("Search submitted with keyword:", searchKeyword);
+  const closeModal = () => setModalState((prev) => ({ ...prev, isOpen: false }));
 
-    setFilters((prev) => {
-      const newFilters = {
-        ...prev,
-        namaMahasiswa: searchKeyword.trim(), // Trim whitespace
+  const openConfirmationModal = (type: "approve" | "cancel") => {
+    if (selectedRows.length === 0) {
+      alert("Pilih setidaknya satu mahasiswa.");
+      return;
+    }
+    const selectedPeriodeId = filters.periodeAkademik;
+    if (!selectedPeriodeId) {
+      alert("Gagal mendapatkan ID Periode Akademik. Silakan pilih periode.");
+      return;
+    }
+
+    let title = "";
+    let message = "";
+    let onConfirm: () => Promise<void>;
+
+    if (type === "approve") {
+      title = "Konfirmasi Persetujuan KRS";
+      message = `Anda yakin akan menyetujui KRS untuk ${selectedRows.length} mahasiswa yang dipilih?`;
+      onConfirm = async () => {
+        await approveKrsMutation.mutateAsync({
+          mahasiswaIds: selectedRows,
+          periodeAkademikId: selectedPeriodeId,
+        });
       };
-      console.log("Search filters updated:", newFilters);
-      return newFilters;
+    } else {
+      title = "Konfirmasi Pembatalan KRS";
+      message = `Anda yakin akan membatalkan KRS untuk ${selectedRows.length} mahasiswa yang dipilih?`;
+      onConfirm = async () => {
+        await cancelKrsMutation.mutateAsync({
+          mahasiswaIds: selectedRows,
+          periodeAkademikId: selectedPeriodeId,
+        });
+      };
+    }
+
+    setModalState({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: async () => {
+        try {
+          await onConfirm();
+          setSelectedRows([]);
+          setTimeout(() => refetch(), 500);
+        } finally {
+          closeModal();
+        }
+      },
     });
-    setCurrentPage(1); // Reset ke halaman 1 saat search
-  }
+    setIsActionOpen(false);
+  };
 
-  // Fungsi untuk clear search
-  function ClearSearch() {
-    console.log("Clearing search");
-    setSearchKeyword("");
-    setFilters((prev) => ({
-      ...prev,
-      namaMahasiswa: "",
-    }));
+  const handleOpenAssignModal = () => {
+    if (selectedRows.length === 0) {
+      alert("Pilih setidaknya satu mahasiswa untuk ditetapkan pembimbingnya.");
+      return;
+    }
+    setIsAssignModalOpen(true);
+    setIsActionOpen(false);
+  };
+
+  const handleSaveAdvisor = async (details: AdvisorDetails) => {
+    const selectedPeriodeId = filters.periodeAkademik;
+    if (!selectedPeriodeId) {
+      alert("Periode akademik tidak ditemukan. Silakan segarkan halaman.");
+      return;
+    }
+    const payload = {
+      periodeAkademikId: selectedPeriodeId,
+      mahasiswaIds: selectedRows,
+      dosenId: details.lecturerId,
+      noSk: details.noSk,
+      tanggalSk: details.tanggalSk,
+    };
+
+    try {
+      await assignAdvisorMutation.mutateAsync(payload);
+      setSelectedRows([]);
+      setIsAssignModalOpen(false);
+      setTimeout(() => refetch(), 500);
+    } catch (error) {
+      console.error("Failed to assign advisor:", error);
+    }
+  };
+
+  const handlePageChange = (page: number) => setCurrentPage(page);
+  const handleRowsPerPageChange = (size: number) => {
+    setRowsPerPage(size);
     setCurrentPage(1);
-  }
+  };
 
-  function Edit() {
-    alert("oke edit");
-  }
-
-  function Detail() {
-    alert("oke Detail");
-  }
-
-  // Fungsi untuk perubahan halaman
-  function handlePageChange(newPage: number) {
-    setCurrentPage(newPage);
-  }
-
-  // Fungsi untuk perubahan rows per page
-  function handleRowsPerPageChange(newRowsPerPage: number) {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(1); // Reset ke halaman 1 saat mengubah rows per page
-  }
-
-  // Action handlers for dropdown
-  function handleSetujuiKrs() {
-    alert("Setujui KRS dipilih");
-    setIsOpen(false);
-    // Add your logic here for approving KRS
-  }
-
-  function handleBatalkanKrs() {
-    alert("Batalkan KRS dipilih");
-    setIsOpen(false);
-    // Add your logic here for canceling KRS
-  }
-
-  function handlePembimbingAkademik() {
-    alert("Pembimbing Akademik dipilih");
-    setIsOpen(false);
-    // Add your logic here for academic advisor assignment
-  }
-
-  const periode =
-    periodeAkademikDropdown?.map((data) => ({
-      value: data.namaPeriode,
-      label: data.namaPeriode,
-    }));
-
-  const statusPembimbing = [
-    { value: "", label: "-- Semua Status Pembimbing --" },
-    { value: "true", label: "Sudah Ada Pembimbing" },
-    { value: "false", label: "Belum Ada Pembimbing" },
-  ];
-
-  const semester = [
-    { value: "", label: "-- Semua Semester --" },
-    { value: "1", label: "Semester 1" },
-    { value: "2", label: "Semester 2" },
-    { value: "3", label: "Semester 3" },
-    { value: "4", label: "Semester 4" },
-    { value: "5", label: "Semester 5" },
-    { value: "6", label: "Semester 6" },
-    { value: "7", label: "Semester 7" },
-    { value: "8", label: "Semester 8" },
-  ];
-
-  const unitKerja = [{ value: "", label: "Universitas Ibn Khaldun" }];
-
-  const statusKRS = [
-    { value: "", label: "-- Semua Status KRS --" },
-    { value: "DIAJUKAN", label: "Diajukan" },
-    { value: "DISETUJUI", label: "Disetujui" },
-    { value: "DITOLAK", label: "Ditolak" },
-  ];
-
-  const statusMahasiswa = [
-    { value: "", label: "-- Semua Status Mahasiswa --" },
-    { value: "aktif", label: "Aktif" },
-    { value: "cuti", label: "Cuti" },
-    { value: "lulus", label: "Lulus" },
-  ];
-
-  const angkatan = [
-    { value: "", label: "-- Semua Angkatan --" },
-    { value: "2024", label: "2024" },
-    { value: "2023", label: "2023" },
-    { value: "2022", label: "2022" },
-    { value: "2021", label: "2021" },
-  ];
+  const handleEdit = (id: string) => alert(`Fungsi Edit untuk ID: ${id} belum diimplementasikan.`);
+  const handleDetail = (id: string) => alert(`Fungsi Detail untuk ID: ${id} belum diimplementasikan.`);
 
   return (
     <MainLayout isGreeting={false} titlePage="Pembimbing Akademik">
-      <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
-        <InputFilter
-          options={periode}
-          label="Periode Akademik"
-          value={filters.periodeAkademik}
-          onChange={(value) => handleFilterChange("periodeAkademik", value)}
-        />
+      {isMutationLoading && <LoadingSpinner title="Menyimpan perubahan..." />}
+      <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-yellow-400 p-3 rounded-md shadow-sm gap-4">
+        <InputFilter options={periodeOptions} label="Periode Akademik" value={filters.periodeAkademik} onChange={(value) => handleFilterChange("periodeAkademik", value)} />
         <InputFilter
           options={statusPembimbing}
           label="Status Pembimbing"
-          value={
-            filters.hasPembimbing !== undefined
-              ? String(filters.hasPembimbing)
-              : ""
-          }
-          onChange={(value) => {
-            // Convert string to boolean or undefined
-            let boolValue: boolean | undefined = undefined;
-            if (value === "true") boolValue = true;
-            else if (value === "false") boolValue = false;
-
-            setFilters((prev) => ({
-              ...prev,
-              hasPembimbing: boolValue,
-            }));
-            setCurrentPage(1);
-          }}
+          value={filters.hasPembimbing === undefined ? "" : String(filters.hasPembimbing)}
+          onChange={(value) => handleFilterChange("hasPembimbing", value === "" ? undefined : value === "true")}
         />
-        <InputFilter options={semester} label="Semester" />
-        <InputFilter options={unitKerja} label="Unit kerja" />
-        <InputFilter
-          options={statusKRS}
-          label="Status KRS"
-          value={filters.statusKrs}
-          onChange={(value) => handleFilterChange("statusKrs", value)}
-        />
-        <InputFilter
-          options={statusMahasiswa}
-          label="Status Mahasiswa"
-          value={filters.statusMahasiswa}
-          onChange={(value) => handleFilterChange("statusMahasiswa", value)}
-        />
-        <InputFilter
-          options={angkatan}
-          label="Angkatan"
-          value={filters.angkatan}
-          onChange={(value) => handleFilterChange("angkatan", value)}
-        />
+        <InputFilter options={[]} label="Semester" />
+        <InputFilter options={[]} label="Unit kerja" />
+        <InputFilter options={statusKRS} label="Status KRS" value={filters.statusKrs} onChange={(value) => handleFilterChange("statusKrs", value)} />
+        <InputFilter options={[]} label="Status Mahasiswa" value={filters.statusMahasiswa} onChange={(value) => handleFilterChange("statusMahasiswa", value)} />
+        <InputFilter options={[]} label="Angkatan" value={filters.angkatan} onChange={(value) => handleFilterChange("angkatan", value)} />
       </div>
 
       <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
         <div className="flex justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <div className="relative">
-              <input
-                type="text"
-                className="border-2 p-1 rounded text-xs w-60"
-                placeholder="Cari nama mahasiswa"
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
-              />
+              <input type="text" className="border-2 p-1 rounded text-xs w-60" placeholder="Cari nama mahasiswa" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} onKeyDown={handleSearchKeyDown} />
               {searchKeyword && (
-                <button
-                  onClick={ClearSearch}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
+                <button onClick={clearSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   <X size={14} />
                 </button>
               )}
             </div>
-            <ButtonClick
-              icon={<Search size={16} strokeWidth={3} />}
-              color="bg-primary-yellow"
-              onClick={SearchSubmit}
-            />
+            <ButtonClick icon={<Search size={16} strokeWidth={3} />} color="bg-primary-yellow" onClick={handleSearchSubmit} />
             {filters.namaMahasiswa && (
               <div className="flex items-center bg-blue-100 px-2 py-1 rounded text-xs">
-                <span className="mr-1">
-                  Pencarian: "{filters.namaMahasiswa}"
-                </span>
-                <button
-                  onClick={ClearSearch}
-                  className="text-blue-600 hover:text-blue-800"
-                >
+                <span className="mr-1">Pencarian: "{filters.namaMahasiswa}"</span>
+                <button onClick={clearSearch} className="text-blue-600 hover:text-blue-800">
                   <X size={12} />
                 </button>
               </div>
@@ -324,38 +272,20 @@ export default function AcademikAdvisor() {
           </div>
 
           <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="flex bg-yellow-500 hover:bg-yellow-600 items-center rounded p-1 px-2 text-white font-semibold text-sm transition-colors"
-            >
+            <button onClick={() => setIsActionOpen(!isActionOpen)} className="flex bg-yellow-500 hover:bg-yellow-600 items-center rounded p-1 px-2 text-white font-semibold text-sm transition-colors">
               <Settings color="white" size={17} className="mr-1" />
               <span className="mr-1">Aksi</span>
-              <ChevronDown
-                size={16}
-                className={`transform transition-transform ${
-                  isOpen ? "rotate-180" : ""
-                }`}
-              />
+              <ChevronDown size={16} className={`transform transition-transform ${isActionOpen ? "rotate-180" : ""}`} />
             </button>
-
-            {isOpen && (
+            {isActionOpen && (
               <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-10 min-w-[180px]">
-                <button
-                  onClick={handleSetujuiKrs}
-                  className="w-full text-left px-3 py-2 text-black text-sm hover:bg-gray-100 rounded-t flex items-center"
-                >
+                <button onClick={() => openConfirmationModal("approve")} className="w-full text-left px-3 py-2 text-black text-sm hover:bg-gray-100 rounded-t flex items-center">
                   Setujui KRS
                 </button>
-                <button
-                  onClick={handleBatalkanKrs}
-                  className="w-full text-left px-3 py-2 text-black text-sm hover:bg-gray-100 flex items-center"
-                >
+                <button onClick={() => openConfirmationModal("cancel")} className="w-full text-left px-3 py-2 text-black text-sm hover:bg-gray-100 flex items-center">
                   Batalkan KRS
                 </button>
-                <button
-                  onClick={handlePembimbingAkademik}
-                  className="w-full text-left px-3 py-2 text-black text-sm hover:bg-gray-100 rounded-b flex items-center"
-                >
+                <button onClick={handleOpenAssignModal} className="w-full text-left px-3 py-2 text-black text-sm hover:bg-gray-100 rounded-b flex items-center">
                   Pembimbing Akademik
                 </button>
               </div>
@@ -363,147 +293,70 @@ export default function AcademikAdvisor() {
           </div>
         </div>
 
-        <div className="overflow-x-auto my-4">
-          <table className="w-full border-collapse">
-            <thead>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm mt-8">
+            <thead className="bg-green-700 text-white">
               <tr>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center w-6">
-                  <input type="checkbox" className="w-4 h-4" />
+                <th className="border border-gray-500 p-2 text-center w-6">
+                  <input type="checkbox" className="w-4 h-4" onChange={handleSelectAllRows} checked={studentRecords.length > 0 && selectedRows.length === studentRecords.length} />
                 </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Nama Mahasiswa
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Angkatan
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Status Smt
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Smt
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  SKS
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Batas SKS
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Total SKS
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  IPS
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  IPK
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  KRS Diajukan
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  KRS Disahkan
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Pembimbing Akademik
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  No SK
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Tgl SK
-                </th>
-                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                  Aksi
-                </th>
+                <th className="border p-2">Nama Mahasiswa</th>
+                <th className="border p-2">Angkatan</th>
+                <th className="border p-2">Status Smt</th>
+                <th className="border p-2">Smt</th>
+                <th className="border p-2">SKS</th>
+                <th className="border p-2">Batas SKS</th>
+                <th className="border p-2">IPS</th>
+                <th className="border p-2">IPK</th>
+                <th className="border p-2">KRS Diajukan</th>
+                <th className="border p-2">KRS Disahkan</th>
+                <th className="border p-2">Pembimbing Akademik</th>
+                <th className="border p-2">No SK</th>
+                <th className="border p-2">Tgl SK</th>
+                <th className="border p-2">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {isLoading ? (
+              {isDataLoading ? (
                 <tr>
-                  <td colSpan={16} className="text-center py-4 text-gray-500">
+                  <td colSpan={15} className="text-center py-4">
                     Memuat data...
+                  </td>
+                </tr>
+              ) : !filters.periodeAkademik ? (
+                <tr>
+                  <td colSpan={15} className="text-center py-4 bg-yellow-50">
+                    Silakan pilih Periode Akademik
                   </td>
                 </tr>
               ) : studentRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={16} className="text-center py-4 text-gray-500">
-                    {filters.namaMahasiswa
-                      ? `Tidak ditemukan mahasiswa dengan nama "${filters.namaMahasiswa}"`
-                      : "Tidak ada data yang ditemukan"}
+                  <td colSpan={15} className="text-center py-4">
+                    Tidak ada data yang ditemukan.
                   </td>
                 </tr>
               ) : (
-                studentRecords.map((record, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <input type="checkbox" className="w-4 h-4" />
+                studentRecords.map((record) => (
+                  <tr key={record.id} className="hover:bg-gray-100">
+                    <td className="text-center">
+                      <input type="checkbox" className="w-4 h-4" checked={selectedRows.includes(record.id)} onChange={() => handleRowCheckboxChange(record.id)} />
                     </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {record.mahasiswa}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.angkatan}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.statusMahasiswa}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.semester}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.totalSks}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.batasSks}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.totalSks}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.ips}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.ipk}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex justify-center">
-                        {record.statusDiajukan ? (
-                          <Check color="green" size={20} />
-                        ) : (
-                          <X color="red" size={20} />
-                        )}
-                      </div>
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex justify-center">
-                        {record.statusDisetujui ? (
-                          <Check color="green" size={20} />
-                        ) : (
-                          <X color="red" size={20} />
-                        )}
-                      </div>
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {record.pembimbingAkademik}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {"-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center text-sm">
-                      {"-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
+                    <td className="p-2">{record.mahasiswa}</td>
+                    <td className="text-center">{record.angkatan}</td>
+                    <td className="text-center">{record.statusMahasiswa}</td>
+                    <td className="text-center">{record.semester}</td>
+                    <td className="text-center">{record.totalSks}</td>
+                    <td className="text-center">{record.batasSks}</td>
+                    <td className="text-center">{record.ips}</td>
+                    <td className="text-center">{record.ipk}</td>
+                    <td className="text-center">{record.statusDiajukan ? <Check color="green" size={20} /> : <X color="red" size={20} />}</td>
+                    <td className="text-center">{record.statusDisetujui ? <Check color="green" size={20} /> : <X color="red" size={20} />}</td>
+                    <td className="text-sm">{record.pembimbingAkademik || "-"}</td>
+                    <td className="text-sm">-</td>
+                    <td className="text-sm text-center">-</td>
+                    <td className="text-center">
                       <div className="flex justify-center space-x-2">
-                        <ButtonClick
-                          icon={<Pen size={16} />}
-                          color="bg-primary-yellow"
-                          onClick={Edit}
-                        />
-                        <ButtonClick
-                          icon={<Eye size={16} />}
-                          color="bg-primary-blueSoft"
-                          onClick={Detail}
-                        />
+                        <ButtonClick icon={<Eye size={16} />} color="bg-primary-blueSoft" onClick={() => handleDetail(record.id)} />
                       </div>
                     </td>
                   </tr>
@@ -513,19 +366,20 @@ export default function AcademikAdvisor() {
           </table>
         </div>
 
-        {/* Pagination Section */}
-        {pagination && (
+        {apiResponse?.pagination && (
           <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
+            currentPage={currentPage}
+            totalPages={apiResponse.pagination.totalPages}
             onPageChange={handlePageChange}
-            rowsPerPage={pagination.perPage}
-            totalRows={pagination.totalItems}
+            rowsPerPage={rowsPerPage}
+            totalRows={apiResponse.pagination.totalElements}
             onRowsPerPageChange={handleRowsPerPageChange}
           />
         )}
       </div>
-      <div className="py-10"></div>
+
+      <ConfirmationModal {...modalState} onClose={closeModal} />
+      <AssignAdvisorModal isOpen={isAssignModalOpen} onClose={() => setIsAssignModalOpen(false)} onSave={handleSaveAdvisor} selectedStudentCount={selectedRows.length} />
     </MainLayout>
   );
 }

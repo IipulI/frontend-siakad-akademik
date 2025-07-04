@@ -32,7 +32,7 @@ export function getCpl(params: ICplParams) {
     queryKey: ["cpl", params],
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await Api.get("/akademik/capaian-pembelajaran", {
+      const response = await Api.get("/akademik/capaian-pembelajaran-lulusan", {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.data;

@@ -179,18 +179,7 @@ const EditCourse = () => {
     <MainLayout isGreeting={false} titlePage="Edit Mata Kuliah" className="">
       <ToastNotif />
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
-        <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
-          <div className="flex items-center gap-4">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded mr-[-18px]">
-              <ArrowLeft className="mr-2" size={16} />
-            </button>
-            <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="px-3 py-2 border border-black/50 rounded-l-md w-64" />
-              <button onClick={handleSearch} className="bg-primary-yellow px-3 py-3 rounded-r-md">
-                <Search color="white" size={20} />
-              </button>
-            </div>
-          </div>
+        <div className="flex flex-col items-center justify-end mb-10 md:flex-row gap-4">
           <div className="flex gap-2">
             <button onClick={handleBack} className="bg-primary-yellow text-white px-4 py-2 rounded flex items-center">
               <ArrowLeft className="mr-2" size={16} />

@@ -56,18 +56,7 @@ const CplCpmkCourse: React.FC = () => {
   return (
     <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
-        <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
-          <div className="flex items-center ">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
-              <ArrowLeft className="mr-2" size={16} />
-            </button>
-            <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50  w-64" />
-              <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
-                <Search color="white" size={20} />
-              </button>
-            </div>
-          </div>
+        <div className="flex flex-col items-center justify-end mb-10 md:flex-row gap-4">
           <div className="flex gap-2">
             <button onClick={handleBack} className="bg-primary-yellow text-white px-4 py-2 rounded flex items-center cursor-pointer">
               <ArrowLeft className="mr-2" size={16} />

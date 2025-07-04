@@ -8,6 +8,7 @@ import { Search, ArrowLeft, Save, Plus } from "lucide-react"; // Removed 'Table'
 import { Api } from "../../../api/Index";
 import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify.tsx";
 import { getCpl } from "../../../hooks/academic/useObeCpl.ts";
+import { id } from "date-fns/locale";
 
 // --- Interface Definition (Ensure this is in components/types.ts or similar) ---
 export interface CplData {
@@ -405,7 +406,7 @@ const ObeCpl: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Navigation */}
           <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.graduateProfile)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.obeManagement.graduateProfile}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>Profil Lulusan</p>
             </div>

@@ -295,8 +295,8 @@ const GraduateProfile: React.FC = () => {
               </select>
               <button
                 onClick={handleAdd}
-                disabled={isAdding || isEditing || !selectedYear}
-                className={`ml-auto w-full md:w-56 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding || isEditing || !selectedYear ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={isAdding || isEditing}
+                className={`ml-auto w-full md:w-56 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding || isEditing ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <Plus className="mr-2" size={16} />
                 Tambah Profil Lulusan
