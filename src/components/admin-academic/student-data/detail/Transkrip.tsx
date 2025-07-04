@@ -35,34 +35,45 @@ export default function Transkrip() {
             </tr>
           </thead>
           <tbody>
-            {transkip?.rincianKrsDto.map((course, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {index + 1}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.kodeMataKuliah}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2">
-                  {course.namaMataKuliah}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.semester}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.sks}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.hurufMutu}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.angkaMutu}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.jumlahAngkaMutu}
+            {!transkip?.rincianKrsDto || transkip.rincianKrsDto.length === 0 ? (
+              <tr>
+                <td
+                  className="border-1 text-center border-gray-500 font-semibold p-2"
+                  colSpan={8}
+                >
+                  Data Transkip Tidak Tersedia
                 </td>
               </tr>
-            ))}
+            ) : (
+              transkip?.rincianKrsDto.map((course, index) => (
+                <tr key={index} className="hover:bg-gray-100">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.kodeMataKuliah}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2">
+                    {course.namaMataKuliah}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.semester}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.sks}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.hurufMutu}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.angkaMutu}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.jumlahAngkaMutu}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
           <tfoot>
             <tr>

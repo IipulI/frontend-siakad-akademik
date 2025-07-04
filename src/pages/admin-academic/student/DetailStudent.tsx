@@ -31,10 +31,14 @@ import EditKRS from "../../../components/admin-academic/student-data/detail/Edit
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useLocation } from "react-router-dom";
 import { getProgramStudi } from "../../../hooks/useFilter";
+import { getFotoProfil } from "../../../hooks/admin-akademik/useMahasiswa";
 
 export default function DetailStudent() {
   const [activeTab, setActiveTab] = useState("biodata");
   const { state } = useLocation();
+  const { data: foto } = getFotoProfil(state);
+
+  console.log("foto", foto);
 
   function SearchSubmit() {
     alert("submit");
@@ -53,7 +57,7 @@ export default function DetailStudent() {
     <MainLayout isGreeting={false} titlePage="Mahasiswa">
       <div className="border-t-2 border-primary-green rounded-t-sm py-4 bg-white">
         <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-0">
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <input
               type="text"
               className="border-2 p-1 rounded text-xs w-50  "
@@ -64,7 +68,8 @@ export default function DetailStudent() {
               color="bg-primary-yellow"
               onClick={SearchSubmit}
             />
-          </div>
+          </div> */}
+          <div></div>
 
           <div className="flex space-x-3">
             <ButtonClick
@@ -236,12 +241,6 @@ export function BiodataStudent() {
     { value: "ya", label: "Ya" },
   ];
 
-  const kampusOptions = [
-    { value: "pusat", label: "Kampus Pusat" },
-    { value: "cabang1", label: "Kampus Cabang 1" },
-    { value: "cabang2", label: "Kampus Cabang 2" },
-  ];
-
   const [activeTab, setActiveTab] = useState("general-information");
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -257,7 +256,6 @@ export function BiodataStudent() {
           options={programStudiOptions}
           required={true}
         />
-        <SelectInput label="Konsentrasi" options={konsentrasiOptions} />
         <SelectInput
           label="Periode Masuk"
           options={periodeOptions}
@@ -310,8 +308,6 @@ export function BiodataStudent() {
           <h2>Biodata Valid</h2>
           <span>❌</span>
         </div>
-
-        <SelectInput label="Kampus" options={kampusOptions} />
       </div>
 
       <div className="rounded-sm lg:col-span-3">

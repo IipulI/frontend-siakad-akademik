@@ -46,59 +46,70 @@ export default function FinalizationMK() {
             </tr>
           </thead>
           <tbody>
-            {finalisasiMk?.map((course, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {index + 1}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.periodeAkademik}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.kurikulum}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.kodeMataKuliah}
-                </td>
-                <td className="border border-gray-500 p-2 font-semibold">
-                  {course.namaMatakuliah}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.sks}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.opsiMataKuliah === true ? "W" : "P"}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.grade}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.status === "Lulus" ? (
-                    <span className="bg-green-700 text-white px-3 py-1 rounded text-xs">
-                      Lulus
-                    </span>
-                  ) : (
-                    <span className="bg-gray-400 text-black py-1 text-center block rounded text-xs">
-                      Belum Dikonci
-                    </span>
-                  )}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.dipakai ? (
-                    <Check className="mx-auto" size={20} color="green" />
-                  ) : (
-                    <span className="text-red-500">✗</span>
-                  )}
-                </td>
-                <td className="border border-gray-500 p-2 text-center font-semibold">
-                  {course.transkip ? (
-                    <Check className="mx-auto" size={20} color="green" />
-                  ) : (
-                    <span className="text-red-500">✗</span>
-                  )}
+            {!finalisasiMk || finalisasiMk.length === 0 ? (
+              <tr>
+                <td
+                  className="border-1 text-center border-gray-500 font-semibold p-2"
+                  colSpan={11}
+                >
+                  Data Finalisasi Mata Kuliah Tidak Tersedia
                 </td>
               </tr>
-            ))}
+            ) : (
+              finalisasiMk?.map((course, index) => (
+                <tr key={index} className="hover:bg-gray-100">
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {index + 1}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.periodeAkademik}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.kurikulum}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.kodeMataKuliah}
+                  </td>
+                  <td className="border border-gray-500 p-2 font-semibold">
+                    {course.namaMatakuliah}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.sks}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.opsiMataKuliah === true ? "W" : "P"}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.grade}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.status === "Lulus" ? (
+                      <span className="bg-green-700 text-white px-3 py-1 rounded text-xs">
+                        Lulus
+                      </span>
+                    ) : (
+                      <span className="bg-gray-400 text-black py-1 text-center block rounded text-xs">
+                        Belum Dikonci
+                      </span>
+                    )}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.dipakai ? (
+                      <Check className="mx-auto" size={20} color="green" />
+                    ) : (
+                      <span className="text-red-500">✗</span>
+                    )}
+                  </td>
+                  <td className="border border-gray-500 p-2 text-center font-semibold">
+                    {course.transkip ? (
+                      <Check className="mx-auto" size={20} color="green" />
+                    ) : (
+                      <span className="text-red-500">✗</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
           <tfoot></tfoot>
         </table>

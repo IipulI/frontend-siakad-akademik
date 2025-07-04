@@ -107,21 +107,52 @@ export default function CreateStudent() {
     nisn: "",
   });
 
-  const [formDataKeluaga, setFormDataKeluarga] =
-    useState<CreateKeluargaMahasiswa>({
-      hubungan: "ayah",
-      nama: "firman",
-      nik: "3283734734",
-      tanggalLahir: "2025-07-03",
-      statusHidup: "hidup",
-      statusKerabat: "hidup",
-      pendidikan: "sd",
-      pekerjaan: "pedagang",
-      penghasilan: "20000",
-      alamat: "gunlet",
-      noTelepon: "0863463463",
-      email: "firmantyu@gmail.com",
-    });
+  const [formDataKeluarga, setFormDataKeluarga] = useState<
+    CreateKeluargaMahasiswa[]
+  >([
+    {
+      noTelepon: "",
+      hubungan: "Ayah",
+      pekerjaan: "",
+      nama: "",
+      alamat: "",
+      statusHidup: "",
+      tanggalLahir: "",
+      nik: "",
+      pendidikan: "",
+      statusKerabat: "",
+      email: "",
+      penghasilan: "",
+    },
+    {
+      noTelepon: "",
+      hubungan: "Ibu",
+      pekerjaan: "",
+      nama: "",
+      alamat: "",
+      statusHidup: "",
+      tanggalLahir: "",
+      nik: "",
+      pendidikan: "",
+      statusKerabat: "",
+      email: "",
+      penghasilan: "",
+    },
+    {
+      noTelepon: "",
+      hubungan: "Wali",
+      pekerjaan: "",
+      nama: "",
+      alamat: "",
+      statusHidup: "",
+      tanggalLahir: "",
+      nik: "",
+      pendidikan: "",
+      statusKerabat: "",
+      email: "",
+      penghasilan: "",
+    },
+  ]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -135,15 +166,15 @@ export default function CreateStudent() {
     }));
   };
 
-  // Handler untuk update form data keluarga
+  // Perubahan pada handler untuk update form data keluarga
   const handleInputChangeKeluarga = (
+    index: number,
     field: keyof CreateKeluargaMahasiswa,
     value: any
   ) => {
-    setFormDataKeluarga((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormDataKeluarga((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
   };
 
   const handleIjazahSekolahChange = (
@@ -188,7 +219,7 @@ export default function CreateStudent() {
 
       await mutateAsync({
         request: JSON.stringify(formData),
-        requestKeluarga: JSON.stringify(formDataKeluaga),
+        requestKeluarga: JSON.stringify(formDataKeluarga),
         fotoProfil: fotoProfil || undefined,
         ijazahSekolah: ijazahSekolah || undefined,
       });
@@ -477,8 +508,18 @@ export default function CreateStudent() {
                 onInputChange={handleInputChange}
               />
             )}
-            {activeTab === "parents" && <FormParents />}
-            {activeTab === "guardian" && <FormGuardian />}
+            {activeTab === "parents" && (
+              <FormParents
+                formDataKeluarga={formDataKeluarga}
+                onInputChangeKeluarga={handleInputChangeKeluarga}
+              />
+            )}
+            {activeTab === "guardian" && (
+              <FormGuardian
+                formDataKeluarga={formDataKeluarga}
+                onInputChangeKeluarga={handleInputChangeKeluarga}
+              />
+            )}
             {activeTab === "school" && (
               <FormSchool
                 formData={formData}

@@ -20,17 +20,6 @@ export default function () {
     ? [dataSemesterStatus]
     : [];
 
-  // Tampilkan loading spinner jika data sedang dimuat
-  if (isLoading) {
-    return (
-      <div className="p-4 border-1 rounded-sm shadow-sm">
-        <BriefStudentData showLine={false} />
-        <div className="mt-4 flex justify-center items-center py-8">
-          <LoadingSpinner />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
