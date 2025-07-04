@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
+import Swal from "sweetalert2";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   CircleX,
@@ -13,9 +15,24 @@ import {
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TabNavigationButtonStudent } from "../../../components/admin-academic/dashboard/TabNavigasiButton";
+import {
+  getClassRPS,
+  getClassAttendants,
+  getDetailCollegeClass,
+  getLecturers,
+  getLecturerSchedule,
+  addLecturerSchedule,
+  getClassesGrades,
+  getStudents,
+  getAllDetailStudentAttendant,
+  addStudentToClass,
+  deleteStudentsFromClass,
+} from "../../../hooks/useKelasKuliah";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import DateFormatter from "../../../helpers/DateFormatter";
 
 interface ClassAttendant {
   id: string;
@@ -30,133 +47,33 @@ interface CollegeClassTableProps {
   data: ClassAttendant[];
 }
 
-const sampleData = [
-  {
-    id: "22110804305",
-    nim: "22110604",
-    name: "Maulana Ikhsan",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "disetujui",
-  },
-  {
-    id: "22110804306",
-    nim: "22110604",
-    name: "Azka Fadilah",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "disetujui",
-  },
-  {
-    id: "22110804307",
-    nim: "22110604",
-    name: "Muhammad Virzha Ardiansyah",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "menunggu disetujui",
-  },
-  {
-    id: "22110804308",
-    nim: "22110604",
-    name: "M.Syaifullah Nurrahman",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "menunggu disetujui",
-  },
-  {
-    id: "22110804309",
-    nim: "22110604",
-    name: "Margonda Panggabean",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "menunggu disetujui",
-  },
-  {
-    id: "22110804310",
-    nim: "22110604",
-    name: "Maulana Ikhsan",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "disetujui",
-  },
-  {
-    id: "22110804311",
-    nim: "22110604",
-    name: "Maulana Ikhsan",
-    program: "S1 - Teknik Informatika",
-    year: "2022",
-    status: "disetujui",
-  },
-];
-
-const sampleDataAttendant = [
-  {
-    id: "22110804305",
-    nim: "22110604",
-    name: "Maulana Ikhsan",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-  {
-    id: "22110804306",
-    nim: "22110604",
-    name: "Azka Fadilah",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-  {
-    id: "22110804307",
-    nim: "22110604",
-    name: "Muhammad Virzha Ardiansyah",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-  {
-    id: "22110804308",
-    nim: "22110604",
-    name: "M.Syaifullah Nurrahman",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-  {
-    id: "22110804309",
-    nim: "22110604",
-    name: "Margonda Panggabean",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-  {
-    id: "22110804310",
-    nim: "22110604",
-    name: "Maulana Ikhsan",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-  {
-    id: "22110804311",
-    nim: "22110604",
-    name: "Maulana Ikhsan",
-    program: "S1 - Teknik Informatika",
-    sks_semester: "22",
-    sks_total: "22",
-    semester: "2",
-  },
-];
-
 const DetailCollegeClass = () => {
   const navigate = useNavigate();
+
+  const { id } = useParams();
+
+  const { data, isLoading, error } = getDetailCollegeClass(id!);
+  const {
+    data: classAttendants,
+    isLoading: isLoadingClassAttendants,
+    error: isErrorClassAttendants,
+  } = getClassAttendants(id!);
+  const {
+    data: classRPS,
+    isLoading: isLoadingRPS,
+    error: isErrorRPS,
+  } = getClassRPS(id!);
+
+  const {
+    data: classGrades,
+    isLoading: isLoadingClassGrades,
+    error: isErrorClassGrades,
+  } = getClassesGrades(id!);
+
+  const { data: lecturers, isLoading: isLoadingLecturers } = getLecturers();
+
+  console.log("NIlai Kelas", classGrades);
+
   const [scheduleList, setScheduleList] = useState([
     {
       day: "",
@@ -195,6 +112,13 @@ const DetailCollegeClass = () => {
     alert("save");
   };
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  console.log("data Detail Kelas Kuliah", data);
+  console.log("data Detail Peserta Kuliah", classAttendants);
+
   return (
     <MainLayout titlePage="Data Kelas" isGreeting={false}>
       <div className="space-y-4">
@@ -217,7 +141,9 @@ const DetailCollegeClass = () => {
             />
             <ButtonClick
               icon={<Save size={15} strokeWidth={3} />}
-              color="bg-primary-blueSoft"
+              color={
+                activeTab == "classDetails" ? `bg-primary-blueSoft` : `hidden`
+              }
               text="Simpan"
               onClick={save}
             />
@@ -271,15 +197,21 @@ const DetailCollegeClass = () => {
             <div className="w-full lg:col-span-5">
               {activeTab === "classDetails" && (
                 <CollegeClassInformation
-                  scheduleList={scheduleList}
+                  data={data}
                   addNewSchedule={addNewSchedule}
                 />
               )}
-              {activeTab === "lecturer" && <Lecturer />}
-              {activeTab === "classAttendant" && <ClassAttendant />}
-              {activeTab === "rps" && <RPS />}
-              {activeTab === "grading" && <Grading />}
-              {activeTab === "examSchedule" && <ExamSchedule />}
+              {activeTab === "lecturer" && (
+                <Lecturer lecturerLists={lecturers} data={data} />
+              )}
+              {activeTab === "classAttendant" && (
+                <ClassAttendant data={data.id} />
+              )}
+              {activeTab === "rps" && <RPS RPS={classRPS} data={data} />}
+              {activeTab === "grading" && (
+                <Grading grades={classGrades} data={data} />
+              )}
+              {activeTab === "examSchedule" && <ExamSchedule data={data} />}
             </div>
           </div>
         </BorderedGreenContainer>
@@ -288,12 +220,7 @@ const DetailCollegeClass = () => {
   );
 };
 
-const CollegeClassInformation = ({ scheduleList, addNewSchedule }) => {
-  const systemOptions = [{ value: "", label: "Semua Sistem Kuliah" }];
-  const periodOptions = [{ value: "", label: "2025 Ganjil" }];
-  const yearOptions = [{ value: "", label: "2025" }];
-  const prodiOptions = [{ value: "", label: "Universitas Ibnu Khaldun" }];
-
+const CollegeClassInformation = ({ data, addNewSchedule }) => {
   return (
     <>
       {/* Informasi Kelas */}
@@ -304,46 +231,62 @@ const CollegeClassInformation = ({ scheduleList, addNewSchedule }) => {
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             <InputFilter
-              select={true}
-              options={periodOptions}
+              select={false}
+              defaultValue={data.periodeAkademik}
               label="Periode Akademik"
             />
             <InputFilter
-              select={true}
-              options={systemOptions}
+              select={false}
+              defaultValue={data.sistemKuliah}
               label="Sistem Kuliah"
             />
             <InputFilter
-              select={true}
-              options={prodiOptions}
+              select={false}
+              defaultValue={data.programStudi.namaProgramStudi}
               label="Program Studi"
             />
-            <InputFilter select={false} label="Kapasitas" />
             <InputFilter
-              options={yearOptions}
-              select={true}
+              select={false}
+              label="Kapasitas"
+              defaultValue={data.kapasitas}
+            />
+            <InputFilter
+              defaultValue={data.periodeAkademik}
+              select={false}
               label="Tahun Kurikulum"
             />
             <InputFilter
-              options={yearOptions}
-              select={true}
+              defaultValue={data.tanggalMulai}
+              select={false}
               label="Tanggal Mulai"
             />
-            <InputFilter select={false} label="Mata Kuliah" />
             <InputFilter
-              options={yearOptions}
-              select={true}
+              select={false}
+              label="Mata Kuliah"
+              defaultValue={data.mataKuliah.namaMataKuliah}
+            />
+            <InputFilter
+              defaultValue={data.tanggalSelesai}
+              select={false}
               label="Tanggal Selesai"
             />
-            <InputFilter select={false} label="Nama Kelas" />
-            <InputFilter select={false} label="Jumlah Pertemuan" />
+            <InputFilter
+              select={false}
+              label="Nama Kelas"
+              defaultValue={data.nama}
+            />
+            <InputFilter
+              select={false}
+              label="Jumlah Pertemuan"
+              defaultValue={data.jumlahPertemuan}
+            />
           </div>
         </div>
 
         {/* Jadwal Mingguan */}
         <div className="space-y-4">
           <h1 className="font-bold text-xl sm:text-2xl">Jadwal Mingguan</h1>
-          <DetailCollegeClassTable scheduleList={scheduleList} />
+          {/* <DetailCollegeClassTable data={data} /> */}
           <div className="flex justify-end">
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
@@ -358,7 +301,8 @@ const CollegeClassInformation = ({ scheduleList, addNewSchedule }) => {
   );
 };
 
-const ClassBio = () => {
+const ClassBio = ({ data }) => {
+  console.log("Class Bio", data);
   return (
     <div className="bg-[#F5FFF9] w-full px-4 py-4 mt-5 border-l-8 border-[#116E63] rounded-md">
       <h2 className="font-semibold text-base mb-4">Status</h2>
@@ -366,33 +310,38 @@ const ClassBio = () => {
         <div className="flex flex-col space-y-2">
           <p>
             <span className="font-medium">
-              Program Studi: S1 - Teknik Informatika
+              Program Studi: {`${data.programStudi.namaProgramStudi}`}
             </span>
           </p>
           <p>
             <span className="font-medium">
-              Mata Kuliah: FTS113 - Bahasa Inggris + Praktikum - 2 SKS
+              Mata Kuliah:
+              {` ${data.mataKuliah.kodeMataKuliah} - ${data.mataKuliah.namaMataKuliah} - 2SKS`}
             </span>
           </p>
           <p>
-            <span className="font-medium">Kurikulum: 2022</span>
+            <span className="font-medium">
+              Kurikulum: {data.mataKuliah.tahunKurikulum}
+            </span>
           </p>
           <p>
-            <span className="font-medium">Kapasitas: 30</span>
+            <span className="font-medium">Kapasitas: {data.kapasitas}</span>
           </p>
         </div>
         <div className="flex flex-col space-y-2">
           <p>
-            <span className="font-medium">Periode: 2024 Genap</span>
+            <span className="font-medium">Periode: {data.periodeAkademik}</span>
           </p>
           <p>
-            <span className="font-medium">Nama Kelas: REG_A</span>
+            <span className="font-medium">Nama Kelas: {data.nama}</span>
           </p>
           <p>
-            <span className="font-medium">Sistem Kuliah: Reguler</span>
+            <span className="font-medium">
+              Sistem Kuliah: {data.sistemKuliah}
+            </span>
           </p>
           <p>
-            <span className="font-medium">Peserta: 20</span>
+            <span className="font-medium">Peserta: {data.peserta}</span>
           </p>
         </div>
       </div>
@@ -400,59 +349,90 @@ const ClassBio = () => {
   );
 };
 
-const Lecturer = () => {
-  const [lecturers, setLecturers] = useState<
-    { id: number; name: string; schedule: string[] }[]
-  >([]);
+const Lecturer = ({ data, lecturerLists }) => {
+  const [lecturers, setLecturers] = useState([{ id: "", jadwalIds: [] }]);
+
+  const { data: lecturerSchedule, isLoading: isLoadingLecturerSchedule } =
+    getLecturerSchedule(data.id);
+
+  const { mutate: submitLecturerSchedule, isLoading: isSubmitting } =
+    addLecturerSchedule(data.id);
 
   const handleAddLecturer = () => {
-    setLecturers((prev) => [
-      ...prev,
-      { id: Date.now(), name: "", schedule: [] },
-    ]);
+    setLecturers((prev) => [...prev, { id: "", jadwalIds: [] }]);
   };
 
-  const handleRemoveLecturer = (id: number) => {
-    setLecturers((prev) => prev.filter((lec) => lec.id !== id));
+  const handleRemoveLecturer = (index) => {
+    setLecturers((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleNameChange = (id: number, value: string) => {
-    setLecturers((prev) =>
-      prev.map((lec) => (lec.id === id ? { ...lec, name: value } : lec))
-    );
+  const handleChangeLecturer = (index, value) => {
+    const updated = [...lecturers];
+    updated[index].id = value;
+    setLecturers(updated);
   };
 
-  const handleScheduleToggle = (id: number, time: string) => {
-    setLecturers((prev) =>
-      prev.map((lec) =>
-        lec.id === id
-          ? {
-              ...lec,
-              schedule: lec.schedule.includes(time)
-                ? lec.schedule.filter((s) => s !== time)
-                : [...lec.schedule, time],
-            }
-          : lec
-      )
-    );
+  const toggleJadwalCheckbox = (lecturerIndex, jadwalId) => {
+    const updated = [...lecturers];
+    const current = updated[lecturerIndex].jadwalIds || [];
+
+    if (current.includes(jadwalId)) {
+      updated[lecturerIndex].jadwalIds = current.filter(
+        (id) => id !== jadwalId
+      );
+    } else {
+      updated[lecturerIndex].jadwalIds = [...current, jadwalId];
+    }
+
+    setLecturers(updated);
   };
+
+  const lecturerHandleSubmit = () => {
+    const payload = {
+      jadwal: lecturers
+        .filter((lec) => lec.id && lec.jadwalIds?.length > 0)
+        .map((lec) => ({
+          dosenId: lec.id,
+          jadwalIds: lec.jadwalIds,
+        })),
+    };
+
+    // console.log("Payload Yg dikirim", payload);
+
+    submitLecturerSchedule(payload, {
+      onSuccess: () => {
+        alert("Berhasil menyimpan jadwal dosen.");
+      },
+      onError: (error) => {
+        console.error("Gagal menyimpan jadwal dosen:", error);
+        alert("Terjadi kesalahan saat menyimpan.");
+      },
+    });
+  };
+
+  if (isLoadingLecturerSchedule) return <LoadingSpinner />;
 
   return (
     <div className="space-y-6">
       {/* Informasi Kelas */}
-      <ClassBio />
+      <ClassBio data={data} />
 
       {/* Tombol Tambah Dosen */}
       <div className="flex justify-end">
         <ButtonClick
           text="Tambah Dosen Pengajar"
           icon={<Plus size={15} />}
-          color="bg-primary-green"
+          color={
+            lecturerSchedule.length === 1
+              ? "bg-primary-green cursor-not-allowed opacity-50"
+              : "bg-primary-green"
+          }
+          disabled={lecturerSchedule.length === 1}
           onClick={handleAddLecturer}
         />
       </div>
 
-      {/* Form Dosen */}
+      {/* Form Dosen Pengajar */}
       {lecturers.length === 0 ? (
         <div className="text-center py-4">
           <h1 className="font-semibold text-lg sm:text-xl text-gray-700">
@@ -461,64 +441,111 @@ const Lecturer = () => {
         </div>
       ) : (
         lecturers.map((lec, index) => (
-          <div key={lec.id} className="border-b border-teal-700 pb-4 space-y-2">
+          <div key={index} className="border-b border-teal-700 pb-4 space-y-2">
             <div className="flex justify-between items-center">
               <label className="font-semibold">
                 Dosen Pengajar {index + 1}
               </label>
               <button
-                onClick={() => handleRemoveLecturer(lec.id)}
                 className="text-white bg-red-500 hover:bg-red-600 p-2 rounded"
+                onClick={() => handleRemoveLecturer(index)}
               >
                 <Trash2 size={16} />
               </button>
             </div>
 
-            <input
-              type="text"
-              value={lec.name}
-              onChange={(e) => handleNameChange(lec.id, e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2"
-              placeholder="Masukkan nama atau NIP dosen"
-            />
+            <select
+              className="border border-gray-300 rounded p-2 w-full"
+              value={lec.id}
+              onChange={(e) => handleChangeLecturer(index, e.target.value)}
+            >
+              <option value="">-- Pilih Dosen --</option>
+              {lecturerLists.map((dosen) => (
+                <option key={dosen.id} value={dosen.id}>
+                  {dosen.nama}
+                </option>
+              ))}
+            </select>
 
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={lec.schedule.includes("Rabu")}
-                  onChange={() => handleScheduleToggle(lec.id, "Rabu")}
-                />
-                Rabu, 13:00 – 14:00
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={lec.schedule.includes("Kamis")}
-                  onChange={() => handleScheduleToggle(lec.id, "Kamis")}
-                />
-                Kamis, 13:00 – 14:00
-              </label>
+            <div className="flex flex-col gap-2 pt-2">
+              {lecturerSchedule.map((jadwalDosen, keyJadwalDosen) => {
+                const jadwalId = jadwalDosen.id;
+                const isChecked = lec.jadwalIds.includes(jadwalId);
+
+                return (
+                  <label
+                    key={keyJadwalDosen}
+                    className="flex items-center gap-2 font-medium"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleJadwalCheckbox(index, jadwalId)}
+                    />
+                    <span>
+                      {jadwalDosen.hari}, {jadwalDosen.siakRuangan.namaRuangan}{" "}
+                      • {jadwalDosen.jamMulai?.split(":").slice(0, 2).join(":")}{" "}
+                      -{" "}
+                      {jadwalDosen.jamSelesai?.split(":").slice(0, 2).join(":")}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
         ))
       )}
+
+      {/* Tombol Simpan */}
+      <ButtonClick
+        spacing="2"
+        icon={<Save />}
+        text={isSubmitting ? "Menyimpan..." : "Simpan"}
+        color="bg-primary-blueSoft cursor-pointer"
+        onClick={lecturerHandleSubmit}
+        disabled={isSubmitting}
+      />
     </div>
   );
 };
 
-const ClassAttendant = () => {
+const ClassAttendant = ({ data }) => {
+  const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  if (!data) {
+    return <LoadingSpinner />;
+  }
+  const {
+    data: allStudents,
+    isLoading: isLoadingStudents,
+    isError: isErrorStudents,
+  } = getStudents();
+
+  const {
+    data: getAllStudentDetailAttendant,
+    isLoading: isLoadingAllStudentDetailAttendant,
+  } = getAllDetailStudentAttendant(data);
+
+  const { mutate: deleteMutate, isPending: isDeleting } =
+    deleteStudentsFromClass(data);
+
+  console.log("ini ID", data);
+
+  if (isLoadingStudents || isLoadingAllStudentDetailAttendant) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="space-y-6">
       {/* Informasi Kelas */}
-      <ClassBio />
+      {/* <ClassBio data={data} /> */}
 
       {/* Tombol Aksi */}
       <div className="flex flex-wrap justify-end items-center gap-2">
         <ButtonClick
-          text="Tambah"
+          text="Tambah Mahasiswa"
           icon={<Plus size={15} />}
           color="bg-primary-green"
           onClick={() => setShowModal(true)} // Tampilkan modal
@@ -539,50 +566,34 @@ const ClassAttendant = () => {
 
       {/* Tabel Peserta */}
       <div className="overflow-x-auto">
-        <CollegeClassTable data={sampleDataAttendant} />
+        <CollegeClassTable data={getAllStudentDetailAttendant} />
       </div>
 
       {/* Modal Tambah Mahasiswa */}
-      {showModal && <AddStudentModal onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <AddStudentModal
+          students={allStudents}
+          kelasId={data}
+          onClose={() => setShowModal(false)}
+          onSuccess={() => {
+            // invalidate query atau refresh data
+            queryClient.invalidateQueries({
+              queryKey: ["kelas-detail", data.id],
+            });
+            setShowModal(false); // tutup modal
+          }}
+        />
+      )}
     </div>
   );
 };
 
-const CollegeClassTable = ({ data }: CollegeClassTableProps) => {
-  const navigate = useNavigate();
+const CollegeClassTable = ({ data }) => {
+  console.log(data);
 
-  const [selectedItems, setSelectedItems] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [selectAll, setSelectAll] = useState(false);
-
-  useEffect(() => {
-    const allChecked =
-      data.length > 0 && data.every((item) => selectedItems[item.id]);
-    setSelectAll(allChecked);
-  }, [selectedItems, data]);
-
-  const handleSelectAll = () => {
-    const newChecked = !selectAll;
-    const updated: { [key: string]: boolean } = {};
-    data.forEach((item) => {
-      updated[item.id] = newChecked;
-    });
-    setSelectedItems(updated);
-  };
-
-  const handleSelectOne = (id: string) => {
-    setSelectedItems((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const statusClass = (status: string) => {
-    if (status === "disetujui") return "bg-primary-green text-white";
-    if (status === "menunggu disetujui") return "bg-gray-500 text-white";
-    return "bg-gray-200 text-black";
-  };
+  if (!data) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="w-full overflow-x-auto rounded-lg shadow-sm border border-gray-200">
@@ -590,53 +601,39 @@ const CollegeClassTable = ({ data }: CollegeClassTableProps) => {
         <thead>
           <tr className="bg-primary-green text-white text-center">
             <th className="py-2 px-4 border border-gray-300">
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-                className="cursor-pointer"
-              />
+              <input type="checkbox" className="cursor-pointer" />
             </th>
             <th className="py-2 px-4 border border-gray-300">NIM</th>
             <th className="py-2 px-4 border border-gray-300">Nama Mahasiswa</th>
             <th className="py-2 px-4 border border-gray-300">Program Studi</th>
-            <th className="py-2 px-4 border border-gray-300">Sks Semester</th>
-            <th className="py-2 px-4 border border-gray-300">Sks Total</th>
-            <th className="py-2 px-4 border border-gray-300">Semester</th>
+            <th className="py-2 px-4 border border-gray-300">Angkatan</th>
+            <th className="py-2 px-4 border border-gray-300">Status KRS</th>
           </tr>
         </thead>
         <tbody>
           {data.length > 0 ? (
             data.map((student) => (
               <tr
-                key={student.id}
+                key={student.npm}
                 className="hover:bg-gray-50 text-center transition-all duration-150"
               >
                 <td className="py-2 px-4 border border-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={!!selectedItems[student.id]}
-                    onChange={() => handleSelectOne(student.id)}
-                    className="cursor-pointer"
-                  />
+                  <input type="checkbox" />
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {student.nim}
+                  {student.npm}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {student.name}
+                  {student.nama}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {student.program}
+                  {student.programStudiResDto.namaProgramStudi}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {student.sks_semester}
+                  {student.angkatan}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {student.sks_total}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.semester}
+                  {student.status == null ? "Belum ada Status" : student.status}
                 </td>
               </tr>
             ))
@@ -661,69 +658,69 @@ const CreateCollegeSelectOption = () => {
   );
 };
 
-const DetailCollegeClassTable = ({ scheduleList }) => {
-  return (
-    <div className="w-full overflow-x-auto rounded-md border border-gray-200">
-      <table className="min-w-[900px] w-full border-collapse text-sm">
-        <thead>
-          <tr className="bg-primary-green text-white text-center">
-            <th className="p-3 border border-gray-300">No</th>
-            <th className="p-3 border border-gray-300">Hari</th>
-            <th className="p-3 border border-gray-300">Jam Mulai</th>
-            <th className="p-3 border border-gray-300">Jam Selesai</th>
-            <th className="p-3 border border-gray-300">Jenis Pertemuan</th>
-            <th className="p-3 border border-gray-300">Metode Pembelajaran</th>
-            <th className="p-3 border border-gray-300">Ruangan</th>
-            <th className="p-3 border border-gray-300">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {scheduleList.length > 0 ? (
-            scheduleList.map((_, index) => (
-              <tr key={index} className="text-center hover:bg-gray-50">
-                <td className="p-3 border border-gray-300">{index + 1}</td>
-                <td className="p-2 border border-gray-300">
-                  <CreateCollegeSelectOption />
-                </td>
-                <td className="p-2 border border-gray-300">
-                  <CreateCollegeSelectOption />
-                </td>
-                <td className="p-2 border border-gray-300">
-                  <CreateCollegeSelectOption />
-                </td>
-                <td className="p-2 border border-gray-300">
-                  <CreateCollegeSelectOption />
-                </td>
-                <td className="p-2 border border-gray-300">
-                  <CreateCollegeSelectOption />
-                </td>
-                <td className="p-2 border border-gray-300">
-                  <CreateCollegeSelectOption />
-                </td>
-                <td className="p-2 border border-gray-300">
-                  <button
-                    className="text-red-500 hover:underline text-xs"
-                    onClick={() => alert(`Hapus jadwal ${index + 1}`)}
-                  >
-                    Hapus
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={8} className="text-center py-4 text-gray-500">
-                Tidak ada jadwal perkuliahan.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+// const DetailCollegeClassTable = ({ data }) => {
+//   return (
+//     <div className="w-full overflow-x-auto rounded-md border border-gray-200">
+//       <table className="min-w-[900px] w-full border-collapse text-sm">
+//         <thead>
+//           <tr className="bg-primary-green text-white text-center">
+//             <th className="p-3 border border-gray-300">No</th>
+//             <th className="p-3 border border-gray-300">Hari</th>
+//             <th className="p-3 border border-gray-300">Jam Mulai</th>
+//             <th className="p-3 border border-gray-300">Jam Selesai</th>
+//             <th className="p-3 border border-gray-300">Jenis Pertemuan</th>
+//             <th className="p-3 border border-gray-300">Metode Pembelajaran</th>
+//             <th className="p-3 border border-gray-300">Ruangan</th>
+//             <th className="p-3 border border-gray-300">Aksi</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {scheduleList.length > 0 ? (
+//             scheduleList.map((_, index) => (
+//               <tr key={index} className="text-center hover:bg-gray-50">
+//                 <td className="p-3 border border-gray-300">{index + 1}</td>
+//                 <td className="p-2 border border-gray-300">
+//                   <CreateCollegeSelectOption />
+//                 </td>
+//                 <td className="p-2 border border-gray-300">
+//                   <CreateCollegeSelectOption />
+//                 </td>
+//                 <td className="p-2 border border-gray-300">
+//                   <CreateCollegeSelectOption />
+//                 </td>
+//                 <td className="p-2 border border-gray-300">
+//                   <CreateCollegeSelectOption />
+//                 </td>
+//                 <td className="p-2 border border-gray-300">
+//                   <CreateCollegeSelectOption />
+//                 </td>
+//                 <td className="p-2 border border-gray-300">
+//                   <CreateCollegeSelectOption />
+//                 </td>
+//                 <td className="p-2 border border-gray-300">
+//                   <button
+//                     className="text-red-500 hover:underline text-xs"
+//                     onClick={() => alert(`Hapus jadwal ${index + 1}`)}
+//                   >
+//                     Hapus
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))
+//           ) : (
+//             <tr>
+//               <td colSpan={8} className="text-center py-4 text-gray-500">
+//                 Tidak ada jadwal perkuliahan.
+//               </td>
+//             </tr>
+//           )}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
 
-const RPS = () => {
+const RPS = ({ RPS, data }) => {
   const InfoItem = ({ label, children }) => (
     <div className="mb-4">
       <h3 className="font-semibold text-gray-700 text-base md:text-lg">
@@ -733,75 +730,50 @@ const RPS = () => {
     </div>
   );
 
+  if (!RPS) {
+    return (
+      <div className="space-y-4 w-full px-4 md:px-0">
+        <ClassBio data={data} />
+        <div className="w-full p-4 md:p-6 bg-white rounded-lg shadow text-center text-gray-500">
+          📭{" "}
+          <span className="block mt-2">
+            RPS belum tersedia untuk kelas ini.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 w-full px-4 md:px-0">
-      <ClassBio />
+      <ClassBio data={data} />
       <div className="w-full p-4 md:p-6 bg-white rounded-lg shadow overflow-x-auto">
-        <InfoItem label="Mata Kuliah">TIF01 - Basis Data</InfoItem>
-        <InfoItem label="Tanggal Penyusunan">15 Januari 2021</InfoItem>
+        <InfoItem label="Mata Kuliah">{RPS.mataKuliah.namaMataKuliah}</InfoItem>
+        <InfoItem label="Tanggal Penyusunan">
+          {DateFormatter(RPS.tanggalPenyusun)}
+        </InfoItem>
         <InfoItem label="Dosen Penyusun">
-          221106043033 - Muhammad Syaifullah Nurohman
-          <br />
-          221106043029 - Azka Fadilah Rahman
+          {RPS.dosenPenyusun.map((dosenPenyusun, key) => (
+            <span key={key}>
+              {dosenPenyusun.nidn} - {dosenPenyusun.nama}
+              <br />
+            </span>
+          ))}
         </InfoItem>
 
         <InfoItem label="Deskripsi Mata Kuliah">
-          Mata kuliah ini akan memberikan pengetahuan dasar dalam konsep
-          persamaan akuntansi, prosedur dan teknik dalam siklus akuntansi.
+          {RPS.deskripsiMataKuliah}
         </InfoItem>
 
-        <InfoItem label="Tujuan Mata Kuliah">
-          <ol className="list-decimal ml-5 space-y-1">
-            <li>
-              Mampu menjelaskan mengenai pengertian dan konsep akuntansi serta
-              praktik akuntansi pada berbagai jenis organisasi.
-            </li>
-            <li>
-              Mampu menjelaskan mengenai siklus akuntansi dalam menyusun laporan
-              keuangan.
-            </li>
-            <li>Mampu menyusun laporan keuangan pada perusahaan jasa.</li>
-            <li>Mampu menyusun laporan keuangan pada perusahaan dagang.</li>
-          </ol>
-        </InfoItem>
+        <InfoItem label="Tujuan Mata Kuliah">{RPS.tujuanMataKuliah}</InfoItem>
 
         <InfoItem label="Materi Pembelajaran">
-          <ol className="list-decimal ml-5 space-y-1">
-            <li>Sejarah dan Gambaran Umum Akuntansi</li>
-            <li>Persamaan Akuntansi dan Akun</li>
-            <li>Menganalisis Transaksi</li>
-            <li>Proses Penyesuaian</li>
-            <li>Menyelesaikan siklus Akuntansi Perusahaan Jasa</li>
-            <li>Sistem Akuntansi</li>
-            <li>Menyelesaikan siklus Akuntansi Perusahaan Dagang</li>
-          </ol>
+          {RPS.materiPembelajaran}
         </InfoItem>
 
-        <InfoItem label="Pustaka Utama">
-          <ol className="list-decimal ml-5 space-y-1">
-            <li>
-              Soemarso S.R., "Akuntansi Suatu Pengantar Edisi ke-6", Salemba
-              Empat, 2020.
-            </li>
-            <li>
-              Carl S. Warren, James M. Reeve, J.E. Duchac, dkk, "Pengantar
-              Akuntansi 1 Adaptasi Indonesia Edisi 4", Salemba Empat, 2017.
-            </li>
-          </ol>
-        </InfoItem>
+        <InfoItem label="Pustaka Utama">{RPS.pustakaUtama}</InfoItem>
 
-        <InfoItem label="Pustaka Pendukung">
-          <ol className="list-decimal ml-5 space-y-1">
-            <li>
-              Ikatan Akuntansi Indonesia, Pernyataan Standar Akuntansi Keuangan
-              (PSAK).
-            </li>
-            <li>
-              Weygandt, Kimmel, Kieso "Financial Accounting IFRS"; WileyPLUS,
-              2015.
-            </li>
-          </ol>
-        </InfoItem>
+        <InfoItem label="Pustaka Pendukung">{RPS.pustakaPendukung}</InfoItem>
 
         <InfoItem label="Dokumen RPS">
           <a
@@ -816,96 +788,12 @@ const RPS = () => {
   );
 };
 
-const Grading = () => {
-  const data = [
-    {
-      no: "22110804305",
-      nim: "22110604",
-      name: "Maulana Ikhsan",
-      task: "S1 - Teknik Informatika",
-      midExam: "99",
-      finalExam: "99",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "A",
-      status: "lulus",
-    },
-    {
-      no: "22110804306",
-      nim: "22110604",
-      name: "Azka Fadilah",
-      task: "S1 - Teknik Informatika",
-      midExam: "99",
-      finalExam: "99",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "A",
-      status: "lulus",
-    },
-    {
-      no: "22110804307",
-      nim: "22110604",
-      name: "Muhammad Virzha Ardiansyah",
-      task: "S1 - Teknik Informatika",
-      midExam: "99",
-      finalExam: "99",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "A",
-      status: "lulus",
-    },
-    {
-      no: "22110804308",
-      nim: "22110604",
-      name: "M.Syaifullah Nurrahman",
-      task: "S1 - Teknik Informatika",
-      midExam: "99",
-      finalExam: "99",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "A",
-      status: "lulus",
-    },
-    {
-      no: "22110804309",
-      nim: "22110604",
-      name: "Margonda Panggabean",
-      task: "S1 - Teknik Informatika",
-      midExam: "80",
-      finalExam: "85",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "A",
-      status: "lulus",
-    },
-    {
-      no: "22110804310",
-      nim: "22110604",
-      name: "Maulana Ikhsan",
-      task: "S1 - Teknik Informatika",
-      midExam: "90",
-      finalExam: "90",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "A",
-      status: "lulus",
-    },
-    {
-      no: "22110804311",
-      nim: "22110604",
-      name: "Maulana Ikhsan",
-      task: "S1 - Teknik Informatika",
-      midExam: "85",
-      finalExam: "85",
-      attendance: "80",
-      grade: "80",
-      alphaGrade: "C",
-      status: "tidak lulus",
-    },
-  ];
+const Grading = ({ grades, data }) => {
+  console.log("NILAI", grades);
+
   return (
     <div className="space-y-4 px-4 md:px-0">
-      <ClassBio />
+      <ClassBio data={data} />
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm md:text-base border-collapse">
           <thead>
@@ -919,18 +807,15 @@ const Grading = () => {
               <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
                 Nama Mahasiswa
               </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Tugas (20,00%)
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                UTS (25,00%)
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                UAS (40,00%)
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Kehadiran (15,00%)
-              </th>
+
+              {grades.komposisiPenilaian.map((bobot, keyBobot) => (
+                <th
+                  key={keyBobot}
+                  className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap"
+                >
+                  {bobot.nama} {`${bobot.persentase}%`}
+                </th>
+              ))}
               <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
                 Nilai
               </th>
@@ -943,44 +828,55 @@ const Grading = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((student) => (
-              <tr key={student.no} className="hover:bg-gray-50 text-center">
-                <td className="py-2 px-4 border border-gray-300 font-medium">
-                  {student.no}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.nim}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.name}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.task}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.midExam}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.finalExam}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.attendance}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.grade}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.alphaGrade}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {student.status === "lulus" ? (
-                    <span className="text-green-600 text-lg">✅</span>
-                  ) : (
-                    <span className="text-red-600 text-lg">❌</span>
-                  )}
+            {grades.mahasiswa.length > 0 ? (
+              grades.mahasiswa.map((grade) => (
+                <tr key={grade.npm} className="hover:bg-gray-50 text-center">
+                  <td className="py-2 px-4 border border-gray-300 font-medium">
+                    {grade.npm}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.npm}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.nama}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.tugas ? grade.tugas : "Belum Ada Nilai"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.uts ? grade.uts : "Belum Ada Nilai"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.uas ? grade.uas : "Belum Ada Nilai"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.kehadiran ? grade.kehadiran : "Belum Ada Nilai"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.nilai ? grade.nilai : "Belum Ada Nilai"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.grade ? grade.grade : "Belum Ada Nilai"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {grade.status === "A" ? (
+                      <span className="text-green-600 text-lg">✅</span>
+                    ) : (
+                      <span className="text-red-600 text-lg">❌</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={10}
+                  className="text-center py-4 text-gray-500 border"
+                >
+                  Tidak ada data peserta kelas.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -988,8 +884,8 @@ const Grading = () => {
   );
 };
 
-const ExamSchedule = () => {
-  const data = [
+const ExamSchedule = ({ data }) => {
+  const tests = [
     {
       no: "1",
       type: "UTS",
@@ -1012,7 +908,7 @@ const ExamSchedule = () => {
 
   return (
     <div className="space-y-4 px-4 md:px-0">
-      <ClassBio />
+      <ClassBio data={data} />
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm md:text-base border-collapse">
           <thead>
@@ -1044,7 +940,7 @@ const ExamSchedule = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((exam) => (
+            {tests.map((exam) => (
               <tr key={exam.no} className="hover:bg-gray-50 text-center">
                 <td className="py-2 px-4 border border-gray-300 font-medium">
                   {exam.no}
@@ -1081,23 +977,63 @@ const ExamSchedule = () => {
   );
 };
 
-const AddStudentModal = ({ onClose }: { onClose: () => void }) => {
+const AddStudentModal = ({
+  onClose,
+  onSuccess,
+  students,
+  kelasId,
+}: {
+  onClose: () => void;
+  onSuccess: () => void;
+  students: any[];
+  kelasId: string;
+}) => {
   const [show, setShow] = useState(false);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const { mutate, isPending } = addStudentToClass(kelasId);
 
   useEffect(() => {
-    // Trigger animation on mount
     setShow(true);
   }, []);
 
+  const addStudentClassAttendant = () => {
+    if (!selectedStudentId) {
+      alert("Pilih mahasiswa terlebih dahulu.");
+      return;
+    }
+
+    mutate(
+      { mahasiswaIds: [selectedStudentId] },
+      {
+        onSuccess: () => {
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: "Peserta berhasil ditambahkan ke kelas.",
+            confirmButtonColor: "#10b981", // Tailwind green
+            timer: 1500,
+            showConfirmButton: false,
+          });
+          onSuccess(); // Panggil fungsi parent (invalidate + tutup modal)
+        },
+        onError: (err: any) => {
+          Swal.fire({
+            icon: "error",
+            title: "Gagal",
+            text: err.message || "Gagal menambahkan peserta.",
+            confirmButtonColor: "#ef4444", // Tailwind red
+          });
+        },
+      }
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Background overlay */}
       <div
         className="absolute inset-0 bg-white/30 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
-
-      {/* Modal content */}
       <div
         className={`relative bg-white rounded-lg shadow-lg p-6 z-50 w-full max-w-md transform transition-all duration-300 ${
           show ? "opacity-100 scale-100" : "opacity-0 scale-95"
@@ -1108,14 +1044,21 @@ const AddStudentModal = ({ onClose }: { onClose: () => void }) => {
         </h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1" htmlFor="mahasiswa">
+          <label htmlFor="mahasiswa" className="block text-sm font-medium mb-1">
             Mahasiswa
           </label>
           <select
             id="mahasiswa"
+            value={selectedStudentId}
+            onChange={(e) => setSelectedStudentId(e.target.value)}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-primary-green"
           >
-            <option>-- Cari Mahasiswa --</option>
+            <option value="">-- Cari Mahasiswa --</option>
+            {students.map((student) => (
+              <option key={student.id} value={student.id}>
+                {student.nama}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -1123,11 +1066,16 @@ const AddStudentModal = ({ onClose }: { onClose: () => void }) => {
           <button
             onClick={onClose}
             className="border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
+            disabled={isPending}
           >
             Batalkan
           </button>
-          <button className="bg-primary-green text-white px-4 py-2 rounded hover:bg-green-700">
-            Tambah Peserta
+          <button
+            onClick={addStudentClassAttendant}
+            className="bg-primary-green text-white px-4 py-2 rounded hover:bg-green-700"
+            disabled={isPending}
+          >
+            {isPending ? "Menambahkan..." : "Tambah Peserta"}
           </button>
         </div>
       </div>

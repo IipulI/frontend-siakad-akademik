@@ -4,9 +4,23 @@ import { TableAnnouncement } from "../../../components/Table"; // Adjusted impor
 import { ArrowLeft, RefreshCw, Search } from "lucide-react";
 import { usePengumumanMahasiswa } from "../../../hooks/usePengumuman";
 import { IPengumuman } from "../../../types/common.types";
+import getAnnouncements from "../../../hooks/useMahasiswa";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function Announcement() {
   const [currentPage, setCurrentPage] = useState(1);
+
+  const {
+    data: announcements,
+    isLoading: isLoadingAnnouncements,
+    isError: isErrorAnnouncements,
+  } = getAnnouncements();
+
+  if (isLoadingAnnouncements) {
+    return <LoadingSpinner />;
+  }
+
+  console.log("Pengumuman data", announcements);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
   const ITEMS_PER_PAGE = 10;
@@ -98,8 +112,19 @@ export default function Announcement() {
             >
               Next
             </button>
-          </div>
+          )}
         </div>
-      </MainLayout>
+        {id ? (
+          <DetailAnnouncement data={dataDetail} />
+        ) : (
+          <TableAnnouncement
+            tableHead={tableHead}
+            data={announcements}
+            error={"error"}
+            setId={setId}
+          />
+        )}
+      </div>
+    </MainLayout>
   );
 }

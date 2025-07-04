@@ -74,6 +74,8 @@ interface SelectProps {
   defaultValue?: string;
   onChange?: (value: string) => void;
   error?: string;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface InputProps {
@@ -91,6 +93,8 @@ export function TextInput({
   value,
   defaultValue = "",
   placeholder,
+  value,
+  onChange,
   onChange,
   error,
 }: InputProps) {
@@ -111,6 +115,8 @@ export function TextInput({
       </label>
       <div className="flex flex-col">
         <input
+          value={value}
+          onChange={onChange}
           placeholder={placeholder}
           className={`bg-white border text-sm sm:text-base ${
             error ? "border-red-500" : "border-gray-300"
@@ -131,15 +137,20 @@ export function SelectInput({
   required = false,
   value,
   defaultValue = "",
-  onChange,
-  error,
-}: SelectProps) {
-  const isControlled = value !== undefined && onChange !== undefined;
-  const selectValue = isControlled ? value : defaultValue;
-
+  getOptionLabel,
+  getOptionValue,
+  onChange, // ✅ tambahkan onChange
+}: SelectProps<T> & { onChange?: (val: T | null) => void }) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+
+    // Temukan object yang sesuai berdasarkan value-nya
+    const selectedOption = options.find(
+      (option) => getOptionValue(option) === selectedValue
+    );
+
     if (onChange) {
-      onChange(e.target.value);
+      onChange(selectedOption ?? null);
     }
   };
 
@@ -158,6 +169,7 @@ export function SelectInput({
           onChange={isControlled ? handleChange : undefined}
           defaultValue={!isControlled ? defaultValue : undefined}
           required={required}
+          onChange={handleChange} // ✅ gunakan handler
         >
           <option value="">{`-- Pilih ${label} --`}</option>
           {options.map((option) => (
@@ -178,6 +190,7 @@ interface DateInputProps {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  value?: string;
   error?: string;
 }
 
@@ -186,6 +199,7 @@ export function DateInput({
   required = true,
   value,
   defaultValue = "",
+  value,
   onChange,
   error,
 }: DateInputProps) {
@@ -197,11 +211,13 @@ export function DateInput({
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
 
-    if (isControlled && onChange) {
-      onChange(newValue);
-    } else {
+    // Jika parent tidak mengatur value (uncontrolled), simpan lokal
+    if (value === undefined) {
       setInternalDate(newValue);
     }
+
+    // Selalu kirim perubahan ke parent
+    onChange(newValue);
   };
 
   return (
@@ -210,37 +226,33 @@ export function DateInput({
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
-      <div className="flex flex-col">
-        <div className="flex">
-          <div className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded-l p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              color="gray"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          </div>
-          <input
-            type="date"
-            className={`w-full bg-white border text-sm sm:text-base ${
-              error ? "border-red-500" : "border-gray-300"
-            } text-gray-400 rounded-r p-2`}
-            value={dateValue}
-            onChange={handleDateChange}
-          />
+      <div className="flex">
+        <div className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded-l p-2">
+          {/* Icon Kalender */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            color="gray"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
         </div>
-        {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
+        <input
+          type="date"
+          className="w-full bg-white border text-sm sm:text-base border-gray-300 text-gray-400 rounded-r p-2"
+          value={value !== undefined ? value : internalDate}
+          onChange={handleDateChange}
+        />
       </div>
     </div>
   );

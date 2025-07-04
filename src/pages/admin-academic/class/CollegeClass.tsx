@@ -203,7 +203,7 @@ const CollegeClass = () => {
   );
 };
 
-const CollegeClassTable = ({ data }: CollegeClassTableProps) => {
+const CollegeClassTable = ({ data }) => {
   const navigate = useNavigate();
 
   const [selectedItems, setSelectedItems] = useState<{
@@ -237,8 +237,8 @@ const CollegeClassTable = ({ data }: CollegeClassTableProps) => {
     alert("link");
   }
 
-  function Detail() {
-    navigate(AdminAcademicRoute.collegeClass.detailClass);
+  function Detail(id: string) {
+    navigate(`${AdminAcademicRoute.collegeClass.detailClass}/${id}`);
   }
 
   function Remove() {
@@ -350,7 +350,7 @@ const CollegeClassTable = ({ data }: CollegeClassTableProps) => {
                   <ButtonClick
                     icon={<Eye size={15} />}
                     color="bg-primary-blueSoft"
-                    onClick={Detail}
+                    onClick={() => Detail(student.id)}
                   />
                   <ButtonClick
                     icon={<Trash2 size={15} />}

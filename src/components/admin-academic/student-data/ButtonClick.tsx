@@ -6,6 +6,7 @@ interface ButtonClickProps {
   color: string;
   onClick: () => void;
   spacing?: string;
+  disabled?: boolean;
 }
 
 export default function ButtonClick({
@@ -14,11 +15,13 @@ export default function ButtonClick({
   color,
   onClick,
   spacing,
+  disabled,
 }: ButtonClickProps) {
   return (
     <button
       onClick={onClick}
-      className={`${color} text-white active:scale-90 transition-all w-fit rounded items-center px-2 cursor-pointer p-1 text-xs md:text-sm font-semibold flex justify-center space-x-${spacing}`}
+      disabled={disabled}
+      className={`${color} text-white active:scale-90 transition-all w-fit rounded items-center px-2  p-1 text-xs md:text-sm font-semibold flex justify-center space-x-${spacing}`}
     >
       {icon}
       <span>{text}</span>
