@@ -72,6 +72,8 @@ import DetailClassLecturer from "./pages/lecturer/courses/DetailClassLecturer";
 import DetailAdvisorLecturer from "./pages/lecturer/guidance/DetailAdvisorLecturer";
 import DetailCourseLecturer from "./pages/lecturer/courses/DetailCourseLecturer";
 import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
+import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
+import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
 
 export default function App() {
   return (
@@ -123,6 +125,8 @@ export default function App() {
 
       {/* Route untuk admin akademik - pengumuman */}
       <Route path={String(AdminAcademicRoute.announcement)} element={<AnnouncementAdminAcademic />} />
+      <Route path={String(AdminAcademicRoute.detailAnnouncement)} element={<DetailAnnouncement />} />
+      <Route path={String(AdminAcademicRoute.addAnnouncement)} element={<AddAnnouncementAdminAcademic />} />
       {/* Route untuk admin akademik - pengaturan */}
       <Route path={String(AdminAcademicRoute.setting.year)} element={<YearAdminAcademic />} />
       <Route path={String(AdminAcademicRoute.setting.period)} element={<PeriodAdminAcademic />} />

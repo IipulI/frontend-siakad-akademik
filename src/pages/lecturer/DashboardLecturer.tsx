@@ -6,12 +6,14 @@ import { useAcademicGuidanceListDashboard } from "../../hooks/lecturer/useFetchG
 import { useNavigate } from "react-router-dom";
 import { LecturerRoute } from "../../types/VarRoutes";
 import { CalendarDays, ChevronDown } from "lucide-react";
+import { useActiveStatus } from "../../hooks/lecturer/useFetchDropdown";
+import { useScheduleList } from "../../hooks/lecturer/useFetchSchedule";
 
 const DashboardLecturer = () => {
   const navigate = useNavigate()
 
   const [currentDate, setCurrentDate] = useState<string | undefined>();
-  // const [periodeAkademikId, setPeriodeAkademikId] = useState<string>("");
+  const [day, setDay] = useState<string | undefined>();
 
   useEffect(() => {
     const options: Intl.DateTimeFormatOptions = {
@@ -20,21 +22,21 @@ const DashboardLecturer = () => {
       month: "long",
       year: "numeric",
     };
-    const today = new Date().toLocaleDateString("id-ID", options);
-    setCurrentDate(today);
+    const today = new Date().toLocaleDateString("id-ID", options)
+    setCurrentDate(today)
+
+    const daysIndo = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"]
+    const todayIdx = new Date().getDay()
+    setDay(daysIndo[todayIdx])
   }, []);
+  
 
-  // const { data: periodeAkademikDropdown } = useAcademicPeriodDropdown()
+  const { data: statusAktif } = useActiveStatus()
+  
+  const { data: studentData, isPending, isError } = useAcademicGuidanceListDashboard(statusAktif?.data.id, "Diajukan")
+  const { data: courseSchedule } = useScheduleList(statusAktif?.data.id)
 
-  const { data: studentData, isPending, isError } = useAcademicGuidanceListDashboard("31152ad0-ae41-4feb-8767-98fec9a1cf6f", "Diajukan")
-
-  console.log(studentData)
-
-  // useEffect(() => {
-  //   if (periodeAkademikDropdown?.data?.length > 0) {
-  //     setPeriodeAkademikId(periodeAkademikDropdown?.data[0].id)
-  //   }
-  // }, [periodeAkademikDropdown]);
+  const todaySchedule = courseSchedule?.data && day ? courseSchedule.data[day] : [];
 
   return (
     <>
@@ -61,52 +63,60 @@ const DashboardLecturer = () => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <DashboardSubjectCard
-                    time="09.40 - 11.20"
-                    lecturer="Fitrah Satrya Fajar"
-                    room="Ruang 206"
-                    meet="Pertemuan ke 6"
-                    absent="Belum hadiran"
-                    sks="2 SKS"
-                    subject={"Pemrograman Perangkat Bergerak"}
-                    classes={"REG_B"}
-                  />
-                  <DashboardSubjectCard
-                    time="09.30 - 11.10"
-                    lecturer="Safarrudin Hidayat A. Ikhsan"
-                    room="Ruang 209"
-                    meet="Pertemuan ke 5"
-                    absent="Belum hadiran"
-                    sks="3 SKS"
-                    subject={"Pemrograman Web"}
-                    classes={"REG_A"}
-                  />
+                  {todaySchedule.map((item, index) => (
+                    <DashboardSubjectCard
+                      key={index}
+                      time={`${item.jamMulai} - ${item.jamSelesai}`}
+                      lecturer={item.dosen}
+                      room={item.ruangan}
+                      subject={item.namaMataKuliah}
+                      classes={item.kelas}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
             <div className="md:col-span-2 space-y-4">
               <div className="space-y-4">
-                <h1 className="font-semibold md:p-0 p-2">Total Mahasiswa Bimbingan yang diajukan</h1>
-                <div className="p-8 bg-white shadow-md rounded-md space-y-6">
                   {isPending || isError ? (
-                    <div className="flex justify-between items-center animate-pulse">
-                      <div className="flex flex-col">
-                        <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
-                        <div className="h-3 w-24 bg-gray-100 rounded" />
+                  <>
+                    <h1 className="font-semibold md:p-0 p-2">Total Mahasiswa Bimbingan yang diajukan</h1>
+                    <div className="p-8 bg-white shadow-md rounded-md space-y-6">
+                      <div className="flex justify-between items-center animate-pulse">
+                        <div className="flex flex-col">
+                          <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
+                          <div className="h-3 w-24 bg-gray-100 rounded" />
+                        </div>
+                        <div className="rounded bg-gray-200 p-2 w-28 h-7" />
                       </div>
-                      <div className="rounded bg-gray-200 p-2 w-28 h-7" />
                     </div>
+                  </>
                   ) : (
-                    studentData && studentData.map((item: any, idx: number) => (
-                      <DashboardCardGuidance
-                        key={idx}
-                        name={item.mahasiswa}
-                        onClick={() => navigate(LecturerRoute.guidance.detailAdvisor) || localStorage.setItem("id_mahasiswa", item.id)}
-                        desc={"Sudah mengajukan KRS"}
-                      />
+                    studentData && studentData.data.length > 0 ? studentData.data.map((item: any, idx: number) => (
+                     <>
+                       <h1 className="font-semibold md:p-0 p-2">Total Mahasiswa Bimbingan yang diajukan</h1>
+                        <div className="p-8 bg-white shadow-md rounded-md space-y-6">
+                          <DashboardCardGuidance
+                            key={idx}
+                            name={item.mahasiswa}
+                            onClick={() => navigate(LecturerRoute.guidance.detailAdvisor) || localStorage.setItem("id_mahasiswa", item.id)}
+                            desc={"Sudah mengajukan KRS"}
+                          />
+                        </div>
+                     </>
                     ))
+                    :
+                    (
+                      <>
+                        <h1 className="font-semibold md:p-0 p-2">Total Mahasiswa Bimbingan yang diajukan</h1>
+                        <div className="p-8 bg-white shadow-md rounded-md space-y-6">
+                          <div className="flex justify-between items-center">
+                            <h1>Belum ada mahasiswa yang diajukan</h1>
+                          </div>
+                        </div>
+                      </>
+                    )
                   )}
-                </div>
               </div>
             </div>
           </div>

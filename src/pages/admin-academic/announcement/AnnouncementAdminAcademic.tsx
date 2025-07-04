@@ -4,15 +4,16 @@ import FilterDropdown from "../../../components/admin-academic/FilterDropdown";
 import {Search, Plus, Trash, ChevronLeft, Save} from "lucide-react";
 import {TableAnnouncement} from "../../../components/admin-academic/announcement/TableAnnouncement";
 import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement";
-import FormAddAnnouncement from "../../../components/admin-academic/announcement/FormAddAnnouncement";
 import {Pagination} from "../../../components/admin-academic/Pagination";
 import {Api} from "../../../api/Index"; // Import your axios instance
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { useNavigate } from "react-router-dom";
 
 const AnnouncementAdminAcademic = () => {
     const [id, setId] = useState<string | null>(null);
+    const navigate = useNavigate()
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [showAddForm, setShowAddForm] = useState(false);
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -104,53 +105,7 @@ const AnnouncementAdminAcademic = () => {
             titlePage={"Pengumuman"}
             isGreeting={false}
         >
-            {id || showAddForm ?
-                (
-                    <div className="w-full mt-2 bg-white py-2 rounded-sm border-t-2 border-primary-green">
-                        <div className="flex mb-4 justify-end">
-                            <div className="flex px-4 gap-4">
-                                <button
-                                    onClick={() => {
-                                        setId(null);
-                                        setShowAddForm(false)
-                                    }}
-                                    className="bg-primary-yellow flex rounded-sm pl-2 cursor-pointer pr-4 py-1 items-center ml-auto text-white"
-                                >
-                                    <ChevronLeft size={16} className="mr-4"/>
-                                    Kembali ke daftar
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        // Logika simpan di sini, lalu sembunyikan formulir
-                                        setId(null);
-                                        setShowAddForm(false);
-                                        // Opsional: ambil ulang data setelah menyimpan
-                                        fetchAnnouncements();
-                                    }}
-                                    className="bg-primary-blueSoft flex rounded-sm pl-2 cursor-pointer pr-4 py-1 items-center ml-auto text-white"
-                                >
-                                    <Save size={16} className="mr-4"/>
-                                    Simpan
-                                </button>
-                            </div>
-                        </div>
-                        {showAddForm ? (
-                            <FormAddAnnouncement
-                                onCancel={() => setShowAddForm(false)}
-                                onSubmit={() => {
-                                    setShowAddForm(false);
-                                    fetchAnnouncements(); // Ambil ulang data setelah berhasil menambah
-                                }}
-                            />
-                        ) : (
-                            <DetailAnnouncement data={dataDetail}/>
-                        )}
-                    </div>
-                )
-                :
-                (
-                    <>
-                        <FilterDropdown title={"Status"} options={statusOptions}/>
+           <FilterDropdown title={"Status"} options={statusOptions}/>
                         <div className="w-full mt-8 bg-white py-2 rounded-sm border-t-2 border-primary-green">
                             <div className="flex px-4 justify-between">
                                 <div className="flex">
@@ -167,7 +122,7 @@ const AnnouncementAdminAcademic = () => {
                                 <div className="flex">
                                     <button
                                         className="ml-2 bg-primary-green cursor-pointer text-sm text-white  px-4 rounded flex items-center justify-center"
-                                        onClick={() => setShowAddForm(true)}
+                                        onClick={() => navigate(AdminAcademicRoute.addAnnouncement)}
                                     >
                                         <Plus color="white" size={16} className="mr-2"/>
                                         Tambah
@@ -210,9 +165,6 @@ const AnnouncementAdminAcademic = () => {
                                 onRowsPerPageChange={setRowsPerPage}
                             />
                         </div>
-                    </>
-                )
-            }
         </MainLayout>
     );
 };

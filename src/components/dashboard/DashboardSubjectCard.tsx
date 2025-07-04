@@ -11,10 +11,10 @@ import React from "react";
 interface DashboardSubjectCardProps {
   time: string;
   lecturer: string;
-  room: string;
-  meet: string;
-  absent: string;
-  sks: string;
+  room?: string;
+  meet?: string;
+  absent?: string;
+  sks?: string;
   subject: string;
   classes: string;
 }
