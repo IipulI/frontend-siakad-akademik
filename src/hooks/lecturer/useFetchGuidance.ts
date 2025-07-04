@@ -28,7 +28,7 @@ export const useAcademicGuidanceListDashboard = (periodeAkademikId: string | nul
         queryKey: [
           "dashboard-dosen/pembimbing-akademik/all", periodeAkademikId, statusKrs],
         queryFn: async () => {
-            const res = await Api.get(`/dosen/pembimbing-akademik/all?periodeAkademikId=${periodeAkademikId}statusKrs=${statusKrs}`)
+            const res = await Api.get(`/dosen/pembimbing-akademik/all?periodeAkademikId=${periodeAkademikId}&statusKrs=${statusKrs}`)
             return res.data
         },
         enabled: !!periodeAkademikId
