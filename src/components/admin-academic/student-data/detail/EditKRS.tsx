@@ -6,34 +6,108 @@ import { useEffect, useRef, useState } from "react";
 import {
   delSuntingDetail,
   getSuntingKrs,
+  useEditKrs, // Import hook baru
 } from "../../../../hooks/admin-akademik/useStudentDetail";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../../../LoadingSpinner";
 import { showToast } from "../../../admin-finance/Toastify";
 import ConfirmModal from "../../../admin-finance/ConfirmModal";
 
+// Interface untuk edit form - hanya nilaiNumerik
+interface EditFormData {
+  id: string;
+  nilaiNumerik: number;
+}
+
 export default function EditKRS() {
   const [filters, setFilters] = useState({
     namaPeriode: "",
   });
-  // state untuk modal konfirmasi delete
+
+  // State untuk modal konfirmasi delete
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // State untuk edit mode
+  const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
+  const [editData, setEditData] = useState<{ [key: string]: EditFormData }>({});
+
   const { state } = useLocation();
 
-  const { data: suntingKrs } = getSuntingKrs(state, filters.namaPeriode);
+  const { data: suntingKrs, isLoading } = getSuntingKrs(
+    state,
+    filters.namaPeriode
+  );
   const { data: periodeAkademikDropdown } = getAcademicPeriodeDropdown();
   const deleteKrs = delSuntingDetail();
+  const editKrs = useEditKrs(); // Hook untuk edit
 
   const reversedDataPeriodeAkademik = periodeAkademikDropdown
     ?.slice()
     .reverse();
 
-  function Edit() {
-    alert("oke see");
+  // Function untuk memulai edit mode
+  function startEdit(course: any) {
+    setEditMode((prev) => ({ ...prev, [course.id]: true }));
+    setEditData((prev) => ({
+      ...prev,
+      [course.id]: {
+        id: course.id,
+        nilaiNumerik: course.nilaiNumerik || 0,
+      },
+    }));
   }
 
+  // Function untuk cancel edit
+  function cancelEdit(courseId: string) {
+    setEditMode((prev) => ({ ...prev, [courseId]: false }));
+    setEditData((prev) => {
+      const newData = { ...prev };
+      delete newData[courseId];
+      return newData;
+    });
+  }
+
+  // Function untuk save edit
+  async function saveEdit(courseId: string) {
+    const dataToSave = editData[courseId];
+    if (!dataToSave) return;
+
+    try {
+      await editKrs.mutateAsync({
+        krsId: courseId,
+        nilaiNumerik: dataToSave.nilaiNumerik,
+      });
+
+      showToast.success("Nilai numerik berhasil diperbarui!");
+      setEditMode((prev) => ({ ...prev, [courseId]: false }));
+      setEditData((prev) => {
+        const newData = { ...prev };
+        delete newData[courseId];
+        return newData;
+      });
+    } catch (error) {
+      showToast.error("Gagal memperbarui nilai numerik.");
+      console.error("Error updating KRS:", error);
+    }
+  }
+
+  // Function untuk handle input change
+  function handleInputChange(
+    courseId: string,
+    field: keyof EditFormData,
+    value: any
+  ) {
+    setEditData((prev) => ({
+      ...prev,
+      [courseId]: {
+        ...prev[courseId],
+        [field]: value,
+      },
+    }));
+  }
+
+  // Function untuk confirm delete
   async function confirmDelete() {
     if (!selectedId || deleteKrs.isPending) return;
 
@@ -48,6 +122,7 @@ export default function EditKRS() {
     }
   }
 
+  // Function untuk open delete modal
   function openDeleteModal(id: string) {
     setSelectedId(id);
     setIsModalOpen(true);
@@ -55,16 +130,10 @@ export default function EditKRS() {
 
   // Handle filter change
   const handleFilterChange = (field: string, value: string) => {
-    console.log(`Filter changed: ${field} = ${value}`);
-
-    setFilters((prev) => {
-      const newFilters = {
-        ...prev,
-        [field]: value,
-      };
-      console.log("New filters:", newFilters);
-      return newFilters;
-    });
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const totalSKS =
@@ -78,16 +147,18 @@ export default function EditKRS() {
         isOpen={isModalOpen}
         onConfirm={confirmDelete}
         onCancel={() => setIsModalOpen(false)}
+        title="Konfirmasi Hapus"
+        message="Apakah Anda yakin ingin menghapus data KRS ini?"
       />
+
       <BriefStudentData showLine={false} />
 
       <div className="flex items-center space-x-2 mt-4">
-        <label htmlFor="" className="text-sm font-medium">
+        <label htmlFor="periode" className="text-sm font-medium">
           Periode
         </label>
         <select
-          name=""
-          id=""
+          id="periode"
           className="border-2 rounded p-1 text-sm w-40"
           onChange={(e) => handleFilterChange("namaPeriode", e.target.value)}
           value={filters.namaPeriode}
@@ -147,72 +218,110 @@ export default function EditKRS() {
               <tr>
                 <td
                   colSpan={12}
-                  className="border border-gray-500 p-8 text-center text-gray-500"
+                  className="border-1 text-center border-gray-500 font-semibold p-2"
                 >
-                  {!filters.namaPeriode
-                    ? "Pilih periode untuk melihat data KRS"
-                    : "Tidak ada data KRS untuk periode yang dipilih"}
+                  Data KRS Tidak Tersedia
                 </td>
               </tr>
             ) : (
               <>
-                {suntingKrs.map((course, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {index + 1}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.kurikulum || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.kodeMataKuliah || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2">
-                      {course.namaMataKuliah || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.namaKelas || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.sks || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.nilaiNumerik || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.nilaiHuruf || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.nilaiMutu || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.valid || "-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex justify-center align-center">
-                        {course.lulus ? (
-                          <Check color="green" />
+                {suntingKrs.map((course, index) => {
+                  const isEditing = editMode[course.id];
+                  const currentEditData = editData[course.id];
+
+                  return (
+                    <tr key={course.id} className="hover:bg-gray-100">
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {index + 1}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.kurikulum || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.kodeMataKuliah || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2">
+                        {course.namaMataKuliah || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.namaKelas || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.sks || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={currentEditData?.nilaiNumerik || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                course.id,
+                                "nilaiNumerik",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="w-full px-1 py-1 border rounded text-sm"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                          />
                         ) : (
-                          <X color="red" />
+                          course.nilaiNumerik || "-"
                         )}
-                      </div>
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex space-x-2 justify-center">
-                        <ButtonClick
-                          icon={<Pen size={16} strokeWidth={3} />}
-                          color={"bg-primary-blueSoft"}
-                          onClick={Edit}
-                        />
-                        <ButtonClick
-                          icon={<Trash2 size={16} strokeWidth={3} />}
-                          color={"bg-red-400"}
-                          onClick={() => openDeleteModal(state)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.nilaiHuruf || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.nilaiMutu || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {course.valid || "-"}
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        <div className="flex justify-center align-center">
+                          {course.lulus ? (
+                            <Check color="green" />
+                          ) : (
+                            <X color="red" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        <div className="flex space-x-2 justify-center">
+                          {isEditing ? (
+                            <>
+                              <ButtonClick
+                                icon={<Check size={16} strokeWidth={3} />}
+                                color="bg-green-500"
+                                onClick={() => saveEdit(course.id)}
+                              />
+                              <ButtonClick
+                                icon={<X size={16} strokeWidth={3} />}
+                                color="bg-gray-500"
+                                onClick={() => cancelEdit(course.id)}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <ButtonClick
+                                icon={<Pen size={16} strokeWidth={3} />}
+                                color="bg-primary-blueSoft"
+                                onClick={() => startEdit(course)}
+                              />
+                              <ButtonClick
+                                icon={<Trash2 size={16} strokeWidth={3} />}
+                                color="bg-red-400"
+                                onClick={() => openDeleteModal(course.id)}
+                              />
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
                 <tr className="bg-gray-100">
                   <td
                     colSpan={5}

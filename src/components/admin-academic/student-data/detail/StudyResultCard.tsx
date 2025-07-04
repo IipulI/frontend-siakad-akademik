@@ -93,12 +93,10 @@ export default function StudyResultCard() {
             {!Khs?.rincianKrsDto || Khs.rincianKrsDto.length === 0 ? (
               <tr>
                 <td
+                  className="border-1 text-center border-gray-500 font-semibold p-2"
                   colSpan={12}
-                  className="border border-gray-500 p-8 text-center text-gray-500"
                 >
-                  {!filters.idPeriode
-                    ? "Pilih periode untuk melihat data KHS"
-                    : "Tidak ada data KHS untuk periode yang dipilih"}
+                  Data KHS Tidak Tersedia
                 </td>
               </tr>
             ) : (

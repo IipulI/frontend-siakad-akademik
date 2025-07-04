@@ -292,9 +292,6 @@ export function useCreateStudent() {
       formData.append("request", data.request);
       formData.append("requestKeluarga", data.requestKeluarga);
 
-      console.log("REQUEST PAYLOAD:", data.request);
-      console.log("REQUEST PAYLOAD:", data.requestKeluarga);
-
       // Send as multipart/form-data
       const response = await Api.post("/akademik/mahasiswa", formData, {
         headers: {
@@ -326,6 +323,79 @@ export function useDeleteStudent() {
     onSuccess: () => {
       // Invalidate pagination queries
       queryClient.invalidateQueries({ queryKey: ["getStudent"] });
+    },
+  });
+}
+
+// GET
+export function getFotoProfil(id: string) {
+  return useQuery<string>({
+    queryKey: ["foto", id],
+    queryFn: async () => {
+      try {
+        const response = await Api.get(`/akademik/mahasiswa/${id}/foto-profil`);
+        return response.data.data;
+      } catch (error) {
+        // Handle specific cases where photo might not exist
+        if (error.response?.status === 404) {
+          return null; // or return a default photo URL
+        }
+        throw error;
+      }
+    },
+    enabled: !!id, // Only run query if id is provided
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+}
+
+// PUT - Update Student Hook
+export function useUpdateStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["updateStudent"],
+    mutationFn: async (data: {
+      id: string; // Student ID untuk parameter path
+      fotoProfil?: File;
+      ijazahSekolah?: File;
+      request: string; // JSON string as shown in the API
+    }) => {
+      const formData = new FormData();
+
+      // Append files if provided
+      if (data.fotoProfil) {
+        formData.append("fotoProfil", data.fotoProfil);
+      }
+
+      if (data.ijazahSekolah) {
+        formData.append("ijazahSekolah", data.ijazahSekolah);
+      }
+
+      // Append the request JSON string
+      formData.append("request", data.request);
+
+      // Send as multipart/form-data with student ID in URL
+      const response = await Api.put(
+        `/akademik/mahasiswa/${data.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data.data;
+    },
+    onSuccess: (data, variables) => {
+      console.log("Student updated successfully:", data);
+      // Invalidate pagination queries
+      queryClient.invalidateQueries({ queryKey: ["getStudent"] });
+      // Optionally invalidate specific student query
+      queryClient.invalidateQueries({ queryKey: ["getStudent", variables.id] });
+    },
+    onError: (error) => {
+      console.error("Error updating student:", error);
     },
   });
 }

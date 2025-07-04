@@ -83,7 +83,7 @@ export default function StudyPlanCard() {
             {!krs?.krs || krs.krs.length === 0 ? (
               <tr>
                 <td
-                  className="border-1 text-center border-gray-500 font-semibold p-2"
+                  className="text-center font-semibold p-2"
                   colSpan={9}
                 >
                   Data KRS Tidak Tersedia

@@ -113,12 +113,10 @@ export default function CollegeGrades() {
             {!nilaiKuliah || nilaiKuliah.length === 0 ? (
               <tr>
                 <td
+                  className="border-1 text-center border-gray-500 font-semibold p-2"
                   colSpan={8}
-                  className="border border-gray-500 p-8 text-center text-gray-500"
                 >
-                  {!filters.namaPeriode
-                    ? "Pilih periode untuk melihat data Nilai Kuliah"
-                    : "Tidak ada data Nilai Kuliah untuk periode yang dipilih"}
+                  Data Nilai Kuliah Tidak Tersedia
                 </td>
               </tr>
             ) : (

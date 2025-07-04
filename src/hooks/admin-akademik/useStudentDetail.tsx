@@ -229,6 +229,7 @@ export function getMengulang(mahasiswaId: string, periodeAkademikId: string) {
 }
 
 interface SuntingKrs {
+  id: string;
   kurikulum: number;
   kodeMataKuliah: string;
   namaMataKuliah: string;
@@ -359,5 +360,34 @@ export function getActiveBill(mahasiswaId: string, namaPeriode: string = "") {
       return response.data.data;
     },
     refetchOnWindowFocus: false,
+  });
+}
+
+// Interface untuk data edit KRS - hanya nilaiNumerik
+interface EditKrsData {
+  krsId: string;
+  nilaiNumerik: number;
+}
+
+// Hook untuk edit KRS
+export function useEditKrs() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationKey: ["editKrs"],
+    mutationFn: async (data: EditKrsData) => {
+      const response = await Api.put(
+        `/akademik/mahasiswa/sunting-krs/update/${data.krsId}`,
+        {
+          nilaiNumerik: data.nilaiNumerik,
+        }
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {
+      // Invalidate queries untuk refresh data
+      queryClient.invalidateQueries({ queryKey: ["getSuntingKrs"] });
+      queryClient.invalidateQueries({ queryKey: ["getStudentData"] });
+    },
   });
 }
