@@ -115,7 +115,7 @@ export default function FormLogin() {
   return (
       <div
           className="min-h-screen w-full bg-cover bg-center flex items-center justify-center px-4"
-          style={{ backgroundImage: 'url("/img/background_uika.jpg")' }}
+          style={{ backgroundImage: 'url("/img/bg_uika.jpg")' }}
       >
         <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl w-full">
           {/* Informational Side */}

@@ -2,123 +2,72 @@ import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import ProfileRedirectButton from "../../../components/profile/ProfileRedirectButton";
 import RoundedBorderLayout from "../../../components/profile/RoundedBorderLayout";
-import InputField from "../../../components/profile/InputBoxField";
+import DataCard from "../../../components/profile/DataCard";
 import { StudentRoute } from "../../../types/VarRoutes";
 import { SquareCheckBig } from "lucide-react";
+import { MahasiswaProfile } from "../../../types/mahasiswa.types";
 
-const EducationHistory = () => {
+// Hooks
+import { useAccountInfo } from "../../../hooks/useAccountInfo";
+import { useMahasiswaProfile } from "../../../hooks/mahasiswa/useProfile";
+
+// Child Component for the Education Form
+const EducationForm = ({ profile }: { profile: MahasiswaProfile }) => {
   return (
-    <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"} className={""}>
-      <div className="grid md:grid-cols-8 gap-6 p-4 border-t-2 border-primary-yellow rounded-t-sm">
-        <div className="md:col-span-2">
-          <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
-            <img
-              width={150}
-              src="/img/profile_logo.png"
-              alt=""
-              className="border-2 shadow rounded-full"
-            />
-            <h1 className="uppercase text-primary-brown">
-              Muhammad Ridho Fathan
-            </h1>
-            <span className="text-secondary-gray underline">
-              idhopatan.2@gmail.com
-            </span>
-            <ProfileRedirectButton route={String(StudentRoute.profile.profile)}>
-              Data Diri
-            </ProfileRedirectButton>
-            <ProfileRedirectButton route={String(StudentRoute.profile.parent)}>
-              Orang Tua Wali
-            </ProfileRedirectButton>
-            <ProfileRedirectButton
-              route={String(StudentRoute.profile.programStudy)}
-            >
-              Program Studi
-            </ProfileRedirectButton>
-            <ProfileRedirectButton
-              route={String(StudentRoute.profile.educationHistory)}
-            >
-              Pendidikan Asal
-            </ProfileRedirectButton>
-
-            <button className="flex w-full mt-10 bg-primary-green rounded p-2 justify-center items-center space-x-2 text-[#DAB969]">
-              <SquareCheckBig color="#DAB969" />
-              <p>Edit Data</p>
-            </button>
-          </div>
+      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+        <div className="flex flex-col space-y-4 ">
+          <DataCard title={"Pendidikan Asal"} desc={profile.pendidikanAsal || "-"} />
+          <DataCard title={"Provinsi Sekolah"} desc={profile.provinsiSekolah || "-"} />
+          <DataCard title={"Kota/Kab Sekolah"} desc={profile.kotaKabSekolah || "-"} />
+          <DataCard title={"Sekolah"} desc={profile.namaPendidikanAsal || "-"} />
+          <DataCard title={"Alamat sekolah"} desc={profile.alamatSekolah || "-"} />
         </div>
-        <div className="md:col-span-6 space-y-4">
-          <EducationForm />
+        <div className="flex flex-col space-y-4 ">
+          <DataCard title={"Telepon Sekolah"} desc={profile.teleponSekolah || "-"} />
+          <DataCard title={"No Ijazah Sekolah"} desc={profile.noIjazahSekolah || "-"} />
+          <DataCard title={"NISN"} desc={profile.nisn || "-"} />
+          <DataCard title={"File Ijazah Terakhir"} desc={"-"} />
         </div>
-      </div>
-    </MainLayout>
+      </RoundedBorderLayout>
   );
 };
 
-const EducationForm = () => {
+
+// ⭐️ Main Page Component ⭐️
+const EducationHistory = () => {
+  const accountInfo = useAccountInfo();
+  const { profile, loading, error } = useMahasiswaProfile(accountInfo?.id || null);
+
+  if (loading) {
+    return <MainLayout titlePage="Pendidikan Asal"><div className="p-4">Loading... ⏳</div></MainLayout>;
+  }
+
+  if (error || !profile) {
+    return <MainLayout titlePage="Pendidikan Asal"><div className="p-4 text-red-500">Error: {error || "Profile not found"} ❌</div></MainLayout>;
+  }
+
   return (
-    <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
-      <div className="flex flex-col space-y-4 ">
-        <InputField
-          placeholder={"SMK"}
-          title={"Pendidikan Asal"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"Jawa Barat"}
-          title={"Provinsi Sekolah"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"Kota Bogor"}
-          title={"Kota/Kab Sekolah"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"20220274 - SMKN 2 BOGOR"}
-          title={"Sekolah"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={
-            "Jl. Pangeran Sogiri No.404, RT.06/RW.01, Tanah Baru, Kec. Bogor Utara, Kota Bogor, Jawa Barat 16154"
-          }
-          textArea={false}
-          title={"Alamat sekolah"}
-          type={""}
-        />
-      </div>
-      <div className="flex flex-col space-y-4 ">
-        <InputField
-          placeholder={"02518652085"}
-          title={"Telepon Sekolah"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={""}
-          title={"No Izajah Sekolah"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"12345566778"}
-          title={"NISN"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={""}
-          title={"File Ijazah Terakhir"}
-          type={""}
-          textArea={false}
-        />
-      </div>
-    </RoundedBorderLayout>
+      <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"}>
+        <div className="grid md:grid-cols-8 gap-6 p-4 border-t-2 border-primary-yellow rounded-t-sm">
+          {/* Sidebar */}
+          <div className="md:col-span-2">
+            <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
+              <img width={150} src="/img/profile_logo.png" alt="Profile" className="border-2 shadow rounded-full" />
+              <h1 className="uppercase text-primary-brown">{profile.nama}</h1>
+              <span className="text-secondary-gray underline">{profile.emailPribadi}</span>
+              <ProfileRedirectButton route={String(StudentRoute.profile.profile)}>Data Diri</ProfileRedirectButton>
+              <ProfileRedirectButton route={String(StudentRoute.profile.parent)}>Orang Tua Wali</ProfileRedirectButton>
+              <ProfileRedirectButton route={String(StudentRoute.profile.programStudy)}>Program Studi</ProfileRedirectButton>
+              <ProfileRedirectButton route={String(StudentRoute.profile.educationHistory)}>Pendidikan Asal</ProfileRedirectButton>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="md:col-span-6 space-y-4">
+            <EducationForm profile={profile} />
+          </div>
+        </div>
+      </MainLayout>
   );
 };
 

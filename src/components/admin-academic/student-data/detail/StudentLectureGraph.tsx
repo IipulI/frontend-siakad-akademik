@@ -8,26 +8,17 @@ import {
   ResponsiveContainer,
   ReferenceArea,
 } from "recharts";
+import { getLearningProgres } from "../../../../hooks/admin-akademik/useStudentDetail";
+import { useLocation } from "react-router-dom";
+import LoadingSpinner from "../../../LoadingSpinner";
 
 export default function StudenLectureGraph() {
-  const data = [
-    { semester: 0, sks: 0 },
-    { semester: 1, sks: 18 },
-    { semester: 2, sks: 21 },
-    { semester: 3, sks: 22 },
-    { semester: 4, sks: 21 },
-    { semester: 5, sks: 23 },
-    { semester: 6, sks: 21 },
-    { semester: 7, sks: null },
-    { semester: 8, sks: null },
-    { semester: 9, sks: null },
-    { semester: 10, sks: null },
-    { semester: 11, sks: null },
-    { semester: 12, sks: null },
-    { semester: 13, sks: null },
-    { semester: 14, sks: null },
-    { semester: 15, sks: null },
-  ];
+
+  const {state} = useLocation()
+
+  const { data:studenLectureGraph } = getLearningProgres(state);
+
+  const data = studenLectureGraph?.perkuliahan
 
   const renderCustomDot = (props: {
     cx?: number;
@@ -63,7 +54,7 @@ export default function StudenLectureGraph() {
       <div className="w-full h-64 md:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
-            data={data}
+            data={data?.sksDiambilPerSemester}
             margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />

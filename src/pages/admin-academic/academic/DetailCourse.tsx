@@ -1,24 +1,28 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, ArrowLeft } from "lucide-react";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { useNavigate, useParams } from "react-router-dom";
+import { Search, ArrowLeft } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
+
+// const fetchCourseDetail = async (id: string): Promise<CourseData> => {
+//   const token = localStorage.getItem("token");
+//   if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+//   const response = await Api.get(`/akademik/mata-kuliah/${id}`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
+
+//   return response.data.data;
+// };
 
 const DetailCourse: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
-  const sksTatapMuka = 2;
-  const sksPraktikum = 1;
-  const totalSks = sksTatapMuka + sksPraktikum;
-  const semester = 1;
-  const unitPengampu = "Universitas Ibn Khaldun Bogor";
-  const kodeMataKuliah = "AK001";
-  const namaMataKuliah = "Akuntansi Dasar";
-  const kurikulum = "2024 Genap";
-  const prasyarat1 = "Akuntansi Menengah";
-  const prasyarat2 = "Akuntansi Lanjutan";
-  const prasyarat3 = "Manajemen Keuangan";
+  const { data: courseDetail, isLoading, error } = getCourseDataById(id!);
 
+  // --- event handlers ---
   const handleBack = () => {
     navigate(AdminAcademicRoute.courseManagement.courseManagement);
   };
@@ -26,6 +30,37 @@ const DetailCourse: React.FC = () => {
   const handleNavigation = (path: string) => {
     navigate(path);
   };
+
+  // --- show loading state ---
+  if (isLoading) {
+    return (
+      <MainLayout isGreeting={false} titlePage="Detail Mata Kuliah" className="">
+        <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
+          <div className="flex items-center justify-center h-64">
+            <p>Loading...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // --- show error state ---
+  if (error || !courseDetail) {
+    return (
+      <MainLayout isGreeting={false} titlePage="Detail Mata Kuliah" className="">
+        <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
+          <div className="flex items-center justify-center h-64">
+            <p className="text-red-500">Error loading course detail or course not found</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // --- Calculate values from fetched data ---
+  const sksTatapMuka = courseDetail.sksTatapMuka || 0;
+  const sksPraktikum = courseDetail.sksPraktikum || 0;
+  const totalSks = sksTatapMuka + sksPraktikum;
 
   return (
     <MainLayout isGreeting={false} titlePage="Detail Mata Kuliah" className="">
@@ -57,11 +92,11 @@ const DetailCourse: React.FC = () => {
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
+            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>RPS</p>
             </div>
@@ -71,18 +106,18 @@ const DetailCourse: React.FC = () => {
           <div className="w-full bg-white py-2 px-2 md:w-[80%]">
             <div className="bg-[#DFF0D8] p-5 mb-6 text-black">
               <h2>
-                Kode, Nama & Total SKS tidak bisa diubah karena mata kuliah sudah digunakan di kurikulum <strong>S1 Akuntansi</strong>
+                Kode, Nama & Total SKS tidak bisa diubah karena mata kuliah sudah digunakan di kurikulum <strong>S1 {courseDetail.programStudi}</strong>
               </h2>
             </div>
 
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Tahun Kurikulum:</label>
-                <p className="px-3 py-2 rounded flex-1">{kurikulum}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.tahunKurikulum}</p>
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3 md:gap-10">
                 <label className="font-semibold w-40">Unit Pengampu:</label>
-                <p className="px-3 py-2 rounded flex-1">{unitPengampu}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.programStudi}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -90,11 +125,11 @@ const DetailCourse: React.FC = () => {
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Kode Mata Kuliah:</label>
-                <p className="px-3 py-2 rounded flex-1">{kodeMataKuliah}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.kodeMataKuliah}</p>
               </div>
               <div className="w-full md:w-1/2 flex items-center gap-3 md:gap-11">
                 <label className="font-semibold w-40">Semester:</label>
-                <p className="px-3 py-2 rounded flex-1">{semester}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.semester}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -102,11 +137,11 @@ const DetailCourse: React.FC = () => {
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Nama Mata Kuliah:</label>
-                <p className="px-3 py-2 rounded flex-1">{namaMataKuliah}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.namaMataKuliah}</p>
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40 md:w-48 whitespace-nowrap">Mata Kuliah Prasyarat 1:</label>
-                <p className="px-3 py-2 rounded flex-1">{prasyarat1}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyaratMataKuliah1?.namaMataKuliah || "-"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -118,7 +153,7 @@ const DetailCourse: React.FC = () => {
               </div>
               <div className="w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40 md:w-48 whitespace-nowrap">Mata Kuliah Prasyarat 2:</label>
-                <p className="px-3 py-2 rounded flex-1">{prasyarat2}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyaratMataKuliah2?.namaMataKuliah || "-"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -130,14 +165,25 @@ const DetailCourse: React.FC = () => {
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40 md:w-48 whitespace-nowrap">Mata Kuliah Prasyarat 3:</label>
-                <p className="px-3 py-2 rounded flex-1">{prasyarat3}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyaratMataKuliah3?.namaMataKuliah || "-"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
-            <div className="flex flex-colgap-4 mb-4 md:flex-row">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className="w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Total SKS:</label>
                 <p className="px-3 py-2 rounded  flex-1">{totalSks}</p>
+              </div>
+              <div className="w-full md:w-1/2 flex items-center gap-3">
+                <label className="font-semibold w-40">Jenis Mata Kuliah:</label>
+                <p className="px-3 py-2 rounded flex-1 md:ml-8">{courseDetail.opsiMataKuliah === null || courseDetail.opsiMataKuliah === undefined ? "" : courseDetail.opsiMataKuliah ? "Wajib" : "Pilihan"}</p>
+              </div>
+            </div>
+            <hr className="border-t-2 border-gray-200 " />
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
+              <div className="w-full md:w-1/2 flex items-center gap-3 md:pt-3">
+                <label className="font-semibold w-40">Nilai Minimum:</label>
+                <p className="px-3 py-2 rounded  flex-1">{courseDetail.nilaiMin}</p>
               </div>
             </div>
           </div>

@@ -3,22 +3,21 @@ import ButtonClick from "../../../components/admin-academic/student-data/ButtonC
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
-import { Api } from "../../../api/Index";
 import { useState } from "react";
-
-interface ComponentBillData {
-  id: string;
-  kodeKomponen: string;
-  nama: string;
-  nominal: number;
-}
+import {
+  useEditComponentBill,
+  ComponentBillData,
+} from "../../../hooks/admin-keuangan/useComponent";
+import {
+  ToastNotif,
+  showToast,
+} from "../../../components/admin-finance/Toastify";
 
 export default function EditComponentBill() {
-  // state untuk mengambil data
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { mutateAsync, status } = useEditComponentBill();
 
-  // inisialisasi form data dengan data dari state
   const [formData, setFormData] = useState<ComponentBillData>({
     id: state.id,
     kodeKomponen: state.kodeKomponen,
@@ -26,39 +25,38 @@ export default function EditComponentBill() {
     nominal: state.nominal,
   });
 
-  // fungsi untuk menangani perubahan input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: id === "nominal" ? Number(value) : value,
     }));
   };
 
-  // fungsi untuk kembali ke daftar komponen tagihan
+  // Fungsi untuk kembali
   function handleBack() {
     navigate(AdminFinanceRoute.componentBill);
   }
 
-  // fungsi untuk menyimpan perubahan data komponen tagihan
+  // Fungsi untuk edit komponen tagihan dengan hook
   async function handleSave() {
+    if (!formData.kodeKomponen || !formData.nama || !formData.nominal) {
+      showToast.info("Mohon lengkapi semua field!");
+      return;
+    }
     try {
-      await Api.put(`/keuangan/invoice-komponen-mahasiswa/${formData.id}`, {
-        kodeKomponen: formData.kodeKomponen,
-        nama: formData.nama,
-        nominal: formData.nominal,
-      });
-
-      alert("Data berhasil disimpan!");
+      await mutateAsync(formData);
       navigate(AdminFinanceRoute.componentBill);
     } catch (error) {
-      alert("Terjadi kesalahan saat menyimpan data");
-      console.error(error);
+      if (!error.message) {
+        showToast.error("Terjadi kesalahan saat menyimpan data");
+      }
     }
   }
 
   return (
     <MainLayout isGreeting={false} titlePage="Komponen Tagihan">
+      <ToastNotif />
       <div className="p-3 border-t-2 border-primary-green rounded-sm bg-white shadow-md">
         <div className="flex justify-end gap-4">
           <ButtonClick
@@ -69,7 +67,7 @@ export default function EditComponentBill() {
             spacing="1"
           />
           <ButtonClick
-            text="Simpan"
+            text={status == "pending" ? "Menyimpan..." : "Simpan"}
             icon={<Save size={16} />}
             color="bg-primary-blueSoft"
             onClick={handleSave}

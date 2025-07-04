@@ -3,6 +3,7 @@ import Biodata from "../../../biodata/Biodata";
 import { TabNavigationButton } from "../../dashboard/TabNavigasiButton";
 import FinantialHistoryBills from "./FinantialHistoryBills";
 import FinantialHistoryPayments from "./FinantialHistoryPayments";
+import { BriefStudentData } from "./BriefStudentData";
 
 export default function FinantialHistory() {
   const [activeTab, setActiveTab] = useState("tagihan");
@@ -11,7 +12,7 @@ export default function FinantialHistory() {
   };
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false}/>
       <div className="my-4">
         <div className="flex w-1/2 lg:w-1/3 gap-2">
           <TabNavigationButton

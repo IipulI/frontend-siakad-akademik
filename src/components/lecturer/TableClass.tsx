@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Check, Eye, Trash, X } from "lucide-react"
+import { Link } from "react-router-dom";
+import { LecturerRoute } from "../../types/VarRoutes";
 
 interface TableProps {
     data: Array<Record<string, any>>;
     error: string;
-    setId?: (id: string | null) => void;
   }
 
 export default function TableClass ({
     data,
     error,
-    setId,
   }: TableProps) {
     const [selected, setSelected] = useState<number[]>([]);
     const selectAllRef = useRef<HTMLInputElement>(null);
@@ -46,7 +46,7 @@ export default function TableClass ({
       <table className="w-full my-4">
         <thead>
           <tr>
-            <th
+            {/* <th
                 className="p-2 bg-primary-green text-white border border-gray-600"
             >
                 <input
@@ -55,7 +55,7 @@ export default function TableClass ({
                   onChange={handleSelectAll}
                   disabled={!data || data.length === 0}
                 />
-            </th>
+            </th> */}
                 <th
                     className="p-2 text-sm font-normal bg-primary-green text-center text-white border border-gray-600"
                 >
@@ -118,13 +118,13 @@ export default function TableClass ({
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-center text-sm border-black/50">
+                  {/* <td className="p-2 border text-center text-sm border-black/50">
                     <input
                       type="checkbox"
                       checked={selected.includes(row.id)}
                       onChange={() => handleSelectRow(row.id)}
                     />
-                  </td>
+                  </td> */}
                   <td className="p-2 border text-center text-sm border-black/50">
                     {row.mataKuliah.tahunKurikulum}
                   </td>
@@ -161,12 +161,13 @@ export default function TableClass ({
                     className="p-2 border text-center text-sm border-black/50"
                   >
                     <div className="flex items-center justify-center w-full">
-                        <div
-                          onClick={() => setId && setId(row.id)}
+                        <Link
+                          to={LecturerRoute.courses.detailClass}
+                          onClick={() => localStorage.setItem("id_kelas_kuliah", row.id)}
                           className="bg-primary-blueSoft cursor-pointer rounded-sm flex items-center justify-center w-8 h-7"
                         >
                           <Eye className="text-white w-4 h-4" />
-                        </div>
+                        </Link>
                     </div>
                   </td>
                 </tr>

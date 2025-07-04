@@ -1,97 +1,56 @@
+import { useLocation } from "react-router-dom";
+import { getKrs } from "../../../../hooks/admin-akademik/useStudentDetail";
 import Biodata from "../../../biodata/Biodata";
+import { BriefStudentData } from "./BriefStudentData";
+import { getAcademicPeriodeDropdown } from "../../../../hooks/useFilter";
+import { useState } from "react";
 
 export default function StudyPlanCard() {
-  const courses = [
-    {
-      no: 1,
-      kodeMK: "TIF302",
-      namaMataKuliah: "Kapita Selekta",
-      kelas: "REG_B",
-      sks: 2,
-      hari: "Kamis",
-      jam: "09.40-11.20",
-      ruangan: "206",
-      dosenPengajar: "Dewi Primasari, S.Si., M.M",
-    },
-    {
-      no: 2,
-      kodeMK: "TIF304",
-      namaMataKuliah: "Manajemen Proyek",
-      kelas: "REG_B",
-      sks: 2,
-      hari: "Jumat",
-      jam: "08.00-09.40",
-      ruangan: "302",
-      dosenPengajar: "Fitrah Satrya Fajar Kusumah",
-    },
-    {
-      no: 3,
-      kodeMK: "TIF306",
-      namaMataKuliah: "Metode Penelitian",
-      kelas: "REG_B",
-      sks: 2,
-      hari: "Selasa",
-      jam: "13.00-14.40",
-      ruangan: "202",
-      dosenPengajar: "Safaruddin Hidayat Ali Ikhsan, S.Kom., M.Kom",
-    },
-    {
-      no: 4,
-      kodeMK: "TIF322",
-      namaMataKuliah: "Teknologi Multimedia + Praktikum",
-      kelas: "REG_B",
-      sks: 3,
-      hari: "Kamis",
-      jam: "13.00-14.40",
-      ruangan: "206",
-      dosenPengajar: "Hersanto Fajri, S.Ds.,M.M.D.",
-    },
-    {
-      no: 5,
-      kodeMK: "TIF362",
-      namaMataKuliah: "E-Commerce (web)",
-      kelas: "REG_B",
-      sks: 3,
-      hari: "Rabu",
-      jam: "13.00-14.40",
-      ruangan: "308",
-      dosenPengajar: "Ina Novianty, S.ST., M.M.S.I",
-    },
-    {
-      no: 6,
-      kodeMK: "TIF392",
-      namaMataKuliah: "Kerja Praktek (KP)",
-      kelas: "REG_B",
-      sks: 3,
-      hari: "Senin",
-      jam: "07.00-07.30",
-      ruangan: "LAB04",
-      dosenPengajar: "-",
-    },
-    {
-      no: 7,
-      kodeMK: "TIF394",
-      namaMataKuliah: "Proyek Perangkat Lunak Bidang Keilmuan",
-      kelas: "REG_B",
-      sks: 6,
-      hari: "Jumat",
-      jam: "13.00-17.00",
-      ruangan: "304",
-      dosenPengajar: "Fitrah Satrya Fajar Kusumah",
-    },
-  ];
+  const [filters, setFilters] = useState({
+    namaPeriode: "",
+  });
+  const { state } = useLocation();
+  const { data: periodeAkademikDropdown } = getAcademicPeriodeDropdown();
+  const { data: krs } = getKrs(state, filters.namaPeriode);
 
-  const totalSKS = courses.reduce((sum, course) => sum + course.sks, 0);
+  // Handle filter change
+  const handleFilterChange = (field: string, value: string) => {
+    console.log(`Filter changed: ${field} = ${value}`);
+
+    setFilters((prev) => {
+      const newFilters = {
+        ...prev,
+        [field]: value,
+      };
+      console.log("New filters:", newFilters);
+      return newFilters;
+    });
+  };
+
+  const reversedDataPeriodeAkademik = periodeAkademikDropdown
+    ?.slice()
+    .reverse();
+
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">
-      <Biodata showLine={false} />
+      <BriefStudentData showLine={false} />
 
       <div className="flex items-center space-x-2 mt-4">
         <label htmlFor="" className="text-sm font-medium">
           Periode
         </label>
-        <select name="" id="" className="border-2 rounded p-1 text-sm w-40">
-          <option value="2024">2024 Genap</option>
+        <select
+          name=""
+          id=""
+          className="border-2 rounded p-1 text-sm w-40"
+          onChange={(e) => handleFilterChange("namaPeriode", e.target.value)}
+          value={filters.namaPeriode}
+        >
+          {reversedDataPeriodeAkademik?.map((periode) => (
+            <option key={periode.id} value={periode.namaPeriode}>
+              {periode.namaPeriode}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -121,37 +80,48 @@ export default function StudyPlanCard() {
             </tr>
           </thead>
           <tbody>
-            {courses.map((course) => (
-              <tr key={course.no} className="hover:bg-gray-100">
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.no}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.kodeMK}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2">
-                  {course.namaMataKuliah}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.kelas}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.sks}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.hari}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.jam}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2 text-center">
-                  {course.ruangan}
-                </td>
-                <td className="border border-gray-500 font-semibold p-2">
-                  {course.dosenPengajar}
+            {!krs?.krs || krs.krs.length === 0 ? (
+              <tr>
+                <td
+                  className="text-center font-semibold p-2"
+                  colSpan={9}
+                >
+                  Data KRS Tidak Tersedia
                 </td>
               </tr>
-            ))}
+            ) : (
+              krs.krs.map((course, index) => (
+                <tr key={index + 1} className="hover:bg-gray-100">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.kodeMataKuliah}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2">
+                    {course.namaMataKuliah}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.kelas}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.sks}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.hari}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.jam}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
+                    {course.ruangan}
+                  </td>
+                  <td className="border border-gray-500 font-semibold p-2">
+                    {course.dosenPengajar}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
           <tfoot>
             <tr>
@@ -162,7 +132,7 @@ export default function StudyPlanCard() {
                 Total SKS
               </td>
               <td className="border border-gray-500 p-2 text-center font-semibold">
-                {totalSKS}
+                {krs?.totalSks}
               </td>
               <td
                 colSpan={4}
@@ -177,7 +147,7 @@ export default function StudyPlanCard() {
                 Batas SKS
               </td>
               <td className="border border-gray-500 p-2 text-center font-semibold">
-                14
+                {krs?.batasSks}
               </td>
               <td
                 colSpan={4}
