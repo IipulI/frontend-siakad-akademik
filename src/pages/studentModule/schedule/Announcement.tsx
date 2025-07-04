@@ -3,9 +3,23 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { TableAnnouncement } from "../../../components/Table";
 import { ArrowLeft, RefreshCw, Search } from "lucide-react";
 import DetailAnnouncement from "../../../components/schedule/DetailAnnouncement";
+import getAnnouncements from "../../../hooks/useMahasiswa";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function Announcement() {
   const [id, setId] = useState<string | null>(null);
+
+  const {
+    data: announcements,
+    isLoading: isLoadingAnnouncements,
+    isError: isErrorAnnouncements,
+  } = getAnnouncements();
+
+  if (isLoadingAnnouncements) {
+    return <LoadingSpinner />;
+  }
+
+  console.log("Pengumuman data", announcements);
 
   const tableHead = ["Tanggal", "Penulis", "Judul", "Aksi"];
   const data = [
@@ -69,7 +83,7 @@ export default function Announcement() {
         ) : (
           <TableAnnouncement
             tableHead={tableHead}
-            data={data}
+            data={announcements}
             error={"error"}
             setId={setId}
           />

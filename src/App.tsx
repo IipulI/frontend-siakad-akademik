@@ -178,7 +178,7 @@ export default function App() {
         element={<CreateCollegeClass />}
       />
       <Route
-        path={String(AdminAcademicRoute.collegeClass.detailClass)}
+        path={String(`${AdminAcademicRoute.collegeClass.detailClass}/:id`)}
         element={<DetailCollegeClass />}
       />
       <Route
@@ -358,18 +358,47 @@ export default function App() {
         element={<EditComponentBill />}
       />
 
-
-        {/* Route untuk dosen */}
-        <Route path={String(LecturerRoute.dashboard)} element={<DashboardLecturer />} />
-        <Route path={String(LecturerRoute.guidance.consultation)} element={<ConsultationLecturer />} />
-        <Route path={String(LecturerRoute.guidance.proposal)} element={<ProposalLecturer />} />
-        <Route path={String(LecturerRoute.schedule.calendar)} element={<CalendarLecturer />} />
-        <Route path={String(LecturerRoute.guidance.finalProject)} element={<FinalProjectLecturer />} />
-        <Route path={String(LecturerRoute.guidance.supporter)} element={<SupporterLecturer />} />
-        <Route path={String(LecturerRoute.guidance.advisor)} element={<AdvisorLecturer />} />
-        <Route path={String(LecturerRoute.courses.course)} element={<CourseLecturer />} />
-        <Route path={String(LecturerRoute.courses.stopStudy)} element={<StopStudyLecturer />} />
-        <Route path={String(LecturerRoute.courses.class)} element={<ClassLecturer />} />
+      {/* Route untuk dosen */}
+      <Route
+        path={String(LecturerRoute.dashboard)}
+        element={<DashboardLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.consultation)}
+        element={<ConsultationLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.proposal)}
+        element={<ProposalLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.schedule.calendar)}
+        element={<CalendarLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.finalProject)}
+        element={<FinalProjectLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.supporter)}
+        element={<SupporterLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.advisor)}
+        element={<AdvisorLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.courses.course)}
+        element={<CourseLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.courses.stopStudy)}
+        element={<StopStudyLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.courses.class)}
+        element={<ClassLecturer />}
+      />
     </Routes>
   );
 }

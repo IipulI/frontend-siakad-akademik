@@ -14,13 +14,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import getAcademicPeriods from "../../../hooks/usePeriodeAkademik";
 import getProgramStudies from "../../../hooks/useProgramStudi";
+import { useMutation } from "@tanstack/react-query";
+import { Api } from "../../../api/Index";
+import {
+  addCollegeClass,
+  CreateCollegeClassPayload,
+  getRooms,
+  getSubjects,
+  getYearCuriculum,
+} from "../../../hooks/useKelasKuliah";
 
 const CreateCollegeClass = () => {
-  const periodOptions = [{ value: "", label: "2025 Ganjil" }];
-  const subjectOptions = [{ value: "", label: "Mata Kuliah" }];
-  const yearOptions = [{ value: "", label: "2025" }];
-  const prodiOptions = [{ value: "", label: "Universitas Ibnu Khaldun" }];
-  const curiculumOptions = [{ value: "", label: "Semua Kurikulum" }];
   const navigate = useNavigate();
   const [scheduleList, setScheduleList] = useState([
     {
@@ -32,6 +36,33 @@ const CreateCollegeClass = () => {
       room: "",
     },
   ]);
+
+  const [academicPeriodId, setAcademicPeriodId] = useState("");
+  const [systemType, setSystemType] = useState("");
+  const [programStudyId, setProgramStudyId] = useState("");
+  const [selectedProgramStudyName, setSelectedProgramStudyName] = useState("");
+
+  //   const [yearCurriculumId, setYearCurriculumId] = useState("");
+
+  const [capacity, setCapacity] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [subject, setSubject] = useState("");
+  const [nameClass, setNameClass] = useState("");
+  const [totalMeet, setTotalMeet] = useState("");
+
+  const { mutate } = useMutation({
+    mutationFn: async (data: CreateCollegeClassPayload) => {
+      const response = await Api.post("/akademik/kelas-kuliah", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      alert("Kelas berhasil ditambahkan!");
+    },
+    onError: (err) => {
+      console.error("Terjadi kesalahan:", err);
+    },
+  });
 
   const addNewSchedule = () => {
     setScheduleList((prev) => [
@@ -50,8 +81,31 @@ const CreateCollegeClass = () => {
     navigate(AdminAcademicRoute.collegeClass.class);
   };
 
-  const save = () => {
-    alert("save");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const payload = {
+      siakPeriodeAkademikId: academicPeriodId,
+      sistemKuliah: systemType,
+      siakProgramStudiId: programStudyId,
+      kapasitas: parseInt(capacity),
+      tanggalMulai: startDate,
+      tanggalSelesai: endDate,
+      siakMataKuliahId: subject,
+      nama: nameClass,
+      jumlahPertemuan: parseInt(totalMeet),
+      jadwalKuliah: scheduleList.map((item) => ({
+        hari: item.day,
+        siakRuanganId: item.room,
+        jamMulai: item.startTime + ":00", // tambahkan detik
+        jamSelesai: item.endTime + ":00", // tambahkan detik
+        jenisPertemuan: item.meetingType,
+        metodePembelajaran: item.learningMethod,
+      })),
+    };
+
+    console.log("Payload ke mutate:", payload);
+    mutate(payload);
   };
 
   const {
@@ -65,6 +119,29 @@ const CreateCollegeClass = () => {
     isLoading: isLoadingProgramStudy,
     error: isErrorProgramStudy,
   } = getProgramStudies();
+
+  const {
+    data: curiculumYear,
+    isLoading: isLoadingCuriculumYear,
+    error: isErrorCuriculumYear,
+  } = getYearCuriculum();
+
+  const {
+    data: subjects,
+    isLoading: isLoadingSubjects,
+    error: isErrorSubjects,
+  } = getSubjects();
+
+  const {
+    data: rooms,
+    isLoading: isLoadingRooms,
+    error: isErrorRooms,
+  } = getRooms();
+
+  console.log("Periode Akademik", academicPeriods);
+  console.log("Program Studi", programStudies);
+  console.log("Tahun Kurikulum", curiculumYear);
+  console.log("Mata Kuliah", subjects);
 
   if (isLoadingAcademicPeriod || isLoadingProgramStudy) {
     return <LoadingSpinner />;
@@ -96,11 +173,11 @@ const CreateCollegeClass = () => {
   const systemOptions = [
     {
       id: "1",
-      type: "reguler",
+      type: "Reguler",
     },
     {
       id: "2",
-      type: "karyawan",
+      type: "Karyawan",
     },
   ];
 
@@ -109,7 +186,7 @@ const CreateCollegeClass = () => {
       <div className="space-y-4">
         <div className="flex justify-between items-center p-4 bg-[#DFF0D8]">
           <span>
-            Default Isian Tanngal Mulai dan Tanggal Selesai diambil dari Periode
+            Default Isian Tanggal Mulai dan Tanggal Selesai diambil dari Periode
             Akademik dengan jenis Perkuliahan
           </span>
           <CircleX />
@@ -126,7 +203,7 @@ const CreateCollegeClass = () => {
               icon={<Save size={15} strokeWidth={3} />}
               color="bg-primary-blueSoft"
               text="Simpan"
-              onClick={save}
+              onClick={handleSubmit}
             />
           </div>
           <div className="space-y-3">
@@ -141,15 +218,16 @@ const CreateCollegeClass = () => {
                 required
                 getOptionLabel={(opt) => opt.namaPeriode}
                 getOptionValue={(opt) => opt.id}
+                onChange={(val) => setAcademicPeriodId(val?.id ?? "")}
               />
-
               <SelectInput<SystemProps>
                 label="Sistem Kuliah"
                 options={systemOptions}
                 defaultValue=""
                 required
                 getOptionLabel={(opt) => opt.type}
-                getOptionValue={(opt) => opt.id}
+                getOptionValue={(opt) => opt.type}
+                onChange={(val) => setSystemType(val?.type ?? "")}
               />
               <SelectInput<ProgramStudy>
                 label="Program Studi"
@@ -158,25 +236,74 @@ const CreateCollegeClass = () => {
                 required
                 getOptionLabel={(opt) => opt.namaProgramStudi}
                 getOptionValue={(opt) => opt.id}
+                onChange={(val) => {
+                  setProgramStudyId(val?.id ?? "");
+                  setSelectedProgramStudyName(val?.namaProgramStudi ?? "");
+                }}
               />
-              <TextInput label="Kapasitas" />
-              {/* <SelectInput
-                options={yearOptions}
+              <TextInput
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
+                label="Kapasitas"
+              />
+              <SelectInput
+                options={curiculumYear}
                 required={true}
+                getOptionLabel={(opt) => opt.tahun}
+                getOptionValue={(opt) => opt.tahun}
+                // onChange={(val) => setNama(val?.id ?? "")}
                 label="Tahun Kurikulum"
-              /> */}
-              <DateInput label="Tanggal Mulai" />
-              <TextInput label="Mata Kuliah" />
-              <DateInput label="Tanggal Selesai" />
-              <TextInput label="Nama Kelas" />
-              <TextInput label="Jumlah Pertemuan" />
+                onChange={(e) => setYearCurriculumId(e.target.value)}
+              />
+              <DateInput
+                value={startDate}
+                onChange={setStartDate}
+                label="Tanggal Mulai"
+              />
+
+              <SelectInput
+                options={
+                  subjects?.filter(
+                    (matkul) =>
+                      matkul.namaProgramStudi === selectedProgramStudyName
+                  ) ?? []
+                }
+                required={true}
+                getOptionLabel={(opt) => opt.namaMataKuliah}
+                getOptionValue={(opt) => opt.mataKuliahId}
+                label="Mata Kuliah"
+                onChange={(val) => {
+                  console.log("Selected Mata Kuliah:", val);
+                  setSubject(val?.mataKuliahId ?? "");
+                }}
+              />
+
+              <DateInput
+                value={endDate}
+                onChange={setEndDate}
+                label="Tanggal Selesai"
+              />
+              <TextInput
+                value={nameClass}
+                onChange={(e) => setNameClass(e.target.value)}
+                label="Nama Kelas"
+              />
+              <TextInput
+                value={totalMeet}
+                onChange={(e) => setTotalMeet(e.target.value)}
+                label="Jumlah Pertemuan"
+              />
             </div>
           </div>
           <div className="space-y-3">
             <div>
               <h1 className="font-bold text-2xl">Jadwal Mingguan</h1>
             </div>
-            <CreateCollegeClassTable scheduleList={scheduleList} />
+            <CreateCollegeClassTable
+              setScheduleList={setScheduleList}
+              scheduleList={scheduleList}
+              listRooms={rooms}
+            />
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
               color="bg-primary-green"
@@ -198,7 +325,21 @@ const CreateCollegeSelectOption = () => {
   );
 };
 
-const CreateCollegeClassTable = ({ scheduleList }) => {
+const CreateCollegeClassTable = ({
+  scheduleList,
+  setScheduleList,
+  listRooms,
+}) => {
+  const handleChange = (index, field, value) => {
+    const newSchedule = [...scheduleList];
+    newSchedule[index][field] = value;
+    setScheduleList(newSchedule);
+  };
+
+  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
+  // Sudah pakai ID
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -221,34 +362,92 @@ const CreateCollegeClassTable = ({ scheduleList }) => {
             <th className="p-2 border font-semibold border-gray-300">
               Ruangan
             </th>
-            <th className="p-2 border font-semibold border-gray-300"></th>
           </tr>
         </thead>
         <tbody>
-          {scheduleList.map((_, index) => (
+          {scheduleList.map((item, index) => (
             <tr key={index} className="hover:bg-gray-50 text-center">
-              <td className="p-2 border border-gray-300 font-semibold">
-                {index + 1}
+              <td className="p-2 border border-gray-300">{index + 1}</td>
+
+              {/* Hari */}
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.day}
+                  onChange={(e) => handleChange(index, "day", e.target.value)}
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {days.map((day) => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  ))}
+                </select>
               </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <CreateCollegeSelectOption />
+
+              {/* Jam Mulai */}
+              <td className="p-2 border border-gray-300">
+                <input
+                  type="time"
+                  value={item.startTime}
+                  onChange={(e) =>
+                    handleChange(index, "startTime", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                />
               </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <CreateCollegeSelectOption />
+
+              {/* Jam Selesai */}
+              <td className="p-2 border border-gray-300">
+                <input
+                  type="time"
+                  value={item.endTime}
+                  onChange={(e) =>
+                    handleChange(index, "endTime", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                />
               </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <CreateCollegeSelectOption />
+
+              {/* Jenis Pertemuan */}
+              <td className="p-2 border border-gray-300">
+                <input
+                  type="text"
+                  value={item.meetingType}
+                  onChange={(e) =>
+                    handleChange(index, "meetingType", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                />
               </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <CreateCollegeSelectOption />
+
+              {/* Metode Pembelajaran */}
+              <td className="p-2 border border-gray-300">
+                <input
+                  type="text"
+                  value={item.learningMethod}
+                  onChange={(e) =>
+                    handleChange(index, "learningMethod", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                />
               </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <CreateCollegeSelectOption />
+
+              {/* Ruangan */}
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.room}
+                  onChange={(e) => handleChange(index, "room", e.target.value)}
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {listRooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.namaRuangan}
+                    </option>
+                  ))}
+                </select>
               </td>
-              <td className="p-2 border border-gray-300 font-semibold">
-                <CreateCollegeSelectOption />
-              </td>
-              <td className="p-2 border border-gray-300 font-semibold"></td>
             </tr>
           ))}
         </tbody>

@@ -56,6 +56,8 @@ interface InputProps {
   required?: boolean;
   defaultValue?: string;
   placeHolder?: string;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface SelectProps<T = any> {
@@ -72,6 +74,8 @@ export function TextInput({
   required = false,
   defaultValue = "",
   placeHolder,
+  value,
+  onChange,
 }: InputProps) {
   return (
     <div className="grid grid-cols-2 items-center mb-3">
@@ -80,6 +84,8 @@ export function TextInput({
         {required && <span className="text-red-500">*</span>}
       </label>
       <input
+        value={value}
+        onChange={onChange}
         placeholder={placeHolder}
         className="bg-white border text-sm sm:text-base border-gray-300 text-black/60 font-semibold  rounded focus:ring-blue-500 focus:border-blue-500 p-1"
         defaultValue={defaultValue}
@@ -95,7 +101,21 @@ export function SelectInput<T>({
   defaultValue = "",
   getOptionLabel,
   getOptionValue,
-}: SelectProps<T>) {
+  onChange, // ✅ tambahkan onChange
+}: SelectProps<T> & { onChange?: (val: T | null) => void }) {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+
+    // Temukan object yang sesuai berdasarkan value-nya
+    const selectedOption = options.find(
+      (option) => getOptionValue(option) === selectedValue
+    );
+
+    if (onChange) {
+      onChange(selectedOption ?? null);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 items-center mb-3">
       <label className="w-fit font-medium text-sm sm:text-base">
@@ -106,6 +126,7 @@ export function SelectInput<T>({
         className="bg-white border text-sm sm:text-base border-gray-300 text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1"
         defaultValue={defaultValue}
         required={required}
+        onChange={handleChange} // ✅ gunakan handler
       >
         <option value="">{`-- Pilih ${label} --`}</option>
         {options.map((option) => (
@@ -123,19 +144,27 @@ interface DateInputProps {
   required?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  value?: string;
 }
 
 export function DateInput({
   label,
   required = true,
   defaultValue = "",
+  value,
   onChange = () => {},
 }: DateInputProps) {
-  const [date, setDate] = useState(defaultValue);
+  const [internalDate, setInternalDate] = useState(defaultValue);
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    setDate(newValue);
+
+    // Jika parent tidak mengatur value (uncontrolled), simpan lokal
+    if (value === undefined) {
+      setInternalDate(newValue);
+    }
+
+    // Selalu kirim perubahan ke parent
     onChange(newValue);
   };
 
@@ -147,6 +176,7 @@ export function DateInput({
       </label>
       <div className="flex">
         <div className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded-l p-2">
+          {/* Icon Kalender */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -159,16 +189,16 @@ export function DateInput({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
         </div>
         <input
           type="date"
           className="w-full bg-white border text-sm sm:text-base border-gray-300 text-gray-400 rounded-r p-2"
-          value={date}
+          value={value !== undefined ? value : internalDate}
           onChange={handleDateChange}
         />
       </div>

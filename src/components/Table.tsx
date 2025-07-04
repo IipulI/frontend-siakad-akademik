@@ -3,7 +3,18 @@ import { useState } from "react";
 import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
 import { CurriculumData, PeriodeAkademik } from "../components/types.ts";
 import { useNavigate } from "react-router-dom";
-import { Eye, Edit, Trash2, Save, X, RefreshCw, Paperclip, CornerUpLeft, Check, Pencil } from "lucide-react";
+import {
+  Eye,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  RefreshCw,
+  Paperclip,
+  CornerUpLeft,
+  Check,
+  Pencil,
+} from "lucide-react";
 
 interface TableProps {
   data: Array<Record<string, any>>;
@@ -16,7 +27,11 @@ interface TableProps {
   currentData: any | null;
   onSave: () => void;
   onReset: () => void;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;
+  onInputChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => void;
   isAdding: boolean;
   onSelect?: (id: number) => void;
   selectedIds?: number[];
@@ -53,7 +68,11 @@ interface TableCurriculumYearProps {
   currentData: CurriculumData | null;
   onSave: () => void;
   onReset: () => void;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;
+  onInputChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => void;
   isFormValid: () => boolean;
   periodeAkademikList: PeriodeAkademik[];
   selectedPeriodeId: string;
@@ -68,7 +87,10 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
       <thead>
         <tr>
           {tableHead.map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+            <th
+              key={head}
+              className="p-4 bg-primary-green text-white border border-gray-600"
+            >
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
@@ -91,7 +113,10 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
           })
         ) : (
           <tr>
-            <td colSpan={tableHead.length} className="text-center border-black border p-2">
+            <td
+              colSpan={tableHead.length}
+              className="text-center border-black border p-2"
+            >
               {error}
             </td>
           </tr>
@@ -107,7 +132,10 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
       <thead>
         <tr>
           {tableHead.map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+            <th
+              key={head}
+              className="p-4 bg-primary-green text-white border border-gray-600"
+            >
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
@@ -130,37 +158,60 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
           })
         ) : (
           <tr>
-            <td colSpan={tableHead.length} className="text-center border-black border p-2">
+            <td
+              colSpan={tableHead.length}
+              className="text-center border-black border p-2"
+            >
               {error}
             </td>
           </tr>
         )}
         <tr>
-          <td colSpan={4} className="border-black/50 text-sm text-center p-2 border">
+          <td
+            colSpan={4}
+            className="border-black/50 text-sm text-center p-2 border"
+          >
             Total SKS
           </td>
           <td className="border-black/50 text-sm border text-center p-2">25</td>
-          <td colSpan={4} className="border-black/50 text-sm border text-center p-2"></td>
+          <td
+            colSpan={4}
+            className="border-black/50 text-sm border text-center p-2"
+          ></td>
         </tr>
         <tr>
-          <td colSpan={4} className="border-black/50 text-center p-2 text-sm border">
+          <td
+            colSpan={4}
+            className="border-black/50 text-center p-2 text-sm border"
+          >
             Batas SKS
           </td>
           <td className="border-black/50 text-center p-2 text-sm border">25</td>
-          <td colSpan={4} className="border-black/50 text-sm border text-center p-2"></td>
+          <td
+            colSpan={4}
+            className="border-black/50 text-sm border text-center p-2"
+          ></td>
         </tr>
       </tbody>
     </table>
   );
 };
 
-export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps) => {
+export const TableAnnouncement = ({
+  data,
+  tableHead,
+  error,
+  setId,
+}: TableProps) => {
   return (
     <table className="w-full my-4">
       <thead>
         <tr>
           {tableHead.map((head) => (
-            <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+            <th
+              key={head}
+              className="p-4 bg-primary-green text-white border border-gray-600"
+            >
               <p className="font-semibold text-center">{head}</p>
             </th>
           ))}
@@ -171,11 +222,23 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
           data.map((row, index) => {
             return (
               <tr key={index} className="text-center">
-                <td className="p-2 border text-sm border-black/50">{row.tanggal}</td>
-                <td className="p-2 border text-sm border-black/50">{row.penulis}</td>
-                <td className="p-2 border text-sm border-black/50">{row.judul}</td>
-                <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
-                  <div onClick={() => setId && setId(row.id)} className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6">
+                <td className="p-2 border text-sm border-black/50">
+                  {row.tanggal}
+                </td>
+                <td className="p-2 border text-sm border-black/50 capitalize">
+                  {row.user}
+                </td>
+                <td className="p-2 border text-sm border-black/50">
+                  {row.judul}
+                </td>
+                <td
+                  className="p-2 border text-sm border-black/50 text-center"
+                  style={{ verticalAlign: "middle" }}
+                >
+                  <div
+                    onClick={() => setId && setId(row.id)}
+                    className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6"
+                  >
                     <Eye className="text-white w-4 h-4" />
                   </div>
                 </td>
@@ -184,7 +247,10 @@ export const TableAnnouncement = ({ data, tableHead, error, setId }: TableProps)
           })
         ) : (
           <tr>
-            <td colSpan={tableHead.length} className="text-center border-black border p-2">
+            <td
+              colSpan={tableHead.length}
+              className="text-center border-black border p-2"
+            >
               {error}
             </td>
           </tr>
@@ -215,7 +281,11 @@ export const TableCurriculumYear = ({
 
   const renderDate = (dateString: string) => {
     if (!dateString) return "";
-    const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" };
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
     return new Date(dateString).toLocaleDateString("id-ID", options);
   };
 
@@ -235,17 +305,23 @@ export const TableCurriculumYear = ({
 
     if (!periode) {
       // Try string comparison in case of type mismatch
-      periode = periodeAkademikList.find((p) => String(p.id) === String(periodeId));
+      periode = periodeAkademikList.find(
+        (p) => String(p.id) === String(periodeId)
+      );
     }
 
     if (!periode) {
       // Try loose matching (trim whitespace)
-      periode = periodeAkademikList.find((p) => String(p.id).trim() === String(periodeId).trim());
+      periode = periodeAkademikList.find(
+        (p) => String(p.id).trim() === String(periodeId).trim()
+      );
     }
 
     if (periode) {
       console.log("✅ Found periode:", periode);
-      return periode.namaPeriode || periode.nama || "Nama periode tidak tersedia";
+      return (
+        periode.namaPeriode || periode.nama || "Nama periode tidak tersedia"
+      );
     }
 
     console.log("❌ Periode not found for ID:", periodeId);
@@ -263,7 +339,10 @@ export const TableCurriculumYear = ({
           <tr>
             {tableHead.length > 0 ? (
               tableHead.map((head) => (
-                <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+                <th
+                  key={head}
+                  className="p-4 bg-primary-green text-white border border-gray-600"
+                >
                   <p className="font-semibold text-center">{head}</p>
                 </th>
               ))
@@ -279,13 +358,30 @@ export const TableCurriculumYear = ({
           {isAdding && currentData && (
             <tr className="text-center">
               <td className="p-2 border text-sm border-black/50">
-                <input type="text" name="tahun" value={currentData.tahun} onChange={onInputChange} className="border p-2 w-full" />
+                <input
+                  type="text"
+                  name="tahun"
+                  value={currentData.tahun}
+                  onChange={onInputChange}
+                  className="border p-2 w-full"
+                />
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <input type="text" name="keterangan" value={currentData.keterangan} onChange={onInputChange} className="border p-2 w-full" />
+                <input
+                  type="text"
+                  name="keterangan"
+                  value={currentData.keterangan}
+                  onChange={onInputChange}
+                  className="border p-2 w-full"
+                />
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <select name="siakPeriodeAkademikId" value={selectedPeriodeId} onChange={(e) => setSelectedPeriodeId(e.target.value)} className="border px-2 py-1 rounded w-full">
+                <select
+                  name="siakPeriodeAkademikId"
+                  value={selectedPeriodeId}
+                  onChange={(e) => setSelectedPeriodeId(e.target.value)}
+                  className="border px-2 py-1 rounded w-full"
+                >
                   <option value="">-- Pilih Periode Akademik --</option>
                   {periodeAkademikList.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -295,17 +391,36 @@ export const TableCurriculumYear = ({
                 </select>
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
+                <input
+                  type="date"
+                  name="tanggalAwal"
+                  value={currentData.tanggalAwal}
+                  onChange={onInputChange}
+                  className="border p-2 w-full"
+                />
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
+                <input
+                  type="date"
+                  name="tanggalAkhir"
+                  value={currentData.tanggalAkhir}
+                  onChange={onInputChange}
+                  className="border p-2 w-full"
+                />
               </td>
               <td className="p-2 border text-sm border-black/50">
                 <div className="flex gap-2 justify-center">
-                  <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded disabled:opacity-50" disabled={!isFormValid()}>
+                  <button
+                    onClick={onSave}
+                    className="bg-primary-green p-2 text-white cursor-pointer rounded disabled:opacity-50"
+                    disabled={!isFormValid()}
+                  >
                     <Save size={17} />
                   </button>
-                  <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                  <button
+                    onClick={onReset}
+                    className="bg-yellow-500 p-2 text-white cursor-pointer rounded"
+                  >
                     <RefreshCw size={17} />
                   </button>
                 </div>
@@ -320,13 +435,30 @@ export const TableCurriculumYear = ({
                 {isEditing && currentData?.id === row.id ? (
                   <>
                     <td className="p-2 border text-sm border-black/50">
-                      <input type="text" name="tahun" value={currentData.tahun} onChange={onInputChange} className="border p-2 w-full" />
+                      <input
+                        type="text"
+                        name="tahun"
+                        value={currentData.tahun}
+                        onChange={onInputChange}
+                        className="border p-2 w-full"
+                      />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <input type="text" name="keterangan" value={currentData.keterangan} onChange={onInputChange} className="border p-2 w-full" />
+                      <input
+                        type="text"
+                        name="keterangan"
+                        value={currentData.keterangan}
+                        onChange={onInputChange}
+                        className="border p-2 w-full"
+                      />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <select name="siakPeriodeAkademikId" value={selectedPeriodeId} onChange={(e) => setSelectedPeriodeId(e.target.value)} className="border p-2 w-full">
+                      <select
+                        name="siakPeriodeAkademikId"
+                        value={selectedPeriodeId}
+                        onChange={(e) => setSelectedPeriodeId(e.target.value)}
+                        className="border p-2 w-full"
+                      >
                         <option value="">-- Pilih Periode Akademik --</option>
                         {periodeAkademikList.map((p) => (
                           <option key={p.id} value={p.id}>
@@ -336,17 +468,36 @@ export const TableCurriculumYear = ({
                       </select>
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <input type="date" name="tanggalAwal" value={currentData.tanggalAwal} onChange={onInputChange} className="border p-2 w-full" />
+                      <input
+                        type="date"
+                        name="tanggalAwal"
+                        value={currentData.tanggalAwal}
+                        onChange={onInputChange}
+                        className="border p-2 w-full"
+                      />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <input type="date" name="tanggalAkhir" value={currentData.tanggalAkhir} onChange={onInputChange} className="border p-2 w-full" />
+                      <input
+                        type="date"
+                        name="tanggalAkhir"
+                        value={currentData.tanggalAkhir}
+                        onChange={onInputChange}
+                        className="border p-2 w-full"
+                      />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
                       <div className="flex gap-2 justify-center">
-                        <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded disabled:opacity-50" disabled={!isFormValid()}>
+                        <button
+                          onClick={onSave}
+                          className="bg-primary-green p-2 text-white cursor-pointer rounded disabled:opacity-50"
+                          disabled={!isFormValid()}
+                        >
                           <Save size={17} />
                         </button>
-                        <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                        <button
+                          onClick={onReset}
+                          className="bg-yellow-500 p-2 text-white cursor-pointer rounded"
+                        >
                           <RefreshCw size={17} />
                         </button>
                       </div>
@@ -354,19 +505,39 @@ export const TableCurriculumYear = ({
                   </>
                 ) : (
                   <>
-                    <td className="p-2 border text-sm border-black/50">{row.tahun}</td>
-                    <td className="p-2 border text-sm border-black/50">{row.keterangan}</td>
                     <td className="p-2 border text-sm border-black/50">
-                      <span className={row.siakPeriodeAkademikId ? "" : "text-red-500 italic"}>{getPeriodeName(row.siakPeriodeAkademikId)}</span>
+                      {row.tahun}
                     </td>
-                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAwal)}</td>
-                    <td className="p-2 border text-sm border-black/50">{renderDate(row.tanggalAkhir)}</td>
+                    <td className="p-2 border text-sm border-black/50">
+                      {row.keterangan}
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <span
+                        className={
+                          row.siakPeriodeAkademikId ? "" : "text-red-500 italic"
+                        }
+                      >
+                        {getPeriodeName(row.siakPeriodeAkademikId)}
+                      </span>
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      {renderDate(row.tanggalAwal)}
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      {renderDate(row.tanggalAkhir)}
+                    </td>
                     <td className="p-2 border text-sm border-black/50">
                       <div className="flex gap-2 justify-center">
-                        <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                        <button
+                          onClick={() => onEdit && onEdit(row.id)}
+                          className="bg-yellow-500 p-2 text-white cursor-pointer rounded"
+                        >
                           <Pencil size={17} />
                         </button>
-                        <button onClick={() => onDelete && onDelete(row.id)} className="bg-red-500 p-2 text-white cursor-pointer rounded">
+                        <button
+                          onClick={() => onDelete && onDelete(row.id)}
+                          className="bg-red-500 p-2 text-white cursor-pointer rounded"
+                        >
                           <Trash2 size={17} />
                         </button>
                       </div>
@@ -377,7 +548,10 @@ export const TableCurriculumYear = ({
             ))
           ) : (
             <tr>
-              <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+              <td
+                colSpan={tableHead.length || 1}
+                className="text-center border-black border p-2"
+              >
                 {error}
               </td>
             </tr>
@@ -388,12 +562,27 @@ export const TableCurriculumYear = ({
   );
 };
 
-export const TableCourseManagement: React.FC<TableProps> = ({ data, tableHead = [], error, onEdit, onDelete, selectedIds, onSelect, isEditing, currentData, onSave, onReset, onInputChange, isAdding }) => {
+export const TableCourseManagement: React.FC<TableProps> = ({
+  data,
+  tableHead = [],
+  error,
+  onEdit,
+  onDelete,
+  selectedIds,
+  onSelect,
+  isEditing,
+  currentData,
+  onSave,
+  onReset,
+  onInputChange,
+  isAdding,
+}) => {
   const navigate = useNavigate();
   const isDataAvailable = data && data.length > 0;
 
   // Cek apakah semua data terpilih
-  const isAllSelected = data.length > 0 && (selectedIds?.length ?? 0) === data.length;
+  const isAllSelected =
+    data.length > 0 && (selectedIds?.length ?? 0) === data.length;
 
   return (
     <div className="w-full overflow-x-auto">
@@ -401,11 +590,19 @@ export const TableCourseManagement: React.FC<TableProps> = ({ data, tableHead = 
         <thead>
           <tr>
             <th className="p-4 bg-primary-green text-white border border-gray-600">
-              <input type="checkbox" checked={isAllSelected} onChange={() => onSelect?.(-1)} className="cursor-pointer" />
+              <input
+                type="checkbox"
+                checked={isAllSelected}
+                onChange={() => onSelect?.(-1)}
+                className="cursor-pointer"
+              />
             </th>
 
             {tableHead.slice(1).map((head) => (
-              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+              <th
+                key={head}
+                className="p-4 bg-primary-green text-white border border-gray-600"
+              >
                 <p className="font-semibold text-center">{head}</p>
               </th>
             ))}
@@ -414,7 +611,15 @@ export const TableCourseManagement: React.FC<TableProps> = ({ data, tableHead = 
         <tbody className="font-semibold">
           {isDataAvailable ? (
             data.map((row) => {
-              const { id, kurikulum, kode, mataKuliah, sks, jenisMK, prodiPengampu } = row;
+              const {
+                id,
+                kurikulum,
+                kode,
+                mataKuliah,
+                sks,
+                jenisMK,
+                prodiPengampu,
+              } = row;
               const isChecked = selectedIds?.includes(id) ?? false;
 
               // if (isEditing && currentData && currentData.id === id) {
@@ -493,21 +698,46 @@ export const TableCourseManagement: React.FC<TableProps> = ({ data, tableHead = 
               return (
                 <tr key={id} className="text-center">
                   <td className="p-2 border text-sm border-black/50">
-                    <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto cursor-pointer" />
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => onSelect?.(id)}
+                      className="mx-auto cursor-pointer"
+                    />
                   </td>
-                  <td className="p-2 border text-sm border-black/50">{kurikulum}</td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {kurikulum}
+                  </td>
                   <td className="p-2 border text-sm border-black/50">{kode}</td>
-                  <td className="p-2 border text-sm border-black/50">{mataKuliah}</td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {mataKuliah}
+                  </td>
                   <td className="p-2 border text-sm border-black/50">{sks}</td>
-                  <td className="p-2 border text-sm border-black/50">{jenisMK}</td>
-                  <td className="p-2 border text-sm border-black/50">{prodiPengampu}</td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {jenisMK}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {prodiPengampu}
+                  </td>
                   <td className="p-2 border text-sm border-black/50 text-center">
                     <div className="flex justify-center gap-2">
-                      <div onClick={() => navigate(AdminAcademicRoute.courseManagement.detailCourse)} className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Edit">
+                      <div
+                        onClick={() =>
+                          navigate(
+                            AdminAcademicRoute.courseManagement.detailCourse
+                          )
+                        }
+                        className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8"
+                        title="Edit"
+                      >
                         <Eye className="text-white w-4 h-4" />
                       </div>
 
-                      <div onClick={() => onDelete?.(id)} className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8" title="Hapus">
+                      <div
+                        onClick={() => onDelete?.(id)}
+                        className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8"
+                        title="Hapus"
+                      >
                         <Trash2 className="text-white w-4 h-4" />
                       </div>
                     </div>
@@ -517,7 +747,10 @@ export const TableCourseManagement: React.FC<TableProps> = ({ data, tableHead = 
             })
           ) : (
             <tr>
-              <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+              <td
+                colSpan={tableHead.length || 1}
+                className="text-center border-black border p-2"
+              >
                 {error}
               </td>
             </tr>
@@ -535,7 +768,10 @@ export const TableCpl = ({ data, tableHead, error }: TableProps) => {
         <thead>
           <tr>
             {tableHead.map((head) => (
-              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+              <th
+                key={head}
+                className="p-4 bg-primary-green text-white border border-gray-600"
+              >
                 <p className="font-semibold text-center">{head}</p>
               </th>
             ))}
@@ -546,15 +782,24 @@ export const TableCpl = ({ data, tableHead, error }: TableProps) => {
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-sm border-black/50 text-left align-top">{row.kodeCpl}</td>
-                  <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpl}</td>
-                  <td className="p-2 border text-sm border-black/50 align-top text-left ">{row.kategori}</td>
+                  <td className="p-2 border text-sm border-black/50 text-left align-top">
+                    {row.kodeCpl}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50 text-left">
+                    {row.deskripsiCpl}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50 align-top text-left ">
+                    {row.kategori}
+                  </td>
                 </tr>
               );
             })
           ) : (
             <tr>
-              <td colSpan={tableHead.length} className="text-center border-black border p-2">
+              <td
+                colSpan={tableHead.length}
+                className="text-center border-black border p-2"
+              >
                 {error}
               </td>
             </tr>
@@ -572,7 +817,10 @@ export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
         <thead>
           <tr>
             {tableHead.map((head) => (
-              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+              <th
+                key={head}
+                className="p-4 bg-primary-green text-white border border-gray-600"
+              >
                 <p className="font-semibold text-center">{head}</p>
               </th>
             ))}
@@ -583,14 +831,21 @@ export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
             data.map((row, index) => {
               return (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border text-sm border-black/50">{row.kodeCpmk}</td>
-                  <td className="p-2 border text-sm border-black/50 text-left">{row.deskripsiCpmk}</td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {row.kodeCpmk}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50 text-left">
+                    {row.deskripsiCpmk}
+                  </td>
                 </tr>
               );
             })
           ) : (
             <tr>
-              <td colSpan={tableHead.length} className="text-center border-black border p-2">
+              <td
+                colSpan={tableHead.length}
+                className="text-center border-black border p-2"
+              >
                 {error}
               </td>
             </tr>
@@ -627,11 +882,25 @@ export const TableRps = ({ data, error, setId }: TableProps) => {
           {data && data.length > 0 ? (
             data.map((row) => (
               <tr key={row.id} className="text-center">
-                <td className="p-2 border text-sm border-black/50">{row.dosenPenyusun}</td>
-                <td className="p-2 border text-sm border-black/50">{row.periodeAkademik}</td>
-                <td className="p-2 border text-sm border-black/50">{row.kelas}</td>
-                <td className="p-2 border text-sm border-black/50 text-center" style={{ verticalAlign: "middle" }}>
-                  <div onClick={() => navigate(AdminAcademicRoute.rpsManagement.rpsManagement)} className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-8">
+                <td className="p-2 border text-sm border-black/50">
+                  {row.dosenPenyusun}
+                </td>
+                <td className="p-2 border text-sm border-black/50">
+                  {row.periodeAkademik}
+                </td>
+                <td className="p-2 border text-sm border-black/50">
+                  {row.kelas}
+                </td>
+                <td
+                  className="p-2 border text-sm border-black/50 text-center"
+                  style={{ verticalAlign: "middle" }}
+                >
+                  <div
+                    onClick={() =>
+                      navigate(AdminAcademicRoute.rpsManagement.rpsManagement)
+                    }
+                    className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-8"
+                  >
                     <Eye className="text-white w-4 h-4" />
                   </div>
                 </td>
@@ -689,15 +958,34 @@ export const TableOBE = ({ data, tableHead, error }) => {
             data.map((item) => (
               <tr key={item.id} className="text-center hover:bg-gray-100">
                 <td className="p-2 border border-black/50">{item.kodeProdi}</td>
-                <td className="p-2 border border-black/50">{item.programStudi}</td>
-                <td className="p-2 border border-black/50">{item.ketuaProdi}</td>
-                <td className="p-2 border border-black/50">{item.pl ? "✅" : "❌"}</td>
-                <td className="p-2 border border-black/50">{item.cpl ? "✅" : "❌"}</td>
-                <td className="p-2 border border-black/50">{item.plToCpl ? "✅" : "❌"}</td>
-                <td className="p-2 border border-black/50">{item.cpmk ? "✅" : "❌"}</td>
+                <td className="p-2 border border-black/50">
+                  {item.programStudi}
+                </td>
+                <td className="p-2 border border-black/50">
+                  {item.ketuaProdi}
+                </td>
+                <td className="p-2 border border-black/50">
+                  {item.pl ? "✅" : "❌"}
+                </td>
+                <td className="p-2 border border-black/50">
+                  {item.cpl ? "✅" : "❌"}
+                </td>
+                <td className="p-2 border border-black/50">
+                  {item.plToCpl ? "✅" : "❌"}
+                </td>
+                <td className="p-2 border border-black/50">
+                  {item.cpmk ? "✅" : "❌"}
+                </td>
                 <td className="p-2 border border-black/50 text-center">
                   <div className="flex justify-center gap-2">
-                    <button className="bg-primary-blueSoft text-white p-2 rounded" onClick={() => navigate(AdminAcademicRoute.obeManagement.graduateProfile)}>
+                    <button
+                      className="bg-primary-blueSoft text-white p-2 rounded"
+                      onClick={() =>
+                        navigate(
+                          AdminAcademicRoute.obeManagement.graduateProfile
+                        )
+                      }
+                    >
                       <Eye className="w-4 h-4" />
                     </button>
                   </div>
@@ -717,7 +1005,20 @@ export const TableOBE = ({ data, tableHead, error }) => {
   );
 };
 
-export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDelete, isEditing, isAdding, currentData, onSave, onReset, onInputChange, isFormValid }: TableProps) => {
+export const TableGraduateProfile = ({
+  data,
+  tableHead = [],
+  error,
+  onEdit,
+  onDelete,
+  isEditing,
+  isAdding,
+  currentData,
+  onSave,
+  onReset,
+  onInputChange,
+  isFormValid,
+}: TableProps) => {
   const isDataAvailable = data && data.length > 0;
 
   return (
@@ -726,7 +1027,10 @@ export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDe
         <tr>
           {tableHead.length > 0 ? (
             tableHead.map((head) => (
-              <th key={head} className="p-4 bg-primary-green text-white border border-gray-600">
+              <th
+                key={head}
+                className="p-4 bg-primary-green text-white border border-gray-600"
+              >
                 <p className="font-semibold text-center">{head}</p>
               </th>
             ))
@@ -741,23 +1045,57 @@ export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDe
         {isAdding && currentData && (
           <tr className="text-center">
             <td className="p-2 border text-sm border-black/50">
-              <input type="text" name="kodePl" value={currentData.kodePl} onChange={onInputChange} className="border p-2 w-full" placeholder="Kode PL" />
+              <input
+                type="text"
+                name="kodePl"
+                value={currentData.kodePl}
+                onChange={onInputChange}
+                className="border p-2 w-full"
+                placeholder="Kode PL"
+              />
             </td>
             <td className="p-2 border text-sm border-black/50">
-              <input type="text" name="profilLulusan" value={currentData.profilLulusan} onChange={onInputChange} className="border p-2 w-full" placeholder="Profil Lulusan" />
+              <input
+                type="text"
+                name="profilLulusan"
+                value={currentData.profilLulusan}
+                onChange={onInputChange}
+                className="border p-2 w-full"
+                placeholder="Profil Lulusan"
+              />
             </td>
             <td className="p-2 border text-sm border-black/50">
-              <input type="text" name="profesi" value={currentData.profesi} onChange={onInputChange} className="border p-2 w-full" placeholder="Profesi" />
+              <input
+                type="text"
+                name="profesi"
+                value={currentData.profesi}
+                onChange={onInputChange}
+                className="border p-2 w-full"
+                placeholder="Profesi"
+              />
             </td>
             <td className="p-2 border text-sm border-black/50">
-              <input type="text" name="deskripsi" value={currentData.deskripsi} onChange={onInputChange} className="border p-2 w-full" placeholder="Deskripsi" />
+              <input
+                type="text"
+                name="deskripsi"
+                value={currentData.deskripsi}
+                onChange={onInputChange}
+                className="border p-2 w-full"
+                placeholder="Deskripsi"
+              />
             </td>
             <td className="p-2 border text-sm border-black/50">
               <div className="flex gap-2 justify-center">
-                <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded">
+                <button
+                  onClick={onSave}
+                  className="bg-primary-green p-2 text-white cursor-pointer rounded"
+                >
                   <Save size={18} />
                 </button>
-                <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                <button
+                  onClick={onReset}
+                  className="bg-yellow-500 p-2 text-white cursor-pointer rounded"
+                >
                   <CornerUpLeft size={18} />
                 </button>
               </div>
@@ -771,23 +1109,53 @@ export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDe
               {isEditing && currentData?.id === row.id ? (
                 <>
                   <td className="p-2 border text-sm border-black/50">
-                    <input type="text" name="kodePl" value={currentData.kodePl} onChange={onInputChange} className="border p-2 w-full" />
+                    <input
+                      type="text"
+                      name="kodePl"
+                      value={currentData.kodePl}
+                      onChange={onInputChange}
+                      className="border p-2 w-full"
+                    />
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    <input type="text" name="profilLulusan" value={currentData.profilLulusan} onChange={onInputChange} className="border p-2 w-full" />
+                    <input
+                      type="text"
+                      name="profilLulusan"
+                      value={currentData.profilLulusan}
+                      onChange={onInputChange}
+                      className="border p-2 w-full"
+                    />
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    <input type="text" name="profesi" value={currentData.profesi} onChange={onInputChange} className="border p-2 w-full" />
+                    <input
+                      type="text"
+                      name="profesi"
+                      value={currentData.profesi}
+                      onChange={onInputChange}
+                      className="border p-2 w-full"
+                    />
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    <input type="text" name="deskripsi" value={currentData.deskripsi} onChange={onInputChange} className="border p-2 w-full" />
+                    <input
+                      type="text"
+                      name="deskripsi"
+                      value={currentData.deskripsi}
+                      onChange={onInputChange}
+                      className="border p-2 w-full"
+                    />
                   </td>
                   <td className="p-2 border text-sm border-black/50">
                     <div className="flex gap-2 justify-center">
-                      <button onClick={onSave} className="bg-primary-green p-2 text-white cursor-pointer rounded">
+                      <button
+                        onClick={onSave}
+                        className="bg-primary-green p-2 text-white cursor-pointer rounded"
+                      >
                         Save
                       </button>
-                      <button onClick={onReset} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                      <button
+                        onClick={onReset}
+                        className="bg-yellow-500 p-2 text-white cursor-pointer rounded"
+                      >
                         Cancel
                       </button>
                     </div>
@@ -795,16 +1163,30 @@ export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDe
                 </>
               ) : (
                 <>
-                  <td className="p-2 border text-sm border-black/50">{row.kodePl}</td>
-                  <td className="p-2 border text-sm border-black/50">{row.profilLulusan}</td>
-                  <td className="p-2 border text-sm border-black/50">{row.profesi}</td>
-                  <td className="p-2 border text-sm border-black/50">{row.deskripsi}</td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {row.kodePl}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {row.profilLulusan}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {row.profesi}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {row.deskripsi}
+                  </td>
                   <td className="p-2 border text-sm border-black/50">
                     <div className="flex gap-2 justify-center">
-                      <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 p-2 text-white cursor-pointer rounded">
+                      <button
+                        onClick={() => onEdit && onEdit(row.id)}
+                        className="bg-yellow-500 p-2 text-white cursor-pointer rounded"
+                      >
                         <Pencil size={18} />
                       </button>
-                      <button onClick={() => onDelete && onDelete(row.id)} className="bg-red-500 p-2 text-white cursor-pointer rounded">
+                      <button
+                        onClick={() => onDelete && onDelete(row.id)}
+                        className="bg-red-500 p-2 text-white cursor-pointer rounded"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -815,7 +1197,10 @@ export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDe
           ))
         ) : (
           <tr>
-            <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+            <td
+              colSpan={tableHead.length || 1}
+              className="text-center border-black border p-2"
+            >
               {error}
             </td>
           </tr>
@@ -827,7 +1212,20 @@ export const TableGraduateProfile = ({ data, tableHead = [], error, onEdit, onDe
 
 const mappingOptions = ["PPL001", "PPL002", "PPL003"];
 
-export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error, onEdit, onDelete, isEditing, isAdding, currentData, onSave, onReset, onInputChange, isFormValid }) => {
+export const TableObeCPL: React.FC<TableProps> = ({
+  data,
+  tableHead = [],
+  error,
+  onEdit,
+  onDelete,
+  isEditing,
+  isAdding,
+  currentData,
+  onSave,
+  onReset,
+  onInputChange,
+  isFormValid,
+}) => {
   const isDataAvailable = data && data.length > 0;
 
   const renderPemetaanCheckboxes = (selectedValues: string[] = []) => {
@@ -836,7 +1234,13 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
       <div className="flex flex-col items-centern">
         {options.map((option) => (
           <label key={option} className="flex items-center gap-2">
-            <input type="checkbox" name="pemetaan" value={option} checked={selectedValues.includes(option)} onChange={onInputChange} />
+            <input
+              type="checkbox"
+              name="pemetaan"
+              value={option}
+              checked={selectedValues.includes(option)}
+              onChange={onInputChange}
+            />
             {option}
           </label>
         ))}
@@ -850,12 +1254,17 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
         <tr>
           {tableHead.length > 0 ? (
             tableHead.map((head) => (
-              <th key={head} className="p-2 text-white border border-gray-600 font-medium">
+              <th
+                key={head}
+                className="p-2 text-white border border-gray-600 font-medium"
+              >
                 {head}
               </th>
             ))
           ) : (
-            <th className="p-2 text-white border border-gray-600 font-medium">Data tidak tersedia</th>
+            <th className="p-2 text-white border border-gray-600 font-medium">
+              Data tidak tersedia
+            </th>
           )}
         </tr>
       </thead>
@@ -863,20 +1272,51 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
         {isAdding && currentData && (
           <tr>
             <td className="p-2 border">
-              <input type="text" name="kodePl" value={currentData.kodePl} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Kode PL" />
+              <input
+                type="text"
+                name="kodePl"
+                value={currentData.kodePl}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Kode PL"
+              />
             </td>
             <td className="p-2 border">
-              <input type="text" name="deskripsiCapaianPembelajaran" value={currentData.deskripsiCapaianPembelajaran} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Deskripsi CPL" />
+              <input
+                type="text"
+                name="deskripsiCapaianPembelajaran"
+                value={currentData.deskripsiCapaianPembelajaran}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Deskripsi CPL"
+              />
             </td>
             <td className="p-2 border">
-              <input type="text" name="kategori" value={currentData.kategori} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Kategori" />
+              <input
+                type="text"
+                name="kategori"
+                value={currentData.kategori}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Kategori"
+              />
             </td>
-            <td className="p-2 border">{renderPemetaanCheckboxes(currentData.pemetaan ? currentData.pemetaan.split(",") : [])}</td>
+            <td className="p-2 border">
+              {renderPemetaanCheckboxes(
+                currentData.pemetaan ? currentData.pemetaan.split(",") : []
+              )}
+            </td>
             <td className="p-2 border flex justify-center gap-2">
-              <button onClick={onSave} className="bg-primary-green text-white px-2 py-1 rounded">
+              <button
+                onClick={onSave}
+                className="bg-primary-green text-white px-2 py-1 rounded"
+              >
                 <Save className="w-4 h-4" />
               </button>
-              <button onClick={onReset} className="bg-yellow-500 text-white px-2 py-1 rounded">
+              <button
+                onClick={onReset}
+                className="bg-yellow-500 text-white px-2 py-1 rounded"
+              >
                 <CornerUpLeft size={16} />
               </button>
             </td>
@@ -889,21 +1329,51 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
               {isEditing && currentData?.id === row.id ? (
                 <>
                   <td className="p-2 border">
-                    <input type="text" name="kodePl" value={currentData.kodePl} onChange={onInputChange} className="w-full p-1 border rounded" />
+                    <input
+                      type="text"
+                      name="kodePl"
+                      value={currentData.kodePl}
+                      onChange={onInputChange}
+                      className="w-full p-1 border rounded"
+                    />
                   </td>
                   <td className="p-2 border">
-                    <input type="text" name="deskripsiCapaianPembelajaran" value={currentData.deskripsiCapaianPembelajaran} onChange={onInputChange} className="w-full p-1 border rounded" />
+                    <input
+                      type="text"
+                      name="deskripsiCapaianPembelajaran"
+                      value={currentData.deskripsiCapaianPembelajaran}
+                      onChange={onInputChange}
+                      className="w-full p-1 border rounded"
+                    />
                   </td>
                   <td className="p-2 border">
-                    <input type="text" name="kategori" value={currentData.kategori} onChange={onInputChange} className="w-full p-1 border rounded" />
+                    <input
+                      type="text"
+                      name="kategori"
+                      value={currentData.kategori}
+                      onChange={onInputChange}
+                      className="w-full p-1 border rounded"
+                    />
                   </td>
-                  <td className="p-2 border">{renderPemetaanCheckboxes(currentData.pemetaan ? currentData.pemetaan.split(",") : [])}</td>
+                  <td className="p-2 border">
+                    {renderPemetaanCheckboxes(
+                      currentData.pemetaan
+                        ? currentData.pemetaan.split(",")
+                        : []
+                    )}
+                  </td>
                   <td className="p-2 border ">
                     <div className="flex gap-2 justify-center">
-                      <button onClick={onSave} className="bg-primary-green text-white px-2 py-1 rounded">
+                      <button
+                        onClick={onSave}
+                        className="bg-primary-green text-white px-2 py-1 rounded"
+                      >
                         <Save size={18} />
                       </button>
-                      <button onClick={onReset} className="bg-yellow-500 text-white px-2 py-1 rounded">
+                      <button
+                        onClick={onReset}
+                        className="bg-yellow-500 text-white px-2 py-1 rounded"
+                      >
                         <CornerUpLeft size={18} />
                       </button>
                     </div>
@@ -912,15 +1382,27 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
               ) : (
                 <>
                   <td className="p-2 border">{row.kodePl}</td>
-                  <td className="p-2 border">{row.deskripsiCapaianPembelajaran}</td>
+                  <td className="p-2 border">
+                    {row.deskripsiCapaianPembelajaran}
+                  </td>
                   <td className="p-2 border">{row.kategori}</td>
-                  <td className="p-2 border">{renderPemetaanCheckboxes(row.pemetaan ? row.pemetaan.split(",") : [])}</td>
+                  <td className="p-2 border">
+                    {renderPemetaanCheckboxes(
+                      row.pemetaan ? row.pemetaan.split(",") : []
+                    )}
+                  </td>
                   <td className="p-2 border text-sm ">
                     <div className="flex gap-2 justify-center">
-                      <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 text-white px-2 py-1 rounded">
+                      <button
+                        onClick={() => onEdit && onEdit(row.id)}
+                        className="bg-yellow-500 text-white px-2 py-1 rounded"
+                      >
                         <Pencil size={18} />
                       </button>
-                      <button onClick={() => onDelete && onDelete(row.id)} className="bg-red-500 text-white px-2 py-1 rounded">
+                      <button
+                        onClick={() => onDelete && onDelete(row.id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -931,7 +1413,10 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
           ))
         ) : (
           <tr>
-            <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+            <td
+              colSpan={tableHead.length || 1}
+              className="text-center border-black border p-2"
+            >
               {error}
             </td>
           </tr>
@@ -941,7 +1426,16 @@ export const TableObeCPL: React.FC<TableProps> = ({ data, tableHead = [], error,
   );
 };
 
-export const TableObeCpmk: React.FC<TableProps> = ({ data, isAdding, newCpmk, onInputChange, onSaveNewCpmk, onCancelAdd, onEdit, onDelete }) => {
+export const TableObeCpmk: React.FC<TableProps> = ({
+  data,
+  isAdding,
+  newCpmk,
+  onInputChange,
+  onSaveNewCpmk,
+  onCancelAdd,
+  onEdit,
+  onDelete,
+}) => {
   const navigate = useNavigate();
 
   // Fungsi ini belum digunakan, kalau mau pakai tinggal hubungkan ke tombol
@@ -963,19 +1457,46 @@ export const TableObeCpmk: React.FC<TableProps> = ({ data, isAdding, newCpmk, on
         {isAdding && (
           <tr>
             <td className="p-2 border">
-              <input type="text" name="kodeMk" value={newCpmk.kodeMk} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Kode MK" />
+              <input
+                type="text"
+                name="kodeMk"
+                value={newCpmk.kodeMk}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Kode MK"
+              />
             </td>
             <td className="p-2 border">
-              <input type="text" name="mataKuliah" value={newCpmk.mataKuliah} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Mata Kuliah" />
+              <input
+                type="text"
+                name="mataKuliah"
+                value={newCpmk.mataKuliah}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Mata Kuliah"
+              />
             </td>
             <td className="p-2 border">
-              <input type="text" name="statusCpmk" value={newCpmk.statusCpmk} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Status CPMK" />
+              <input
+                type="text"
+                name="statusCpmk"
+                value={newCpmk.statusCpmk}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Status CPMK"
+              />
             </td>
             <td className="p-2 border flex gap-2 justify-center">
-              <button onClick={onSaveNewCpmk} className="bg-green-500 text-white px-3 py-1 rounded">
+              <button
+                onClick={onSaveNewCpmk}
+                className="bg-green-500 text-white px-3 py-1 rounded"
+              >
                 Save
               </button>
-              <button onClick={onCancelAdd} className="bg-red-500 text-white px-3 py-1 rounded">
+              <button
+                onClick={onCancelAdd}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
                 Cancel
               </button>
             </td>
@@ -989,7 +1510,10 @@ export const TableObeCpmk: React.FC<TableProps> = ({ data, isAdding, newCpmk, on
               <td className="p-2 border">{cpmk.mataKuliah}</td>
               <td className="p-2 border">{cpmk.statusCpmk}</td>
               <td className="p-2 border flex justify-center gap-2">
-                <button onClick={() => handleViewDetail?.(cpmk.id)} className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8">
+                <button
+                  onClick={() => handleViewDetail?.(cpmk.id)}
+                  className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8"
+                >
                   <Eye className="w-4 h-4" />
                 </button>
               </td>
@@ -1007,7 +1531,20 @@ export const TableObeCpmk: React.FC<TableProps> = ({ data, isAdding, newCpmk, on
   );
 };
 
-export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [], error, onEdit, onDelete, isEditing, isAdding, currentData, onSave, onReset, onInputChange, isFormValid }) => {
+export const TableObeCpmkMatkul: React.FC<TableProps> = ({
+  data,
+  tableHead = [],
+  error,
+  onEdit,
+  onDelete,
+  isEditing,
+  isAdding,
+  currentData,
+  onSave,
+  onReset,
+  onInputChange,
+  isFormValid,
+}) => {
   const isDataAvailable = data && data.length > 0;
 
   const renderPemetaanCheckboxes = (selectedValues: string[] = []) => {
@@ -1016,7 +1553,13 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
       <div className="flex flex-col items-center">
         {options.map((option) => (
           <label key={option} className="flex items-center gap-2">
-            <input type="checkbox" name="pemetaan" value={option} checked={selectedValues.includes(option)} onChange={onInputChange} />
+            <input
+              type="checkbox"
+              name="pemetaan"
+              value={option}
+              checked={selectedValues.includes(option)}
+              onChange={onInputChange}
+            />
             {option}
           </label>
         ))}
@@ -1030,12 +1573,17 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
         <tr>
           {tableHead.length > 0 ? (
             tableHead.map((head) => (
-              <th key={head} className="p-2 text-white border border-gray-600 font-medium">
+              <th
+                key={head}
+                className="p-2 text-white border border-gray-600 font-medium"
+              >
                 {head}
               </th>
             ))
           ) : (
-            <th className="p-2 text-white border border-gray-600 font-medium">Data tidak tersedia</th>
+            <th className="p-2 text-white border border-gray-600 font-medium">
+              Data tidak tersedia
+            </th>
           )}
         </tr>
       </thead>
@@ -1043,18 +1591,42 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
         {isAdding && currentData && (
           <tr>
             <td className="p-2 border">
-              <input type="text" name="kodeCpmk" value={currentData.kodeCpmk} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Kode CPMK" />
+              <input
+                type="text"
+                name="kodeCpmk"
+                value={currentData.kodeCpmk}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Kode CPMK"
+              />
             </td>
             <td className="p-2 border">
-              <input type="text" name="deskripsi" value={currentData.deskripsi} onChange={onInputChange} className="w-full p-1 border rounded" placeholder="Deskripsi CPMK" />
+              <input
+                type="text"
+                name="deskripsi"
+                value={currentData.deskripsi}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Deskripsi CPMK"
+              />
             </td>
-            <td className="p-2 border">{renderPemetaanCheckboxes(currentData.pemetaan ? currentData.pemetaan.split(",") : [])}</td>
+            <td className="p-2 border">
+              {renderPemetaanCheckboxes(
+                currentData.pemetaan ? currentData.pemetaan.split(",") : []
+              )}
+            </td>
             <td className="p-2 border">
               <div className="flex gap-2 justify-center">
-                <button onClick={onSave} className="bg-primary-green text-white px-2 py-1 rounded">
+                <button
+                  onClick={onSave}
+                  className="bg-primary-green text-white px-2 py-1 rounded"
+                >
                   <Save size={18} />
                 </button>
-                <button onClick={onReset} className="bg-yellow-500 text-white px-2 py-1 rounded">
+                <button
+                  onClick={onReset}
+                  className="bg-yellow-500 text-white px-2 py-1 rounded"
+                >
                   <CornerUpLeft size={16} />
                 </button>
               </div>
@@ -1068,18 +1640,42 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
               {isEditing && currentData?.id === row.id ? (
                 <>
                   <td className="p-2 border">
-                    <input type="text" name="kodeCpmk" value={currentData.kodeCpmk} onChange={onInputChange} className="w-full p-1 border rounded" />
+                    <input
+                      type="text"
+                      name="kodeCpmk"
+                      value={currentData.kodeCpmk}
+                      onChange={onInputChange}
+                      className="w-full p-1 border rounded"
+                    />
                   </td>
                   <td className="p-2 border">
-                    <input type="text" name="deskripsi" value={currentData.deskripsi} onChange={onInputChange} className="w-full p-1 border rounded" />
+                    <input
+                      type="text"
+                      name="deskripsi"
+                      value={currentData.deskripsi}
+                      onChange={onInputChange}
+                      className="w-full p-1 border rounded"
+                    />
                   </td>
-                  <td className="p-2 border">{renderPemetaanCheckboxes(currentData.pemetaan ? currentData.pemetaan.split(",") : [])}</td>
+                  <td className="p-2 border">
+                    {renderPemetaanCheckboxes(
+                      currentData.pemetaan
+                        ? currentData.pemetaan.split(",")
+                        : []
+                    )}
+                  </td>
                   <td className="p-2 border">
                     <div className="flex gap-2 justify-center">
-                      <button onClick={onSave} className="bg-primary-green text-white px-2 py-1 rounded">
+                      <button
+                        onClick={onSave}
+                        className="bg-primary-green text-white px-2 py-1 rounded"
+                      >
                         <Save size={18} />
                       </button>
-                      <button onClick={onReset} className="bg-yellow-500 text-white px-2 py-1 rounded">
+                      <button
+                        onClick={onReset}
+                        className="bg-yellow-500 text-white px-2 py-1 rounded"
+                      >
                         <CornerUpLeft size={18} />
                       </button>
                     </div>
@@ -1089,13 +1685,23 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
                 <>
                   <td className="p-2 border">{row.kodeCpmk}</td>
                   <td className="p-2 border">{row.deskripsi}</td>
-                  <td className="p-2 border">{renderPemetaanCheckboxes(row.pemetaan ? row.pemetaan.split(",") : [])}</td>
+                  <td className="p-2 border">
+                    {renderPemetaanCheckboxes(
+                      row.pemetaan ? row.pemetaan.split(",") : []
+                    )}
+                  </td>
                   <td className="p-2 border text-sm">
                     <div className="flex gap-2 justify-center">
-                      <button onClick={() => onEdit && onEdit(row.id)} className="bg-yellow-500 text-white px-2 py-1 rounded">
+                      <button
+                        onClick={() => onEdit && onEdit(row.id)}
+                        className="bg-yellow-500 text-white px-2 py-1 rounded"
+                      >
                         <Pencil size={18} />
                       </button>
-                      <button onClick={() => onDelete && onDelete(row.id)} className="bg-red-500 text-white px-2 py-1 rounded">
+                      <button
+                        onClick={() => onDelete && onDelete(row.id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -1106,7 +1712,10 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
           ))
         ) : (
           <tr>
-            <td colSpan={tableHead.length || 1} className="text-center border-black border p-2">
+            <td
+              colSpan={tableHead.length || 1}
+              className="text-center border-black border p-2"
+            >
               {error}
             </td>
           </tr>
@@ -1116,10 +1725,18 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({ data, tableHead = [],
   );
 };
 
-export const TableCurriculumProdi: React.FC<TableProps> = ({ data, onEdit, onDelete }) => {
+export const TableCurriculumProdi: React.FC<TableProps> = ({
+  data,
+  onEdit,
+  onDelete,
+}) => {
   const totalSKS = data.reduce((acc, item) => acc + parseInt(item.sks), 0);
-  const totalWajib = data.filter((item) => item.status === "Wajib").reduce((acc, item) => acc + parseInt(item.sks), 0);
-  const totalPilihan = data.filter((item) => item.status === "Pilihan").reduce((acc, item) => acc + parseInt(item.sks), 0);
+  const totalWajib = data
+    .filter((item) => item.status === "Wajib")
+    .reduce((acc, item) => acc + parseInt(item.sks), 0);
+  const totalPilihan = data
+    .filter((item) => item.status === "Pilihan")
+    .reduce((acc, item) => acc + parseInt(item.sks), 0);
 
   return (
     <div className="w-full overflow-x-auto">
@@ -1164,14 +1781,23 @@ export const TableCurriculumProdi: React.FC<TableProps> = ({ data, onEdit, onDel
                 <td className="p-2 border">{item.prasyarat}</td>
                 <td className="p-2 border">{item.konsentrasiBidang}</td>
                 <td className="p-2 border flex justify-center gap-2">
-                  <button onClick={() => onEdit?.(item.id)} className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8">
+                  <button
+                    onClick={() => onEdit?.(item.id)}
+                    className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8"
+                  >
                     <Paperclip className="w-4 h-4" />
                   </button>
 
-                  <button onClick={() => onEdit?.(item.id)} className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8">
+                  <button
+                    onClick={() => onEdit?.(item.id)}
+                    className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8"
+                  >
                     <Eye className="w-4 h-4" />
                   </button>
-                  <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8">
+                  <button
+                    onClick={() => onDelete?.(item.id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
@@ -1215,7 +1841,11 @@ interface RPSData {
   kelas: string;
 }
 
-export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, onDelete }) => {
+export const TableRpsManagement: React.FC<TableProps> = ({
+  data = [],
+  onEdit,
+  onDelete,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RPSData | null>(null);
 
@@ -1259,13 +1889,27 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
                   <td className="p-2 border">{item.sks}</td>
                   <td className="p-2 border">{item.kelas}</td>
                   <td className="p-2 border flex justify-center gap-2">
-                    <button onClick={() => handlePaperclipClick(item)} className="bg-purple-500 text-white px-2 py-1 rounded" title="Edit">
+                    <button
+                      onClick={() => handlePaperclipClick(item)}
+                      className="bg-purple-500 text-white px-2 py-1 rounded"
+                      title="Edit"
+                    >
                       <Paperclip className="w-4 h-4" />
                     </button>
-                    <button onClick={() => navigate(AdminAcademicRoute.rpsManagement.editRps)} className="bg-yellow-500 text-white px-2 py-1 rounded" title="Edit">
+                    <button
+                      onClick={() =>
+                        navigate(AdminAcademicRoute.rpsManagement.editRps)
+                      }
+                      className="bg-yellow-500 text-white px-2 py-1 rounded"
+                      title="Edit"
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button onClick={() => onDelete?.(item.id)} className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8" title="Hapus">
+                    <button
+                      onClick={() => onDelete?.(item.id)}
+                      className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8"
+                      title="Hapus"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
@@ -1285,7 +1929,9 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
       {isModalOpen && selectedItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white py-4 px-16 rounded-lg shadow-lg w-[400px] border-primary-green border-t-3">
-            <h3 className="text-center text-lg mb-6 font-medium">Memetakan RPS ke Kelas</h3>
+            <h3 className="text-center text-lg mb-6 font-medium">
+              Memetakan RPS ke Kelas
+            </h3>
             <div className="grid grid-cols-2 gap-y-2 gap-x-2 mb-4">
               <span>Mata Kuliah:</span>
               <span className="text-gray-700">{selectedItem.mataKuliah}</span>
@@ -1306,7 +1952,10 @@ export const TableRpsManagement: React.FC<TableProps> = ({ data = [], onEdit, on
             </div>
 
             <div className="flex justify-end gap-2">
-              <button className="bg-[#828282] px-4 py-2 rounded-lg text-primary-white flex items-center gap-2 cursor-pointer" onClick={handleCloseModal}>
+              <button
+                className="bg-[#828282] px-4 py-2 rounded-lg text-primary-white flex items-center gap-2 cursor-pointer"
+                onClick={handleCloseModal}
+              >
                 <CornerUpLeft className="w-4 h-4" />
                 <span>Batal</span>
               </button>
