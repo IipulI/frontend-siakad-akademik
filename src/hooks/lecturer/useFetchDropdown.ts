@@ -10,6 +10,15 @@ export const useAcademicPeriodDropdown = () =>
         }
 });
 
+export const useActiveStatus = () =>
+    useQuery({
+        queryKey: ["/periode-akademik/active-status"],
+        queryFn: async () => {
+            const res = await Api.get(`/periode-akademik/active-status`)
+            return res.data
+    }
+})
+
 export const useStudyProgramDropdown = () =>
     useQuery({
         queryKey: ["/dosen/program-studi"],

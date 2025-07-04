@@ -9,4 +9,4 @@ export const useScheduleList = (periodeAkademik: string) =>
             return res.data
         },
         enabled: !!periodeAkademik
-});
+})

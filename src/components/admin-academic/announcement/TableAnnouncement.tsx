@@ -1,5 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
 import {Check, Eye, Trash, X} from "lucide-react";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { useNavigate } from "react-router-dom";
 
 // Perbaiki interface TableProps
 interface TableProps {
@@ -18,6 +20,7 @@ export const TableAnnouncement = ({
     // Ubah tipe state selected dari number[] menjadi string[] karena ID dari API adalah string
     const [selected, setSelected] = useState<string[]>([]);
     const selectAllRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!data || data.length === 0) {
@@ -124,7 +127,7 @@ export const TableAnnouncement = ({
                                 <div className="flex items-center justify-center w-full">
                                     <div className="flex items-center justify-center space-x-2">
                                         <div
-                                            onClick={() => setId && setId(row.id)} // Pastikan row.id adalah string
+                                            onClick={() => navigate(AdminAcademicRoute.detailAnnouncement) || localStorage.setItem("id_pengumuman", row.id)} // Pastikan row.id adalah string
                                             className="bg-primary-blueSoft cursor-pointer rounded-sm flex items-center justify-center w-8 h-7"
                                         >
                                             <Eye className="text-white w-4 h-4"/>

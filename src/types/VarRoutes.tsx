@@ -48,6 +48,8 @@ export const AdminAcademicRoute = {
     academicAdvisor: "/admin-akademik/pembimbing-akademik",
   },
   announcement: "/admin-akademik/pengumuman",
+  detailAnnouncement: "/admin-akademik/pengumuman/detail",
+  addAnnouncement: "/admin-akademik/pengumuman/tambah",
   curriculumYear: "/admin-akademik/tahun-kurikulum",
   courseManagement: {
     courseManagement: "/admin-akademik/mata-kuliah",
