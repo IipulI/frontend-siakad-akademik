@@ -1,103 +1,142 @@
 import MainLayout from "../../../components/layouts/MainLayout";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
-import TableStudent from "../../../components/admin-academic/student-data/TableStudent";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import {
   Plus,
-  Printer,
   RefreshCw,
   Search,
-  Settings,
   Trash2,
+  Eye,
 } from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Status from "../../../components/admin-academic/student-data/Status";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import {
+  useDeleteStudent,
+  useStudentData,
+} from "../../../hooks/admin-akademik/useMahasiswa";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import {
+  showToast,
+  ToastNotif,
+} from "../../../components/admin-finance/Toastify";
+import ConfirmModal from "../../../components/admin-finance/ConfirmModal";
+import { getProgramStudi } from "../../../hooks/useFilter";
 
 export default function StudentData() {
-  const categoryOptions = [{ value: "", label: "Semua Kategori" }];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // state untuk filter dan search
+  const [filters, setFilters] = useState({
+    keyword: "",
+    programStudi: "",
+    jenisPendaftaran: "",
+    kelasPerkuliahan: "",
+    angkatan: "",
+    jalurPendaftaran: "",
+    statusMahasiswa: "",
+    gelombang: "",
+    jenisKelamin: "",
+    sistemKuliah: "",
+    kurikulum: "",
+    periodeMasuk: "",
+    periodeKeluar: "",
+  });
 
-  const sampleData = [
-    {
-      id: "22110804305",
-      name: "Maulana Ikhsan",
-      level: "S1",
-      program: "TI",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 40,
-      gpa: 3.73,
-    },
-    {
-      id: "22110804291",
-      name: "Moraginda Pangabean",
-      level: "S1",
-      program: "MNJ",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 96,
-      gpa: 3.53,
-    },
-    {
-      id: "22110804201",
-      name: "Muhammad Virzha",
-      level: "S1",
-      program: "AK",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 36,
-      gpa: 3.78,
-    },
-    {
-      id: "22110804908",
-      name: "Muhammad Zikri",
-      level: "S1",
-      program: "TM",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 32,
-      gpa: 3.9,
-    },
-    {
-      id: "22110804032",
-      name: "Arka Fadilah Rahman",
-      level: "S1",
-      program: "SI",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 12,
-      gpa: 4,
-    },
-    {
-      id: "22110804018",
-      name: "Aufa Akhdan",
-      level: "S1",
-      program: "HKM",
-      entryYear: "20242",
-      status: "A",
-      semester: 7,
-      credits: 29,
-      gpa: 3.92,
-    },
-  ];
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const navigate = useNavigate();
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+  } = useStudentData(
+    currentPage,
+    rowsPerPage,
+    filters.keyword,
+    filters.programStudi,
+    filters.jenisPendaftaran,
+    filters.kelasPerkuliahan,
+    filters.angkatan,
+    filters.jalurPendaftaran,
+    filters.statusMahasiswa,
+    filters.gelombang,
+    filters.jenisKelamin,
+    filters.sistemKuliah,
+    filters.kurikulum,
+    filters.periodeMasuk,
+    filters.periodeKeluar
+  );
+  // state untuk modal konfirmasi delete
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const deleteStudent = useDeleteStudent();
+  const { data: programStudiData } = getProgramStudi();
+
+  const firstLoad = useRef(true);
+
+  // Extract data dari response
+  const studentData = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination;
+
+  useEffect(() => {
+    if (!isLoading) {
+      firstLoad.current = false;
+    }
+  }, [isLoading]);
+
+  if (isLoading && firstLoad.current) {
+    return <LoadingSpinner title="Mahasiswa" />;
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center py-4">
+        Gagal memuat data Mahasiswa
+      </div>
+    );
+  }
+
+  // Handle Enter key pada search input
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      SearchSubmit();
+    }
+  };
 
   // function buat search
   function SearchSubmit() {
-    alert("submit");
+    setFilters((prev) => ({
+      ...prev,
+      keyword: searchKeyword,
+    }));
+    setCurrentPage(1); // Reset ke halaman 1 saat search
   }
+
   function Refres() {
-    window.location.reload();
+    setFilters({
+      keyword: "",
+      programStudi: "",
+      jenisPendaftaran: "",
+      kelasPerkuliahan: "",
+      angkatan: "",
+      jalurPendaftaran: "",
+      statusMahasiswa: "",
+      gelombang: "",
+      jenisKelamin: "",
+      sistemKuliah: "",
+      kurikulum: "",
+      periodeMasuk: "",
+      periodeKeluar: "",
+    });
+    setSearchKeyword("");
+    setCurrentPage(1);
   }
 
   // function buat tambah, hapus, cetak dan aksi
-  const navigate = useNavigate();
   function Create() {
     navigate(AdminAcademicRoute.student.createStudent);
   }
@@ -107,30 +146,222 @@ export default function StudentData() {
   function Print() {
     alert("print");
   }
-  function Setting() {
-    alert("aksi");
+
+  // Handler untuk perubahan halaman
+  function handlePageChange(newPage: number) {
+    setCurrentPage(newPage);
   }
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // Handler untuk perubahan rows per page
+  function handleRowsPerPageChange(newRowsPerPage: number) {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1);
+  }
+
+  function openDeleteModal(id: string) {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  }
+
+  function Link() {
+    alert("link");
+  }
+  function Detail(item) {
+    navigate(AdminAcademicRoute.student.detailStudent, {
+      state: item,
+    });
+  }
+
+  // Fungsi untuk menghapus komponen tagihan dengan hook
+  async function confirmDelete() {
+    if (!selectedId || deleteStudent.isPending) return;
+
+    try {
+      await deleteStudent.mutateAsync(selectedId);
+      if (studentData.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+      showToast.success("Data berhasil dihapus!");
+      Refres();
+    } catch (err) {
+      showToast.error("Gagal menghapus data.");
+    } finally {
+      setIsModalOpen(false);
+      setSelectedId(null);
+    }
+  }
+
+  const programStudi = [
+    { value: "", label: "-- Pilih Program Studi --" },
+    ...(programStudiData?.map((item) => ({
+      value: item.namaProgramStudi,
+      label: item.namaProgramStudi,
+    })) || []),
+  ];
+
+  const jenisPendaftaran = [
+    { value: "", label: "-- Pilih Jenis Pendaftaran --" },
+    {
+      value: "Baru",
+      label: "Baru",
+    },
+  ];
+
+  const kelasPerkuliahan = [
+    { value: "", label: "-- Pilih Kelas Perkuliahan --" },
+    {
+      value: "A",
+      label: "A",
+    },
+    {
+      value: "B",
+      label: "B",
+    },
+    {
+      value: "C",
+      label: "C",
+    },
+    {
+      value: "D",
+      label: "D",
+    },
+  ];
+
+  const periodeKeluar = [{ value: "", label: "-- Pilih Periode Keluar --" }];
+
+  const angkatan = [
+    { value: "", label: "-- Pilih Angkatan --" },
+    { value: "2021", label: "2021" },
+    { value: "2022", label: "2022" },
+    { value: "2023", label: "2023" },
+    { value: "2024", label: "2024" },
+  ];
+
+  const jalurPendaftaran = [
+    { value: "", label: "-- Pilih Jalur Pendaftaran --" },
+    { value: "Mandiri", label: "Mandiri" },
+  ];
+
+  const rangeIPK = [{ value: "", label: "-- Pilih Range IPK --" }];
+
+  const statusMahasiswa = [
+    { value: "", label: "-- Pilih Status Mahasiswa --" },
+    { value: "aktif", label: "Aktive" },
+    { value: "tidak aktif", label: "Tidak Aktive" },
+  ];
+
+  const gelombang = [
+    { value: "", label: "-- Pilih Gelombang --" },
+    { value: "1", label: "Gelombang 1" },
+    { value: "2", label: "Gelombang 2" },
+    { value: "3", label: "Gelombang 3" },
+  ];
+
+  const jenisKelamin = [
+    { value: "", label: "-- Pilih Jenis Kelamin --" },
+    { value: "Laki-Laki", label: "Laki-Laki" },
+    { value: "Perempuan", label: "Perempuan" },
+  ];
+
+  const sistemKuliah = [
+    { value: "", label: "-- Pilih Sistem Kuliah --" },
+    { value: "Reguler", label: "Reguler" },
+    { value: "Karyawan", label: "Karyawan" },
+  ];
+
+  const kurikulum = [{ value: "", label: "-- Pilih Kurikulum --" }];
+
+  const periodeMasuk = [
+    { value: "", label: "-- Pilih Periode Masuk --" },
+    { value: "20241", label: "20241" },
+  ];
+
+  // Handle filter change
+  const handleFilterChange = (field: string, value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setCurrentPage(1); // Reset ke halaman 1 saat filter berubah
+  };
 
   return (
     <MainLayout titlePage="Mahasiswa" isGreeting={false}>
       {/* filter */}
       <div className="grid xl:grid-cols-4 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
-        <InputFilter options={categoryOptions} label="Unit / Program Studi" />
-        <InputFilter options={categoryOptions} label="Angkatan" />
-        <InputFilter options={categoryOptions} label="Status Mahasiswa" />
-        <InputFilter options={categoryOptions} label="Sistem Kuliah" />
-        <InputFilter options={categoryOptions} label="Jenis Pendaftaran" />
-        <InputFilter options={categoryOptions} label="Jalur Pendaftaran" />
-        <InputFilter options={categoryOptions} label="Gelombang" />
-        <InputFilter options={categoryOptions} label="Kurikulum" />
-        <InputFilter options={categoryOptions} label="Kelas Perkuliahan" />
-        <InputFilter options={categoryOptions} label="Range IPK" />
-        <InputFilter options={categoryOptions} label="Jenis Kelamin" />
-        <InputFilter options={categoryOptions} label="Periode Masuk" />
-        <InputFilter options={categoryOptions} label="Periode Keluar" />
+        <InputFilter
+          options={programStudi}
+          label="Unit / Program Studi"
+          value={filters.programStudi}
+          onChange={(value) => handleFilterChange("programStudi", value)}
+        />
+        <InputFilter
+          options={angkatan}
+          label="Angkatan"
+          value={filters.angkatan}
+          onChange={(value) => handleFilterChange("angkatan", value)}
+        />
+        <InputFilter
+          options={statusMahasiswa}
+          label="Status Mahasiswa"
+          value={filters.statusMahasiswa}
+          onChange={(value) => handleFilterChange("statusMahasiswa", value)}
+        />
+        <InputFilter
+          options={sistemKuliah}
+          label="Sistem Kuliah"
+          value={filters.sistemKuliah}
+          onChange={(value) => handleFilterChange("sistemKuliah", value)}
+        />
+        <InputFilter
+          options={jenisPendaftaran}
+          label="Jenis Pendaftaran"
+          value={filters.jenisPendaftaran}
+          onChange={(value) => handleFilterChange("jenisPendaftaran", value)}
+        />
+        <InputFilter
+          options={jalurPendaftaran}
+          label="Jalur Pendaftaran"
+          value={filters.jalurPendaftaran}
+          onChange={(value) => handleFilterChange("jalurPendaftaran", value)}
+        />
+        <InputFilter
+          options={gelombang}
+          label="Gelombang"
+          value={filters.gelombang}
+          onChange={(value) => handleFilterChange("gelombang", value)}
+        />
+        <InputFilter
+          options={kurikulum}
+          label="Kurikulum"
+          value={filters.kurikulum}
+          onChange={(value) => handleFilterChange("kurikulum", value)}
+        />
+        <InputFilter
+          options={rangeIPK}
+          label="Range IPK"
+          value={filters.keyword}
+          onChange={(value) => handleFilterChange("kelasPerkuliahan", value)}
+        />
+
+        <InputFilter
+          options={jenisKelamin}
+          label="Jenis Kelamin"
+          value={filters.jenisKelamin}
+          onChange={(value) => handleFilterChange("jenisKelamin", value)}
+        />
+        <InputFilter
+          options={periodeMasuk}
+          label="Periode Masuk"
+          value={filters.periodeMasuk}
+          onChange={(value) => handleFilterChange("periodeMasuk", value)}
+        />
+        <InputFilter
+          options={periodeKeluar}
+          label="Periode Keluar"
+          value={filters.periodeKeluar}
+          onChange={(value) => handleFilterChange("periodeKeluar", value)}
+        />
       </div>
 
       {/* tabel mahasiswa */}
@@ -145,7 +376,10 @@ export default function StudentData() {
               <input
                 type="text"
                 className="border-2 p-1 rounded text-xs w-50  "
-                placeholder="Cari Kelas Kuliah"
+                placeholder="Cari Data Mahasiswa"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
               />
               <ButtonClick
                 icon={<Search size={16} strokeWidth={3} />}
@@ -167,7 +401,7 @@ export default function StudentData() {
               text="Tambah"
               onClick={Create}
             />
-            <ButtonClick
+            {/* <ButtonClick
               icon={<Trash2 size={15} />}
               color="bg-red-400"
               text="Hapus"
@@ -178,25 +412,137 @@ export default function StudentData() {
               color="bg-primary-blueSoft"
               text="Cetak"
               onClick={Print}
-            />
-            <ButtonClick
-              icon={<Settings size={15} strokeWidth={2.5} />}
-              color="bg-primary-yellow"
-              text="Aksi"
-              onClick={Setting}
-            />
+            /> */}
           </div>
         </div>
-        <TableStudent data={sampleData} />
+        <div className="overflow-x-auto">
+          <ConfirmModal
+            isOpen={isModalOpen}
+            onConfirm={confirmDelete}
+            onCancel={() => setIsModalOpen(false)}
+          />
+          <ToastNotif />
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-primary-green text-white">
+                <th className="p-2 border font-semibold border-gray-300">
+                  NPM
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Nama
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Jenjang
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Program Studi
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Masuk
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Status
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Semester
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  SKS
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  IPK
+                </th>
+                <th className="p-2 border font-semibold border-gray-300">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={10} className="text-center py-4 text-gray-500">
+                    Memuat data...
+                  </td>
+                </tr>
+              ) : studentData.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="text-center py-4 text-gray-500">
+                    Tidak ada data yang ditemukan
+                  </td>
+                </tr>
+              ) : (
+                studentData.map((student, index) => (
+                  <tr key={student.id} className="hover:bg-gray-50">
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.npm}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold">
+                      {student.nama}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.jenjang}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.namaProgramStudi}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.periodeMasuk}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.statusMahasiswa}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.semester}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.sks}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold text-center">
+                      {student.ipk}
+                    </td>
+                    <td className="p-2 border border-gray-300 font-semibold">
+                      <div className="flex justify-center space-x-2">
+                        {/* {
+              <ButtonClick
+                icon={<Link2 size={15} />}
+                color={"bg-primary-yellow"}
+                onClick={Link}
+              />
+            } */}
+                        {
+                          <ButtonClick
+                            icon={<Eye size={15} />}
+                            color={"bg-primary-blueSoft"}
+                            onClick={() => Detail(student.id)}
+                          />
+                        }
+                        {
+                          <ButtonClick
+                            icon={<Trash2 size={15} />}
+                            color={"bg-red-400"}
+                            onClick={() => openDeleteModal(student.id)}
+                          />
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={1000}
-          onPageChange={setCurrentPage}
-          rowsPerPage={rowsPerPage}
-          totalRows={65}
-          onRowsPerPageChange={setRowsPerPage}
-        />
+        {/* Pagination Section */}
+        {pagination && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            rowsPerPage={pagination.perPage}
+            totalRows={pagination.totalItems}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        )}
       </div>
       <Status />
       <div className="py-5"></div>

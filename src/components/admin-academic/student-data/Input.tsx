@@ -70,10 +70,12 @@ interface SelectProps {
   label: string;
   options: SelectOption[];
   required?: boolean;
+  value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
   error?: string;
   value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface InputProps {
@@ -88,9 +90,11 @@ interface InputProps {
 export function TextInput({
   label,
   required = false,
+  value,
   defaultValue = "",
   placeholder,
   value,
+  onChange,
   onChange,
   error,
 }: InputProps) {
@@ -111,6 +115,8 @@ export function TextInput({
       </label>
       <div className="flex flex-col">
         <input
+          value={value}
+          onChange={onChange}
           placeholder={placeholder}
           className={`bg-white border text-sm sm:text-base ${
             error ? "border-red-500" : "border-gray-300"
@@ -125,7 +131,7 @@ export function TextInput({
   );
 }
 
-export function SelectInput<T>({
+export function SelectInput({
   label,
   options,
   required = false,
@@ -181,6 +187,7 @@ export function SelectInput<T>({
 interface DateInputProps {
   label?: string;
   required?: boolean;
+  value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
   value?: string;
@@ -190,6 +197,7 @@ interface DateInputProps {
 export function DateInput({
   label,
   required = true,
+  value,
   defaultValue = "",
   value,
   onChange,

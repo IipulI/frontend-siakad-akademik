@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import BiodataSection from "./BiodataSection";
 import HorizontalLine from "../profile/HorizontalLine";
-import React from "react";
 
 interface BiodataProps {
   showLine?: boolean;

@@ -1,7 +1,7 @@
 import React from "react";
 
 interface BiodataSectionProps {
-    title: string[];
+    title: any[];
     isTitle?: boolean;
 }
 

@@ -3,250 +3,152 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import ProfileRedirectButton from "../../../components/profile/ProfileRedirectButton";
 import TabNavigationButton from "../../../components/profile/TabNavigationButton";
 import RoundedBorderLayout from "../../../components/profile/RoundedBorderLayout";
-import InputField from "../../../components/profile/InputBoxField";
+import DataCard from "../../../components/profile/DataCard";
 import { Check, MapPin, Phone, SquareCheckBig, User } from "lucide-react";
 import { StudentRoute } from "../../../types/VarRoutes";
-import DataCard from "../../../components/profile/DataCard";
+import { MahasiswaProfile } from "../../../types/mahasiswa.types";
 
+// Hooks
+import { useAccountInfo } from "../../../hooks/useAccountInfo";
+import { useMahasiswaProfile } from "../../../hooks/mahasiswa/useProfile";
+
+// Child Component: Displays personal data
+const PersonalProfile = ({ profile }: { profile: MahasiswaProfile }) => {
+  return (
+      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+        <div className="flex flex-col space-y-5 ">
+          <DataCard title={"Nama Mahasiswa"} desc={profile.nama || "-"} />
+          <DataCard title={"Tempat Lahir"} desc={profile.tempatLahir || "-"} />
+          <DataCard title={"Agama"} desc={profile.agama || "-"} />
+          <DataCard title={"Status Mahasiswa"} desc={profile.statusMahasiswa || "-"} />
+          <DataCard title={"Berat Badan"} desc={profile.beratBadan ? `${profile.beratBadan} kg` : "-"} />
+          <DataCard title={"Kebutuhan Khusus"} desc={profile.kebutuhanKhusus ? "Ya" : "Tidak"} />
+        </div>
+        <div className="flex flex-col space-y-5 ">
+          <DataCard title={"NIK/No KTP*"} desc={profile.nik || "-"} />
+          <DataCard title={"Tanggal Lahir"} desc={profile.tanggalLahir || "-"} />
+          <DataCard title={"Jenis Kelamin"} desc={profile.jenisKelamin || "-"} />
+          <DataCard title={"Tinggi Badan (cm)"} desc={profile.tinggiBadan ? `${profile.tinggiBadan} cm` : "-"} />
+          <DataCard title={"Golongan Darah"} desc={profile.golonganDarah || "-"} />
+          <DataCard title={"Biodata Valid"} desc={<Check color="#00A65A" strokeWidth={5} />} />
+        </div>
+      </RoundedBorderLayout>
+  );
+};
+
+// Child Component: Displays address data
+const Domicile = ({ profile }: { profile: MahasiswaProfile }) => {
+  return (
+      <RoundedBorderLayout className={" items-start gap-4 text-[#617182]"}>
+        <div className="flex flex-col space-y-5 ">
+          <h1 className="text-primary-green text-sm font-semibold">Alamat KTP</h1>
+          <div className="h-px border-2 border-primary-green"></div>
+          <DataCard title={"Alamat"} desc={profile.alamatKtp || "-"} />
+          <DataCard title={"Provinsi"} desc={profile.provinsiKtp || "-"} />
+          <DataCard title={"Desa/Kelurahan"} desc={profile.desaKtp || "-"} />
+          <DataCard title={"RT / RW"} desc={`${profile.rtKtp || "-"} / ${profile.rwKtp || "-"}`} />
+          <DataCard title={"Kode Pos"} desc={profile.kodePosKtp || "-"} />
+          <DataCard title={"Status Tinggal"} desc={profile.statusTinggalKtp || "-"} />
+        </div>
+        <div className="flex flex-col space-y-5 ">
+          <h1 className="text-primary-green text-sm font-semibold">Alamat Domisili</h1>
+          <div className="h-px border-2 border-primary-green"></div>
+          <DataCard title={"Alamat"} desc={profile.alamatDomisili || "-"} />
+          <DataCard title={"Provinsi"} desc={profile.provinsiDomisili || "-"} />
+          <DataCard title={"Desa/Kelurahan"} desc={profile.desaDomisili || "-"} />
+          <DataCard title={"RT / RW"} desc={`${profile.rtDomisili || "-"} / ${profile.rwDomisili || "-"}`} />
+          <DataCard title={"Kode Pos"} desc={profile.kodePosDomisili || "-"} />
+          <DataCard title={"Status Tinggal"} desc={profile.statusTinggalDomisili || "-"} />
+        </div>
+      </RoundedBorderLayout>
+  );
+};
+
+// Child Component: Displays contact data
+const Contact = ({ profile }: { profile: MahasiswaProfile }) => {
+  return (
+      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+        <div className="flex flex-col space-y-4 ">
+          <DataCard title={"No. HP*"} desc={profile.noHp || "-"} />
+          <DataCard title={"No. Telepon"} desc={profile.noTelepon || "-"} />
+        </div>
+        <div className="flex flex-col space-y-4 ">
+          <DataCard title={"Email Kampus"} desc={profile.emailKampus || "-"} />
+          <DataCard title={"Email Pribadi*"} desc={profile.emailPribadi || "-"} />
+        </div>
+      </RoundedBorderLayout>
+  );
+};
+
+
+// ⭐️ Main Page Component ⭐️
 const StudentInformation = () => {
   const [activeTab, setActiveTab] = useState("data-diri");
 
-  const handleTabClick = (tab) => {
+  // 1. Get user info directly from localStorage using our custom hook
+  const accountInfo = useAccountInfo();
+
+  // 2. Fetch the detailed profile using the ID from the account info
+  const { profile, loading, error } = useMahasiswaProfile(accountInfo?.id || null);
+
+  const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
 
-  return (
-    <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"} className={""}>
-      <div className="grid sm:grid-cols-2 md:grid-cols-8 gap-6 p-4 border-t-2 border-primary-yellow rounded-t-sm">
-        <div className="md:col-span-2">
-          <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
-            <img  
-              width={150}
-              src="/img/profile_logo.png"
-              alt=""
-              className="border-2 shadow rounded-full"
-            />
-            <h1 className="uppercase text-primary-brown">
-              Muhammad Ridho Fathan
-            </h1>
-            <span className="text-secondary-gray underline">
-              idhopatan.2@gmail.com
-            </span>
-            <ProfileRedirectButton route={String(StudentRoute.profile.profile)}>
-              Data Diri
-            </ProfileRedirectButton>
-            <ProfileRedirectButton route={String(StudentRoute.profile.parent)}>
-              Orang Tua Wali
-            </ProfileRedirectButton>
-            <ProfileRedirectButton
-              route={String(StudentRoute.profile.programStudy)}
-            >
-              Program Studi
-            </ProfileRedirectButton>
-            <ProfileRedirectButton
-              route={String(StudentRoute.profile.educationHistory)}
-            >
-              Pendidikan Asal
-            </ProfileRedirectButton>
+  // 3. Handle loading and error states while data is being fetched
+  if (loading) {
+    return (
+        <MainLayout titlePage="Data Mahasiswa">
+          <div className="p-4">Loading Profile... ⏳</div>
+        </MainLayout>
+    );
+  }
 
-            <button className="flex w-full mt-10 bg-primary-green rounded p-2 justify-center items-center space-x-2 text-[#DAB969]">
-              <SquareCheckBig color="#DAB969" />
-              <p>Edit Data</p>
-            </button>
+  if (error || !profile) {
+    return (
+        <MainLayout titlePage="Data Mahasiswa">
+          <div className="p-4 text-red-500">Error: {error || "Profile data not found"} ❌</div>
+        </MainLayout>
+    );
+  }
+
+  // 4. Render the full page with the fetched data
+  return (
+      <MainLayout isGreeting={false} titlePage={"Data Mahasiswa"}>
+        <div className="grid sm:grid-cols-2 md:grid-cols-8 gap-6 p-4 border-t-2 border-primary-yellow rounded-t-sm">
+          {/* Sidebar */}
+          <div className="md:col-span-2">
+            <div className="bg-white p-4 flex flex-col items-center rounded-md shadow-md space-y-3 text-sm font-semibold">
+              <img
+                  width={150}
+                  src="/img/profile_logo.png"
+                  alt="Profile"
+                  className="border-2 shadow rounded-full"
+              />
+              <h1 className="uppercase text-primary-brown">{profile.nama}</h1>
+              <span className="text-secondary-gray underline">{profile.emailPribadi}</span>
+              <ProfileRedirectButton route={String(StudentRoute.profile.profile)}>Data Diri</ProfileRedirectButton>
+              <ProfileRedirectButton route={String(StudentRoute.profile.parent)}>Orang Tua Wali</ProfileRedirectButton>
+              <ProfileRedirectButton route={String(StudentRoute.profile.programStudy)}>Program Studi</ProfileRedirectButton>
+              <ProfileRedirectButton route={String(StudentRoute.profile.educationHistory)}>Pendidikan Asal</ProfileRedirectButton>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="md:col-span-6 space-y-4">
+            <div className="p-1 bg-[#dddddd] rounded-xl flex w-full justify-between">
+              <TabNavigationButton icon={<User size={18} />} isActive={activeTab === "data-diri"} onClick={() => handleTabClick("data-diri")}>Data Diri</TabNavigationButton>
+              <TabNavigationButton icon={<MapPin size={18} />} isActive={activeTab === "domisili"} onClick={() => handleTabClick("domisili")}>Alamat</TabNavigationButton>
+              <TabNavigationButton icon={<Phone size={18} />} isActive={activeTab === "kontak"} onClick={() => handleTabClick("kontak")}>Kontak</TabNavigationButton>
+            </div>
+
+            {/* Pass the fetched `profile` data down to the correct child component */}
+            {activeTab === "data-diri" && <PersonalProfile profile={profile} />}
+            {activeTab === "domisili" && <Domicile profile={profile} />}
+            {activeTab === "kontak" && <Contact profile={profile} />}
           </div>
         </div>
-        <div className="md:col-span-6 space-y-4">
-          <div className="p-1 bg-[#dddddd] rounded-xl flex w-full justify-between">
-            <TabNavigationButton
-              icon={<User size={18} />}
-              isActive={activeTab === "data-diri"}
-              onClick={() => handleTabClick("data-diri")}
-            >
-              Data Diri
-            </TabNavigationButton>
-            <TabNavigationButton
-              icon={<MapPin size={18} />}
-              isActive={activeTab === "domisili"}
-              onClick={() => handleTabClick("domisili")}
-            >
-              Alamat
-            </TabNavigationButton>
-            <TabNavigationButton
-              icon={<Phone size={18} />}
-              isActive={activeTab === "kontak"}
-              onClick={() => handleTabClick("kontak")}
-            >
-              Kontak
-            </TabNavigationButton>
-          </div>
-          {activeTab === "data-diri" && <PersonalProfile />}
-          {activeTab === "domisili" && <Domicile />}
-          {activeTab === "kontak" && <Contact />}
-        </div>
-      </div>
-    </MainLayout>
-  );
-};
-
-const Domicile = () => {
-  return (
-    <RoundedBorderLayout className={" items-start gap-4 text-[#617182]"}>
-      <div className="flex flex-col space-y-5 ">
-        <h1 className="text-primary-green text-sm font-semibold">KTP</h1>
-        <div className="h-px border-2 border-primary-green"></div>
-        <DataCard title={"Kewarganegaraan*"} desc={"Indonesia"} />
-        <DataCard title={"Provinsi"} desc={"Jawa Barat"} />
-        <DataCard title={"Kota"} desc={"Kota Bogor"} />
-        <DataCard title={"Kecamatan"} desc={"Tanah Sareal"} />
-        <DataCard title={"Desa/Kelurahan"} desc={"Sukaresmi"} />
-        <DataCard title={"Alamat"} desc={"Kedung Halang Sentral"} />
-
-        <InputField
-          placeholder={"15156"}
-          title={"Kode Pos"}
-          type={""}
-          textArea={false}
-        />
-        <DataCard title={"Rw"} desc={"04"} />
-        <DataCard title={"Rt"} desc={"02"} />
-        <InputField
-          placeholder={""}
-          title={"Dusun"}
-          type={""}
-          textArea={false}
-        />
-      </div>
-      <div className="flex flex-col space-y-5 ">
-        <h1 className="text-primary-green text-sm font-semibold">
-          Tempat Tinggal
-        </h1>
-        <div className="h-px border-2 border-primary-green"></div>
-        <InputField
-          placeholder={"Jawa Barat"}
-          title={"Provinsi"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"Kota Bogor"}
-          title={"Kota"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"Tanah Sareal"}
-          title={"Kecamatan"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"Sukaresmi"}
-          title={"Desa/Kelurahan"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"Kedung Halang Sentral"}
-          title={"Alamat"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"15156"}
-          title={"Kode Pos"}
-          type={""}
-          textArea={false}
-        />
-        <InputField placeholder={"04"} title={"Rw"} type={""} textArea={false} />
-        <InputField placeholder={"02"} title={"Rt"} type={""} textArea={false} />
-        <InputField
-          placeholder={""}
-          title={"Dusun"}
-          type={""}
-          textArea={false}
-        />
-        <DataCard title={"Alamat sama dengan KTP?"} desc={"❌"} />
-      </div>
-    </RoundedBorderLayout>
-  );
-};
-
-const Contact = () => {
-  return (
-    <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
-      <div className="flex flex-col space-y-4 ">
-        <InputField
-          placeholder={"+628123456789"}
-          title={"No. Whatsapp*"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"+628123456789"}
-          title={"No. HP*"}
-          type={""}
-          textArea={false}
-        />
-      </div>
-      <div className="flex flex-col space-y-4 ">
-        <InputField
-          placeholder={""}
-          title={"Email Kampus"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"email@gmail.com"}
-          title={"Email Pribadi*"}
-          type={""}
-          textArea={false}
-        />
-      </div>
-    </RoundedBorderLayout>
-  );
-};
-
-const PersonalProfile = () => {
-  return (
-    <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
-      <div className="flex flex-col space-y-5 ">
-        <DataCard title={"Nama Mahasiswa"} desc={"Muhammad Ridho Fathan"} />
-        <DataCard title={"Tempat Lahir"} desc={"Bogor"} />
-        <DataCard title={"Agama"} desc={"Islam"} />
-        <InputField
-          placeholder={""}
-          title={"Suku"}
-          type={""}
-          textArea={false}
-        />
-        <InputField
-          placeholder={"70"}
-          title={"Berat Badan"}
-          type={""}
-          textArea={false}
-        />
-        <DataCard title={"Ukuran Almamater"} desc={"XL"} />
-        <DataCard title={"Status Mahasiswa"} desc={"Aktif"} />
-        <DataCard title={"Kebutuhan Khusus"} desc={"Tidak"} />
-      </div>
-      <div className="flex flex-col space-y-5 ">
-        <DataCard title={"NIK/No KTP*"} desc={"3271060000003"} />
-        <DataCard title={"Tanggal Lahir"} desc={"15 Mei 2003"} />
-        <DataCard title={"Jenis Kelamin"} desc={"Laki - Laki"} />
-        <DataCard title={"Status Nikah"} desc={"Belum Nikah"} />
-        <InputField
-          placeholder={"183"}
-          title={"Tinggi Badan (cm)"}
-          type={""}
-          textArea={false}
-        />
-        <DataCard title={"Golongan Darah"} desc={""} />
-        <DataCard
-          title={"Biodata Valid"}
-          desc={<Check color="#00A65A" strokeWidth={5} />}
-        />
-      </div>
-    </RoundedBorderLayout>
+      </MainLayout>
   );
 };
 

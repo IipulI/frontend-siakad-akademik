@@ -15,8 +15,8 @@ importers:
         specifier: ^4.0.9
         version: 4.0.14(vite@6.2.1(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2))
       '@tanstack/react-query':
-        specifier: ^5.75.5
-        version: 5.75.5(react@19.0.0)
+        specifier: ^5.80.10
+        version: 5.80.10(react@19.0.0)
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -35,6 +35,9 @@ importers:
       draft-js:
         specifier: ^0.11.7
         version: 0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      draft-js-export-html:
+        specifier: ^1.4.1
+        version: 1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6)
       lucide-react:
         specifier: ^0.487.0
         version: 0.487.0(react@19.0.0)
@@ -53,6 +56,9 @@ importers:
       react-router-dom:
         specifier: ^7.3.0
         version: 7.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-toastify:
+        specifier: ^11.0.5
+        version: 11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       recharts:
         specifier: ^2.15.3
         version: 2.15.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -745,11 +751,11 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6
 
-  '@tanstack/query-core@5.75.5':
-    resolution: {integrity: sha512-kPDOxtoMn2Ycycb76Givx2fi+2pzo98F9ifHL/NFiahEDpDwSVW6o12PRuQ0lQnBOunhRG5etatAhQij91M3MQ==}
+  '@tanstack/query-core@5.80.10':
+    resolution: {integrity: sha512-mUNQOtzxkjL6jLbyChZoSBP6A5gQDVRUiPvW+/zw/9ftOAz+H754zCj3D8PwnzPKyHzGkQ9JbH48ukhym9LK1Q==}
 
-  '@tanstack/react-query@5.75.5':
-    resolution: {integrity: sha512-QrLCJe40BgBVlWdAdf2ZEVJ0cISOuEy/HKupId1aTKU6gPJZVhSvZpH+Si7csRflCJphzlQ77Yx6gUxGW9o0XQ==}
+  '@tanstack/react-query@5.80.10':
+    resolution: {integrity: sha512-6zM098J8sLy9oU60XAdzUlAH4wVzoMVsWUWiiE/Iz4fd67PplxeyL4sw/MPcVJJVhbwGGXCsHn9GrQt2mlAzig==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -969,6 +975,18 @@ packages:
 
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
+
+  draft-js-export-html@1.4.1:
+    resolution: {integrity: sha512-G4VGBSalPowktIE4wp3rFbhjs+Ln9IZ2FhXeHjsZDSw0a2+h+BjKu5Enq+mcsyVb51RW740GBK8Xbf7Iic51tw==}
+    peerDependencies:
+      draft-js: '>=0.10.0'
+      immutable: 3.x.x
+
+  draft-js-utils@1.4.1:
+    resolution: {integrity: sha512-xE81Y+z/muC5D5z9qWmKfxEW1XyXfsBzSbSBk2JRsoD0yzMGGHQm/0MtuqHl/EUDkaBJJLjJ2EACycoDMY/OOg==}
+    peerDependencies:
+      draft-js: '>=0.10.0'
+      immutable: 3.x.x
 
   draft-js@0.11.7:
     resolution: {integrity: sha512-ne7yFfN4sEL82QPQEn80xnADR8/Q6ALVworbC5UOSzOvjffmYfFsr3xSZtxbIirti14R7Y33EZC5rivpLgIbsg==}
@@ -1438,6 +1456,12 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  react-toastify@11.0.5:
+    resolution: {integrity: sha512-EpqHBGvnSTtHYhCPLxML05NLY2ZX0JURbAdNYa6BUkk+amz4wbKBQvoKQAB0ardvSarUBuY4Q4s1sluAzZwkmA==}
+    peerDependencies:
+      react: ^18 || ^19
+      react-dom: ^18 || ^19
 
   react-transition-group@4.4.5:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
@@ -2059,11 +2083,11 @@ snapshots:
       tailwindcss: 4.0.14
       vite: 6.2.1(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)
 
-  '@tanstack/query-core@5.75.5': {}
+  '@tanstack/query-core@5.80.10': {}
 
-  '@tanstack/react-query@5.75.5(react@19.0.0)':
+  '@tanstack/react-query@5.80.10(react@19.0.0)':
     dependencies:
-      '@tanstack/query-core': 5.75.5
+      '@tanstack/query-core': 5.80.10
       react: 19.0.0
 
   '@types/chart.js@2.9.41':
@@ -2265,6 +2289,17 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.27.1
       csstype: 3.1.3
+
+  draft-js-export-html@1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6):
+    dependencies:
+      draft-js: 0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      draft-js-utils: 1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6)
+      immutable: 3.7.6
+
+  draft-js-utils@1.4.1(draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(immutable@3.7.6):
+    dependencies:
+      draft-js: 0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      immutable: 3.7.6
 
   draft-js@0.11.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
@@ -2727,6 +2762,12 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       react-transition-group: 4.4.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+
+  react-toastify@11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      clsx: 2.1.1
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   react-transition-group@4.4.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:

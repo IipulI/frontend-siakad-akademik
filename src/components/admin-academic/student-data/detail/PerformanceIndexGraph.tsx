@@ -9,16 +9,18 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { getLearningProgres } from "../../../../hooks/admin-akademik/useStudentDetail";
+import { useLocation } from "react-router-dom";
 
 export default function PerformanceIndexGraph() {
-  const data = [
-    { semester: 1, IPS: 3.75, IPK: 0, IPKLulus: 3.75 },
-    { semester: 2, IPS: 3.8, IPK: 0, IPKLulus: 3.78 },
-    { semester: 3, IPS: 4.0, IPK: 0, IPKLulus: 3.85 },
-    { semester: 4, IPS: 3.8, IPK: 0, IPKLulus: 3.83 },
-    { semester: 5, IPS: 3.8, IPK: 0, IPKLulus: 3.82 },
-    { semester: 6, IPS: 0.0, IPK: 0, IPKLulus: 3.82 },
-  ];
+    const { state } = useLocation();
+  
+    const { data: studenLectureGraph } = getLearningProgres(state);
+  
+    const data = studenLectureGraph?.indeksPrestasi;
+  
+    console.log(data)
+    
 
   return (
     <div className="flex flex-col items-center w-full border-2 col-span-5 lg:col-span-3">
@@ -28,7 +30,7 @@ export default function PerformanceIndexGraph() {
       <div className="w-full h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={data}
+            data={data?.riwayat}
             margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
@@ -59,7 +61,7 @@ export default function PerformanceIndexGraph() {
             <ReferenceLine
               y={2.5}
               label={{
-                value: "IP Min: 2,50",
+                value: `IP Min: ${data?.ipMinimum}`,
                 position: "insideLeft",
                 fill: "black",
                 fontSize: 12,
@@ -70,7 +72,7 @@ export default function PerformanceIndexGraph() {
               stroke="red"
             />
             <Line
-              dataKey="IPS"
+              dataKey="ips"
               name="IPS"
               stroke="#4572A7"
               strokeWidth={2}
@@ -78,7 +80,7 @@ export default function PerformanceIndexGraph() {
               activeDot={{ r: 7 }}
             />
             <Line
-              dataKey="IPK"
+              dataKey="ipk"
               name="IPK"
               stroke="#b91c1c"
               strokeWidth={2}
