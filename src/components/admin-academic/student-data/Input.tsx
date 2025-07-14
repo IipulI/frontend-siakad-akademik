@@ -66,16 +66,15 @@ interface SelectOption {
   label: string;
 }
 
-interface SelectProps {
+interface SelectProps<T> {
   label: string;
-  options: SelectOption[];
+  options: T[];
   required?: boolean;
   value?: string;
   defaultValue?: string;
-  onChange?: (value: string) => void;
   error?: string;
-  value: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  getOptionLabel: (option: T) => string;
+  getOptionValue: (option: T) => string;
 }
 
 interface InputProps {
@@ -93,8 +92,6 @@ export function TextInput({
   value,
   defaultValue = "",
   placeholder,
-  value,
-  onChange,
   onChange,
   error,
 }: InputProps) {
@@ -115,8 +112,6 @@ export function TextInput({
       </label>
       <div className="flex flex-col">
         <input
-          value={value}
-          onChange={onChange}
           placeholder={placeholder}
           className={`bg-white border text-sm sm:text-base ${
             error ? "border-red-500" : "border-gray-300"
@@ -131,24 +126,25 @@ export function TextInput({
   );
 }
 
-export function SelectInput({
+export function SelectInput<T>({
   label,
   options,
   required = false,
   value,
   defaultValue = "",
+  error,
   getOptionLabel,
   getOptionValue,
-  onChange, // ✅ tambahkan onChange
+  onChange,
 }: SelectProps<T> & { onChange?: (val: T | null) => void }) {
+  const isControlled = value !== undefined;
+  const selectValue = isControlled ? value : defaultValue;
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
-
-    // Temukan object yang sesuai berdasarkan value-nya
     const selectedOption = options.find(
       (option) => getOptionValue(option) === selectedValue
     );
-
     if (onChange) {
       onChange(selectedOption ?? null);
     }
@@ -166,15 +162,13 @@ export function SelectInput({
             error ? "border-red-500" : "border-gray-300"
           } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1`}
           value={selectValue}
-          onChange={isControlled ? handleChange : undefined}
-          defaultValue={!isControlled ? defaultValue : undefined}
+          onChange={handleChange}
           required={required}
-          onChange={handleChange} // ✅ gunakan handler
         >
           <option value="">{`-- Pilih ${label} --`}</option>
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
+            <option key={getOptionValue(option)} value={getOptionValue(option)}>
+              {getOptionLabel(option)}
             </option>
           ))}
         </select>
@@ -190,7 +184,6 @@ interface DateInputProps {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
-  value?: string;
   error?: string;
 }
 
@@ -199,7 +192,6 @@ export function DateInput({
   required = true,
   value,
   defaultValue = "",
-  value,
   onChange,
   error,
 }: DateInputProps) {
@@ -217,7 +209,9 @@ export function DateInput({
     }
 
     // Selalu kirim perubahan ke parent
-    onChange(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
   };
 
   return (
