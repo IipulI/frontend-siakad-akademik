@@ -9,25 +9,39 @@ interface InputFilterProps {
   options?: OptionProps[];
   label: string;
   select?: boolean;
-  defaultValue?: string;
   placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-// input for filter student
+// Input for filter student
 export function InputFilter({
   options = [],
   select = true,
   label,
-  defaultValue = "",
   placeholder,
+  value,
+  onChange,
 }: InputFilterProps) {
+  const isControlled = value !== undefined && onChange !== undefined;
+  const inputValue = isControlled ? value : "";
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    if (onChange) {
+      onChange(e.target.value);
+    }
+  };
+
   return (
     <div className={`input-filter-container grid grid-cols-2 items-center`}>
       <label className="text-xs w-fit font-medium">{label}</label>
       {select ? (
         <select
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
-          defaultValue={defaultValue}
+          value={inputValue}
+          onChange={isControlled ? handleChange : undefined}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -39,57 +53,74 @@ export function InputFilter({
         <input
           placeholder={placeholder}
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
-          defaultValue={defaultValue}
+          value={inputValue}
+          onChange={isControlled ? handleChange : undefined}
         />
       )}
     </div>
   );
 }
 
-interface OptionProps {
+interface SelectOption {
   value: string;
   label: string;
+}
+
+interface SelectProps {
+  label: string;
+  options: SelectOption[];
+  required?: boolean;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  error?: string;
+  value: string;
 }
 
 interface InputProps {
   label: string;
   required?: boolean;
+  value?: string;
   defaultValue?: string;
-  placeHolder?: string;
-  value: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  onChange?: (value: string) => void;
+  error?: string;
 }
-
-interface SelectProps<T = any> {
-  label: string;
-  options: T[];
-  required?: boolean;
-  defaultValue?: string;
-  getOptionLabel: (option: T) => string;
-  getOptionValue: (option: T) => string;
-}
-
 export function TextInput({
   label,
   required = false,
   defaultValue = "",
-  placeHolder,
+  placeholder,
   value,
   onChange,
+  error,
 }: InputProps) {
+  const isControlled = value !== undefined && onChange !== undefined;
+  const inputValue = isControlled ? value : defaultValue;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e.target.value);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 items-center mb-3">
-      <label className=" w-fit font-medium text-sm sm:text-base">
+      <label className="w-fit font-medium text-sm sm:text-base">
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
-      <input
-        value={value}
-        onChange={onChange}
-        placeholder={placeHolder}
-        className="bg-white border text-sm sm:text-base border-gray-300 text-black/60 font-semibold  rounded focus:ring-blue-500 focus:border-blue-500 p-1"
-        defaultValue={defaultValue}
-      />
+      <div className="flex flex-col">
+        <input
+          placeholder={placeholder}
+          className={`bg-white border text-sm sm:text-base ${
+            error ? "border-red-500" : "border-gray-300"
+          } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1`}
+          value={inputValue}
+          onChange={isControlled ? handleChange : undefined}
+          defaultValue={!isControlled ? defaultValue : undefined}
+        />
+        {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
+      </div>
     </div>
   );
 }
@@ -98,6 +129,7 @@ export function SelectInput<T>({
   label,
   options,
   required = false,
+  value,
   defaultValue = "",
   getOptionLabel,
   getOptionValue,
@@ -122,19 +154,26 @@ export function SelectInput<T>({
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
-      <select
-        className="bg-white border text-sm sm:text-base border-gray-300 text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1"
-        defaultValue={defaultValue}
-        required={required}
-        onChange={handleChange} // ✅ gunakan handler
-      >
-        <option value="">{`-- Pilih ${label} --`}</option>
-        {options.map((option) => (
-          <option key={getOptionValue(option)} value={getOptionValue(option)}>
-            {getOptionLabel(option)}
-          </option>
-        ))}
-      </select>
+      <div className="flex flex-col">
+        <select
+          className={`bg-white border text-sm sm:text-base ${
+            error ? "border-red-500" : "border-gray-300"
+          } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1`}
+          value={selectValue}
+          onChange={isControlled ? handleChange : undefined}
+          defaultValue={!isControlled ? defaultValue : undefined}
+          required={required}
+          onChange={handleChange} // ✅ gunakan handler
+        >
+          <option value="">{`-- Pilih ${label} --`}</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
+      </div>
     </div>
   );
 }
@@ -145,6 +184,7 @@ interface DateInputProps {
   defaultValue?: string;
   onChange?: (value: string) => void;
   value?: string;
+  error?: string;
 }
 
 export function DateInput({
@@ -152,9 +192,13 @@ export function DateInput({
   required = true,
   defaultValue = "",
   value,
-  onChange = () => {},
+  onChange,
+  error,
 }: DateInputProps) {
+  const isControlled = value !== undefined && onChange !== undefined;
   const [internalDate, setInternalDate] = useState(defaultValue);
+
+  const dateValue = isControlled ? value : internalDate;
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -206,36 +250,46 @@ export function DateInput({
   );
 }
 
-// Radio Options Component
 interface RadioOptionProps {
-  value: string;
+  value: string | boolean;
   label: string;
 }
 
 interface RadioInputProps {
   label?: string;
   options?: RadioOptionProps[];
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  value?: string | boolean;
+  defaultValue?: string | boolean;
+  onChange?: (value: boolean) => void;
   name?: string;
+  error?: string;
 }
 
 export function RadioInput({
   label = "Kebutuhan Khusus",
   options = [
-    { value: "tidak", label: "Tidak" },
-    { value: "ya", label: "Ya" },
+    { value: false, label: "Tidak" },
+    { value: true, label: "Ya" },
   ],
-  defaultValue = "tidak",
-  onChange = () => {},
+  value,
+  defaultValue = false,
+  onChange,
   name = "radio-group",
+  error,
 }: RadioInputProps) {
-  const [selected, setSelected] = useState(defaultValue);
+  const isControlled = value !== undefined && onChange !== undefined;
+  const [internalSelected, setInternalSelected] = useState(defaultValue);
+
+  const selectedValue = isControlled ? value : internalSelected;
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSelected(newValue);
-    onChange(newValue);
+    const newValue = e.target.value === "true";
+
+    if (isControlled && onChange) {
+      onChange(newValue);
+    } else {
+      setInternalSelected(newValue);
+    }
   };
 
   return (
@@ -243,26 +297,29 @@ export function RadioInput({
       <label className="block font-medium mb-2 text-sm sm:text-base">
         {label}
       </label>
-      <div className="flex gap-6">
-        {options.map((option) => (
-          <div key={option.value} className="flex items-center">
-            <input
-              type="radio"
-              id={`${name}-${option.value}`}
-              name={name}
-              value={option.value}
-              checked={selected === option.value}
-              onChange={handleRadioChange}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-            />
-            <label
-              htmlFor={`${name}-${option.value}`}
-              className="ml-2 text-sm sm:text-base font-medium text-gray-700"
-            >
-              {option.label}
-            </label>
-          </div>
-        ))}
+      <div className="flex flex-col">
+        <div className="flex gap-6">
+          {options.map((option) => (
+            <div key={String(option.value)} className="flex items-center">
+              <input
+                type="radio"
+                id={`${name}-${option.value}`}
+                name={name}
+                value={String(option.value)}
+                checked={selectedValue === option.value}
+                onChange={handleRadioChange}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+              />
+              <label
+                htmlFor={`${name}-${option.value}`}
+                className="ml-2 text-sm sm:text-base font-medium text-gray-700"
+              >
+                {option.label}
+              </label>
+            </div>
+          ))}
+        </div>
+        {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
       </div>
     </div>
   );

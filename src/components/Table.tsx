@@ -1,7 +1,5 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useState } from "react";
-import { AdminAcademicRoute } from "../types/VarRoutes.tsx";
-import { CurriculumData, PeriodeAkademik } from "../components/types.ts";
 import { useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -44,10 +42,6 @@ interface TableProps {
   onSaveNewProfile?: () => void;
   onCancelAdd?: () => void;
 
-  // ObeCPL
-  onSaveNewCpl?: () => void;
-  newCpl?: any;
-
   // ObeCPMK
   onSaveNewCpmk?: () => void;
   newCpmk?: any;
@@ -75,11 +69,85 @@ interface TableCurriculumYearProps {
   ) => void;
   isFormValid: () => boolean;
   periodeAkademikList: PeriodeAkademik[];
-  selectedPeriodeId: string;
-  setSelectedPeriodeId: (id: string) => void;
+  // selectedPeriodeId: string;
+  // setSelectedPeriodeId: (id: string) => void;
 }
 
-// table
+interface TableCourseManagementProps {
+  data: CourseData[];
+  tableHead?: string[];
+  error: string;
+  onDelete?: (id: string) => void;
+  selectedIds?: string[];
+  onSelect?: (id: string) => void;
+}
+
+interface TableRpsProps {
+  data: RpsData[];
+  error: string;
+}
+
+interface TableCplProps {
+  data: CplCpmkCourseResponse[];
+  tableHead: string[];
+  error: string;
+}
+
+interface TableCpmkProps {
+  data: CplCpmkCourseResponse[];
+  tableHead: string[];
+  error: string;
+}
+
+interface TableObeCplProps {
+  data: CplData[];
+  tableHead: string[];
+  error: string;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  isEditing: boolean;
+  isAdding: boolean;
+  currentData: CplData | null;
+  onSave: () => void;
+  onReset: () => void;
+  onInputChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => void;
+  isFormValid: () => boolean;
+}
+
+interface TableObeCpmkProps {
+  data: CpmkData[];
+  tableHead: string[];
+  error: string;
+}
+
+interface TableRpsManagementProps {
+  data: RpsData[];
+  error: string;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onView?: (id: string) => void;
+}
+
+interface TableCurriculumProdiProps {
+  data: CurriculumProdiData[];
+  tableHead: string[];
+  error: string;
+  onDelete?: (id: string) => void;
+}
+
+interface TableAnnouncementProps {
+  data: IPengumuman[];
+  tableHead: string[];
+  error: string;
+  isLoading: boolean;
+  isError: boolean;
+}
+
+// --- table ---
 
 export const Table = ({ data, tableHead, error }: TableProps) => {
   return (
@@ -126,7 +194,24 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
   );
 };
 
-export const TableHistory = ({ data, tableHead, error }: TableProps) => {
+// Table History
+interface TableHistoryProps {
+  data: Array<Record<string, any>>;
+  tableHead: string[];
+  error: string;
+  totalSks: number;
+  batasSks: number;
+}
+
+export const TableHistory = ({
+  data,
+  tableHead,
+  error,
+  totalSks,
+  batasSks,
+}: TableHistoryProps) => {
+  const isDataAvailable = data && data.length > 0;
+
   return (
     <table className="w-full my-4">
       <thead>
@@ -142,15 +227,19 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
         </tr>
       </thead>
       <tbody className="font-semibold">
-        {data && data.length > 0 ? (
+        {isDataAvailable ? (
           data.map((row, index) => {
+            // Gunakan row.kodeMataKuliah atau ID unik lain jika tersedia sebagai key
+            const uniqueKey = row.kodeMataKuliah
+              ? `${row.kodeMataKuliah}-${index}`
+              : index;
             const { id, ...rowWithoutId } = row;
             const rowData = Object.values(rowWithoutId);
             return (
-              <tr key={index} className="text-center">
+              <tr key={uniqueKey} className="text-center">
                 {rowData.map((cell, idx) => (
                   <td key={idx} className="p-2 border text-sm border-black/50">
-                    {String(cell)}
+                    {String(cell ?? "-")} {/* Tampilkan '-' jika data null */}
                   </td>
                 ))}
               </tr>
@@ -166,6 +255,8 @@ export const TableHistory = ({ data, tableHead, error }: TableProps) => {
             </td>
           </tr>
         )}
+
+        {/* Baris Total dan Batas SKS sekarang menggunakan props dinamis */}
         <tr>
           <td
             colSpan={4}
@@ -225,8 +316,8 @@ export const TableAnnouncement = ({
                 <td className="p-2 border text-sm border-black/50">
                   {row.tanggal}
                 </td>
-                <td className="p-2 border text-sm border-black/50 capitalize">
-                  {row.user}
+                <td className="p-2 border text-sm border-black/50">
+                  {row.penulis}
                 </td>
                 <td className="p-2 border text-sm border-black/50">
                   {row.judul}
@@ -274,9 +365,9 @@ export const TableCurriculumYear = ({
   onInputChange,
   isFormValid,
   periodeAkademikList,
-  selectedPeriodeId,
-  setSelectedPeriodeId,
-}: TableCurriculumYearProps) => {
+}: // selectedPeriodeId,
+// setSelectedPeriodeId,
+TableCurriculumYearProps) => {
   const isDataAvailable = data && data.length > 0;
 
   const renderDate = (dateString: string) => {
@@ -354,7 +445,6 @@ export const TableCurriculumYear = ({
           </tr>
         </thead>
         <tbody className="font-semibold">
-          {/* Form tambah */}
           {isAdding && currentData && (
             <tr className="text-center">
               <td className="p-2 border text-sm border-black/50">
@@ -622,79 +712,6 @@ export const TableCourseManagement: React.FC<TableProps> = ({
               } = row;
               const isChecked = selectedIds?.includes(id) ?? false;
 
-              // if (isEditing && currentData && currentData.id === id) {
-              //   return (
-              //     <tr key={id} className="text-center bg-yellow-50">
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="kurikulum" value={currentData.kurikulum} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="kode" value={currentData.kode} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="mataKuliah" value={currentData.mataKuliah} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="number" name="sks" value={currentData.sks} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="jenisMK" value={currentData.jenisMK} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="prodiPengampu" value={currentData.prodiPengampu} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50 text-center">
-              //         <button onClick={onSave} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
-              //           Simpan
-              //         </button>
-              //         <button onClick={onReset} className="bg-gray-500 text-white px-3 py-1 rounded">
-              //           Batal
-              //         </button>
-              //       </td>
-              //     </tr>
-              //   );
-              // }
-
-              // if (isAdding && currentData && currentData.id === id) {
-              //   // Render baris input untuk tambah data baru
-              //   return (
-              //     <tr key={id} className="text-center bg-green-50">
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="checkbox" checked={isChecked} onChange={() => onSelect?.(id)} className="mx-auto" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="kurikulum" value={currentData.kurikulum} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="kode" value={currentData.kode} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="mataKuliah" value={currentData.mataKuliah} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="number" name="sks" value={currentData.sks} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="jenisMK" value={currentData.jenisMK} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50">
-              //         <input type="text" name="prodiPengampu" value={currentData.prodiPengampu} onChange={onInputChange} className="w-full border border-gray-300 rounded px-2 py-1" />
-              //       </td>
-              //       <td className="p-2 border text-sm border-black/50 text-center">
-              //         <button onClick={onSave} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
-              //           Simpan
-              //         </button>
-              //         <button onClick={onReset} className="bg-gray-500 text-white px-3 py-1 rounded">
-              //           Batal
-              //         </button>
-              //       </td>
-              //     </tr>
-              //   );
-              // }
-
               return (
                 <tr key={id} className="text-center">
                   <td className="p-2 border text-sm border-black/50">
@@ -761,7 +778,7 @@ export const TableCourseManagement: React.FC<TableProps> = ({
   );
 };
 
-export const TableCpl = ({ data, tableHead, error }: TableProps) => {
+export const TableCpl = ({ data, tableHead, error }: TableCplProps) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full my-4">
@@ -810,7 +827,7 @@ export const TableCpl = ({ data, tableHead, error }: TableProps) => {
   );
 };
 
-export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
+export const TableCpmk = ({ data, tableHead, error }: TableCpmkProps) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full my-4">
@@ -856,7 +873,7 @@ export const TableCpmk = ({ data, tableHead, error }: TableProps) => {
   );
 };
 
-export const TableRps = ({ data, error, setId }: TableProps) => {
+export const TableRps = ({ data, error }: TableRpsProps) => {
   const navigate = useNavigate();
 
   return (
@@ -919,10 +936,21 @@ export const TableRps = ({ data, error, setId }: TableProps) => {
   );
 };
 
-export const TableOBE = ({ data, tableHead, error }) => {
+export const TableOBE = ({ data, error }) => {
   const isDataAvailable = data.length > 0;
-
   const navigate = useNavigate();
+
+  const handleViewProfile = (obeItem) => {
+    // Pass ID dan data penting via URL params
+    navigate(
+      `${AdminAcademicRoute.obeManagement.graduateProfile}/${obeItem.id}`,
+      {
+        state: {
+          obeData: obeItem,
+        },
+      }
+    );
+  };
 
   return (
     <div className="overflow-x-auto w-full">
@@ -933,11 +961,9 @@ export const TableOBE = ({ data, tableHead, error }) => {
               Kode Prodi
             </th>
             <th className="p-4 border border-gray-600" rowSpan={2}>
-              Program Studi
+              Jenjang - Program Studi
             </th>
-            <th className="p-4 border border-gray-600" rowSpan={2}>
-              Ketua Program Studi
-            </th>
+
             <th className="p-4 border border-gray-600" colSpan={4}>
               Status Pengisian
             </th>
@@ -1210,8 +1236,6 @@ export const TableGraduateProfile = ({
   );
 };
 
-const mappingOptions = ["PPL001", "PPL002", "PPL003"];
-
 export const TableObeCPL: React.FC<TableProps> = ({
   data,
   tableHead = [],
@@ -1274,11 +1298,11 @@ export const TableObeCPL: React.FC<TableProps> = ({
             <td className="p-2 border">
               <input
                 type="text"
-                name="kodePl"
-                value={currentData.kodePl}
+                name="kodeCpl"
+                value={currentData.kodeCpl}
                 onChange={onInputChange}
                 className="w-full p-1 border rounded"
-                placeholder="Kode PL"
+                placeholder="Kode CPL"
               />
             </td>
             <td className="p-2 border">
@@ -1438,7 +1462,6 @@ export const TableObeCpmk: React.FC<TableProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // Fungsi ini belum digunakan, kalau mau pakai tinggal hubungkan ke tombol
   const handleViewDetail = (id: string) => {
     navigate(AdminAcademicRoute.obeManagement.cpmkMataKuliah);
   };
@@ -1506,9 +1529,9 @@ export const TableObeCpmk: React.FC<TableProps> = ({
         {data.length > 0 ? (
           data.map((cpmk) => (
             <tr key={cpmk.id} className="text-center">
-              <td className="p-2 border">{cpmk.kodeMk}</td>
-              <td className="p-2 border">{cpmk.mataKuliah}</td>
-              <td className="p-2 border">{cpmk.statusCpmk}</td>
+              <td className="p-2 border">{cpmk.kodeMataKuliah}</td>
+              <td className="p-2 border">{cpmk.namaMataKuliah}</td>
+              <td className="p-2 border">{cpmk.hasCpmk}</td>
               <td className="p-2 border flex justify-center gap-2">
                 <button
                   onClick={() => handleViewDetail?.(cpmk.id)}
@@ -1847,22 +1870,175 @@ export const TableRpsManagement: React.FC<TableProps> = ({
   onDelete,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<RPSData | null>(null);
+  const [selectedItem, setSelectedItem] = useState<RpsData | null>(null);
+  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
 
+  // const { data: classData, isLoading: isClassLoading, error: classError } = getKelas();
+  const { data: classData, isLoading: isClassLoading } = useQuery<KelasData[]>({
+    queryKey: ["kelas"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      if (!token)
+        throw new Error(
+          "Token tidak ditemukan. Silakan login terlebih dahulu."
+        );
+
+      const response = await Api.get("/akademik/kelas-kuliah", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("🔍 Raw kelas API data:", response.data.data);
+      return response.data.data;
+    },
+    enabled: isModalOpen,
+  });
+
+  const mapKelasMutation = useMapKelasToRps();
+  const queryClient = useQueryClient();
+  const mutation = useAddRps();
   const navigate = useNavigate();
 
-  const handlePaperclipClick = (item: RPSData) => {
+  const uniqueClasses = useMemo(() => {
+    if (!classData) return [];
+    const seen = new Map();
+    // Filter data kelas, hanya simpan yang namanya unik
+    return classData.filter((kelas: KelasData) => {
+      if (!seen.has(kelas.nama)) {
+        seen.set(kelas.nama, true);
+        return true;
+      }
+      return false;
+    });
+  }, [classData]);
+
+  const handlePaperclipClick = (item: RpsData) => {
     setSelectedItem(item);
+    const existingClassIds = item.kelas?.map((k) => k.id) || [];
+    setSelectedClasses(existingClassIds);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedItem(null);
+    setSelectedClasses([]);
   };
 
-  const totalSKS = data.reduce((acc, item) => acc + Number(item.sks), 0);
+  const handleClassToggle = (id: string) => {
+    setSelectedClasses((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
+  const handleSaveClassMapping = () => {
+    if (!selectedItem) return;
+
+    // Buat payload sederhana sesuai dokumentasi
+    const payload = {
+      rpsId: selectedItem.id,
+      kelasIds: selectedClasses,
+    };
+
+    console.log("PAYLOAD FINAL (SIMPLE & CORRECT):", payload);
+
+    mapKelasMutation.mutate(payload, {
+      onSuccess: () => {
+        handleCloseModal();
+        queryClient.invalidateQueries({ queryKey: ["rps"] });
+      },
+    });
+  };
+
+  // Improved safe value access function
+  const getSafeValue = (obj: any, path: string, defaultValue: string = "-") => {
+    try {
+      const value = path.split(".").reduce((current, key) => {
+        return current && current[key] !== undefined ? current[key] : null;
+      }, obj);
+      return value !== null && value !== undefined && value !== ""
+        ? String(value)
+        : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  };
+
+  // Improved SKS calculation
+  const getSKS = (item: any) => {
+    try {
+      // First try to get from mataKuliah object
+      const sksTatapMuka = Number(
+        getSafeValue(item, "mataKuliah.sksTatapMuka", "0")
+      );
+      const sksPraktikum = Number(
+        getSafeValue(item, "mataKuliah.sksPraktikum", "0")
+      );
+      const totalSKS = sksTatapMuka + sksPraktikum;
+
+      if (totalSKS > 0) {
+        return totalSKS.toString();
+      }
+
+      // Fallback to direct sks property
+      const directSKS = getSafeValue(item, "sks", "0");
+      if (directSKS !== "0" && directSKS !== "-") {
+        return directSKS;
+      }
+
+      // Last fallback to mataKuliah.sks
+      return getSafeValue(item, "mataKuliah.sks", "0");
+    } catch {
+      return "0";
+    }
+  };
+
+  // Function to get course code safely
+  const getCourseCode = (item: any) => {
+    return (
+      getSafeValue(item, "mataKuliah.kodeMataKuliah") ||
+      getSafeValue(item, "kodeMataKuliah") ||
+      getSafeValue(item, "mataKuliah.kode")
+    );
+  };
+
+  // Function to get course name safely
+  const getCourseName = (item: any) => {
+    return (
+      getSafeValue(item, "mataKuliah.namaMataKuliah") ||
+      getSafeValue(item, "namaMataKuliah") ||
+      getSafeValue(item, "mataKuliah.nama")
+    );
+  };
+
+  const getLecturerName = (item: any): string => {
+    if (Array.isArray(item.dosenPenyusun) && item.dosenPenyusun.length > 0) {
+      return item.dosenPenyusun.map((dosen) => dosen.nama).join(", ");
+    }
+
+    if (Array.isArray(item.dosen) && item.dosen.length > 0) {
+      return item.dosen.map((dosen) => dosen.nama).join(", ");
+    }
+
+    if (typeof item.dosenPenyusun === "string" && item.dosenPenyusun) {
+      return item.dosenPenyusun;
+    }
+
+    return "-";
+  };
+
+  const getSemester = (item: any) => {
+    return (
+      getSafeValue(item, "mataKuliah.semester") ||
+      getSafeValue(item, "semester")
+    );
+  };
+
+  const getClassName = (item: any) => {
+    if (Array.isArray(item.kelas) && item.kelas.length > 0) {
+      return item.kelas.map((k) => k.nama || k.namaKelas).join(", ");
+    }
+
+    return getSafeValue(item, "namaKelas", "-");
+  };
   return (
     <>
       <div className="w-full overflow-x-auto">
@@ -1917,8 +2093,8 @@ export const TableRpsManagement: React.FC<TableProps> = ({
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="p-2 text-center">
-                  Data tidak ditemukan.
+                <td colSpan={7} className="p-2 text-center text-gray-500 py-8">
+                  {error || "Data tidak ditemukan."}
                 </td>
               </tr>
             )}
@@ -1926,6 +2102,7 @@ export const TableRpsManagement: React.FC<TableProps> = ({
         </table>
       </div>
 
+      {/* Modal for class mapping */}
       {isModalOpen && selectedItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white py-4 px-16 rounded-lg shadow-lg w-[400px] border-primary-green border-t-3">
@@ -1936,19 +2113,39 @@ export const TableRpsManagement: React.FC<TableProps> = ({
               <span>Mata Kuliah:</span>
               <span className="text-gray-700">{selectedItem.mataKuliah}</span>
 
-              <span>SKS:</span>
-              <span className="text-gray-700">{selectedItem.sks}</span>
+              <span className="font-medium">SKS:</span>
+              <span className="text-gray-700">{getSKS(selectedItem)}</span>
 
-              <span>Semester:</span>
-              <span className="text-gray-700">{selectedItem.smt}</span>
+              <span className="font-medium">Semester:</span>
+              <span className="text-gray-700">{getSemester(selectedItem)}</span>
 
-              <label>Pilih Kelas:</label>
-              <select className="border px-2 py-1 rounded">
-                <option value="">Reguler_A</option>
-                <option value="">Reguler_B</option>
-                <option value="">Reguler_C</option>
-                <option value="">Reguler_D</option>
-              </select>
+              <div className="col-span-2">
+                <label className="font-medium text-gray-600 mb-2 block">
+                  Pilih Kelas:
+                </label>
+                {isClassLoading ? (
+                  <div className="text-center p-4">Memuat kelas...</div>
+                ) : (
+                  <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-md max-h-48 overflow-y-auto">
+                    {uniqueClasses.map((kelas: KelasData) => {
+                      const isSelected = selectedClasses.includes(kelas.id);
+                      return (
+                        <button
+                          key={kelas.id}
+                          onClick={() => handleClassToggle(kelas.id)}
+                          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                            isSelected
+                              ? "bg-primary-green text-white shadow-md"
+                              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          }`}
+                        >
+                          {kelas.nama}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex justify-end gap-2">
@@ -1959,9 +2156,21 @@ export const TableRpsManagement: React.FC<TableProps> = ({
                 <CornerUpLeft className="w-4 h-4" />
                 <span>Batal</span>
               </button>
-              <button className="bg-primary-green text-white px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
-                <Check className="w-4 h-4" />
-                <span>Simpan</span>
+              <button
+                className="bg-primary-green text-white px-4 py-2 rounded-lg flex items-center gap-2 disabled:bg-primary-green/50 cursor-pointer"
+                onClick={handleSaveClassMapping}
+                disabled={
+                  mapKelasMutation.isPending || selectedClasses.length === 0
+                }
+              >
+                {mapKelasMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Check className="w-4 h-4" />
+                )}
+                <span>
+                  {mapKelasMutation.isPending ? "Menyimpan..." : "Simpan"}
+                </span>
               </button>
             </div>
           </div>

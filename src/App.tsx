@@ -10,6 +10,7 @@ import ThisWeek from "./pages/studentModule/schedule/ThisWeek";
 import History from "./pages/studentModule/academic/History";
 import Retake from "./pages/studentModule/academic/Retake";
 import Announcement from "./pages/studentModule/schedule/Announcement";
+import AnnouncementDetailPage from "./pages/studentModule/schedule/AnnouncmentDetailPage";
 import ParentInformation from "./pages/studentModule/profile/ParentInformation";
 import StudentPayment from "./pages/studentModule/payment/StudentPayment";
 import ProgramStudy from "./pages/studentModule/profile/ProgramStudy";
@@ -59,14 +60,8 @@ import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
-import ConsultationLecturer from "./pages/lecturer/guidance/ConsultationLecturer";
-import CalendarLecturer from "./pages/lecturer/schedule/CalendarLecturer";
 import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
-import ProposalLecturer from "./pages/lecturer/guidance/ProposalLecturer";
-import FinalProjectLecturer from "./pages/lecturer/guidance/FinalProjectLecturer";
-import SupporterLecturer from "./pages/lecturer/guidance/SupporterLecturer";
 import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
-import StopStudyLecturer from "./pages/lecturer/courses/StopStudyLecturer";
 import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
 import ClassLecturer from "./pages/lecturer/courses/ClassLecturer";
 import EditBill from "./pages/admin-finance/EditBill";
@@ -78,6 +73,12 @@ import ComponentBill from "./pages/admin-finance/component-bill/ComponentBill";
 import CreateComponentBill from "./pages/admin-finance/component-bill/CreateComponentBill";
 import EditComponentBill from "./pages/admin-finance/component-bill/EditComponentBill";
 import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetailTransaction";
+import DetailClassLecturer from "./pages/lecturer/courses/DetailClassLecturer";
+import DetailAdvisorLecturer from "./pages/lecturer/guidance/DetailAdvisorLecturer";
+import DetailCourseLecturer from "./pages/lecturer/courses/DetailCourseLecturer";
+import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
+import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
+import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
 
 export default function App() {
   return (
@@ -97,6 +98,10 @@ export default function App() {
       <Route
         path={String(StudentRoute.schedule.announcement)}
         element={<Announcement />}
+      />
+      <Route
+        path={String(StudentRoute.schedule.announcementDetail)}
+        element={<AnnouncementDetailPage />}
       />
       <Route
         path={String(StudentRoute.schedule.thisWeek)}
@@ -203,6 +208,14 @@ export default function App() {
         path={String(AdminAcademicRoute.announcement)}
         element={<AnnouncementAdminAcademic />}
       />
+      <Route
+        path={String(AdminAcademicRoute.detailAnnouncement)}
+        element={<DetailAnnouncement />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.addAnnouncement)}
+        element={<AddAnnouncementAdminAcademic />}
+      />
       {/* Route untuk admin akademik - pengaturan */}
       <Route
         path={String(AdminAcademicRoute.setting.year)}
@@ -251,22 +264,22 @@ export default function App() {
       />
 
       <Route
-        path={String(AdminAcademicRoute.courseManagement.editCourse)}
+        path={`${AdminAcademicRoute.courseManagement.editCourse}/:id`}
         element={<EditCourse />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.courseManagement.detailCourse)}
+        path={`${AdminAcademicRoute.courseManagement.detailCourse}/:id`}
         element={<DetailCourse />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.courseManagement.cplCpmkCourse)}
+        path={`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/:id`}
         element={<CplCpmkCourse />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.courseManagement.rpsCourse)}
+        path={`${AdminAcademicRoute.courseManagement.rpsCourse}/:id`}
         element={<RpsCourse />}
       />
 
@@ -277,7 +290,7 @@ export default function App() {
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.graduateProfile)}
+        path={`${AdminAcademicRoute.obeManagement.graduateProfile}/:id`}
         element={<GraduateProfile />}
       />
 
@@ -314,12 +327,12 @@ export default function App() {
       />
 
       <Route
-        path={String(AdminAcademicRoute.rpsManagement.editRps)}
+        path={`${AdminAcademicRoute.rpsManagement.editRps}/:id`}
         element={<EditRps />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.rpsManagement.detailRps)}
+        path={`${AdminAcademicRoute.rpsManagement.detailRps}/:id`}
         element={<DetailRps />}
       />
 
