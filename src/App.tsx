@@ -376,7 +376,7 @@ export default function App() {
         path={String(LecturerRoute.dashboard)}
         element={<DashboardLecturer />}
       />
-      <Route
+      {/* <Route
         path={String(LecturerRoute.guidance.consultation)}
         element={<ConsultationLecturer />}
       />
@@ -395,7 +395,7 @@ export default function App() {
       <Route
         path={String(LecturerRoute.guidance.supporter)}
         element={<SupporterLecturer />}
-      />
+      /> */}
       <Route
         path={String(LecturerRoute.guidance.advisor)}
         element={<AdvisorLecturer />}
@@ -404,10 +404,10 @@ export default function App() {
         path={String(LecturerRoute.courses.course)}
         element={<CourseLecturer />}
       />
-      <Route
+      {/* <Route
         path={String(LecturerRoute.courses.stopStudy)}
         element={<StopStudyLecturer />}
-      />
+      /> */}
       <Route
         path={String(LecturerRoute.courses.class)}
         element={<ClassLecturer />}

@@ -9,32 +9,22 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function Announcement() {
   const [currentPage, setCurrentPage] = useState(1);
-
-  const {
-    data: announcementsData,
-    isLoading: isLoadingAnnouncements,
-    isError: isErrorAnnouncements,
-  } = getAnnouncements();
-
-  if (isLoadingAnnouncements) {
-    return <LoadingSpinner />;
-  }
-
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
   const ITEMS_PER_PAGE = 10;
 
-  // Debouncing effect for search input
+  // Debounce input
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedKeyword(searchTerm);
       if (currentPage !== 1) {
-        setCurrentPage(1); // Reset to page 1 on new search
+        setCurrentPage(1);
       }
     }, 500);
     return () => clearTimeout(timerId);
   }, [searchTerm]);
 
+  // Data pengumuman utama
   const {
     data: response,
     isLoading,
@@ -48,68 +38,64 @@ export default function Announcement() {
     keyword: debouncedKeyword,
   });
 
-  // The headers for the table, matching the data fields
+  // Data untuk ditampilkan
+  const announcements = useMemo(() => response?.data || [], [response]);
+  const currentPageFromAPI = response?.currentPage ?? 1;
+  const totalPagesFromAPI = response?.totalPages ?? 1;
+
   const tableHead = ["Tanggal", "Judul", "Penulis", "Aksi"];
 
-  // Memoize the data to prevent unnecessary re-renders of the table
-  const announcements = useMemo(() => response?.data || [], [response]);
-  const pagination = useMemo(() => response?.pagination, [response]);
-
   return (
-      <MainLayout isGreeting={false} titlePage={"Pengumuman"} className={""}>
-        <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-yellow">
-          <div className="px-2 gap-3 lg:gap-16 border-2 p-2 grid grid-cols-1 lg:grid-cols-3">
-            <select className="rounded px-3 text-primary-brown border-primary-brown border p-1">
-              <option value={"semua"}>-Semua-</option>
-            </select>
-            <div className="flex">
-              <input
-                  type="search"
-                  placeholder="Cari Pengumuman"
-                  className="px-2 py-1 w-full md:w-70 rounded shadow-md border border-black/50"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button
-                  onClick={() => refetch()}
-                  className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center"
-                  title="Refresh Data"
-              >
-                <RefreshCw color="white" size={20} />
-              </button>
-            </div>
+    <MainLayout isGreeting={false} titlePage="Pengumuman" className="">
+      <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-2 border-primary-yellow">
+        <div className="px-2 gap-3 lg:gap-16 border-2 p-2 grid grid-cols-1 lg:grid-cols-3">
+          <select className="rounded px-3 text-primary-brown border-primary-brown border p-1">
+            <option value="semua">-Semua-</option>
+          </select>
+          <div className="flex">
+            <input
+              type="search"
+              placeholder="Cari Pengumuman"
+              className="px-2 py-1 w-full md:w-70 rounded shadow-md border border-black/50"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button
+              onClick={() => refetch()}
+              className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center"
+              title="Refresh Data"
+            >
+              <RefreshCw color="white" size={20} />
+            </button>
           </div>
+        </div>
 
-          <TableAnnouncement
-              tableHead={tableHead}
-              data={announcementsData}
-              // isLoading={isLoading}
-              // isError={isError}
-              error={error?.message || "Gagal memuat data."}
-          />
+        <TableAnnouncement
+          tableHead={tableHead}
+          data={announcements}
+          error={error?.message || "Gagal memuat data."}
+        />
 
-          <div className="flex justify-center items-center p-4 space-x-4">
-            <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1 || isLoading}
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span>
-            Page {pagination?.currentPage} of {pagination?.totalPages}
+        <div className="flex justify-center items-center p-4 space-x-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1 || isLoading}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPageFromAPI} of {totalPagesFromAPI}
           </span>
-            <button
-                onClick={() =>
-                    setCurrentPage((prev) =>
-                        Math.min(prev + 1, pagination?.totalPages || 1)
-                    )
-                }
-                disabled={currentPage === pagination?.totalPages || isLoading}
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Next
-            </button>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPagesFromAPI))
+            }
+            disabled={currentPage === totalPagesFromAPI || isLoading}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </div>
     </MainLayout>
