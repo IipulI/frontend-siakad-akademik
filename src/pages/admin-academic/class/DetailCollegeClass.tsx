@@ -15,7 +15,7 @@ import {
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TabNavigationButtonStudent } from "../../../components/admin-academic/dashboard/TabNavigasiButton";
 import {
@@ -51,6 +51,7 @@ const DetailCollegeClass = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
 
   const { data, isLoading, error } = getDetailCollegeClass(id!);
   const {

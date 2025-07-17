@@ -12,58 +12,58 @@ export default function FormGeneralInformation({
   onInputChange,
 }: FormGeneralInformationProps) {
   const jenisKelaminOptions = [
-    { value: "Laki-laki", label: "Laki-laki" },
-    { value: "Perempuan", label: "Perempuan" },
+    { value: "laki-laki", label: "Laki-laki" },
+    { value: "perempuan", label: "Perempuan" },
   ];
 
   const agamaOptions = [
-    { value: "Islam", label: "Islam" },
-    { value: "Kristen", label: "Kristen" },
-    { value: "Katolik", label: "Katolik" },
-    { value: "Hindu", label: "Hindu" },
-    { value: "Buddha", label: "Buddha" },
-    { value: "Konghucu", label: "Konghucu" },
+    { value: "islam", label: "Islam" },
+    { value: "kristen", label: "Kristen" },
+    { value: "katolik", label: "Katolik" },
+    { value: "hindu", label: "Hindu" },
+    { value: "buddha", label: "Buddha" },
+    { value: "konghucu", label: "Konghucu" },
   ];
 
   const golonganDarahOptions = [
-    { value: "A", label: "A" },
-    { value: "B", label: "B" },
-    { value: "AB", label: "AB" },
-    { value: "O", label: "O" },
+    { value: "a", label: "A" },
+    { value: "b", label: "B" },
+    { value: "ab", label: "AB" },
+    { value: "o", label: "O" },
   ];
 
   const transportasiOptions = [
-    { value: "Motor", label: "Motor" },
-    { value: "Mobil", label: "Mobil" },
-    { value: "Angkutan Umum", label: "Angkutan Umum" },
-    { value: "Jalan Kaki", label: "Jalan Kaki" },
+    { value: "motor", label: "Motor" },
+    { value: "mobil", label: "Mobil" },
+    { value: "angkutan umum", label: "Angkutan Umum" },
+    { value: "jalan kaki", label: "Jalan Kaki" },
   ];
 
   const kewarganegaraanOptions = [
-    { value: "Indonesia", label: "Indonesia" },
-    { value: "WNA", label: "WNA" },
+    { value: "indonesia", label: "Indonesia" },
+    { value: "wna", label: "WNA" },
   ];
 
   const statusNikahOptions = [
-    { value: "Belum Menikah", label: "Belum Menikah" },
-    { value: "Menikah", label: "Menikah" },
-    { value: "Cerai", label: "Cerai" },
+    { value: "belum menikah", label: "Belum Menikah" },
+    { value: "menikah", label: "Menikah" },
+    { value: "cerai", label: "Cerai" },
   ];
 
   const ukuranJasOptions = [
-    { value: "S", label: "S" },
-    { value: "M", label: "M" },
-    { value: "L", label: "L" },
-    { value: "XL", label: "XL" },
-    { value: "XXL", label: "XXL" },
+    { value: "s", label: "S" },
+    { value: "m", label: "M" },
+    { value: "l", label: "L" },
+    { value: "xl", label: "XL" },
+    { value: "xxl", label: "XXL" },
   ];
 
   const pekerjaanOptions = [
-    { value: "PNS", label: "PNS" },
-    { value: "Karyawan Swasta", label: "Karyawan Swasta" },
-    { value: "Wiraswasta", label: "Wiraswasta" },
-    { value: "Mahasiswa", label: "Mahasiswa" },
-    { value: "Lainnya", label: "Lainnya" },
+    { value: "pns", label: "PNS" },
+    { value: "karyawan swasta", label: "Karyawan Swasta" },
+    { value: "wiraswasta", label: "Wiraswasta" },
+    { value: "mahasiswa", label: "Mahasiswa" },
+    { value: "lainnya", label: "Lainnya" },
   ];
 
   const penghasilanOptions = [
@@ -85,9 +85,13 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Jenis Kelamin"
               options={jenisKelaminOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               required={true}
               value={formData?.jenisKelamin}
-              onChange={(value) => onInputChange("jenisKelamin", value)}
+              onChange={(option) =>
+                onInputChange("jenisKelamin", option?.value ?? "")
+              }
             />
             <TextInput
               label="Tempat Lahir"
@@ -104,8 +108,10 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Agama"
               options={agamaOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData?.agama}
-              onChange={(value) => onInputChange("agama", value)}
+              onChange={(option) => onInputChange("agama", option?.value ?? "")}
             />
             <TextInput
               label="Berat Badan (kg)"
@@ -120,14 +126,22 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Golongan Darah"
               options={golonganDarahOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData?.golonganDarah}
-              onChange={(value) => onInputChange("golonganDarah", value)}
+              onChange={(option) =>
+                onInputChange("golonganDarah", option?.value ?? "")
+              }
             />
             <SelectInput
               label="Transportasi"
               options={transportasiOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData?.transportasi}
-              onChange={(value) => onInputChange("transportasi", value)}
+              onChange={(option) =>
+                onInputChange("transportasi", option?.value ?? "")
+              }
             />
           </div>
         </div>
@@ -171,8 +185,12 @@ export default function FormGeneralInformation({
         <SelectInput
           label="Kewarganegaraan"
           options={kewarganegaraanOptions}
+          getOptionLabel={(opt) => opt.label}
+          getOptionValue={(opt) => opt.value}
           value={formData?.kewarganegaraan}
-          onChange={(value) => onInputChange("kewarganegaraan", value)}
+          onChange={(option) =>
+            onInputChange("kewarganegaraan", option?.value ?? "")
+          }
         />
         <TextInput
           label="Paspor"
@@ -193,14 +211,22 @@ export default function FormGeneralInformation({
         <SelectInput
           label="Status Nikah"
           options={statusNikahOptions}
+          getOptionLabel={(opt) => opt.label}
+          getOptionValue={(opt) => opt.value}
           value={formData?.statusNikah}
-          onChange={(value) => onInputChange("statusNikah", value)}
+          onChange={(option) =>
+            onInputChange("statusNikah", option?.value ?? "")
+          }
         />
         <SelectInput
           label="Ukuran Jas Almamater"
           options={ukuranJasOptions}
+          getOptionLabel={(opt) => opt.label}
+          getOptionValue={(opt) => opt.value}
           value={formData?.ukuranJasAlmamater}
-          onChange={(value) => onInputChange("ukuranJasAlmamater", value)}
+          onChange={(option) =>
+            onInputChange("ukuranJasAlmamater", option?.value ?? "")
+          }
         />
 
         {/* Section Pekerjaan */}
@@ -212,8 +238,12 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Pekerjaan"
               options={pekerjaanOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData?.pekerjaan}
-              onChange={(value) => onInputChange("pekerjaan", value)}
+              onChange={(option) =>
+                onInputChange("pekerjaan", option?.value ?? "")
+              }
             />
             <TextInput
               label="Instansi Pekerjaan"
@@ -223,8 +253,12 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Penghasilan"
               options={penghasilanOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData?.penghasilan}
-              onChange={(value) => onInputChange("penghasilan", value)}
+              onChange={(option) =>
+                onInputChange("penghasilan", option?.value ?? "")
+              }
             />
           </div>
         </div>

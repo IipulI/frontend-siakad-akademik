@@ -8,6 +8,8 @@ import { getCourseData } from "../../../hooks/academic/useCourseManagement.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { useDeleteCurriculumProdi } from "../../../hooks/academic/useCurriculumProdi.ts";
+import { SelectInput } from "../../../components/admin-academic/student-data/Input.tsx";
+import { getSubjects } from "../../../hooks/useKelasKuliah.ts";
 
 type CurriculumQueryParams = {
   programStudi: string;
@@ -31,7 +33,14 @@ const transformDataForTable = (data: any[]): any[] => {
         ...mk,
         semester: semesterData.semester,
         totalSks: mk.sksTatapMuka + mk.sksPraktikum,
-        prasyarat: [mk.prasyaratMataKuliah1?.kodeMataKuliah, mk.prasyaratMataKuliah2?.kodeMataKuliah, mk.prasyaratMataKuliah3?.kodeMataKuliah].filter(Boolean).join(", ") || "-",
+        prasyarat:
+          [
+            mk.prasyaratMataKuliah1?.kodeMataKuliah,
+            mk.prasyaratMataKuliah2?.kodeMataKuliah,
+            mk.prasyaratMataKuliah3?.kodeMataKuliah,
+          ]
+            .filter(Boolean)
+            .join(", ") || "-",
         status: mk.opsiMataKuliah ? "Wajib" : "Pilihan",
       });
     });
@@ -40,10 +49,15 @@ const transformDataForTable = (data: any[]): any[] => {
   return flatData;
 };
 
-const fetchCurriculumProdiData = async ({ queryKey }: { queryKey: [string, CurriculumQueryParams] }): Promise<any[]> => {
+const fetchCurriculumProdiData = async ({
+  queryKey,
+}: {
+  queryKey: [string, CurriculumQueryParams];
+}): Promise<any[]> => {
   const [, { programStudi, tahunKurikulum }] = queryKey;
   const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+  if (!token)
+    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   const response = await Api.get("/akademik/kurikulum-prodi", {
     headers: {
@@ -65,9 +79,18 @@ const useAddCurriculumProdi = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: AddCurriculumProdiData }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: AddCurriculumProdiData;
+    }) => {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+      if (!token)
+        throw new Error(
+          "Token tidak ditemukan. Silakan login terlebih dahulu."
+        );
 
       const payload = {
         siakProgramStudiId: data.siakProgramStudiId,
@@ -79,12 +102,16 @@ const useAddCurriculumProdi = () => {
 
       console.log("Final payload:", payload);
 
-      const response = await Api.put(`/akademik/kurikulum-prodi/add/${id}`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await Api.put(
+        `/akademik/kurikulum-prodi/add/${id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       return response.data;
     },
@@ -104,7 +131,8 @@ const useAddCurriculumProdi = () => {
 const CurriculumProdi: React.FC = () => {
   // --- State Management ---
   const [selectedProgramStudi, setSelectedProgramStudi] = useState<string>("");
-  const [selectedTahunKurikulum, setSelectedTahunKurikulum] = useState<string>("");
+  const [selectedTahunKurikulum, setSelectedTahunKurikulum] =
+    useState<string>("");
   const [selectedSemester, setSelectedSemester] = useState<string>("all");
   const [selectedMataKuliah, setSelectedMataKuliah] = useState<string>("all");
   const [selectedNilaiMin, setSelectedNilaiMin] = useState<string>("all");
@@ -113,9 +141,21 @@ const CurriculumProdi: React.FC = () => {
   // Get query client for cache invalidation
   const queryClient = useQueryClient();
 
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
-  const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
-  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
+  const {
+    data: courseData = [],
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = getSubjects();
+  const {
+    data: prodiData = [],
+    isLoading: isProdiLoading,
+    error: prodiError,
+  } = getProdi();
+  const {
+    data: curriculumData = [],
+    isLoading: isCurriculumLoading,
+    error: curriculumError,
+  } = getCurriculumYear();
 
   const { mutate } = useDeleteCurriculumProdi();
 
@@ -155,11 +195,25 @@ const CurriculumProdi: React.FC = () => {
   const addCurriculumProdi = useAddCurriculumProdi();
 
   const handleTambahData = () => {
-    const selectedCourse = courseData.find((course) => course.namaMataKuliah === selectedMataKuliah);
-    const selectedKurikulum = curriculumData.find((item) => item.tahun.toString() === selectedTahunKurikulum);
-    const selectedProdi = prodiData.find((prodi) => prodi.namaProgramStudi === selectedProgramStudi);
+    const selectedCourse = courseData.find(
+      (course) => course.namaMataKuliah === selectedMataKuliah
+    );
+    const selectedKurikulum = curriculumData.find(
+      (item) => item.tahun.toString() === selectedTahunKurikulum
+    );
+    const selectedProdi = prodiData.find(
+      (prodi) => prodi.namaProgramStudi === selectedProgramStudi
+    );
 
-    if (!selectedCourse || !selectedKurikulum || !selectedProdi || selectedSemester === "all" || selectedNilaiMin === "all" || !opsiMataKuliah || (opsiMataKuliah !== "wajib" && opsiMataKuliah !== "pilihan")) {
+    if (
+      !selectedCourse ||
+      !selectedKurikulum ||
+      !selectedProdi ||
+      selectedSemester === "all" ||
+      selectedNilaiMin === "all" ||
+      !opsiMataKuliah ||
+      (opsiMataKuliah !== "wajib" && opsiMataKuliah !== "pilihan")
+    ) {
       alert("Mohon lengkapi semua data terlebih dahulu sebelum menambahkan.");
       return;
     }
@@ -193,22 +247,28 @@ const CurriculumProdi: React.FC = () => {
 
             switch (status) {
               case 400:
-                errorMessage = `❌ Data tidak valid: ${data.message || "Periksa kembali data yang diinput"}`;
+                errorMessage = `❌ Data tidak valid: ${
+                  data.message || "Periksa kembali data yang diinput"
+                }`;
                 break;
               case 401:
                 errorMessage = "❌ Sesi telah berakhir. Silakan login kembali.";
                 break;
               case 403:
-                errorMessage = "❌ Anda tidak memiliki akses untuk melakukan operasi ini.";
+                errorMessage =
+                  "❌ Anda tidak memiliki akses untuk melakukan operasi ini.";
                 break;
               case 409:
                 errorMessage = "❌ Data sudah ada atau terjadi konflik data.";
                 break;
               case 500:
-                errorMessage = "❌ Terjadi kesalahan server. Silakan hubungi admin.";
+                errorMessage =
+                  "❌ Terjadi kesalahan server. Silakan hubungi admin.";
                 break;
               default:
-                errorMessage = `❌ Error ${status}: ${data.message || "Terjadi kesalahan"}`;
+                errorMessage = `❌ Error ${status}: ${
+                  data.message || "Terjadi kesalahan"
+                }`;
             }
           }
 
@@ -220,16 +280,22 @@ const CurriculumProdi: React.FC = () => {
 
   // Get unique semesters for dropdown
   const availableSemesters = React.useMemo(() => {
-    const semesters = [...new Set(curriculumProdiData.map((item) => item.semester))];
+    const semesters = [
+      ...new Set(curriculumProdiData.map((item) => item.semester)),
+    ];
     return semesters.sort((a, b) => parseInt(a) - parseInt(b));
   }, [curriculumProdiData]);
 
   // Event Handlers
-  const handleProgramStudiChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleProgramStudiChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedProgramStudi(e.target.value);
   };
 
-  const handleTahunKurikulumChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTahunKurikulumChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedTahunKurikulum(e.target.value);
   };
 
@@ -259,13 +325,21 @@ const CurriculumProdi: React.FC = () => {
     opsiMataKuliah !== null &&
     (opsiMataKuliah === "wajib" || opsiMataKuliah === "pilihan");
 
+  console.log("COURSE DATA", courseData);
+
   return (
     <MainLayout isGreeting={false} titlePage="Kurikulum Prodi" className="">
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5 flex flex-col items-center justify-between gap-4 md:flex-row md:mb-6">
         <div className="flex flex-col gap-4 mb-4 md:flex-row md:mb-0 w-full">
           <div className="flex items-center gap-2 w-full md:w-96">
-            <span className="whitespace-nowrap w-28 text-primary-yellow font-semibold">Program Studi</span>
-            <select className="rounded px-3 py-2 border border-primary-brown flex-1 w-20" value={selectedProgramStudi} onChange={handleProgramStudiChange}>
+            <span className="whitespace-nowrap w-28 text-primary-yellow font-semibold">
+              Program Studi
+            </span>
+            <select
+              className="rounded px-3 py-2 border border-primary-brown flex-1 w-20"
+              value={selectedProgramStudi}
+              onChange={handleProgramStudiChange}
+            >
               <option value="">-- Pilih Program Studi --</option>
               {prodiData.map((prodi) => (
                 <option key={prodi.id} value={prodi.namaProgramStudi}>
@@ -275,8 +349,14 @@ const CurriculumProdi: React.FC = () => {
             </select>
           </div>
           <div className="flex items-center gap-2 w-full md:w-72">
-            <span className="whitespace-nowrap w-28 text-primary-yellow font-semibold">Kurikulum</span>
-            <select className="rounded px-3 py-2 border border-primary-brown flex-1" value={selectedTahunKurikulum} onChange={handleTahunKurikulumChange}>
+            <span className="whitespace-nowrap w-28 text-primary-yellow font-semibold">
+              Kurikulum
+            </span>
+            <select
+              className="rounded px-3 py-2 border border-primary-brown flex-1"
+              value={selectedTahunKurikulum}
+              onChange={handleTahunKurikulumChange}
+            >
               <option value="">-- Pilih Tahun Kurikulum --</option>
               {curriculumData.map((item) => (
                 <option key={item.id} value={item.tahun.toString()}>
@@ -294,20 +374,42 @@ const CurriculumProdi: React.FC = () => {
           <div className="flex flex-col gap-4 md:flex-row w-full">
             {/* Mata Kuliah Dropdown */}
             <div className="flex flex-col gap-2 w-full md:w-96 md:ml-[-40px]">
-              <span className="text-primary-green font-semibold">Mata Kuliah</span>
+              <span className="text-primary-green font-semibold">
+                Mata Kuliah
+              </span>
               <div className="relative">
-                <select
+                {/* <select
                   className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
                   value={selectedMataKuliah}
                   onChange={handleMataKuliahChange}
                 >
                   <option value="all">-- Cari Mata Kuliah --</option>
                   {courseData.map((mataKuliah) => (
-                    <option key={mataKuliah.id} value={mataKuliah.namaMataKuliah}>
+                    <option
+                      key={mataKuliah.id}
+                      value={mataKuliah.namaMataKuliah}
+                    >
                       {mataKuliah.namaMataKuliah}
                     </option>
                   ))}
-                </select>
+                </select> */}
+
+                <SelectInput
+                  label="Mata Kuliah"
+                  options={
+                    courseData?.filter(
+                      (matkul) =>
+                        matkul.namaProgramStudi === selectedProgramStudi
+                    ) ?? []
+                  }
+                  required
+                  getOptionLabel={(opt) => opt.namaMataKuliah}
+                  getOptionValue={(opt) => opt.id}
+                  value={selectedMataKuliah}
+                  onChange={(val) =>
+                    setSelectedMataKuliah(val?.mataKuliahId ?? "")
+                  }
+                />
               </div>
             </div>
 
@@ -322,7 +424,11 @@ const CurriculumProdi: React.FC = () => {
                 >
                   <option value="all">-- Pilih Semester --</option>
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
-                    <option key={sem} value={sem.toString()} className="font-semibold">
+                    <option
+                      key={sem}
+                      value={sem.toString()}
+                      className="font-semibold"
+                    >
                       {sem}
                     </option>
                   ))}
@@ -332,7 +438,9 @@ const CurriculumProdi: React.FC = () => {
 
             {/* Nilai Minimum Dropdown */}
             <div className="flex flex-col gap-2 w-full md:w-40">
-              <span className="text-primary-green font-semibold">Nilai Minimum</span>
+              <span className="text-primary-green font-semibold">
+                Nilai Minimum
+              </span>
               <div className="relative">
                 <select
                   className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
@@ -373,13 +481,27 @@ const CurriculumProdi: React.FC = () => {
               <h3 className="font-bold">Opsi Tambahan</h3>
               <div className="flex flex-col gap-3 md:flex-row">
                 <div className="flex items-center gap-2">
-                  <input type="radio" id="opsiWajib" name="opsiMataKuliah" className="w-4 h-4" checked={opsiMataKuliah === "wajib"} onChange={() => handleOpsiMataKuliahChange("wajib")} />
+                  <input
+                    type="radio"
+                    id="opsiWajib"
+                    name="opsiMataKuliah"
+                    className="w-4 h-4"
+                    checked={opsiMataKuliah === "wajib"}
+                    onChange={() => handleOpsiMataKuliahChange("wajib")}
+                  />
                   <label htmlFor="opsiWajib" className="font-semibold">
                     MK Wajib
                   </label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <input type="radio" id="opsiPilihan" name="opsiMataKuliah" className="w-4 h-4" checked={opsiMataKuliah === "pilihan"} onChange={() => handleOpsiMataKuliahChange("pilihan")} />
+                  <input
+                    type="radio"
+                    id="opsiPilihan"
+                    name="opsiMataKuliah"
+                    className="w-4 h-4"
+                    checked={opsiMataKuliah === "pilihan"}
+                    onChange={() => handleOpsiMataKuliahChange("pilihan")}
+                  />
                   <label htmlFor="opsiPilihan" className="font-semibold">
                     MK Pilihan
                   </label>
@@ -391,10 +513,18 @@ const CurriculumProdi: React.FC = () => {
               <button
                 className="bg-primary-green text-white rounded px-4 py-2 flex items-center gap-1 cursor-pointer duration-200 disabled:bg-gray-400"
                 onClick={handleTambahData}
-                disabled={!isFormValid || isLoading || addCurriculumProdi.isPending}
+                disabled={
+                  !isFormValid || isLoading || addCurriculumProdi.isPending
+                }
               >
-                {isLoading || addCurriculumProdi.isPending ? <RefreshCw size={16} className="animate-spin" /> : <Plus size={16} />}
-                {isLoading || addCurriculumProdi.isPending ? "Loading..." : "Tambah"}
+                {isLoading || addCurriculumProdi.isPending ? (
+                  <RefreshCw size={16} className="animate-spin" />
+                ) : (
+                  <Plus size={16} />
+                )}
+                {isLoading || addCurriculumProdi.isPending
+                  ? "Loading..."
+                  : "Tambah"}
               </button>
             </div>
           </div>
@@ -412,7 +542,22 @@ const CurriculumProdi: React.FC = () => {
               </div>
             </div>
           ) : (
-            <TableCurriculumProdi data={filteredData} tableHead={["No", "Semester", "Kode", "Mata Kuliah", "SKS", "Status", "Nilai Min", "Prasyarat", "Aksi"]} error="Data tidak ditemukan." onDelete={mutate} />
+            <TableCurriculumProdi
+              data={filteredData}
+              tableHead={[
+                "No",
+                "Semester",
+                "Kode",
+                "Mata Kuliah",
+                "SKS",
+                "Status",
+                "Nilai Min",
+                "Prasyarat",
+                "Aksi",
+              ]}
+              error="Data tidak ditemukan."
+              onDelete={mutate}
+            />
           )}
         </div>
       </div>

@@ -13,6 +13,13 @@ import {
   Check,
   Pencil,
 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useAddRps,
+  useMapKelasToRps,
+} from "../hooks/academic/useRpsManagement";
+import { SelectInput } from "./admin-academic/student-data/Input";
+import { getAcademicPeriods, getProgramStudi } from "../hooks/useGeneral";
 
 interface TableProps {
   data: Array<Record<string, any>>;
@@ -423,6 +430,9 @@ TableCurriculumYearProps) => {
     return `ID tidak ditemukan: ${periodeId}`;
   };
 
+  const { data: academicPeriods, isLoading: isLoadingAcademicPeriods } =
+    getAcademicPeriods();
+
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full my-4 ">
@@ -466,34 +476,49 @@ TableCurriculumYearProps) => {
                 />
               </td>
               <td className="p-2 border text-sm border-black/50">
-                <select
-                  name="siakPeriodeAkademikId"
-                  value={selectedPeriodeId}
-                  onChange={(e) => setSelectedPeriodeId(e.target.value)}
-                  className="border px-2 py-1 rounded w-full"
-                >
-                  <option value="">-- Pilih Periode Akademik --</option>
-                  {periodeAkademikList.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.namaPeriode}
-                    </option>
-                  ))}
-                </select>
-              </td>
-              <td className="p-2 border text-sm border-black/50">
-                <input
-                  type="date"
-                  name="tanggalAwal"
-                  value={currentData.tanggalAwal}
-                  onChange={onInputChange}
-                  className="border p-2 w-full"
+                <SelectInput
+                  options={academicPeriods}
+                  label="Periode Akademik"
+                  required
+                  getOptionLabel={(opt) => opt.namaPeriode}
+                  getOptionValue={(opt) => opt.id}
+                  value={currentData.siakPeriodeAkademikId ?? ""}
+                  onChange={(selected) => {
+                    // Set ID periode akademik
+                    onInputChange({
+                      target: {
+                        name: "siakPeriodeAkademikId",
+                        value: selected?.id ?? "",
+                      },
+                    });
+
+                    // Hanya isi tanggal awal jika ada
+                    if (selected?.tanggalMulai) {
+                      onInputChange({
+                        target: {
+                          name: "tanggalMulai",
+                          value: selected.tanggalMulai,
+                        },
+                      });
+                    }
+                  }}
                 />
               </td>
               <td className="p-2 border text-sm border-black/50">
                 <input
                   type="date"
-                  name="tanggalAkhir"
-                  value={currentData.tanggalAkhir}
+                  name="tanggalMulai"
+                  value={currentData.tanggalMulai}
+                  onChange={onInputChange}
+                  readOnly
+                  className="border p-2 w-full cursor-not-allowed "
+                />
+              </td>
+              <td className="p-2 border text-sm border-black/50">
+                <input
+                  type="date"
+                  name="tanggalSelesai"
+                  value={currentData.tanggalSelesai}
                   onChange={onInputChange}
                   className="border p-2 w-full"
                 />
@@ -543,34 +568,58 @@ TableCurriculumYearProps) => {
                       />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      <select
-                        name="siakPeriodeAkademikId"
-                        value={selectedPeriodeId}
-                        onChange={(e) => setSelectedPeriodeId(e.target.value)}
-                        className="border p-2 w-full"
-                      >
-                        <option value="">-- Pilih Periode Akademik --</option>
-                        {periodeAkademikList.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.namaPeriode}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="p-2 border text-sm border-black/50">
-                      <input
-                        type="date"
-                        name="tanggalAwal"
-                        value={currentData.tanggalAwal}
-                        onChange={onInputChange}
-                        className="border p-2 w-full"
+                      <SelectInput
+                        label="Periode Akademik"
+                        required
+                        options={academicPeriods}
+                        getOptionLabel={(opt) => opt.namaPeriode}
+                        getOptionValue={(opt) => String(opt.id)}
+                        value={String(currentData?.periodeAkademik?.id ?? "")}
+                        onChange={(selected) => {
+                          console.log("SELECTED", selected);
+
+                          // Update ID periode akademik
+                          onInputChange({
+                            target: {
+                              name: "siakPeriodeAkademikId",
+                              value: selected?.id ?? "",
+                            },
+                          });
+
+                          // 🔧 Tambahkan: update currentData.periodeAkademik juga
+                          onInputChange({
+                            target: {
+                              name: "periodeAkademik",
+                              value: selected,
+                            },
+                          });
+
+                          if (selected?.tanggalMulai) {
+                            onInputChange({
+                              target: {
+                                name: "tanggalMulai",
+                                value: selected.tanggalMulai,
+                              },
+                            });
+                          }
+                        }}
                       />
                     </td>
                     <td className="p-2 border text-sm border-black/50">
                       <input
                         type="date"
-                        name="tanggalAkhir"
-                        value={currentData.tanggalAkhir}
+                        name="tanggalMulai"
+                        value={currentData.tanggalMulai}
+                        onChange={onInputChange}
+                        readOnly
+                        className="border p-2 w-full cursor-not-allowed"
+                      />
+                    </td>
+                    <td className="p-2 border text-sm border-black/50">
+                      <input
+                        type="date"
+                        name="tanggalSelesai"
+                        value={currentData.tanggalSelesai}
                         onChange={onInputChange}
                         className="border p-2 w-full"
                       />
@@ -604,17 +653,19 @@ TableCurriculumYearProps) => {
                     <td className="p-2 border text-sm border-black/50">
                       <span
                         className={
-                          row.siakPeriodeAkademikId ? "" : "text-red-500 italic"
+                          row.periodeAkademik.namaPeriode
+                            ? ""
+                            : "text-red-500 italic"
                         }
                       >
-                        {getPeriodeName(row.siakPeriodeAkademikId)}
+                        {getPeriodeName(row.periodeAkademik.id)}
                       </span>
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      {renderDate(row.tanggalAwal)}
+                      {renderDate(row.tanggalMulai)}
                     </td>
                     <td className="p-2 border text-sm border-black/50">
-                      {renderDate(row.tanggalAkhir)}
+                      {renderDate(row.tanggalSelesai)}
                     </td>
                     <td className="p-2 border text-sm border-black/50">
                       <div className="flex gap-2 justify-center">

@@ -30,3 +30,13 @@ export function getProgramStudi() {
     },
   });
 }
+
+export function getYearCuriculum() {
+  return useQuery({
+    queryKey: ["curiculumYear"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/tahun-kurikulum");
+      return response.data.data;
+    },
+  });
+}
