@@ -1,5 +1,7 @@
 import { id } from "date-fns/locale";
 export interface CurriculumData {
+  tanggalAkhir: string | undefined;
+  tanggalAwal: string | undefined;
   id: string;
   mulaiBerlaku: string;
   tahun: string;

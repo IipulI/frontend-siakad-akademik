@@ -42,7 +42,7 @@ const CreateCollegeClass = () => {
   const [programStudyId, setProgramStudyId] = useState("");
   const [selectedProgramStudyName, setSelectedProgramStudyName] = useState("");
 
-  //   const [yearCurriculumId, setYearCurriculumId] = useState("");
+  const [yearCurriculum, setYearCurriculum] = useState("");
 
   const [capacity, setCapacity] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -214,8 +214,8 @@ const CreateCollegeClass = () => {
               <SelectInput<AcademicPeriod>
                 label="Periode Akademik"
                 options={academicPeriods}
-                defaultValue=""
                 required
+                value={academicPeriodId}
                 getOptionLabel={(opt) => opt.namaPeriode}
                 getOptionValue={(opt) => opt.id}
                 onChange={(val) => setAcademicPeriodId(val?.id ?? "")}
@@ -223,7 +223,7 @@ const CreateCollegeClass = () => {
               <SelectInput<SystemProps>
                 label="Sistem Kuliah"
                 options={systemOptions}
-                defaultValue=""
+                value={systemType} // ✅ gunakan value
                 required
                 getOptionLabel={(opt) => opt.type}
                 getOptionValue={(opt) => opt.type}
@@ -232,7 +232,8 @@ const CreateCollegeClass = () => {
               <SelectInput<ProgramStudy>
                 label="Program Studi"
                 options={programStudies}
-                defaultValue=""
+                // defaultValue=""
+                value={programStudyId}
                 required
                 getOptionLabel={(opt) => opt.namaProgramStudi}
                 getOptionValue={(opt) => opt.id}
@@ -247,14 +248,23 @@ const CreateCollegeClass = () => {
                 label="Kapasitas"
               />
               <SelectInput
+                label="Tahun Kurikulum"
                 options={curiculumYear}
-                required={true}
+                value={yearCurriculum}
+                required
                 getOptionLabel={(opt) => opt.tahun}
                 getOptionValue={(opt) => opt.tahun}
-                // onChange={(val) => setNama(val?.id ?? "")}
-                label="Tahun Kurikulum"
-                onChange={(e) => setYearCurriculumId(e.target.value)}
+                onChange={(val) => setYearCurriculum(val?.tahun ?? "")}
               />
+              {/* <SelectInput
+                label="Tahun Kurikulum"
+                options={curiculumYear}
+                value={systemType} // ✅ gunakan value
+                required
+                getOptionLabel={(opt) => opt.type}
+                getOptionValue={(opt) => opt.type}
+                onChange={(val) => setSystemType(val?.type ?? "")}
+              /> */}
               <DateInput
                 value={startDate}
                 onChange={setStartDate}
@@ -269,6 +279,7 @@ const CreateCollegeClass = () => {
                   ) ?? []
                 }
                 required={true}
+                value={subject}
                 getOptionLabel={(opt) => opt.namaMataKuliah}
                 getOptionValue={(opt) => opt.mataKuliahId}
                 label="Mata Kuliah"

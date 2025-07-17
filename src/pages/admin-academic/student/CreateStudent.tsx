@@ -21,12 +21,21 @@ import {
   CreateStudentData,
   useCreateStudent,
 } from "../../../hooks/admin-akademik/useMahasiswa";
-import { getProgramStudi } from "../../../hooks/useFilter";
+// import {
+//   getAcademicPeriodeDropdown,
+//   getProgramStudi,
+//   getYearCuriculum,
+// } from "../../../hooks/useFilter";
 import {
   showToast,
   ToastNotif,
 } from "../../../components/admin-finance/Toastify";
-import { useMutation } from "@tanstack/react-query";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import {
+  getAcademicPeriodeDropdown,
+  getProgramStudi,
+  getYearCuriculum,
+} from "../../../hooks/useFilter";
 
 export default function CreateStudent() {
   const [activeTab, setActiveTab] = useState("general-information");
@@ -188,7 +197,42 @@ export default function CreateStudent() {
 
   const { mutateAsync, isPending } = useCreateStudent();
 
-  const { data: programStudiDropdown } = getProgramStudi();
+  const { data: programStudiDropdown, isLoading: isLoadingProgramStudi } =
+    getProgramStudi();
+
+  const { data: periodeOptions, isLoading: isLoadingPeriode } =
+    getAcademicPeriodeDropdown();
+
+  const { data: kurikulumOptions, isLoading: isLoadingKurikulum } =
+    getYearCuriculum();
+
+  const sistemOptions = [
+    { value: "reguler", label: "Reguler" },
+    { value: "karyawan", label: "Karyawan" },
+  ];
+
+  const kelasOptions = [{ value: "-", label: "Belum ada Kelasssss" }];
+
+  const jenisPendaftaranOptions = [
+    { value: "peserta didik baru", label: "Peserta Didik Baru" },
+    { value: "transfer", label: "Transfer" },
+  ];
+
+  const jalurPendaftaranOptions = [
+    { value: "mandiri", label: "Seleksi Mandiri" },
+    { value: "beasiswa", label: "Beasiswa" },
+  ];
+
+  const gelombangOptions = [
+    { value: "1", label: "Gelombang 1" },
+    { value: "2", label: "Gelombang 2" },
+    { value: "3", label: "Gelombang 3" },
+  ];
+
+  const kebutuhanKhususOptions = [
+    { value: "tidak", label: "Tidak" },
+    { value: "ya", label: "Ya" },
+  ];
 
   async function handleSimpan() {
     try {
@@ -246,59 +290,15 @@ export default function CreateStudent() {
     navigate(AdminAcademicRoute.student.studentData);
   }
 
-  const programStudiOptions =
-    programStudiDropdown?.map((item) => ({
-      value: item.id,
-      label: item.namaProgramStudi,
-    })) || [];
-
-  const periodeOptions = [
-    { value: "2023/2024", label: "2023/2024" },
-    { value: "2024/2025", label: "2024/2025" },
-    { value: "2025/2026", label: "2025/2026" },
-  ];
-
-  const kurikulumOptions = [
-    { value: "2020/2021", label: "Kurikulum 2020/2021" },
-    { value: "2023/2024", label: "Kurikulum 2023/2024" },
-    { value: "2025/2024", label: "Kurikulum 2025/2024" },
-  ];
-
-  const sistemOptions = [
-    { value: "Reguler", label: "Reguler" },
-    { value: "Karyawan", label: "Karyawan" },
-  ];
-
-  const kelasOptions = [
-    { value: "Pagi", label: "Pagi" },
-    { value: "Siang", label: "Siang" },
-    { value: "Malam", label: "Malam" },
-  ];
-
-  const jenisPendaftaranOptions = [
-    { value: "Baru", label: "Baru" },
-    { value: "Transfer", label: "Transfer" },
-    { value: "Pindahan", label: "Pindahan" },
-  ];
-
-  const jalurPendaftaranOptions = [
-    { value: "Mandiri", label: "Mandiri" },
-    { value: "Kerjasama", label: "Kerjasama" },
-    { value: "Beasiswa", label: "Beasiswa" },
-  ];
-
-  const gelombangOptions = [
-    { value: "1", label: "Gelombang 1" },
-    { value: "2", label: "Gelombang 2" },
-    { value: "3", label: "Gelombang 3" },
-  ];
-
-  const kebutuhanKhususOptions = [
-    { value: "tidak", label: "Tidak" },
-    { value: "ya", label: "Ya" },
-  ];
-
   const kampusOptions = [];
+
+  console.log("formdata", formData);
+  console.log("PRODI", programStudiDropdown);
+  //   console.log("PROGRAM STUDI", programStudiOptions);
+
+  if (isLoadingProgramStudi) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <MainLayout isGreeting={false} titlePage="Mahasiswa">
@@ -354,44 +354,58 @@ export default function CreateStudent() {
             />
             <SelectInput
               label="Program Studi"
-              options={programStudiOptions}
-              required={true}
+              options={programStudiDropdown}
+              required
+              getOptionLabel={(opt) => opt.namaProgramStudi}
+              getOptionValue={(opt) => opt.id}
               value={formData.siakProgramStudiId}
               onChange={(value) =>
-                handleInputChange("siakProgramStudiId", value)
+                handleInputChange("siakProgramStudiId", value?.id ?? "")
               }
             />
-            {/* <SelectInput
-              label="Konsentrasi"
-              options={konsentrasiOptions}
-              // Tidak ada di interface, jadi tidak diintegrasikan dengan formData
-            /> */}
+            {/* <SelectInput label="Konsentrasi" options={konsentrasiOptions} /> */}
             <SelectInput
               label="Periode Masuk"
               options={periodeOptions}
               required={true}
+              getOptionLabel={(opt) => opt.namaPeriode}
+              getOptionValue={(opt) => opt.kodePeriode}
               value={formData.periodeMasuk}
-              onChange={(value) => handleInputChange("periodeMasuk", value)}
+              onChange={(value) =>
+                handleInputChange("periodeMasuk", value?.kodePeriode ?? "")
+              }
             />
             <SelectInput
               label="Tahun Kurikulum"
               options={kurikulumOptions}
+              getOptionLabel={(opt) => opt.tahun}
+              getOptionValue={(opt) => opt.tahun}
               required={true}
               value={formData.kurikulum}
-              onChange={(value) => handleInputChange("kurikulum", value)}
+              onChange={(value) =>
+                handleInputChange("kurikulum", value?.tahun ?? "")
+              }
             />
             <SelectInput
               label="Sistem Kuliah"
               options={sistemOptions}
               required={true}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData.sistemKuliah}
-              onChange={(value) => handleInputChange("sistemKuliah", value)}
+              onChange={(option) =>
+                handleInputChange("sistemKuliah", option?.value ?? "")
+              }
             />
             <SelectInput
               label="Kelas / Kelompok"
               options={kelasOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData.kelas}
-              onChange={(value) => handleInputChange("kelas", value)}
+              onChange={(option) =>
+                handleInputChange("kelas", option?.value ?? "")
+              }
             />
           </div>
 
@@ -399,25 +413,37 @@ export default function CreateStudent() {
             <SelectInput
               label="Jenis Pendaftaran"
               options={jenisPendaftaranOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               required={true}
               value={formData.jenisPendaftaran}
-              onChange={(value) => handleInputChange("jenisPendaftaran", value)}
+              onChange={(option) =>
+                handleInputChange("jenisPendaftaran", option?.value ?? "")
+              }
             />
 
             <SelectInput
               label="Jalur Pendaftaran"
               options={jalurPendaftaranOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               required={true}
               value={formData.jalurPendaftaran}
-              onChange={(value) => handleInputChange("jalurPendaftaran", value)}
+              onChange={(option) =>
+                handleInputChange("jalurPendaftaran", option?.value ?? "")
+              }
             />
 
             <SelectInput
               label="Gelombang"
               options={gelombangOptions}
               required={true}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData.gelombang}
-              onChange={(value) => handleInputChange("gelombang", value)}
+              onChange={(value) =>
+                handleInputChange("gelombang", value?.value ?? "")
+              }
             />
 
             <DateInput

@@ -7,8 +7,14 @@ import { RefreshCw, Search, Plus } from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
 import { getPeriodeAkdemikCoba } from "../../../hooks/academic/usePeriodeAkademikCoba.ts";
-import { getCurriculumYear, useAddCurriculumYear, useUpdateCurriculumYear, useDeleteCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
+import {
+  getCurriculumYear,
+  useAddCurriculumYear,
+  useUpdateCurriculumYear,
+  useDeleteCurriculumYear,
+} from "../../../hooks/academic/useCurriculumYear.ts";
 import InfoAlert from "../../../components/InfoAlert.tsx";
+import { getAcademicPeriods } from "../../../hooks/useGeneral.ts";
 
 const CurriculumYear: React.FC = () => {
   const queryClient = useQueryClient();
@@ -25,8 +31,16 @@ const CurriculumYear: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   // --- data queries ---
-  const { data: periodeAkademikList = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba();
-  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
+  const {
+    data: academicPeriods,
+    isLoading: isLoadingAcademicPeriods,
+    error: isErrorAcademicPeriods,
+  } = getAcademicPeriods();
+  const {
+    data: curriculumData,
+    isLoading: isCurriculumLoading,
+    error: curriculumError,
+  } = getCurriculumYear();
 
   // --- mutations ---
   const createMutation = useAddCurriculumYear();
@@ -34,11 +48,11 @@ const CurriculumYear: React.FC = () => {
   const deleteMutation = useDeleteCurriculumYear();
 
   // --- Conditional rendering ---
-  if (isPeriodeAkademikLoading || isCurriculumLoading) {
+  if (isLoadingAcademicPeriods || isCurriculumLoading) {
     return <LoadingSpinner />;
   }
 
-  if (periodeAkademikError) {
+  if (isErrorAcademicPeriods) {
     return <div className="text-red-500">Gagal memuat periode akademik</div>;
   }
 
@@ -46,7 +60,9 @@ const CurriculumYear: React.FC = () => {
     return <div className="text-red-500">Gagal memuat tahun kurikulum</div>;
   }
 
-  const filteredData = curriculumData.filter((item) => item.tahun.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredData = curriculumData.filter((item) =>
+    item.tahun.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // --- error handling ---
   const handleMutationError = (error: any) => {
@@ -101,14 +117,22 @@ const CurriculumYear: React.FC = () => {
       mulaiBerlaku: "",
       siakPeriodeAkademikId: "",
       tanggalMulai: "",
-      tanggalSelesai: "",
+      tanggalAkhir: "",
     });
     // setSelectedPeriodeId("");
     setErrorMessage("");
   };
 
   const isFormValid = () => {
-    return !!(currentData?.tahun && currentData?.keterangan && currentData?.siakPeriodeAkademikId && currentData?.tanggalMulai && currentData?.tanggalSelesai);
+    return !!(
+      (
+        currentData?.tahun &&
+        currentData?.keterangan &&
+        currentData?.siakPeriodeAkademikId &&
+        currentData?.tanggalMulai &&
+        currentData?.tanggalSelesai
+      ) // ✅ fix di sini
+    );
   };
 
   const handleSave = async () => {
@@ -131,7 +155,10 @@ const CurriculumYear: React.FC = () => {
 
     try {
       if (isEditing && currentData.id) {
-        await updateMutation.mutateAsync({ id: currentData.id, data: dataToSave });
+        await updateMutation.mutateAsync({
+          id: currentData.id,
+          data: dataToSave,
+        });
         setSuccessMessage("Data berhasil diperbarui.");
       } else if (isAdding) {
         await createMutation.mutateAsync(dataToSave);
@@ -155,7 +182,11 @@ const CurriculumYear: React.FC = () => {
     setErrorMessage("");
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleInputChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
@@ -167,30 +198,59 @@ const CurriculumYear: React.FC = () => {
 
   // --- pagination logic ---
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   // Loading state
-  const isLoading = isCurriculumLoading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+  const isLoading =
+    isCurriculumLoading ||
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending;
 
   return (
     <MainLayout isGreeting={false} titlePage="Tahun Kurikulum" className="">
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow">
         {/* Error message display */}
-        {errorMessage && <div className="mx-4 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>}
+        {errorMessage && (
+          <div className="mx-4 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {errorMessage}
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row px-4 py-2 gap-2 sm:gap-4 border-b-2 w-full flex-wrap">
           <div className="flex w-full sm:w-auto sm:order-1">
-            <input type="search" placeholder="Cari Tahun Kurikulum" className="px-3 py-1 w-full sm:w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
+            <input
+              type="search"
+              placeholder="Cari Tahun Kurikulum"
+              className="px-3 py-1 w-full sm:w-72 rounded-l-md border border-black/50"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
             <button className="bg-primary-yellow w-10 flex items-center justify-center">
               <Search color="white" size={20} />
             </button>
-            <button onClick={handleRefresh} className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center" disabled={isLoading}>
-              <RefreshCw color="white" size={20} className={isLoading ? "animate-spin" : ""} />
+            <button
+              onClick={handleRefresh}
+              className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center"
+              disabled={isLoading}
+            >
+              <RefreshCw
+                color="white"
+                size={20}
+                className={isLoading ? "animate-spin" : ""}
+              />
             </button>
           </div>
 
-          <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white flex items-center cursor-pointer disabled:opacity-50 w-full sm:w-auto sm:ml-auto sm:order-3" disabled={isLoading}>
+          <button
+            onClick={handleAdd}
+            className="bg-primary-green rounded py-2 px-4 text-white flex items-center cursor-pointer disabled:opacity-50 w-full sm:w-auto sm:ml-auto sm:order-3"
+            disabled={isLoading}
+          >
             <Plus className="mr-2" size={16} />
             Tambah
           </button>
@@ -201,7 +261,14 @@ const CurriculumYear: React.FC = () => {
         <div className="mt-8">
           <TableCurriculumYear
             data={paginatedData}
-            tableHead={["Tahun", "Keterangan", "Mulai Berlaku", "Tanggal Awal", "Tanggal Akhir", "Aksi"]}
+            tableHead={[
+              "Tahun",
+              "Keterangan",
+              "Mulai Berlaku",
+              "Tanggal Awal",
+              "Tanggal Akhir",
+              "Aksi",
+            ]}
             error="Data tidak ditemukan."
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -212,13 +279,19 @@ const CurriculumYear: React.FC = () => {
             onInputChange={handleInputChange}
             isAdding={isAdding}
             isFormValid={isFormValid}
-            periodeAkademikList={periodeAkademikList}
+            periodeAkademikList={academicPeriods}
             // selectedPeriodeId={selectedPeriodeId}
             // setSelectedPeriodeId={setSelectedPeriodeId}
           />
         </div>
 
-        <Pagination currentPage={currentPage} totalRows={filteredData.length} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
+        <Pagination
+          currentPage={currentPage}
+          totalRows={filteredData.length}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          onRowsPerPageChange={setItemsPerPage}
+        />
       </div>
     </MainLayout>
   );

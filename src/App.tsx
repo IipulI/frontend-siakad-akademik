@@ -79,6 +79,7 @@ import DetailCourseLecturer from "./pages/lecturer/courses/DetailCourseLecturer"
 import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
 import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
 import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -412,6 +413,8 @@ export default function App() {
         path={String(LecturerRoute.courses.class)}
         element={<ClassLecturer />}
       />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
