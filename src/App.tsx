@@ -402,6 +402,10 @@ export default function App() {
         element={<AdvisorLecturer />}
       />
       <Route
+        path={String(LecturerRoute.schedule)}
+        element={<ScheduleLecturer />}
+      />
+      <Route
         path={String(LecturerRoute.courses.course)}
         element={<CourseLecturer />}
       />
