@@ -28,15 +28,11 @@ export default function FormLogin() {
   const [formError, setFormError] = useState<string>(""); // For general form error message
   const navigate = useNavigate();
 
-  const {
-    isCaptchaVerified,
-    isCaptchaLoading,
-    isVerifying,
-    elementInternals,
-    messageInfo,
-    triggerReload: reloadCaptchaHook,
-    triggerResetAndReload: resetAndReloadCaptchaHook,
-  }: UseCaptchaReturn = useCaptcha();
+  // const {
+  //   isVerifying,
+  //   elementInternals,
+  //   messageInfo,
+  // }: UseCaptchaReturn = useCaptcha();
 
   // Define onSuccess handler for the auth hook
   const handleLoginSuccess = useCallback((data: UserLoginData) => {
@@ -69,15 +65,14 @@ export default function FormLogin() {
   }, [navigate]); // Add any other stable dependencies if necessary
 
   // Define onError handler for the auth hook
-  const handleLoginError = useCallback((error: Error) => { // Use Error type from the hook
-    setFormError(error.message || "Login gagal, periksa kembali akun Anda");
-    // console.error is already handled in the hook, but you can add more specific logging here if needed
-    resetAndReloadCaptchaHook();
-  }, [resetAndReloadCaptchaHook]); // setFormError is stable
+  // const handleLoginError = useCallback((error: Error) => { // Use Error type from the hook
+  //   setFormError(error.message || "Login gagal, periksa kembali akun Anda");
+  //   // console.error is already handled in the hook, but you can add more specific logging here if needed
+  //   resetAndReloadCaptchaHook();
+  // }, [resetAndReloadCaptchaHook]); // setFormError is stable
 
   const { login, isLoggingIn } = useAuthLogin({
     onSuccess: handleLoginSuccess,
-    onError: handleLoginError,
   });
 
   const submitHandler = (e: React.FormEvent) => {
@@ -96,10 +91,6 @@ export default function FormLogin() {
       if (Object.keys(newErrors).length > 0) {
         generalError = "Akun Pengguna dan Password harus diisi";
       }
-    }
-
-    if (!isCaptchaVerified) {
-      generalError = "Harap selesaikan CAPTCHA terlebih dahulu.";
     }
 
     if (Object.keys(newErrors).length > 0 || generalError) {
@@ -204,22 +195,6 @@ export default function FormLogin() {
               )}
             </div>
 
-            {/* CAPTCHA Section */}
-            {!isCaptchaVerified ? (
-                <CaptchaChallenge
-                    elementInternals={elementInternals}
-                    messageInfo={messageInfo}
-                    isCaptchaLoading={isCaptchaLoading}
-                    isVerifying={isVerifying}
-                    isCaptchaVerified={isCaptchaVerified}
-                    onReloadCaptcha={reloadCaptchaHook}
-                />
-            ) : (
-                <div className="bg-green-100 text-green-800 text-sm px-4 py-3 rounded-xl mb-4 border border-green-300 text-center">
-                  <p>✔️ Verifikasi keamanan berhasil. Silakan lanjutkan.</p>
-                </div>
-            )}
-
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between text-xs text-gray-600 mb-4">
               <label className="flex items-center space-x-2">
@@ -234,7 +209,7 @@ export default function FormLogin() {
             {/* Submit Button */}
             <button
                 type="submit"
-                disabled={isLoggingIn || !isCaptchaVerified || isCaptchaLoading || isVerifying}
+                disabled={isLoggingIn}
                 className="cursor-pointer w-full bg-green-700 hover:bg-green-800 text-white py-2 rounded-xl font-semibold transition disabled:opacity-50"
             >
               {isLoggingIn ? "Memproses..." : "Login"}
