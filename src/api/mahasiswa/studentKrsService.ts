@@ -74,4 +74,15 @@ export const studentKrsService = {
             throw error;
         }
     },
+
+    submitKrsForApproval: async (): Promise<IApiResponseSuccess> => {
+        try {
+            // Endpoint ini tidak memerlukan request body, hanya trigger status change
+            const response = await Api.put<IApiResponseSuccess>('/mahasiswa/krs/status');
+            return response.data;
+        } catch (error) {
+            console.error('Error submitting KRS:', error);
+            throw error;
+        }
+    },
 };

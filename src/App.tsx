@@ -408,8 +408,16 @@ export default function App() {
         element={<AdvisorLecturer />}
       />
       <Route
+        path={String(LecturerRoute.schedule)}
+        element={<ScheduleLecturer />}
+      />
+      <Route
         path={String(LecturerRoute.courses.course)}
         element={<CourseLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.courses.detailCourse)}
+        element={<DetailCourseLecturer />}
       />
       {/* <Route
         path={String(LecturerRoute.courses.stopStudy)}
@@ -418,6 +426,10 @@ export default function App() {
       <Route
         path={String(LecturerRoute.courses.class)}
         element={<ClassLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.courses.detailCourse)}
+        element={<DetailAdvisorLecturer />}
       />
 
       <Route path="*" element={<NotFound />} />

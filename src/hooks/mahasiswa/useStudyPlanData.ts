@@ -75,6 +75,20 @@ export const useStudyPlanData = () => {
         }
     });
 
+    const { mutate: submitKrs, isLoading: isSubmittingKrs } = useMutation({
+        mutationFn: studentKrsService.submitKrsForApproval,
+        onSuccess: (data) => {
+            alert(data.message || "KRS telah berhasil diajukan.");
+            // PENTING: Invalidate 'krsInfo' untuk mengambil status terbaru.
+            // Ini akan membuat UI berganti ke mode terkunci secara otomatis.
+            queryClient.invalidateQueries({ queryKey: ['krsInfo'] });
+        },
+        onError: (error) => {
+            console.error("Gagal mengajukan KRS:", error);
+            alert("Gagal mengajukan KRS. Silakan coba lagi.");
+        },
+    });
+
     // Return all data, states, and functions needed by the UI
     return {
         krsInfo,
@@ -91,5 +105,7 @@ export const useStudyPlanData = () => {
         setSearchTerm,
         addCourses,
         isAddingCourses,
+        submitKrs,
+        isSubmittingKrs,
     };
 };

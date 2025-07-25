@@ -101,7 +101,7 @@ const PeriodAdminAcademic: React.FC = () => {
     // This array tells TableSetting exactly how to render each column.
     const periodColumns: ITableColumn<IPeriod>[] = [
         {
-            key: 'tahun', // This key is used to display the academic year NAME from IPeriod
+            key: 'tahun', // This key is used by TableSetting to create an input with name="tahun"
             header: 'Tahun',
             isEditable: true,
             inputType: 'select',
@@ -111,48 +111,49 @@ const PeriodAdminAcademic: React.FC = () => {
         { key: 'namaPeriode', header: 'Nama Periode', isEditable: true, inputType: 'text' },
         { key: 'tanggalMulai', header: 'Tanggal Mulai', isEditable: true, inputType: 'date' },
         { key: 'tanggalSelesai', header: 'Tanggal Selesai', isEditable: true, inputType: 'date' },
-        { key: 'status', header: 'Status' }, // You might want this to be a select with options 'Aktif', 'Nonaktif' later
-        { key: 'actions', header: 'Aksi' } // Special 'actions' key for the buttons
+        { key: 'status', header: 'Status' },
+        { key: 'actions', header: 'Aksi' }
     ];
 
     // --- Handlers for "Tambah" (Add New Row) Button ---
     const handleAddClick = () => {
-        // If already adding, cancel it. Otherwise, start adding.
         if (isAddingNewRow) {
             handleCancelAdd();
         } else {
             setIsAddingNewRow(true);
             setNewRowData({
-                siakTahunAjaranId: "", // Reset to empty string
+                siakTahunAjaranId: "",
                 namaPeriode: "",
                 kodePeriode: "",
                 tanggalMulai: "",
                 tanggalSelesai: "",
             });
-            setEditingRowId(null); // Ensure no row is in edit mode
+            setEditingRowId(null);
         }
     };
 
-    // This handler needs to correctly update newRowData for all input types
+    // --- CORRECTED HANDLER for New Row ---
     const handleNewRowInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        // Special handling for the 'Tahun' column: its display name is 'tahun', but the payload key is 'siakTahunAjaranId'
-        const fieldName = name === 'siakTahunAjaranId' ? 'siakTahunAjaranId' : name; // Ensure name matches the payload field
-        setNewRowData(prev => ({ ...prev, [fieldName as keyof IPeriodPayload]: value }));
+        // If the input name is 'tahun' (from the column key),
+        // we know we need to update the 'siakTahunAjaranId' field in the state.
+        if (name === 'tahun') {
+            setNewRowData(prev => ({ ...prev, siakTahunAjaranId: value }));
+        } else {
+            // For other inputs, use the name directly.
+            setNewRowData(prev => ({ ...prev, [name as keyof IPeriodPayload]: value }));
+        }
     };
 
-
     const handleSaveNew = async () => {
-        // Basic validation for required fields
         if (!newRowData.siakTahunAjaranId || !newRowData.namaPeriode || !newRowData.kodePeriode || !newRowData.tanggalMulai || !newRowData.tanggalSelesai) {
             alert("Semua field harus diisi!");
             return;
         }
         try {
             await createPeriod(newRowData);
-            setIsAddingNewRow(false); // Hide the form row
+            setIsAddingNewRow(false);
             alert("Periode berhasil ditambahkan!");
-            // React Query's invalidateQueries in hook will refetch the list
         } catch (err: any) {
             console.error("Error saving new period:", err);
             alert(`Gagal menambahkan periode: ${err.response?.data?.message || err.message || 'Terjadi kesalahan'}`);
@@ -166,37 +167,36 @@ const PeriodAdminAcademic: React.FC = () => {
 
     // --- Handlers for Edit Inline Form ---
     const handleEditClick = (id: string) => {
-        // If already editing this row, cancel. Otherwise, start editing.
         if (editingRowId === id) {
             handleCancelEdit();
         } else {
             const periodToEdit = periods.find(period => period.id === id);
             if (periodToEdit) {
-                setEditingRowId(id);
-                // When editing, we need the 'siakTahunAjaranId' for the 'Tahun' dropdown.
-                // The API gives us 'periodToEdit.tahun' (the name), so we find the corresponding ID.
                 const selectedYearId = academicYears.find(year => year.nama === periodToEdit.tahun)?.id || "";
 
+                setEditingRowId(id);
                 setEditedRowData({
-                    siakTahunAjaranId: selectedYearId, // Set the ID for the dropdown
+                    siakTahunAjaranId: selectedYearId,
                     namaPeriode: periodToEdit.namaPeriode,
                     kodePeriode: periodToEdit.kodePeriode,
                     tanggalMulai: periodToEdit.tanggalMulai,
                     tanggalSelesai: periodToEdit.tanggalSelesai,
                 });
-                setIsAddingNewRow(false); // Hide add row if it was visible
+                setIsAddingNewRow(false);
             }
         }
     };
 
-    // This handler needs to correctly update editedRowData for all input types
+    // --- CORRECTED HANDLER for Edited Row ---
     const handleEditedRowInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        // Special handling for the 'Tahun' column: its display name is 'tahun', but the payload key is 'siakTahunAjaranId'
-        const fieldName = name === 'siakTahunAjaranId' ? 'siakTahunAjaranId' : name; // Ensure name matches the payload field
-        setEditedRowData(prev => ({ ...prev, [fieldName as keyof IPeriodPayload]: value }));
+        // Apply the same logic as the new row handler, but for the 'editedRowData' state.
+        if (name === 'tahun') {
+            setEditedRowData(prev => ({ ...prev, siakTahunAjaranId: value }));
+        } else {
+            setEditedRowData(prev => ({ ...prev, [name as keyof IPeriodPayload]: value }));
+        }
     };
-
 
     const handleSaveEdit = async () => {
         if (!editingRowId || !editedRowData.siakTahunAjaranId || !editedRowData.namaPeriode || !editedRowData.kodePeriode || !editedRowData.tanggalMulai || !editedRowData.tanggalSelesai) {
@@ -205,9 +205,8 @@ const PeriodAdminAcademic: React.FC = () => {
         }
         try {
             await updatePeriod({ id: editingRowId, payload: editedRowData });
-            setEditingRowId(null); // Exit edit mode
+            setEditingRowId(null);
             alert("Periode berhasil diperbarui!");
-            // React Query's invalidateQueries in hook will refetch the list
         } catch (err: any) {
             console.error("Error saving edited period:", err);
             alert(`Gagal memperbarui periode: ${err.response?.data?.message || err.message || 'Terjadi kesalahan'}`);
@@ -254,7 +253,7 @@ const PeriodAdminAcademic: React.FC = () => {
                             <button
                                 className="bg-primary-yellow mx-1 w-8 rounded flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
                                 onClick={() => refetch()}
-                                disabled={isLoading || isCreating || isUpdating || isDeleting || isLoadingYears} // Disable if periods or years are loading
+                                disabled={isLoading || isCreating || isUpdating || isDeleting || isLoadingYears}
                             >
                                 <Search color="white" size={18} />
                             </button>
@@ -283,16 +282,16 @@ const PeriodAdminAcademic: React.FC = () => {
                 </div>
 
                 {/* Conditional rendering based on loading, error, and data presence */}
-                {isLoading || isLoadingYears ? ( // Show loading if periods OR academic years are loading
+                {isLoading || isLoadingYears ? (
                     <p className="text-center p-4">Memuat data periode akademik...</p>
                 ) : isError ? (
                     <p className="text-center p-4 text-red-500">Error: {error?.message || "Gagal memuat periode akademik."}</p>
-                ) : yearsError ? ( // Show error if fetching academic years failed
+                ) : yearsError ? (
                     <p className="text-center p-4 text-red-500">Error: {yearsError?.message || "Gagal memuat tahun ajaran untuk dropdown."}</p>
                 ) : (
-                    <TableSetting<IPeriod> // Pass the generic type IPeriod
-                        columns={periodColumns} // Pass the columns definition
-                        data={periods} // Pass the fetched periods data
+                    <TableSetting<IPeriod>
+                        columns={periodColumns}
+                        data={periods}
                         error={periods.length === 0 ? "Tidak ada data periode akademik yang ditemukan." : null}
                         onEdit={handleEditClick}
                         onDelete={handleDeleteClick}
