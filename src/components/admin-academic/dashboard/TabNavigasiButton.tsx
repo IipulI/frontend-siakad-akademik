@@ -48,3 +48,32 @@ export function TabNavigationButtonStudent({
     </button>
   );
 }
+
+// for OBE
+export function TabNavigationButtonOBE({ onClick, isActive = false, label }) {
+  return (
+    <div
+      className={
+        isActive
+          ? `flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer`
+          : `flex items-center bg-[#116E63]/30 mb-1 text-black cursor-pointer `
+      }
+      onClick={onClick}
+    >
+      <div
+        className={
+          isActive
+            ? `w-1 h-10 bg-primary-green mr-3`
+            : `w-1 h-10 bg-primary-green mr-3 opacity-40`
+        }
+      ></div>
+      <p
+        className={
+          isActive ? `text-black font-semibold` : `text-black font-light`
+        }
+      >
+        {label}
+      </p>
+    </div>
+  );
+}

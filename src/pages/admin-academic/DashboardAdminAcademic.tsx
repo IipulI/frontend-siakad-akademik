@@ -18,7 +18,12 @@ export default function DashboardAdminFinance() {
     setActiveTab(tab);
   };
 
-  const periodOptions = ["2024 Ganjil", "2024 Genap", "2025 Ganjil", "2025 Genap"]
+  const periodOptions = [
+    "2024 Ganjil",
+    "2024 Genap",
+    "2025 Ganjil",
+    "2025 Genap",
+  ];
 
   return (
     <MainLayout titlePage={"Beranda"} isGreeting={false}>
@@ -69,15 +74,6 @@ export default function DashboardAdminFinance() {
         </div>
 
         <div className="flex flex-col gap-10 sm:col-span-2 lg:col-span-1">
-          <DashboardInfoCard
-            title="Pergantian Periode Semester"
-            lineColor="border-primary-green"
-          >
-            <button className="p-2 bg-primary-green rounded-sm text-white text-sm px-10 font-semibold my-5">
-              Ganti
-            </button>
-          </DashboardInfoCard>
-
           <DashboardInfoCard
             title="Informasi"
             lineColor="border-primary-blueDark"

@@ -13,9 +13,13 @@ import { id } from "date-fns/locale";
 
 const fetchCplData = async (page: number, size: number): Promise<CplData[]> => {
   const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+  if (!token)
+    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-  const response = await Api.get(`/akademik/capaian-pembelajaran-lulusan?page=1&size=10&sort=createdAt%2Cdesc`, { headers: { Authorization: `Bearer ${token}` } });
+  const response = await Api.get(
+    `/akademik/capaian-pembelajaran-lulusan?page=1&size=10&sort=createdAt%2Cdesc`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 
   const apiData = response.data.data;
 
@@ -42,7 +46,8 @@ const fetchCplData = async (page: number, size: number): Promise<CplData[]> => {
 
 const createCpl = async (data: Omit<CplData, "id">): Promise<CplData> => {
   const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+  if (!token)
+    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   const payload = {
     programStudi: data.programStudi,
@@ -55,9 +60,13 @@ const createCpl = async (data: Omit<CplData, "id">): Promise<CplData> => {
 
   console.log("Payload dikirim:", payload);
 
-  const response = await Api.post("/akademik/capaian-pembelajaran-lulusan", payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const response = await Api.post(
+    "/akademik/capaian-pembelajaran-lulusan",
+    payload,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
   console.log("Response dari API:", response.data);
 
@@ -73,9 +82,16 @@ const createCpl = async (data: Omit<CplData, "id">): Promise<CplData> => {
   };
 };
 
-const updateCpl = async ({ id, data }: { id: string; data: Omit<CplData, "id"> }): Promise<CplData> => {
+const updateCpl = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: Omit<CplData, "id">;
+}): Promise<CplData> => {
   const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+  if (!token)
+    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   const payload = {
     programStudi: data.programStudi,
@@ -95,7 +111,8 @@ const updateCpl = async ({ id, data }: { id: string; data: Omit<CplData, "id"> }
 
 const deleteCpl = async (id: string): Promise<void> => {
   const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+  if (!token)
+    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
   await Api.delete(`/akademik/capaian-pembelajaran-lulusan/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -127,6 +144,8 @@ const ObeCpl: React.FC = () => {
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  console.log("data CPL", cplData);
 
   // Mutations
   const createMutation = useMutation({
@@ -255,13 +274,22 @@ const ObeCpl: React.FC = () => {
     setErrorMessage("");
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleInputChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setCurrentData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   const isFormValid = () => {
-    return !!(currentData?.kodeCpl && currentData?.deskripsiCpl && currentData?.kategoriCpl && currentData?.pemetaan);
+    return !!(
+      currentData?.kodeCpl &&
+      currentData?.deskripsiCpl &&
+      currentData?.kategoriCpl &&
+      currentData?.pemetaan
+    );
   };
 
   return (
@@ -269,22 +297,35 @@ const ObeCpl: React.FC = () => {
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
           <div className="flex items-center ">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
+            <button
+              onClick={handleBack}
+              className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md"
+            >
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50  w-64" />
+              <input
+                type="search"
+                placeholder="Cari Mata Kuliah"
+                className="px-3 py-2 border border-black/50  w-64"
+              />
               <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
                 <Search color="white" size={20} />
               </button>
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={handleBack} className="bg-primary-yellow text-white px-4 py-2 rounded flex items-center cursor-pointer">
+            <button
+              onClick={handleBack}
+              className="bg-primary-yellow text-white px-4 py-2 rounded flex items-center cursor-pointer"
+            >
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
             </button>
-            <button onClick={handleSave} className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center">
+            <button
+              onClick={handleSave}
+              className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center"
+            >
               <Save className="mr-2" size={16} />
               Simpan
             </button>
@@ -293,15 +334,32 @@ const ObeCpl: React.FC = () => {
 
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/30  mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.graduateProfile)}>
+            <div
+              className="flex items-center bg-[#116E63]/30  mb-1 text-gray-600 cursor-pointer"
+              onClick={() =>
+                handleNavigation(
+                  AdminAcademicRoute.obeManagement.graduateProfile
+                )
+              }
+            >
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>Profil Lulusan</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpl)}>
+            <div
+              className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer"
+              onClick={() =>
+                handleNavigation(AdminAcademicRoute.obeManagement.cpl)
+              }
+            >
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p className="text-black font-semibold">CPL</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1  text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpmk)}>
+            <div
+              className="flex items-center bg-[#116E63]/30 mb-1  text-gray-600 cursor-pointer"
+              onClick={() =>
+                handleNavigation(AdminAcademicRoute.obeManagement.cpmk)
+              }
+            >
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>CPMK</p>
             </div>
@@ -310,43 +368,69 @@ const ObeCpl: React.FC = () => {
           <div className=" w-fullmd:w-[80%] p-3">
             <div className="grid grid-cols-1 gap-2 bg-primary-green/10 p-4 md:grid-cols-2">
               <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Kode Prodi:</span>
+                <span className="font-semibold w-full text-left">
+                  Kode Prodi:
+                </span>
                 <span className="w-full text-left">MK001</span>
               </div>
               <div className="flex justify-between md:ml-8 ">
-                <span className="font-semibold w-full text-left">Tahun Kurikulum:</span>
+                <span className="font-semibold w-full text-left">
+                  Tahun Kurikulum:
+                </span>
                 <span className="w-full text-left">{selectedYear}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold w-full text-left">Program Studi:</span>
+                <span className="font-semibold w-full text-left">
+                  Program Studi:
+                </span>
                 <span className="w-full text-left">Pemrograman Lanjut</span>
               </div>
               <div className="flex justify-between md:ml-8">
-                <span className="font-semibold w-full text-left">Ketua Prodi:</span>
+                <span className="font-semibold w-full text-left">
+                  Ketua Prodi:
+                </span>
                 <span className="w-full text-left">1</span>
               </div>
             </div>
 
             <div className="mt-6 flex flex-col md:items-center gap-2 md:flex-row">
               <h2 className="text-lg font-semibold">Tahun Kurikulum</h2>
-              <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="border border-black/50 rounded-md px-2 py-1 w-full md:w-40">
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="border border-black/50 rounded-md px-2 py-1 w-full md:w-40"
+              >
                 <option value="2024">2024</option>
                 <option value="2023">2023</option>
                 <option value="2022">2022</option>
               </select>
-              <button onClick={handleAddCpl} disabled={isAdding} className={`ml-auto bg-primary-green text-white w-full md:w-48 px-4 py-2 rounded flex items-center hover:bg-primary-blue ${isAdding ? " cursor-not-allowed" : ""}`}>
+              <button
+                onClick={handleAddCpl}
+                disabled={isAdding}
+                className={`ml-auto bg-primary-green text-white w-full md:w-48 px-4 py-2 rounded flex items-center hover:bg-primary-blue ${
+                  isAdding ? " cursor-not-allowed" : ""
+                }`}
+              >
                 <Plus className="mr-2" size={16} />
                 Tambah CPL
               </button>
             </div>
 
             {/* Tampilkan error validasi */}
-            {errorMessage && <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>}
+            {errorMessage && (
+              <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>
+            )}
 
             <div className="mt-4 overflow-x-auto">
               <TableObeCPL
                 data={cplData}
-                tableHead={["Kode CPL", "Deskripsi Capaian Pembelajaran Lulusan (CPL)", "Kategori", "Pemetaan PL ke CPL", "Aksi"]}
+                tableHead={[
+                  "Kode CPL",
+                  "Deskripsi Capaian Pembelajaran Lulusan (CPL)",
+                  "Kategori",
+                  "Pemetaan PL ke CPL",
+                  "Aksi",
+                ]}
                 error="Data tidak ditemukan."
                 onEdit={handleEdit}
                 onDelete={handleDelete}

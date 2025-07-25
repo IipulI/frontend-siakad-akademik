@@ -231,3 +231,15 @@ export const deleteStudentsFromClass = (kelasId: string) => {
     },
   });
 };
+
+export const getStudentExams = (id) => {
+  return useQuery({
+    queryKey: ["exams"],
+    queryFn: async () => {
+      const response = await Api.get(
+        `/akademik/kelas-kuliah/${id}/jadwal-ujian`
+      );
+      return response.data.data;
+    },
+  });
+};

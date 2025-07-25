@@ -61,6 +61,7 @@ export const AdminAcademicRoute = {
   },
   obeManagement: {
     obeManagement: "/admin-akademik/obe/manajemen-obe",
+    detailOBE: "/admin-akademik/obe/detail-obe",
     graduateProfile: "/admin-akademik/obe/profil-lulusan",
     cpl: "/admin-akademik/obe/cpl",
     cpmk: "/admin-akademik/obe/cpmk",
@@ -80,7 +81,8 @@ export const AdminAcademicRoute = {
     level: "/admin-akademik/jenjang-pendidikan",
     limit: "/admin-akademik/batas-sks",
     composition: "/admin-akademik/komposisi-nilai",
-    setComposition: "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
+    setComposition:
+      "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
   } as routeType,
 };
 
@@ -90,9 +92,11 @@ export const AdminFinanceRoute: routeType = {
   createBill: "/admin-keuangan/buat-tagihan",
   formCreateBill: "/admin-keuangan/buat-tagihan/form-buat-tagihan",
   studentBill: "/admin-keuangan/tagihan-mahasiswa",
-  detailStudentBill: "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
+  detailStudentBill:
+    "/admin-keuangan/tagihan-mahasiswa/detail-tagihan-mahasiswa",
   componentBill: "/admin-keuangan/komponen-tagihan",
-  createComponentBill: "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
+  createComponentBill:
+    "/admin-keuangan/komponen-tagihan/tambah-komponen-tagihan",
   editComponentBill: "/admin-keuangan/komponen-tagihan/edit-komponen-tagihan",
 };
 
@@ -100,7 +104,7 @@ export const LecturerRoute = {
   dashboard: "/dosen/dashboard",
   guidance: {
     advisor: "/dosen/bimbingan/pembimbing-akademik",
-    detailAdvisor: "/dosen/bimbingan/pembimbing-akademik/detail"
+    detailAdvisor: "/dosen/bimbingan/pembimbing-akademik/detail",
   } as routeType,
   announcement: {},
   schedule: "/dosen/jadwal-akademik",
@@ -108,6 +112,6 @@ export const LecturerRoute = {
     course: "/dosen/perkuliahan/mata-kuliah",
     class: "/dosen/perkuliahan/kelas-kuliah",
     detailClass: "/dosen/perkuliahan/kelas-kuliah/detail",
-    detailCourse: "/dosen/perkuliahan/mata-kuliah/detail"
+    detailCourse: "/dosen/perkuliahan/mata-kuliah/detail",
   },
 };

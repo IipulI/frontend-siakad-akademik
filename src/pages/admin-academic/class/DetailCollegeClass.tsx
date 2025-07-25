@@ -30,6 +30,7 @@ import {
   getAllDetailStudentAttendant,
   addStudentToClass,
   deleteStudentsFromClass,
+  getStudentExams,
 } from "../../../hooks/useKelasKuliah";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import DateFormatter from "../../../helpers/DateFormatter";
@@ -222,6 +223,8 @@ const DetailCollegeClass = () => {
 };
 
 const CollegeClassInformation = ({ data, addNewSchedule }) => {
+  console.log("TEST DATA", data);
+
   return (
     <>
       {/* Informasi Kelas */}
@@ -233,53 +236,49 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             <InputFilter
               select={false}
-              defaultValue={data.periodeAkademik}
+              value={data.periodeAkademik}
               label="Periode Akademik"
             />
             <InputFilter
               select={false}
-              defaultValue={data.sistemKuliah}
+              value={data.sistemKuliah}
               label="Sistem Kuliah"
             />
             <InputFilter
               select={false}
-              defaultValue={data.programStudi.namaProgramStudi}
+              value={data.programStudi.namaProgramStudi}
               label="Program Studi"
             />
             <InputFilter
               select={false}
               label="Kapasitas"
-              defaultValue={data.kapasitas}
+              value={data.kapasitas}
             />
             <InputFilter
-              defaultValue={data.periodeAkademik}
+              value={data.periodeAkademik}
               select={false}
               label="Tahun Kurikulum"
             />
             <InputFilter
-              defaultValue={data.tanggalMulai}
+              value={data.tanggalMulai}
               select={false}
               label="Tanggal Mulai"
             />
             <InputFilter
               select={false}
               label="Mata Kuliah"
-              defaultValue={data.mataKuliah.namaMataKuliah}
+              value={data.mataKuliah.namaMataKuliah}
             />
             <InputFilter
-              defaultValue={data.tanggalSelesai}
+              value={data.tanggalSelesai}
               select={false}
               label="Tanggal Selesai"
             />
-            <InputFilter
-              select={false}
-              label="Nama Kelas"
-              defaultValue={data.nama}
-            />
+            <InputFilter select={false} label="Nama Kelas" value={data.nama} />
             <InputFilter
               select={false}
               label="Jumlah Pertemuan"
-              defaultValue={data.jumlahPertemuan}
+              value={data.jumlahPertemuan}
             />
           </div>
         </div>
@@ -538,6 +537,29 @@ const ClassAttendant = ({ data }) => {
     return <LoadingSpinner />;
   }
 
+  console.log("datas", data);
+
+  const handleDelete = () => {
+    console.log("Kelas ID:", data);
+    console.log("Mahasiswa IDs:", selectedIds);
+
+    deleteMutate(
+      { mahasiswaIds: selectedIds },
+      {
+        onSuccess: () => {
+          alert("Berhasil dihapus");
+          queryClient.invalidateQueries({
+            queryKey: ["kelas-detail", data.id],
+          });
+          setSelectedIds([]);
+        },
+        onError: () => {
+          alert("Gagal menghapus");
+        },
+      }
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Informasi Kelas */}
@@ -555,7 +577,7 @@ const ClassAttendant = ({ data }) => {
           icon={<Trash2 size={15} />}
           text="Hapus"
           color="bg-red-400"
-          onClick={() => alert("Hapus")}
+          onClick={handleDelete}
         />
         <ButtonClick
           icon={<Settings size={15} />}
@@ -567,7 +589,11 @@ const ClassAttendant = ({ data }) => {
 
       {/* Tabel Peserta */}
       <div className="overflow-x-auto">
-        <CollegeClassTable data={getAllStudentDetailAttendant} />
+        <CollegeClassTable
+          data={getAllStudentDetailAttendant}
+          selectedIds={selectedIds}
+          onChangeSelectedIds={setSelectedIds}
+        />
       </div>
 
       {/* Modal Tambah Mahasiswa */}
@@ -589,12 +615,30 @@ const ClassAttendant = ({ data }) => {
   );
 };
 
-const CollegeClassTable = ({ data }) => {
-  console.log(data);
-
+const CollegeClassTable = ({ data, selectedIds, onChangeSelectedIds }) => {
   if (!data) {
     return <LoadingSpinner />;
   }
+
+  const allIds = data.map((student) => student.id); // atau pakai student.id jika ada
+  const isAllSelected = allIds.every((id) => selectedIds.includes(id));
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      onChangeSelectedIds(allIds); // select all
+    } else {
+      onChangeSelectedIds([]); // deselect all
+    }
+  };
+
+  const handleSelectRow = (id, checked) => {
+    const updated = checked
+      ? [...selectedIds, id]
+      : selectedIds.filter((selectedId) => selectedId !== id);
+    onChangeSelectedIds(updated);
+  };
+
+  console.log("tedttt", data);
 
   return (
     <div className="w-full overflow-x-auto rounded-lg shadow-sm border border-gray-200">
@@ -602,7 +646,11 @@ const CollegeClassTable = ({ data }) => {
         <thead>
           <tr className="bg-primary-green text-white text-center">
             <th className="py-2 px-4 border border-gray-300">
-              <input type="checkbox" className="cursor-pointer" />
+              <input
+                type="checkbox"
+                checked={isAllSelected}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+              />
             </th>
             <th className="py-2 px-4 border border-gray-300">NIM</th>
             <th className="py-2 px-4 border border-gray-300">Nama Mahasiswa</th>
@@ -619,7 +667,16 @@ const CollegeClassTable = ({ data }) => {
                 className="hover:bg-gray-50 text-center transition-all duration-150"
               >
                 <td className="py-2 px-4 border border-gray-300">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(student.id)} // gunakan ID mahasiswa
+                    onChange={(e) => {
+                      const updated = e.target.checked
+                        ? [...selectedIds, student.id]
+                        : selectedIds.filter((id) => id !== student.id);
+                      onChangeSelectedIds(updated);
+                    }}
+                  />
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
                   {student.npm}
@@ -886,26 +943,11 @@ const Grading = ({ grades, data }) => {
 };
 
 const ExamSchedule = ({ data }) => {
-  const tests = [
-    {
-      no: "1",
-      type: "UTS",
-      date: "14 April 2025",
-      time: "13:00 - 14:30",
-      room: "Ruang Kuliah Lantai 3 No 305",
-      watcher: "221106043035 - Maulana Ikhsan",
-      attendance: "30",
-    },
-    {
-      no: "2",
-      type: "UTS",
-      date: "15 April 2025",
-      time: "13:00 - 18:30",
-      room: "Ruang Kuliah Lantai 3 No 311",
-      watcher: "221106043035 - Maulana Ikhsan",
-      attendance: "10",
-    },
-  ];
+  const {
+    data: exams,
+    isLoading: isLoadingExams,
+    isError: isErrorExams,
+  } = getStudentExams(data.id);
 
   return (
     <div className="space-y-4 px-4 md:px-0">
@@ -941,29 +983,29 @@ const ExamSchedule = ({ data }) => {
             </tr>
           </thead>
           <tbody>
-            {tests.map((exam) => (
-              <tr key={exam.no} className="hover:bg-gray-50 text-center">
+            {exams?.map((exam, index) => (
+              <tr key={exam.id} className="hover:bg-gray-50 text-center">
                 <td className="py-2 px-4 border border-gray-300 font-medium">
-                  {exam.no}
+                  {exam.id}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.type}
+                  {exam.jenisUjian}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.date}
+                  {DateFormatter(exam.date)}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.time}
+                  {exam.hour}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.room}
+                  {exam.siakRuangan.namaRuangan}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.watcher}
+                  {exam.siakDosen.nama}
                 </td>
-                <td className="py-2 px-4 border border-gray-300">
+                {/* <td className="py-2 px-4 border border-gray-300">
                   {exam.attendance}
-                </td>
+                </td> */}
                 <td className="py-2 px-4 border border-gray-300">
                   <button className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition">
                     <Trash size={18} />

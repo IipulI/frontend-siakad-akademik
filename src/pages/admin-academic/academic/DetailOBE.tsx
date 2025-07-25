@@ -14,8 +14,9 @@ import {
 } from "../../../hooks/academic/useGraduateProfile.ts";
 import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { getObeById } from "../../../hooks/academic/useObeManagement.ts";
 
-const GraduateProfile: React.FC = () => {
+const DetailOBE: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -52,6 +53,14 @@ const GraduateProfile: React.FC = () => {
     isLoading: isGraduateProfileLoading,
     error: graduateProfileError,
   } = getGraduateProfileData(currentPage, itemsPerPage);
+
+  const {
+    data: obeData,
+    isLoading: isLoadingObeData,
+    isError: isErrorObeData,
+  } = getObeById(id!);
+
+  console.log("GRADUATE", graduateProfileData);
 
   // Mutations
   const createMutation = useAddGraduateProfile();
@@ -355,7 +364,7 @@ const GraduateProfile: React.FC = () => {
                   Kode Prodi:
                 </span>
                 <span className="w-full text-left">
-                  {obeInfo?.kodeProgramStudi}
+                  {obeData?.kodeProgramStudi}
                 </span>
               </div>
               <div className="flex justify-between ml-0 md:ml-8">
@@ -363,7 +372,7 @@ const GraduateProfile: React.FC = () => {
                   Tahun Kurikulum:
                 </span>
                 <span className="w-full text-left">
-                  {obeInfo?.tahunKurikulum}
+                  {obeData?.tahunKurikulum}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -440,4 +449,4 @@ const GraduateProfile: React.FC = () => {
   );
 };
 
-export default GraduateProfile;
+export default DetailOBE;

@@ -80,6 +80,7 @@ import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
 import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
 import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
 import NotFound from "./pages/NotFound";
+import DetailOBE from "./pages/admin-academic/academic/DetailOBE";
 
 export default function App() {
   return (
@@ -293,6 +294,11 @@ export default function App() {
       <Route
         path={`${AdminAcademicRoute.obeManagement.graduateProfile}/:id`}
         element={<GraduateProfile />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.detailOBE}/:id`}
+        element={<DetailOBE />}
       />
 
       <Route

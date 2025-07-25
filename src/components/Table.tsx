@@ -20,6 +20,7 @@ import {
 } from "../hooks/academic/useRpsManagement";
 import { SelectInput } from "./admin-academic/student-data/Input";
 import { getAcademicPeriods, getProgramStudi } from "../hooks/useGeneral";
+import { AdminAcademicRoute } from "../types/VarRoutes";
 
 interface TableProps {
   data: Array<Record<string, any>>;
@@ -1038,9 +1039,9 @@ export const TableOBE = ({ data, error }) => {
                 <td className="p-2 border border-black/50">
                   {item.programStudi}
                 </td>
-                <td className="p-2 border border-black/50">
+                {/* <td className="p-2 border border-black/50">
                   {item.ketuaProdi}
-                </td>
+                </td> */}
                 <td className="p-2 border border-black/50">
                   {item.pl ? "✅" : "❌"}
                 </td>
@@ -1059,7 +1060,7 @@ export const TableOBE = ({ data, error }) => {
                       className="bg-primary-blueSoft text-white p-2 rounded"
                       onClick={() =>
                         navigate(
-                          AdminAcademicRoute.obeManagement.graduateProfile
+                          `${AdminAcademicRoute.obeManagement.detailOBE}/${item.id}`
                         )
                       }
                     >
@@ -2090,6 +2091,9 @@ export const TableRpsManagement: React.FC<TableProps> = ({
 
     return getSafeValue(item, "namaKelas", "-");
   };
+
+  console.log("data", data);
+
   return (
     <>
       <div className="w-full overflow-x-auto">
@@ -2109,35 +2113,49 @@ export const TableRpsManagement: React.FC<TableProps> = ({
             {data.length > 0 ? (
               data.map((item) => (
                 <tr key={item.id} className="text-center">
-                  <td className="p-2 border">{item.kodeMk}</td>
-                  <td className="p-2 border">{item.mataKuliah}</td>
-                  <td className="p-2 border">{item.dosenPenyusun}</td>
-                  <td className="p-2 border">{item.smt}</td>
-                  <td className="p-2 border">{item.sks}</td>
-                  <td className="p-2 border">{item.kelas}</td>
-                  <td className="p-2 border flex justify-center gap-2">
+                  <td className="p-2 border">
+                    {item.mataKuliah.kodeMataKuliah}
+                  </td>
+                  <td className="p-2 border">
+                    {item.mataKuliah.namaMataKuliah}
+                  </td>
+                  <td className="p-2 border">
+                    {item.dosenPenyusun.map((lecturer, lecturerId) => (
+                      <div key={lecturerId}>{lecturer.nama}</div>
+                    ))}
+                  </td>
+                  <td className="p-2 border">{item.mataKuliah.semester}</td>
+                  <td className="p-2 border">{item.mataKuliah.sks}</td>
+                  <td className="p-2 border">
+                    {item.kelas.map((classes, classesId) => (
+                      <div key={classesId}>{classes.nama}</div>
+                    ))}
+                  </td>
+                  <td className="p-2 border space-x-2">
                     <button
                       onClick={() => handlePaperclipClick(item)}
                       className="bg-purple-500 text-white px-2 py-1 rounded"
                       title="Edit"
                     >
-                      <Paperclip className="w-4 h-4" />
+                      <Paperclip className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() =>
-                        navigate(AdminAcademicRoute.rpsManagement.editRps)
+                        navigate(
+                          `${AdminAcademicRoute.rpsManagement.editRps}/${item.id}`
+                        )
                       }
                       className="bg-yellow-500 text-white px-2 py-1 rounded"
                       title="Edit"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => onDelete?.(item.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8"
+                      className="bg-red-500 text-white px-2 py-1 rounded"
                       title="Hapus"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-5 h-5" />
                     </button>
                   </td>
                 </tr>
@@ -2162,7 +2180,9 @@ export const TableRpsManagement: React.FC<TableProps> = ({
             </h3>
             <div className="grid grid-cols-2 gap-y-2 gap-x-2 mb-4">
               <span>Mata Kuliah:</span>
-              <span className="text-gray-700">{selectedItem.mataKuliah}</span>
+              <span className="text-gray-700">
+                {getClassName(selectedItem)}
+              </span>
 
               <span className="font-medium">SKS:</span>
               <span className="text-gray-700">{getSKS(selectedItem)}</span>
