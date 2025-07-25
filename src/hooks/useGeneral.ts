@@ -35,7 +35,7 @@ export function getAcademicPeriods() {
   return useQuery({
     queryKey: ["academicPeriods"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/periode-akademik");
+      const response = await Api.get("/akademik/periode-akademik?size=100");
       return response.data.data;
     },
   });
@@ -46,6 +46,26 @@ export function getPeriodeAcademicActive() {
     queryKey: ["academicPeriodsActive"],
     queryFn: async () => {
       const response = await Api.get("/periode-akademik/active-status");
+      return response.data.data;
+    },
+  });
+}
+
+export function getLecturers() {
+  return useQuery({
+    queryKey: ["lecturers"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/dosen");
+      return response.data.data;
+    },
+  });
+}
+
+export function getSubjects() {
+  return useQuery({
+    queryKey: ["subjects"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/mata-kuliah/all");
       return response.data.data;
     },
   });

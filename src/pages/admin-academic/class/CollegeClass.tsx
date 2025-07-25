@@ -206,6 +206,8 @@ const CollegeClass = () => {
 const CollegeClassTable = ({ data }) => {
   const navigate = useNavigate();
 
+  console.log("DATA", data);
+
   const [selectedItems, setSelectedItems] = useState<{
     [key: string]: boolean;
   }>({});

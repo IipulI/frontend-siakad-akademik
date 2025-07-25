@@ -244,7 +244,7 @@ const CreateCollegeClass = () => {
               />
               <TextInput
                 value={capacity}
-                onChange={(e) => setCapacity(e.target.value)}
+                onChange={(e) => setCapacity(e)}
                 label="Kapasitas"
               />
               <SelectInput
@@ -296,12 +296,12 @@ const CreateCollegeClass = () => {
               />
               <TextInput
                 value={nameClass}
-                onChange={(e) => setNameClass(e.target.value)}
+                onChange={(e) => setNameClass(e)}
                 label="Nama Kelas"
               />
               <TextInput
                 value={totalMeet}
-                onChange={(e) => setTotalMeet(e.target.value)}
+                onChange={(e) => setTotalMeet(e)}
                 label="Jumlah Pertemuan"
               />
             </div>
@@ -341,6 +341,8 @@ const CreateCollegeClassTable = ({
   setScheduleList,
   listRooms,
 }) => {
+  const meetingTypes = ["Kuliah", "Kuliah Lapangan", "Praktikum"];
+  const learningMethod = ["Offline", "Online", "Hybrid"];
   const handleChange = (index, field, value) => {
     const newSchedule = [...scheduleList];
     newSchedule[index][field] = value;

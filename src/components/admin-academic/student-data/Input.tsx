@@ -12,6 +12,7 @@ interface InputFilterProps {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
+  error?: string;
 }
 
 // Input for filter student
@@ -22,6 +23,7 @@ export function InputFilter({
   placeholder,
   value,
   onChange,
+  error,
 }: InputFilterProps) {
   const isControlled = value !== undefined && onChange !== undefined;
   const inputValue = isControlled ? value : "";
@@ -36,7 +38,7 @@ export function InputFilter({
 
   return (
     <div className={`input-filter-container grid grid-cols-2 items-center`}>
-      <label className="text-xs w-fit font-medium">{label}</label>
+      <label className="text-md w-fit font-medium">{label}</label>
       {select ? (
         <select
           className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
@@ -52,8 +54,10 @@ export function InputFilter({
       ) : (
         <input
           placeholder={placeholder}
-          className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
-          value={inputValue}
+          className={`bg-white border text-sm sm:text-base ${
+            error ? "border-red-500" : "border-gray-300"
+          } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1`}
+          value={value}
           onChange={isControlled ? handleChange : undefined}
         />
       )}
