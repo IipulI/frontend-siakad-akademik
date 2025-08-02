@@ -949,6 +949,8 @@ const ExamSchedule = ({ data }) => {
     isError: isErrorExams,
   } = getStudentExams(data.id);
 
+  console.log("123", exams);
+
   return (
     <div className="space-y-4 px-4 md:px-0">
       <ClassBio data={data} />
@@ -974,9 +976,7 @@ const ExamSchedule = ({ data }) => {
               <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
                 Pengawas Ujian
               </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Peserta
-              </th>
+
               <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
                 Aksi
               </th>
@@ -986,16 +986,16 @@ const ExamSchedule = ({ data }) => {
             {exams?.map((exam, index) => (
               <tr key={exam.id} className="hover:bg-gray-50 text-center">
                 <td className="py-2 px-4 border border-gray-300 font-medium">
-                  {exam.id}
+                  {index + 1}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
                   {exam.jenisUjian}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {DateFormatter(exam.date)}
+                  {DateFormatter(exam.tanggal)}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.hour}
+                  {exam.jamMulai}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
                   {exam.siakRuangan.namaRuangan}
@@ -1003,9 +1003,7 @@ const ExamSchedule = ({ data }) => {
                 <td className="py-2 px-4 border border-gray-300">
                   {exam.siakDosen.nama}
                 </td>
-                {/* <td className="py-2 px-4 border border-gray-300">
-                  {exam.attendance}
-                </td> */}
+
                 <td className="py-2 px-4 border border-gray-300">
                   <button className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition">
                     <Trash size={18} />

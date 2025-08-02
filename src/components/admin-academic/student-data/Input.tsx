@@ -80,6 +80,7 @@ interface SelectProps<T> {
   onChange?: (val: T | null) => void;
   getOptionLabel?: (option: T) => string; // optional
   getOptionValue?: (option: T) => string; // optional
+  name?: string;
 }
 
 export function SelectInput<T>({
@@ -89,6 +90,7 @@ export function SelectInput<T>({
   value,
   defaultValue = "",
   error,
+  name,
   getOptionLabel = (opt: T) => String(opt), // ✅ fallback
   getOptionValue = (opt: T) => String(opt), // ✅ fallback
   onChange,
