@@ -6,7 +6,8 @@ import HeaderAdminAcademic from "../Header/HeaderAdminAcademic";
 import HeaderAdminFinance from "../Header/HeaderAdminFinance";
 import HeaderLecturer from "../Header/HeaderLecturer";
 
-interface MainLayoutProps { // Renamed for clarity, a common convention
+interface MainLayoutProps {
+  // Renamed for clarity, a common convention
   children: React.ReactNode;
   isGreeting: boolean;
   titlePage: string;
@@ -14,11 +15,11 @@ interface MainLayoutProps { // Renamed for clarity, a common convention
 }
 
 export default function MainLayout({
-                                     children,
-                                     isGreeting,
-                                     titlePage,
-                                     className,
-                                   }: MainLayoutProps) {
+  children,
+  isGreeting,
+  titlePage,
+  className,
+}: MainLayoutProps) {
   const [greeting, setGreeting] = useState("");
   const [userRole, setUserRole] = useState<string>("");
   // 1. Add state for the user's name
@@ -74,25 +75,25 @@ export default function MainLayout({
   };
 
   return (
-      <div className={`bg-primary-white min-h-screen ${className}`}>
-        {renderHeader()}
-        <div className="px-5 md:px-10 xl:px-40">
-          {isGreeting ? (
-              <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
-                <h1>{greeting},&nbsp;</h1>
-                {/* 3. Render the userName state variable instead of the hardcoded string */}
-                <h1 className="text-gray-text font-semibold">{userName}</h1>
-              </div>
-          ) : (
-              <div className="py-4">
-                <Breadcrumb />
-                <div className="text-2xl flex">
-                  <h1 className="text-gray-text font-semibold">{titlePage}</h1>
-                </div>
-              </div>
-          )}
-          {children}
-        </div>
+    <div className={`bg-primary-white min-h-screen ${className}`}>
+      {renderHeader()}
+      <div className="px-5 md:px-10 xl:px-40">
+        {isGreeting ? (
+          <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
+            <h1>{greeting},&nbsp;</h1>
+            {/* 3. Render the userName state variable instead of the hardcoded string */}
+            <h1 className="text-gray-text font-semibold">{userName}</h1>
+          </div>
+        ) : (
+          <div className="py-4">
+            <Breadcrumb />
+            <div className="text-2xl flex">
+              <h1 className="text-gray-text font-semibold">{titlePage}</h1>
+            </div>
+          </div>
+        )}
+        {children}
       </div>
+    </div>
   );
 }

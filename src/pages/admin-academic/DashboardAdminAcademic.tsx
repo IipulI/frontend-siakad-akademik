@@ -31,18 +31,14 @@ export default function DashboardAdminFinance() {
       <FilterDropdown title="Periode Akademik" options={periodOptions} />
 
       <div className="w-full mt-10 grid grid-cols-1 gap-5 sm:gap-10 lg:gap-5 xl:gap-16 sm:grid-cols-2 lg:grid-cols-4 pb-20">
+        <Card title="Total Mahasiswa" value="77" color="bg-[#4F46E5]" />
+        <Card title="Mahasiswa Aktif" value="8.077" color="bg-[#10B981]" />
+        <Card title="Mahasiswa Terdaftar" value="36.388" color="bg-[#F59E0B]" />
         <Card
-          title="Mahasiswa Baru Periode 2024 Genap"
-          value="77"
-          color="bg-blue-500"
+          title="Periode Saat Ini"
+          value="2024 Genap"
+          color="bg-[#F43F5E]"
         />
-        <Card title="Mahasiswa Aktif" value="8.077" color="bg-primary-green" />
-        <Card
-          title="Mahasiswa Terdaftar"
-          value="36.388"
-          color="bg-primary-yellow"
-        />
-        <Card title="Periode Saat Ini" value="2024 Genap" color="bg-red-700" />
 
         <div className="border-t-2 p-3 shadow-sm bg-white border-primary-green rounded-sm sm:col-span-2 lg:col-span-3">
           <h1 className="mb-3 font-semibold">

@@ -1,7 +1,13 @@
 @import "tailwindcss";
-.poppins {
-  font-family: ;
+
+.font-poppins {
+  font-family: "Poppins", sans-serif;
 }
+
+.font-roboto {
+  font-family: "roboto", sans-serif;
+}
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

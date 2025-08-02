@@ -1,82 +1,22 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { InputFilter } from "../../../components/admin-academic/student-data/Input";
+import {
+  InputFilter,
+  SelectInput,
+} from "../../../components/admin-academic/student-data/Input";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { Eye, Link2, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import { getCollegeClasses } from "../../../hooks/useKelasKuliah";
+import { getCollegeClass } from "../../../hooks/useKelasKuliah";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-
-const sampleData = [
-  {
-    id: "22110804305",
-    year: "2024",
-    code: "TIF302",
-    subject: "Kapita Selekta",
-    program: "S1 - Teknik Informatika",
-    class: "REG_B",
-    lecturer: "Maulana Ikhsan",
-    weeklySchedule: "",
-    kap: 40,
-    pst: 0,
-    status: "Sudah",
-  },
-  {
-    id: "22110804306",
-    year: "2024",
-    code: "TIF302",
-    subject: "Kapita Selekta",
-    program: "S1 - Teknik Informatika",
-    class: "REG_B",
-    lecturer: "Maulana Ikhsan",
-    weeklySchedule: "",
-    kap: 40,
-    pst: 0,
-    status: "Sudah",
-  },
-  {
-    id: "22110804307",
-    year: "2024",
-    code: "TIF302",
-    subject: "Kapita Selekta",
-    program: "S1 - Teknik Informatika",
-    class: "REG_B",
-    lecturer: "Maulana Ikhsan",
-    weeklySchedule: "",
-    kap: 40,
-    pst: 0,
-    status: "Sudah",
-  },
-  {
-    id: "22110804308",
-    year: "2024",
-    code: "TIF302",
-    subject: "Kapita Selekta",
-    program: "S1 - Teknik Informatika",
-    class: "REG_B",
-    lecturer: "Maulana Ikhsan",
-    weeklySchedule: "",
-    kap: 40,
-    pst: 0,
-    status: "Sudah",
-  },
-  {
-    id: "22110804309",
-    year: "2024",
-    code: "TIF302",
-    subject: "Kapita Selekta",
-    program: "S1 - Teknik Informatika",
-    class: "REG_B",
-    lecturer: "Maulana Ikhsan",
-    weeklySchedule: "",
-    kap: 40,
-    pst: 0,
-    status: "Sudah",
-  },
-];
+import {
+  getAcademicPeriodeDropdown,
+  getProgramStudi,
+  getYearCuriculum,
+} from "../../../hooks/useGeneral";
 
 interface Classes {
   id: string;
@@ -97,10 +37,30 @@ interface CollegeClassTableProps {
 }
 
 const CollegeClass = () => {
+  const [filter, setFilter] = useState({
+    periodeAkademik: "",
+    programStudi: "",
+    tahunKuriKulum: "",
+  });
   const systemOptions = [{ value: "", label: "Semua Sistem Kuliah" }];
-  const periodOptions = [{ value: "", label: "2025 Ganjil" }];
   const prodiOptions = [{ value: "", label: "Universitas Ibnu Khaldun" }];
   const curiculumOptions = [{ value: "", label: "Semua Kurikulum" }];
+
+  const { data: periods, isLoading: isLoadingPeriods } =
+    getAcademicPeriodeDropdown();
+
+  const { data: programs, isLoading: isLoadingPrograms } = getProgramStudi();
+  const { data: curiculums, isLoading: isLoadingCuriculums } =
+    getYearCuriculum();
+
+  const handleChangeFilter = (fieldName, selectedValue) => {
+    setFilter((prev) => ({
+      ...prev,
+      [fieldName]: selectedValue,
+    }));
+  };
+
+  console.log("filter", filter);
 
   const location = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -111,31 +71,49 @@ const CollegeClass = () => {
   const Create = () => location(AdminAcademicRoute.collegeClass.createClass);
   const Delete = () => alert("Delete");
 
-  const { data, isLoading, error } = getCollegeClasses();
+  const { data, isLoading, error } = getCollegeClass(filter);
 
-  if (isLoading) {
-    return <LoadingSpinner title="Kelas Kuliah" />;
-  }
+  //   if (isLoading) {
+  //     return <LoadingSpinner title="Kelas Kuliah" />;
+  //   }
 
   if (error) {
     return <div>Terjadi Kesalahan Dalam Mengambil Data</div>;
   }
+
+  console.log("programs", programs);
+  console.log("curiculums", curiculums);
 
   return (
     <MainLayout isGreeting={false} titlePage="Kelas Kuliah">
       <div className="space-y-4">
         {/* FILTER SECTION */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-white border-t-2 border-primary-yellow p-3 rounded shadow-sm">
-          <InputFilter
-            select
-            options={periodOptions}
+          <SelectInput
+            getOptionLabel={(opt) => opt.namaPeriode}
+            getOptionValue={(opt) => opt.namaPeriode}
+            onChange={(val) =>
+              handleChangeFilter("periodeAkademik", val.namaPeriode)
+            }
+            value={filter.periodeAkademik}
+            options={periods}
             label="Periode Akademik"
           />
-          <InputFilter select options={prodiOptions} label="Prodi Pengampu" />
-          <InputFilter select options={systemOptions} label="Sistem Kuliah" />
-          <InputFilter
-            select
-            options={curiculumOptions}
+          <SelectInput
+            options={programs}
+            getOptionLabel={(opt) => opt.namaProgramStudi}
+            getOptionValue={(opt) => opt.id}
+            onChange={(val) => handleChangeFilter("programStudi", val.id)}
+            value={filter.programStudi}
+            label="Program Studi"
+          />
+          <SelectInput options={systemOptions} label="Sistem Kuliah" />
+          <SelectInput
+            options={curiculums}
+            getOptionLabel={(opt) => opt.tahun}
+            getOptionValue={(opt) => opt.id}
+            onChange={(val) => handleChangeFilter("tahunKuriKulum", val.id)}
+            value={filter.tahunKuriKulum}
             label="Tahun Kurikulum"
           />
         </div>
@@ -215,7 +193,7 @@ const CollegeClassTable = ({ data }) => {
 
   useEffect(() => {
     const allChecked =
-      data.length > 0 && data.every((item) => selectedItems[item.id]);
+      data?.length > 0 && data.every((item) => selectedItems[item.id]);
     setSelectAll(allChecked);
   }, [selectedItems, data]);
 
@@ -295,74 +273,78 @@ const CollegeClassTable = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((student) => (
-            <tr key={student.id} className="hover:bg-gray-50 text-sm">
-              <td className="py-2 px-4 text-center border border-gray-300 font-semibold">
-                <input
-                  type="checkbox"
-                  checked={!!selectedItems[student.id]}
-                  onChange={() => handleSelectOne(student.id)}
-                />
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                {student.periodeAkademik}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                {student.mataKuliah.kodeMataKuliah}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                {student.mataKuliah.namaMataKuliah}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                {`${student.programStudi.jenjang.jenjang} - ${student.programStudi.namaProgramStudi}`}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                {student.nama}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                {student.dosen.map((dosen, i) => (
-                  <span key={i} className="block">
-                    {dosen}
-                  </span>
-                ))}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                {student.jadwalMingguan.map((jadwal, i) => (
-                  <span key={i} className="block">
-                    {jadwal}
-                  </span>
-                ))}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                {student.kapasitas}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                {student.peserta}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                {student.statusPenilaian}
-              </td>
-              <td className="p-2 border border-gray-300 font-medium">
-                <div className="flex justify-center flex-wrap gap-1">
-                  <ButtonClick
-                    icon={<Link2 size={15} />}
-                    color="bg-primary-yellow"
-                    onClick={Link}
+          {data?.length > 0 ? (
+            data?.map((student) => (
+              <tr key={student.id} className="hover:bg-gray-50 text-sm">
+                <td className="py-2 px-4 text-center border border-gray-300 font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={!!selectedItems[student.id]}
+                    onChange={() => handleSelectOne(student.id)}
                   />
-                  <ButtonClick
-                    icon={<Eye size={15} />}
-                    color="bg-primary-blueSoft"
-                    onClick={() => Detail(student.id)}
-                  />
-                  <ButtonClick
-                    icon={<Trash2 size={15} />}
-                    color="bg-red-400"
-                    onClick={Remove}
-                  />
-                </div>
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
+                  {student.periodeAkademik}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
+                  {student.mataKuliah.kodeMataKuliah}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-left break-words">
+                  {student.mataKuliah.namaMataKuliah}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-left break-words">
+                  {`${student.programStudi.jenjang.jenjang} - ${student.programStudi.namaProgramStudi}`}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
+                  {student.nama}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center break-words">
+                  {student.dosen.map((dosen, i) => (
+                    <span key={i} className="block">
+                      {dosen}
+                    </span>
+                  ))}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center break-words">
+                  {student.jadwalMingguan.map((jadwal, i) => (
+                    <span key={i} className="block">
+                      {jadwal}
+                    </span>
+                  ))}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
+                  {student.kapasitas}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
+                  {student.peserta}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-center break-words">
+                  {student.statusPenilaian}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium">
+                  <div className="flex justify-center flex-wrap gap-1">
+                    <ButtonClick
+                      icon={<Link2 size={15} />}
+                      color="bg-primary-yellow"
+                      onClick={Link}
+                    />
+                    <ButtonClick
+                      icon={<Eye size={15} />}
+                      color="bg-primary-blueSoft"
+                      onClick={() => Detail(student.id)}
+                    />
+                    <ButtonClick
+                      icon={<Trash2 size={15} />}
+                      color="bg-red-400"
+                      onClick={Remove}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>Data TIdak ada</tr>
+          )}
         </tbody>
       </table>
     </div>

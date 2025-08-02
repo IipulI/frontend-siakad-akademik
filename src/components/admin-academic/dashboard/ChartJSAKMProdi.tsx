@@ -8,30 +8,52 @@ import {
 } from "chart.js";
 import React from "react";
 import { Bar } from "react-chartjs-2";
+import { getAKMProdi } from "../../../hooks/admin-akademik/useChart";
+import Status from "../student-data/Status";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
 export default function ChartJSAKMProdi() {
-    // Data dummy (anda bisa mengganti dengan data aktual)
+  const { data: chartData, isLoading } = getAKMProdi();
+  console.log("data prodi akm", chartData);
+
+  const barColors = [
+    "#4F46E5", // Indigo 600
+    "#10B981", // Emerald 500
+    "#F59E0B", // Amber 500
+    "#3B82F6", // Blue 500
+    "#EF4444", // Red 500
+    "#8B5CF6", // Violet 500
+    "#14B8A6", // Teal 500
+    "#EC4899", // Pink 500
+    "#22C55E", // Green 500
+    "#6366F1", // Indigo 500
+  ];
+
+  const labels = [
+    "S1 - Akuntansi",
+    "S1 - Bisnis Digital",
+    "S1 - Gizi",
+    "S1 - Ilmu Lingkungan",
+    "S1 - Teknik Informatika",
+    "S1 - Manajemen",
+    "S1 - Teknik Mesin",
+    "S1 - Teknik Sipil",
+    "S1 - Hukum",
+    "S1 - Sistem Informasi",
+  ];
+
+  // Jumlah mahasiswa per jurusan
+  const values = [800, 2000, 850, 2550, 2700, 2700, 2700, 2700, 2700, 2700];
+
+  // ✅ Hanya satu dataset
   const data = {
-    labels: [
-      "S1 - Akuntansi",
-      "S1 - Bisnis Digital",
-      "S1 - Gizi",
-      "S1 - Ilmu Lingkungan",
-      "S1 - Teknik Informatika",
-      "S1 - Manajemen",
-      "S1 - Teknik Mesin",
-      "S1 - Teknik SIpil",
-      "S1 - Hukum",
-      "S1 - Sistem Informasi ",
-    ],
+    labels: labels,
     datasets: [
       {
         label: "Jumlah Mahasiswa",
-        data: [800, 2000, 850, 2550, 2700, 2700, 2700, 2700, 2700, 2700], // Contoh data
-        backgroundColor: "#694BDB",
-        hoverBackgroundColor: "#FF7777",
+        data: values,
+        backgroundColor: barColors,
       },
     ],
   };
@@ -50,23 +72,40 @@ export default function ChartJSAKMProdi() {
       x: {
         title: {
           display: true,
-          text: "Tahun",
+          text: "Program Studi",
           color: "#000",
+          font: {
+            size: 18,
+          },
+        },
+        ticks: {
+          maxRotation: 45,
+          minRotation: 30,
+          callback: function (val, index) {
+            const label = labels[index];
+            return label.length > 15 ? label.slice(0, 12) + "…" : label;
+          },
         },
       },
     },
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false, // Karena hanya 1 dataset
       },
-      title: {
-        display: false,
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.dataset.label}: ${context.parsed.y}`;
+          },
+        },
       },
     },
   };
-    return (
-      <div className="w-full relative">
-        <Bar data={data} options={options} className="relative" />
-      </div>
-    );
+
+  return (
+    <div className="w-full relative">
+      <Bar data={data} options={options} className="relative" />
+      <Status />
+    </div>
+  );
 }

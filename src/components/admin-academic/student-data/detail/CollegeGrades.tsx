@@ -8,12 +8,39 @@ import { getNilaiKuliah } from "../../../../hooks/admin-akademik/useStudentDetai
 import { useState } from "react";
 
 export default function CollegeGrades() {
+  const staticCompositions = [
+    {
+      id: 1,
+      name: "Kehadiran",
+      value: 15,
+    },
+    {
+      id: 2,
+      name: "Tugas",
+      value: 20,
+    },
+    {
+      id: 3,
+      name: "UTS",
+      value: 25,
+    },
+    {
+      id: 4,
+      name: "UAS",
+      value: 40,
+    },
+  ];
   const [filters, setFilters] = useState({
     namaPeriode: "",
   });
   const { state } = useLocation();
   const { data: periodeAkademikDropdown } = getAcademicPeriodeDropdown();
   const { data: nilaiKuliah } = getNilaiKuliah(state, filters.namaPeriode);
+
+  const composition = nilaiKuliah?.flatMap(
+    (item) => item.komposisiNilaiMataKuliahResDto
+  );
+  console.log("komposisi", nilaiKuliah);
 
   // Handle filter change
   const handleFilterChange = (field: string, value: string) => {
@@ -85,12 +112,13 @@ export default function CollegeGrades() {
                 Nama Kelas
               </th>
               <th
-                colSpan={3}
+                colSpan={4}
                 className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center"
               >
                 Nilai Komponen
               </th>
               <th
+                colSpan={2}
                 rowSpan={2}
                 className="bg-primary-green text-white border border-gray-500 font-semibold p-2 align-middle"
               >
@@ -98,15 +126,14 @@ export default function CollegeGrades() {
               </th>
             </tr>
             <tr>
-              <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                Komponen
-              </th>
-              <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                %
-              </th>
-              <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">
-                Nilai
-              </th>
+              {staticCompositions.map((composition) => (
+                <th
+                  key={composition.id}
+                  className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center"
+                >
+                  {composition.name} ({composition.value}%)
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -135,23 +162,14 @@ export default function CollegeGrades() {
                     <td className="border border-gray-500 font-semibold p-2 text-center">
                       {course.namaKelas}
                     </td>
+
+                    {course.komposisiNilaiMataKuliahResDto.map((test) => (
+                      <td className="border border-gray-500 font-semibold p-2 text-center">
+                        {test.nilai}
+                      </td>
+                    ))}
                     <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.komposisiNilaiMataKuliahResDto.map((komponen) => (
-                        <p>{komponen.namaKomposisi}</p>
-                      ))}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.komposisiNilaiMataKuliahResDto.map((komponen) => (
-                        <p>{komponen.persentase}</p>
-                      ))}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.komposisiNilaiMataKuliahResDto.map((komponen) => (
-                        <p>{komponen.nilai}</p>
-                      ))}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {course.nilaiAkhir}
+                      {course.nilai}
                     </td>
                   </tr>
                 ))}

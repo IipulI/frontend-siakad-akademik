@@ -1,5 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Api } from "../api/Index";
+import { useMemo } from "react";
+import { useDebounce } from "use-debounce";
 
 export interface CollegeClass {
   id: string;
@@ -59,11 +61,26 @@ export interface LecturerSchedulePayload {
   }[];
 }
 
-export function getCollegeClasses() {
-  return useQuery<CollegeClass>({
-    queryKey: ["classes"],
+export function getCollegeClass(filter: {
+  periodeAkademik?: string;
+  programStudi?: string;
+  tahunKuriKulum?: string;
+}) {
+  // Debounce selama 500ms
+  const [debouncedFilter] = useDebounce(filter, 500);
+
+  // Optional: gunakan useMemo agar queryKey lebih stabil
+  const queryKey = useMemo(
+    () => ["classes", debouncedFilter],
+    [debouncedFilter]
+  );
+
+  return useQuery({
+    queryKey,
     queryFn: async () => {
-      const response = await Api.get("/akademik/kelas-kuliah");
+      const response = await Api.get("/akademik/kelas-kuliah", {
+        params: debouncedFilter,
+      });
       return response.data.data;
     },
   });

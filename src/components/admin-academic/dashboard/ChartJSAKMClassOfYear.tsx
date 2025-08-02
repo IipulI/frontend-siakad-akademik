@@ -13,17 +13,31 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 import React from "react";
 
 export default function ChartJSAKMClassOfYear() {
-  // Data dummy (anda bisa mengganti dengan data aktual)
+  const labels = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+  const barColors = [
+    "#4F46E5", // Indigo 600
+    "#10B981", // Emerald 500
+    "#F59E0B", // Amber 500
+    "#3B82F6", // Blue 500
+    "#EF4444", // Red 500
+    "#8B5CF6", // Violet 500
+    "#14B8A6", // Teal 500
+    "#EC4899", // Pink 500
+    "#22C55E", // Green 500
+    "#6366F1", // Indigo 500
+  ];
+
+  // Jumlah mahasiswa per jurusan
+  const values = [800, 2000, 850, 2550, 2700, 2700, 2700, 2700, 2700, 2700];
+
+  // ✅ Hanya satu dataset
   const data = {
-    labels: [
-      2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
-    ],
+    labels: labels,
     datasets: [
       {
         label: "Jumlah Mahasiswa",
-        data: [0, 1000, 900, 450, 1800, 700, 750, 1800, 2500, 2600, 2700, 1750], // Contoh data
-        backgroundColor: "#694BDB",
-        hoverBackgroundColor: "#FF7777",
+        data: values,
+        backgroundColor: barColors,
       },
     ],
   };
@@ -42,20 +56,36 @@ export default function ChartJSAKMClassOfYear() {
       x: {
         title: {
           display: true,
-          text: "Tahun",
+          text: "Angkatan",
           color: "#000",
+          font: {
+            size: 18,
+          },
+        },
+        ticks: {
+          maxRotation: 45,
+          minRotation: 30,
+          callback: function (val, index) {
+            const label = labels[index];
+            return label.length > 15 ? label.slice(0, 12) + "…" : label;
+          },
         },
       },
     },
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false, // Karena hanya 1 dataset
       },
-      title: {
-        display: false,
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.dataset.label}: ${context.parsed.y}`;
+          },
+        },
       },
     },
   };
+
   return (
     <div className="w-full relative">
       <Bar data={data} options={options} className="w-full relative" />
