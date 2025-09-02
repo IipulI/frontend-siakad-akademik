@@ -441,7 +441,7 @@ export default function App() {
 
       <Route path="*" element={<NotFound />} />
       <Route path="/403" element={<Forbidden />} />
-      <Route path="/callback" />
+      <Route path="/callback" element={<LoginPage />} />
     </Routes>
   );
 }
