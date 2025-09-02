@@ -80,7 +80,9 @@ import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
 import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
 import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
 import NotFound from "./pages/NotFound";
+import Forbidden from "./pages/ForbiddenPage";
 import DetailOBE from "./pages/admin-academic/academic/DetailOBE";
+import { ProtectedRoute } from "./route/ProtectedRoute";
 
 export default function App() {
   return (
@@ -188,9 +190,14 @@ export default function App() {
         path={String(`${AdminAcademicRoute.collegeClass.detailClass}/:id`)}
         element={<DetailCollegeClass />}
       />
+
       <Route
         path={String(AdminAcademicRoute.student.studentData)}
-        element={<StudentData />}
+        element={
+          <ProtectedRoute permission="mahasiswa.view">
+            <StudentData />
+          </ProtectedRoute>
+        }
       />
       <Route
         path={String(AdminAcademicRoute.student.createStudent)}
@@ -433,6 +440,8 @@ export default function App() {
       />
 
       <Route path="*" element={<NotFound />} />
+      <Route path="/403" element={<Forbidden />} />
+      <Route path="/callback" />
     </Routes>
   );
 }
