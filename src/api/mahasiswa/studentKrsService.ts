@@ -75,6 +75,16 @@ export const studentKrsService = {
         }
     },
 
+    updateKrsCourses: async (payload: IAddKrsPayload): Promise<IApiResponseSuccess> => {
+        try {
+            const response = await Api.put<IApiResponseSuccess>(`/mahasiswa/krs`, payload);
+            return response.data;
+        } catch (error) {
+            console.error('Error updating KRS:', error);
+            throw error;
+        }
+    },
+
     submitKrsForApproval: async (): Promise<IApiResponseSuccess> => {
         try {
             // Endpoint ini tidak memerlukan request body, hanya trigger status change

@@ -37,12 +37,12 @@ export default function AdvisorLecturer() {
   
   const periodeOptions = periodeAkademikDropdown?.data?.map((item: IAcademicPeriod) => ({
     value: item.id,
-    label: item.namaPeriode,
+    label: item.nama,
   })) || [];
 
   const unitKerjaOptions = programStudiDropdown?.data?.map((item: IStudyProgram) => ({
-    value: item.namaProgramStudi,
-    label: item.namaProgramStudi,
+    value: item.nama,
+    label: item.nama,
   })) || [];
 
   unitKerjaOptions.unshift({
@@ -124,13 +124,13 @@ export default function AdvisorLecturer() {
         alert("Pilih mahasiswa terlebih dahulu.");
         return;
       }
-      accept({ mahasiswaIds: selectedIds, periodeAkademikId: filters.periode });
+      accept({ krsIds: selectedIds });
     } else {
       if (selectedIds.length === 0) {
         alert("Pilih mahasiswa terlebih dahulu.");
         return;
       }
-      reject({ mahasiswaIds: selectedIds, periodeAkademikId: filters.periode });
+      accept({ krsIds: selectedIds });
     }
     e.target.value = ""
   };
@@ -232,16 +232,16 @@ export default function AdvisorLecturer() {
                     studentData?.data.map((record: any, index: number) => (
                       <tr key={index} className="hover:bg-gray-100">
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          <input type="checkbox" className="w-4 h-4" checked={selectedIds.includes(record.id)} onChange={handleSelectOne(record.id)} />
+                          <input type="checkbox" className="w-4 h-4" checked={selectedIds.includes(record?.krsTerbaru?.id)} onChange={handleSelectOne(record?.krsTerbaru?.id)} />
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-sm">
-                          {record.mahasiswa}
+                          {record.nama}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           {record.angkatan}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          {record.statusMahasiswa}
+                          {record?.statusMahasiswa.nama}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           {record.semester}
@@ -250,17 +250,17 @@ export default function AdvisorLecturer() {
                           {record.batasSks}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          {record.totalSks}
+                          {record?.krsTerbaru?.sksDiambil}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          {record.ips}
+                          {record?.hasilStudiTerbaru?.ips}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          {record.ipk}
+                          {record?.hasilStudiTerbaru?.ipk}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           <div className="flex justify-center">
-                            {record.statusDiajukan ? (
+                            {(record?.krsTerbaru.status === 'Diajukan' || record?.krsTerbaru.status === 'Disetujui') ? (
                               <Check color="green" size={20} />
                             ) : (
                               <X color="red" size={20} />
@@ -269,7 +269,7 @@ export default function AdvisorLecturer() {
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           <div className="flex justify-center">
-                            {record.statusDisetujui ? (
+                            {record.krsTerbaru.status === 'Disetujui' ? (
                               <Check color="green" size={20} />
                             ) : (
                               <X color="red" size={20} />
@@ -277,7 +277,7 @@ export default function AdvisorLecturer() {
                           </div>
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-sm">
-                          {record.pembimbingAkademik}
+                          {record?.pembimbingDosen?.dosen?.nama}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           <div className="flex justify-center space-x-2">

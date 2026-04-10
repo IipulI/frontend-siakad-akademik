@@ -99,10 +99,11 @@ export interface IAvailableCourse {
     jamSelesai: string;
     dosenPengajar: string;
     riwayatMatakuliah: string | null;
+    jadwalKuliah: IJadwalMataKuliah[]
 }
 
 export interface IKrsInfo {
-    statusKrs: "Belum Diajukan" | "Disetujui" | "Ditolak" | "Menunggu Persetujuan";
+    statusKrs: "Belum Diajukan" | "Disetujui" | "Ditolak" | "Menunggu Persetujuan" | "Draft";
     semester: number;
     batasSks: number;
     periodeAkademik: string;
@@ -150,6 +151,12 @@ export interface ITranscriptData {
     rincianKrsDto: ITranscriptCourse[];
     ipk: number;
     totalSks: number;
+}
+
+export interface IJadwalMataKuliah {
+    hari: string,
+    jamMulai: string,
+    jamSelesai: string
 }
 
 
