@@ -1,35 +1,36 @@
 import Navbar from "../Navbar";
 import HamburgerMenu from "../HamburgerMenu";
-import {Link, useNavigate} from "react-router-dom";
-import {Bell, ArrowRight} from "lucide-react"; // Import ArrowRight
-import React, {useState, useRef, useEffect} from "react"; // Import hooks
-import {LecturerRoute} from "../../types/VarRoutes";
+import { Link, useNavigate } from "react-router-dom";
+import { Bell, ArrowRight } from "lucide-react"; // Import ArrowRight
+import React, { useState, useRef, useEffect } from "react"; // Import hooks
+import { LecturerRoute } from "../../types/VarRoutes";
 
 // Define navigation items
 const navItems = [
-  {
-    id: "1",
-    name: "Beranda",
-    path: String(LecturerRoute.dashboard),
-    hasDropdown: false,
-  },
-  {
-    id: "2",
-    name: "Bimbingan Akademik",
-    path: String(LecturerRoute.guidance.advisor),
-    hasDropdown: false,
-  },
-  { id: "3",
-    name: "Jadwal",
-    path: String(LecturerRoute.schedule),
-    hasDropdown: false
-  },
-  {
-    id: "4",
-    name: "Perkuliahan",
-    dropdownKey: "perkuliahan",
-    hasDropdown: true,
-  },
+    {
+        id: "1",
+        name: "Beranda",
+        path: String(LecturerRoute.dashboard),
+        hasDropdown: false,
+    },
+    {
+        id: "2",
+        name: "Bimbingan Akademik",
+        dropdownKey: "bimbingan",
+        hasDropdown: true,
+    },
+    {
+        id: "3",
+        name: "Jadwal",
+        path: String(LecturerRoute.schedule),
+        hasDropdown: false
+    },
+    {
+        id: "4",
+        name: "Perkuliahan",
+        dropdownKey: "perkuliahan",
+        hasDropdown: true,
+    },
 ];
 
 
@@ -37,6 +38,12 @@ const dropdownMenus = {
     bimbingan: {
         title: "KONSULTASI",
         items: [
+            {
+                icon: "icon_timetable.png",
+                title: "Pembimbing Akademik",
+                description: "Daftar Mahasiswa Bimbingan",
+                to: String(LecturerRoute.guidance.advisor),
+            },
             {
                 icon: "icon_annon.png",
                 title: "Konsultasi",
@@ -102,7 +109,7 @@ const dropdownMenus = {
 };
 
 // --- START: KOMPONEN PROFILE DROPDOWN (Reusable) ---
-const ProfileDropdown = ({profileData, onClose}) => {
+const ProfileDropdown = ({ profileData, onClose }) => {
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
@@ -153,10 +160,10 @@ const ProfileDropdown = ({profileData, onClose}) => {
                                 onClick={onClose}
                             >
                                 {item.icon && (
-                                    <img src={`/img/${item.icon}`} alt="" className="w-4 h-4 mr-3"/>
+                                    <img src={`/img/${item.icon}`} alt="" className="w-4 h-4 mr-3" />
                                 )}
                                 <span className="font-semibold">{item.title}</span> {/* Dibuat bold */}
-                                <ArrowRight size={16} className="ml-auto"/>
+                                <ArrowRight size={16} className="ml-auto" />
                             </Link>
                         ) : item.action === "logout" ? ( // Untuk item logout
                             <button
@@ -164,10 +171,10 @@ const ProfileDropdown = ({profileData, onClose}) => {
                                 onClick={handleLogout}
                             >
                                 {item.icon && (
-                                    <img src={`/img/${item.icon}`} alt="" className="w-4 h-4 mr-3"/>
+                                    <img src={`/img/${item.icon}`} alt="" className="w-4 h-4 mr-3" />
                                 )}
                                 <span className="font-semibold">{item.title}</span> {/* Dibuat bold */}
-                                <ArrowRight size={16} className="ml-auto"/>
+                                <ArrowRight size={16} className="ml-auto" />
                             </button>
                         ) : null}
                     </React.Fragment>
@@ -218,7 +225,7 @@ const HeaderAdminAcademic = () => {
                                         to={"/dosen/dashboard"}
                                         className="hidden sm:block sm:w-12 xl:w-15"
                                     >
-                                        <img width={60} src="/img/logo_uika.png" alt=""/>
+                                        <img width={60} src="/img/logo_uika.png" alt="" />
                                     </Link>
                                     <div>
                                         <div className="text-white">
@@ -241,7 +248,7 @@ const HeaderAdminAcademic = () => {
                         className="absolute h-full right-0"
                     />
                     <div className="flex space-x-5 items-center">
-                        <Bell size={30} color="#fff"/>
+                        <Bell size={30} color="#fff" />
                         {/* START: Tambah Icon Profile dengan Dropdown */}
                         <div className="relative" ref={profileRef}>
                             <button onClick={toggleProfileDropdown} className="focus:outline-none">
@@ -263,7 +270,7 @@ const HeaderAdminAcademic = () => {
                     </div>
                 </div>
             </div>
-            <Navbar navItems={navItems} dropdownMenus={dropdownMenus}/>
+            <Navbar navItems={navItems} dropdownMenus={dropdownMenus} />
         </div>
     );
 };

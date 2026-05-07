@@ -47,6 +47,12 @@ const dropdownMenus = {
         description: "Aktivitas Seminggu Ke Depan",
         to: String(StudentRoute.schedule.thisWeek),
       },
+      {
+        icon: "icon_timetable.png",
+        title: "Jadwal Ujian",
+        description: "Jadwal Ujian Anda",
+        to: String(StudentRoute.schedule.exam),
+      },
     ],
   },
   akademik: {

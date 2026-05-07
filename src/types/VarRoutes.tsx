@@ -105,6 +105,11 @@ export const LecturerRoute = {
   guidance: {
     advisor: "/dosen/bimbingan/pembimbing-akademik",
     detailAdvisor: "/dosen/bimbingan/pembimbing-akademik/detail",
+    consultation: "/dosen/bimbingan/konsultasi",
+    addConsultation: "/dosen/bimbingan/konsultasi/tambah",
+    proposal: "/dosen/bimbingan/proposal-tugas-akhir",
+    finalProject: "/dosen/bimbingan/tugas-akhir",
+    supporter: "/dosen/bimbingan/kegiatan-pendukung",
   } as routeType,
   announcement: {},
   schedule: "/dosen/jadwal-akademik",
