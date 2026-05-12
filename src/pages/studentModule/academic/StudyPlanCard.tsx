@@ -11,6 +11,7 @@ import {
     SlidersHorizontal,
     Trash,
 } from "lucide-react";
+import { log } from "console";
 
 // A utility hook for debouncing input to prevent excessive API calls
 const useDebounce = (value: string, delay: number) => {
@@ -46,14 +47,15 @@ const StudyPlanCard = () => {
         queryFn: studentKrsService.getKrsInfo,
     });
 
+    console.log('KRS Info:', krsInfo);
     const { data: availableCoursesData, isLoading: isLoadingCourses } = useQuery({
         queryKey: ['availableCourses', debouncedSearchTerm, page, pageSize],
         queryFn: () => studentKrsService.getAvailableCourses({
             keyword: debouncedSearchTerm, page, size: pageSize,
         }),
-        keepPreviousData: true,
     });
 
+    console.log('Available Courses:', availableCoursesData);
     const { data: savedKrsData, isLoading: isLoadingSaved } = useQuery({
         queryKey: ['savedKrs'],
         queryFn: studentKrsService.getSavedCourses,
@@ -355,6 +357,8 @@ const StudyPlanCardTable = ({
                                         const isAlreadySaved = savedCourseIds.has(course.mataKuliah.id);
                                         const isSelected = selectedCourses.includes(course.id);
 
+                                        console.log('course', course);
+
                                         const showError = false;
 
                                         return (
@@ -370,13 +374,13 @@ const StudyPlanCardTable = ({
                                                         />
                                                     </td>
                                                     <td className="px-4 py-4 border-r border-gray-300 text-left font-medium">
-                                                        {course.mataKuliah.kode ? `${course.mataKuliah.kode} - ` : ''}{course.mataKuliah.nama} ({course.nama})
+                                                        {course.mataKuliah.kode ? `${course.mataKuliah.kode} - ` : ''}{course.mataKuliah.nama} {course.nama ? `(${course.nama})` : ''}
                                                     </td>
                                                     <td className="px-4 py-4 border-r border-gray-300 text-center">
                                                         {course.jadwalKuliah && course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}
                                                     </td>
                                                     <td className="px-4 py-4 border-r border-gray-300 text-center">
-                                                        {course.mataKuliah.tahunKurikulum || '2021'}
+                                                        {typeof course.mataKuliah.tahunKurikulum === 'object' ? course.mataKuliah.tahunKurikulum?.tahun : (course.mataKuliah.tahunKurikulum || '2021')}
                                                     </td>
                                                     <td className="px-4 py-4 border-r border-gray-300 text-center font-semibold">
                                                         {course.mataKuliah.totalSks} SKS
@@ -385,7 +389,7 @@ const StudyPlanCardTable = ({
                                                         {course.mataKuliah.semester || '-'}
                                                     </td>
                                                     <td className="px-4 py-4 border-r border-gray-300 text-left">
-                                                        {course.jadwalKuliah && course.jadwalKuliah[0] ? course.jadwalKuliah[0].dosen.nama : '-'}
+                                                        {course.jadwalKuliah && course.jadwalKuliah[0] && course.jadwalKuliah[0].dosen ? course.jadwalKuliah[0].dosen.nama : '-'}
                                                     </td>
                                                     <td className="px-4 py-4 text-center">
                                                     </td>
@@ -461,8 +465,8 @@ const StudyPlanCardTable = ({
                                 </tr>
                             </thead>
                             <tbody className="text-sm">
-                                {savedCoursesData?.rincianKrsMahasiswa && savedCoursesData.rincianKrsMahasiswa.length > 0 ? (
-                                    savedCoursesData.rincianKrsMahasiswa.map((course) => (
+                                {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
+                                    savedCoursesData.krs.map((course) => (
                                         <tr key={course.id} className="transition border-b border-gray-300 hover:bg-gray-50">
                                             <td className="px-3 py-4 border-r border-gray-300 text-center">
                                                 <input type="checkbox" className="w-4 h-4 cursor-not-allowed accent-primary-green" checked disabled />
@@ -474,7 +478,7 @@ const StudyPlanCardTable = ({
                                                 {course.jadwalKuliah && course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}
                                             </td>
                                             <td className="px-4 py-4 border-r border-gray-300 text-center">
-                                                {course.mataKuliah.tahunKurikulum || '2021'}
+                                                {typeof course.mataKuliah.tahunKurikulum === 'object' ? course.mataKuliah.tahunKurikulum?.tahun : (course.mataKuliah.tahunKurikulum || '2021')}
                                             </td>
                                             <td className="px-4 py-4 border-r border-gray-300 text-center font-semibold">
                                                 {course.mataKuliah.totalSks} SKS
@@ -503,7 +507,7 @@ const StudyPlanCardTable = ({
                                     <td colSpan={3} className="px-4 py-3 text-right">
                                         <button
                                             onClick={handleSubmitKrs}
-                                            disabled={isSubmittingKrs || !savedCoursesData?.rincianKrsMahasiswa?.length}
+                                            disabled={isSubmittingKrs || !savedCoursesData?.krs?.length}
                                             className="flex items-center gap-2 bg-primary-green hover:bg-green-700 text-white font-semibold px-6 py-2 rounded shadow-sm ml-auto disabled:opacity-50 transition"
                                         >
                                             <Check className="w-5 h-5" />{isSubmittingKrs ? 'Mengajukan...' : 'Ajukan KRS'}
@@ -539,8 +543,8 @@ const StudyPlanCardTable = ({
                             </tr>
                         </thead>
                         <tbody className="text-sm">
-                            {savedCoursesData?.rincianKrsMahasiswa && savedCoursesData.rincianKrsMahasiswa.length > 0 ? (
-                                savedCoursesData.rincianKrsMahasiswa.map((course) => (
+                            {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
+                                savedCoursesData.krs.map((course) => (
                                     <tr key={course.id} className="transition border-b border-gray-300 hover:bg-gray-50">
                                         <td className="px-4 py-4 border-r border-gray-300 text-left font-medium">
                                             {course.mataKuliah.kode ? `${course.mataKuliah.kode} - ` : ''}{course.mataKuliah.nama} ({course.nama})
@@ -549,7 +553,7 @@ const StudyPlanCardTable = ({
                                             {course.jadwalKuliah && course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}
                                         </td>
                                         <td className="px-4 py-4 border-r border-gray-300 text-center">
-                                            {course.mataKuliah.tahunKurikulum || '2021'}
+                                            {typeof course.mataKuliah.tahunKurikulum === 'object' ? course.mataKuliah.tahunKurikulum?.tahun : (course.mataKuliah.tahunKurikulum || '2021')}
                                         </td>
                                         <td className="px-4 py-4 border-r border-gray-300 text-center font-semibold">
                                             {course.mataKuliah.totalSks} SKS
@@ -577,7 +581,7 @@ const StudyPlanCardTable = ({
         );
     };
 
-    return krsValidated ? validatedKRS() : notValidatedKRS();
+    return notValidatedKRS();
 };
 
 // Make sure the default export is at the end of the file.

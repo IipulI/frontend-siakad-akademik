@@ -125,12 +125,12 @@ export default function AdvisorLecturer() {
         return;
       }
       accept({ krsIds: selectedIds });
-    } else {
+    } else if (e.target.value === "tolak") {
       if (selectedIds.length === 0) {
         alert("Pilih mahasiswa terlebih dahulu.");
         return;
       }
-      accept({ krsIds: selectedIds });
+      reject({ krsIds: selectedIds });
     }
     e.target.value = ""
   };

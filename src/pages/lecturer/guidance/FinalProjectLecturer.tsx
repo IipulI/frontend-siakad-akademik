@@ -74,7 +74,7 @@ const FinalProjectLecturer = () => {
                                 <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">Tahap Tugas Akhir</th>
                                 <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">Nilai</th>
                                 <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">Status</th>
-                                <th className="bg-primary-yellow text-white border border-gray-500 font-semibold p-2 text-center w-16">Aksi</th>
+                                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center w-16">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

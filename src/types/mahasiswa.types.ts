@@ -77,29 +77,45 @@ export interface IAcademicPeriod {
 
 export interface IMataKuliah {
     id: string;
-    programStudi: string;
-    tahunKurikulum: string;
-    semester: string;
+    siakTahunKurikulumId: string;
+    nama: string;
+    kode: string;
+    semester: number;
     nilaiMin: string;
-    sksTatapMuka: number;
-    sksPraktikum: number;
-    adaPraktikum: boolean;
-    opsiMataKuliah: boolean;
-    kodeMataKuliah: string;
-    namaMataKuliah: string;
-    jenisMataKuliah: string;
+    totalSks: number;
+    tahunKurikulum?: {
+        id: string;
+        tahun: string;
+    };
+    prasyarat1?: any;
+    prasyarat2?: any;
+    prasyarat3?: any;
 }
 
 export interface IAvailableCourse {
     id: string;
+    siakMataKuliahId: string;
+    nama: string; // Nama Kelas (e.g. Reguler A)
+    kapasitas: number;
+    sistemKuliah: string;
+    jumlahPeminat?: number | null;
     mataKuliah: IMataKuliah;
-    namaKelas: string;
-    hari: string | null;
-    jamMulai: string;
-    jamSelesai: string;
-    dosenPengajar: string;
-    riwayatMatakuliah: string | null;
-    jadwalKuliah: IJadwalMataKuliah[]
+    jadwalKuliah: {
+        id: string;
+        hari: string;
+        jamMulai: string;
+        jamSelesai: string;
+        dosen: {
+            id: string;
+            nama: string;
+            nidn: string;
+        };
+        ruangan: {
+            id: string;
+            nama: string;
+        };
+    }[];
+    previousGrade?: string | null;
 }
 
 export interface IKrsInfo {
