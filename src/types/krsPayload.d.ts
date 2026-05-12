@@ -1,6 +1,7 @@
 interface KrsActionPayload {
-    mahasiswaIds: string[];
-    periodeAkademikId: string;
+    krsIds: string[];
+    // mahasiswaIds: string[];
+    // periodeAkademikId: string;
 }
 
 export type { KrsActionPayload }
