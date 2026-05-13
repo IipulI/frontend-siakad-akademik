@@ -454,7 +454,7 @@ const CreateCollegeClassTable = ({
                   className="border p-1 w-full"
                 >
                   <option value="">-- Pilih --</option>
-                  {listRooms.map((room) => (
+                  {listRooms?.map((room) => (
                     <option key={room.id} value={room.id}>
                       {room.namaRuangan}
                     </option>

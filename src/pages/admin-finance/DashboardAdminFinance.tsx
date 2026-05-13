@@ -2,7 +2,7 @@ import MainLayout from "../../components/layouts/MainLayout";
 import ButtonClick from "../../components/admin-academic/student-data/ButtonClick";
 import { Search } from "lucide-react";
 import Card from "../../components/admin-academic/dashboard/Card";
-import FacultyBill from "../../components/admin-finance/facultyBill";
+import FacultyBill from "../../components/admin-finance/FacultyBill";
 import LastTransaction from "../../components/admin-finance/LastTransaction";
 import { useGetAllbill } from "../../hooks/admin-keuangan/useDashboardFinance";
 import LoadingSpinner from "../../components/LoadingSpinner";
