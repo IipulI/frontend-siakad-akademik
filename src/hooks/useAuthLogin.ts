@@ -1,42 +1,39 @@
 // src/hooks/useAuthLogin.ts
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { Api } from "../api/Index"; // Adjust path as needed
+import { Api } from "../api/Index"; // Sesuaikan path jika perlu
 
-interface LoginCredentials {
-  token: string;
-  role_id: string;
-  appModule_id: string;
-  unit_id: string;
+// 1. Ubah kredensial agar sesuai dengan form (username/email dan password)
+export interface LoginCredentials {
+  username?: string;
+  email?: string;
+  password: string;
 }
 
-// Define this based on your actual API response structure for user data
+// 2. Interface data dari backend saat login sukses
 export interface UserLoginData {
   token: string;
   user: {
-    id: string; // Or number
+    id: string; 
     username: string;
-    roles: string[];
-    // Add other relevant user properties
+    email?: string;
+    // Tambahkan properti user lainnya jika ada
   };
   account_info: {
     id: string;
     nama: string;
-    code: string; // This is likely the NIM/Student ID
+    // Tambahkan properti spesifik role (seperti NIM/NIDN) jika ada
   };
-  // any other data returned on successful login
 }
 
 interface UseAuthLoginOptions {
   onSuccess?: (data: UserLoginData) => void;
-  onError?: (error: Error) => void; // Use Error type or a more specific custom error type
+  onError?: (error: Error) => void; 
 }
 
-// Define what the hook will return more explicitly
 interface UseAuthLoginReturn {
   login: (credentials: LoginCredentials) => void;
   isLoggingIn: boolean;
   error: Error | null;
-  // data: UserLoginData | undefined; // Optional, if the component needs direct access to the data
 }
 
 export function useAuthLogin({
@@ -49,33 +46,35 @@ export function useAuthLogin({
     LoginCredentials
   > = useMutation<UserLoginData, Error, LoginCredentials>({
     mutationFn: async (credentials: LoginCredentials) => {
-      const res = await Api.get("/call_user", {
-        params: credentials,
-      });
+      // 3. Ubah menjadi POST dan arahkan ke endpoint yang benar
+      const res = await Api.post("/auth/login", credentials);
+      
+      // Backend ResponseBuilder mengembalikan struktur: { status, message, data, ... }
       if (res.data && res.data.data) {
-        // Or however your API response is structured
         return res.data.data as UserLoginData;
       }
+      
       throw new Error(
-        res.data?.message || "Login failed due to an unknown error"
+        res.data?.message || "Login gagal karena kesalahan sistem"
       );
     },
     onSuccess: (data: UserLoginData) => {
-      // Core success actions (like saving to localStorage) can happen here
+      // 4. Menyimpan data ke localStorage sesuai arsitektur frontend
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("account_info", JSON.stringify(data.account_info));
+      
+      // Pastikan account_info ada sebelum di-stringify (untuk berjaga-jaga jika admin tidak punya account_info)
+      if (data.account_info) {
+        localStorage.setItem("account_info", JSON.stringify(data.account_info));
+      }
 
-      // Then call the provided onSuccess callback for component-specific actions
       if (onSuccess) {
         onSuccess(data);
       }
     },
     onError: (error: Error) => {
-      // Core error logging can happen here
       console.error("Login API error:", error);
 
-      // Then call the provided onError callback for component-specific actions
       if (onError) {
         onError(error);
       }
@@ -86,6 +85,5 @@ export function useAuthLogin({
     login: loginMutation.mutate,
     isLoggingIn: loginMutation.isPending,
     error: loginMutation.error,
-    // data: loginMutation.data,
   };
 }

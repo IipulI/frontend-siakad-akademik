@@ -48,7 +48,7 @@ import EditCourse from "./pages/admin-academic/academic/EditCourse";
 import DetailCourse from "./pages/admin-academic/academic/DetailCourse";
 import CplCpmkCourse from "./pages/admin-academic/academic/CplCpmkCourse";
 import RpsCourse from "./pages/admin-academic/academic/RpsCourse";
-import OBEManagement from "./pages/admin-academic/academic/OBEManagement";
+import {OBEManagement} from "./pages/admin-academic/academic/OBEManagement";
 import GraduateProfile from "./pages/admin-academic/academic/GraduateProfile";
 import ObeCpl from "./pages/admin-academic/academic/ObeCpl";
 import ObeCpmk from "./pages/admin-academic/academic/ObeCpmk";
