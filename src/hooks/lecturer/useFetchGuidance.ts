@@ -17,7 +17,7 @@ export const useAcademicGuidanceList = (periodeAkademikId: string, programStudi:
           size
         ],
         queryFn: async () => {
-            const res = await Api.get(`/dosen/pembimbing-akademik/all?periodeAkademikId=${periodeAkademikId}&programStudi=${programStudi}&angkatan=${angkatan}&statusKrs=${statusKrs}&keyword=${keyword}&statusMahasiswa=${statusMahasiswa}&semester=${semester}&size=${size}`)
+            const res = await Api.get(`/dosen/pembimbing-akademik/all?periodeAkademikId=${periodeAkademikId}&programStudi=${programStudi}&angkatan=${angkatan}&statusKrs=${statusKrs}&keyword=${keyword}&statusMahasiswa=${statusMahasiswa}&semester=${semester}&page=${page}&size=${size}`)
             return res.data
         },
         enabled: !!periodeAkademikId
@@ -45,10 +45,9 @@ export const useAcademicGuidanceDetail = (id: string | null) =>
 
 export const useAcceptKRS = (onSuccess, onError) => {
   return useMutation({
-    mutationFn: async ({ mahasiswaIds, periodeAkademikId }: KrsActionPayload) => {
+    mutationFn: async ({ krsIds }: KrsActionPayload) => {
       const body = {
-        mahasiswaIds,
-        periodeAkademikId,
+        krsIds,
       };
       const res = await Api.post("/dosen/pembimbing-akademik/setuju", body);
       return res.data;
@@ -60,10 +59,9 @@ export const useAcceptKRS = (onSuccess, onError) => {
 
 export const useRejectKRS = (onSuccess, onError) => {
   return useMutation({
-    mutationFn: async ({ mahasiswaIds, periodeAkademikId }: KrsActionPayload) => {
+    mutationFn: async ({ krsIds }: KrsActionPayload) => {
       const body = {
-        mahasiswaIds,
-        periodeAkademikId,
+        krsIds,
       };
       const res = await Api.post("/dosen/pembimbing-akademik/tolak", body);
       return res.data;

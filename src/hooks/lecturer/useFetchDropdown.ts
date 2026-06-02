@@ -21,9 +21,9 @@ export const useActiveStatus = () =>
 
 export const useStudyProgramDropdown = () =>
     useQuery({
-        queryKey: ["/dosen/program-studi"],
+        queryKey: ["/program-studi"],
         queryFn: async () => {
-            const res = await Api.get(`/dosen/program-studi`)
+            const res = await Api.get(`/program-studi`)
             return res.data
         }
 });

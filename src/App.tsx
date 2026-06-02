@@ -63,6 +63,11 @@ import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass"
 import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
 import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
 import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
+import ConsultationLecturer from "./pages/lecturer/guidance/ConsultationLecturer";
+import FormConsultationLecturer from "./pages/lecturer/guidance/FormConsultationLecturer";
+import ProposalLecturer from "./pages/lecturer/guidance/ProposalLecturer";
+import FinalProjectLecturer from "./pages/lecturer/guidance/FinalProjectLecturer";
+import SupporterLecturer from "./pages/lecturer/guidance/SupporterLecturer";
 import ClassLecturer from "./pages/lecturer/courses/ClassLecturer";
 import EditBill from "./pages/admin-finance/EditBill";
 import CreateBill from "./pages/admin-finance/create-bill/CreateBill";
@@ -221,6 +226,8 @@ export default function App() {
         path={String(AdminAcademicRoute.detailAnnouncement)}
         element={<DetailAnnouncement />}
       />
+
+
       <Route
         path={String(AdminAcademicRoute.addAnnouncement)}
         element={<AddAnnouncementAdminAcademic />}
@@ -390,15 +397,27 @@ export default function App() {
         path={String(LecturerRoute.dashboard)}
         element={<DashboardLecturer />}
       />
-      {/* <Route
+      <Route
         path={String(LecturerRoute.guidance.consultation)}
         element={<ConsultationLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.addConsultation)}
+        element={<FormConsultationLecturer />}
       />
       <Route
         path={String(LecturerRoute.guidance.proposal)}
         element={<ProposalLecturer />}
       />
       <Route
+        path={String(LecturerRoute.guidance.finalProject)}
+        element={<FinalProjectLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.guidance.supporter)}
+        element={<SupporterLecturer />}
+      />
+      {/* <Route
         path={String(LecturerRoute.schedule.calendar)}
         element={<CalendarLecturer />}
       />

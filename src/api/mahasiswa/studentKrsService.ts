@@ -20,8 +20,18 @@ export const studentKrsService = {
         try {
             const response = await Api.get<{ data: IKrsInfo }>('/mahasiswa/krs/info-krs');
             return response.data.data;
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching KRS info:', error);
+            // Fallback data jika endpoint belum ada di backend lokal
+            if (error.response?.status === 404) {
+                return {
+                    statusKrs: "Belum Diajukan",
+                    semester: 4,
+                    batasSks: 24,
+                    periodeAkademik: "2024/2025 Genap",
+                    pembimbingAkademik: "Dosen Pembimbing (Lokal)"
+                };
+            }
             throw error;
         }
     },
@@ -32,15 +42,25 @@ export const studentKrsService = {
      */
     getAvailableCourses: async (params: GetKrsParams): Promise<IPaginatedResponse<IAvailableCourse>> => {
         try {
-            const response = await Api.get<IPaginatedResponse<IAvailableCourse>>('/mahasiswa/krs', {
+            const response = await Api.get<any>('/mahasiswa/krs', {
                 params: {
                     page: params.page,
                     size: params.size,
-                    keyword: params.keyword,
+                    search: params.keyword,
                     sort: params.sort || 'createdAt,desc',
                 },
             });
-            return response.data; // API Anda sudah mengembalikan struktur paginasi yang pas
+            
+            const rawData = response.data;
+            
+            // Jika backend mengembalikan data dalam format { status, message, data: [] }
+            // Kita transform menjadi IPaginatedResponse
+            return {
+                data: rawData.data || [],
+                totalItems: rawData.pagination?.totalItems || (rawData.data?.length || 0),
+                totalPages: rawData.pagination?.totalPage || 1,
+                currentPage: rawData.pagination?.currentPage || 1,
+            };
         } catch (error) {
             console.error('Error fetching available courses:', error);
             throw error;
@@ -53,8 +73,16 @@ export const studentKrsService = {
      */
     getSavedCourses: async (): Promise<ISavedKrsResponse> => {
         try {
-            const response = await Api.get<{ data: ISavedKrsResponse }>('/mahasiswa/krs/status-menunggu');
-            return response.data.data;
+            const response = await Api.get<{ data: IAvailableCourse[] }>('/mahasiswa/krs/tersimpan');
+            const courses = response.data.data;
+            
+            // Hitung total SKS dari data yang ada
+            const totalSks = courses.reduce((sum, item) => sum + (item.mataKuliah?.totalSks || 0), 0);
+            
+            return {
+                krs: courses,
+                totalSks: totalSks
+            };
         } catch (error) {
             console.error('Error fetching saved KRS:', error);
             throw error;
@@ -65,9 +93,11 @@ export const studentKrsService = {
      * Menambahkan kelas-kelas yang dipilih ke dalam KRS mahasiswa.
      * POST /mahasiswa/krs
      */
-    addCoursesToKrs: async (payload: IAddKrsPayload): Promise<IApiResponseSuccess> => {
+    addCoursesToKrs: async (payload: any): Promise<IApiResponseSuccess> => {
         try {
-            const response = await Api.post<IApiResponseSuccess>('/mahasiswa/krs', payload);
+            const response = await Api.post<IApiResponseSuccess>('/mahasiswa/krs', {
+                kelasKuliahIds: payload.kelasIds || payload.kelasKuliahIds
+            });
             return response.data;
         } catch (error) {
             console.error('Error adding courses to KRS:', error);
@@ -75,13 +105,48 @@ export const studentKrsService = {
         }
     },
 
+    updateKrsCourses: async (krsId: string, payload: any): Promise<IApiResponseSuccess> => {
+        try {
+            const response = await Api.put<IApiResponseSuccess>(`/mahasiswa/krs/${krsId}`, {
+                kelasKuliahIds: payload.kelasIds || payload.kelasKuliahIds
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error updating KRS:', error);
+            throw error;
+        }
+    },
+
     submitKrsForApproval: async (): Promise<IApiResponseSuccess> => {
         try {
-            // Endpoint ini tidak memerlukan request body, hanya trigger status change
-            const response = await Api.put<IApiResponseSuccess>('/mahasiswa/krs/status');
+            const response = await Api.post<IApiResponseSuccess>('/mahasiswa/krs/ajukan', {});
             return response.data;
         } catch (error) {
             console.error('Error submitting KRS:', error);
+            throw error;
+        }
+    },
+
+    deleteKrs: async (krsId: string, kelasKuliahIds: string[]): Promise<IApiResponseSuccess> => {
+        try {
+            const response = await Api.delete<IApiResponseSuccess>(`/mahasiswa/krs/${krsId}`, {
+                data: { kelasKuliahIds }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error deleting KRS item:', error);
+            throw error;
+        }
+    },
+
+    getKrsHistory: async (periodeId: string): Promise<any> => {
+        try {
+            const response = await Api.get('/mahasiswa/krs/riwayat-krs', {
+                params: { periodeId }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching KRS history:', error);
             throw error;
         }
     },
