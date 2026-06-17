@@ -47,14 +47,15 @@ const StudyPlanCard = () => {
         queryFn: studentKrsService.getKrsInfo,
     });
 
+    console.log('KRS Info:', krsInfo);
     const { data: availableCoursesData, isLoading: isLoadingCourses } = useQuery({
         queryKey: ['availableCourses', debouncedSearchTerm, page, pageSize],
         queryFn: () => studentKrsService.getAvailableCourses({
             keyword: debouncedSearchTerm, page, size: pageSize,
         }),
-        keepPreviousData: true,
     });
 
+    console.log('Available Courses:', availableCoursesData);
     const { data: savedKrsData, isLoading: isLoadingSaved } = useQuery({
         queryKey: ['savedKrs'],
         queryFn: studentKrsService.getSavedCourses,
@@ -145,8 +146,10 @@ const StudyPlanCard = () => {
             </div>
             <InfoAlert />
 
-            {isLoading && krsInfo ? (
+            {isLoading ? (
                 <div className="text-center p-4">Memuat data kelas...</div>
+            ) : !krsInfo ? (
+                <div className="text-center p-4 text-red-500">Data KRS tidak ditemukan.</div>
             ) : (
                 <StudyPlanCardTable
                     krsInfo={krsInfo}
@@ -284,13 +287,53 @@ const StudyPlanCardTable = ({
     const notValidatedKRS = () => {
         return (
             <div className="mb-20">
-                <div className="flex items-center mb-4">
-                    <button onClick={() => setActiveButton("pilihKelas")} className={`font-semibold cursor-pointer py-2 px-5 pr-14 transform scale-y-[-1] w-fit ${activeButton === "pilihKelas" ? "bg-primary-green text-white" : "bg-white text-black"}`}>
-                        <p className="transform scale-y-[-1]">Pilih Kelas</p>
-                    </button>
-                    <button onClick={() => setActiveButton("krsTersimpan")} className={`font-semibold cursor-pointer py-2 px-5 pr-14 transform scale-y-[-1] w-fit border border-primary-green ${activeButton === "krsTersimpan" ? "bg-primary-green text-white" : "bg-white text-black"}`} style={{ clipPath: "polygon(0 0, 100% 0, 80% 100%, 0% 100%)" }}>
-                        <p className="transform scale-y-[-1]">KRS Tersimpan</p>
-                    </button>
+                <div className="flex flex-col gap-3 mb-4">
+                    <div className="flex items-center gap-4 flex-wrap">
+                        {/* Tabs */}
+                        <div className="flex">
+                            <button
+                                onClick={() => setActiveButton("pilihKelas")}
+                                className={`font-semibold py-2 px-6 text-sm ${activeButton === "pilihKelas" ? "bg-primary-green text-white" : "bg-white text-gray-700 border border-gray-300"}`}
+                            >
+                                Pilih Kelas
+                            </button>
+                            <button
+                                onClick={() => setActiveButton("krsTersimpan")}
+                                className={`font-semibold py-2 px-6 text-sm ${activeButton === "krsTersimpan" ? "bg-primary-green text-white" : "bg-white text-gray-700 border border-gray-300 border-l-0"}`}
+                            >
+                                KRS Tersimpan
+                            </button>
+                        </div>
+
+                        {/* Search and Icons */}
+                        <div className="flex">
+                            <input
+                                type="search"
+                                placeholder="Cari Kelas"
+                                className="px-4 py-2 w-64 text-sm border border-gray-300 focus:outline-none"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <button className="bg-[#00c274] hover:bg-[#00a864] w-10 flex items-center justify-center transition">
+                                <Search color="white" size={18} />
+                            </button>
+                            <button className="bg-[#4b6bfb] hover:bg-[#3b5beb] w-10 flex items-center justify-center transition">
+                                <RefreshCw color="white" size={18} />
+                            </button>
+                        </div>
+
+                        {/* Filter Button */}
+                        <button className="bg-[#ff9f1c] hover:bg-[#f0921a] text-white flex items-center gap-2 px-4 py-2 font-semibold text-sm transition">
+                            <SlidersHorizontal size={16} /> Filter dan Urutkan
+                        </button>
+                    </div>
+
+                    {/* Secondary Filters */}
+                    <div className="flex items-center gap-2">
+                        <button className="border border-gray-300 bg-white hover:bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 transition">Tepat Semester</button>
+                        <button className="border border-gray-300 bg-white hover:bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 transition">Semester Lalu</button>
+                        <button className="border border-gray-300 bg-white hover:bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 transition">Tidak Lulus</button>
+                    </div>
                 </div>
 
                 {activeButton === "pilihKelas" && (
@@ -405,8 +448,8 @@ const StudyPlanCardTable = ({
         return (
             <div className="mb-20">
                 <div className="flex items-center mb-4">
-                    <button className="font-semibold cursor-default py-2 px-5 pr-14 transform scale-y-[-1] w-fit text-white bg-primary-green border border-primary-green" style={{ clipPath: "polygon(0 0, 100% 0, 80% 100%, 0% 100%)" }}>
-                        <p className="transform scale-y-[-1]">KRS Disetujui/Diajukan</p>
+                    <button className="font-semibold cursor-default py-2 px-6 text-sm bg-primary-green text-white border border-primary-green">
+                        KRS Disetujui/Diajukan
                     </button>
                 </div>
                 <table className="min-w-full bg-white">
@@ -453,7 +496,7 @@ const StudyPlanCardTable = ({
         );
     };
 
-    return krsValidated ? validatedKRS() : notValidatedKRS();
+    return notValidatedKRS();
 };
 
 // Make sure the default export is at the end of the file.
