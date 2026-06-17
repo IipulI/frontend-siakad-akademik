@@ -13,7 +13,7 @@ export interface LoginCredentials {
 export interface UserLoginData {
   token: string;
   user: {
-    id: string; 
+    id: string;
     username: string;
     email?: string;
     // Tambahkan properti user lainnya jika ada
@@ -27,7 +27,7 @@ export interface UserLoginData {
 
 interface UseAuthLoginOptions {
   onSuccess?: (data: UserLoginData) => void;
-  onError?: (error: Error) => void; 
+  onError?: (error: Error) => void;
 }
 
 interface UseAuthLoginReturn {
@@ -48,12 +48,12 @@ export function useAuthLogin({
     mutationFn: async (credentials: LoginCredentials) => {
       // 3. Ubah menjadi POST dan arahkan ke endpoint yang benar
       const res = await Api.post("/auth/login", credentials);
-      
+
       // Backend ResponseBuilder mengembalikan struktur: { status, message, data, ... }
       if (res.data && res.data.data) {
         return res.data.data as UserLoginData;
       }
-      
+
       throw new Error(
         res.data?.message || "Login gagal karena kesalahan sistem"
       );
@@ -62,7 +62,7 @@ export function useAuthLogin({
       // 4. Menyimpan data ke localStorage sesuai arsitektur frontend
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      
+
       // Pastikan account_info ada sebelum di-stringify (untuk berjaga-jaga jika admin tidak punya account_info)
       if (data.account_info) {
         localStorage.setItem("account_info", JSON.stringify(data.account_info));
