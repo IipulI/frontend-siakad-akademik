@@ -1,211 +1,64 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { TableObeCPL } from "../../../components/Table";
-import { Search, ArrowLeft, Save, Plus, Table } from "lucide-react";
-import { CplData } from "../../../components/types.ts";
-import { Api } from "../../../api/Index";
-import { id } from "date-fns/locale";
-
-// api
-
-const fetchCplData = async (page: number, size: number): Promise<CplData[]> => {
-  const token = localStorage.getItem("token");
-  if (!token)
-    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(
-    `/akademik/capaian-pembelajaran-lulusan?page=1&size=10&sort=createdAt%2Cdesc`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-
-  const apiData = response.data.data;
-
-  console.log("🔍 Raw graduate profile API data:", apiData);
-
-  const formattedData = Array.isArray(apiData)
-    ? apiData.map((item: any) => {
-        const formatted = {
-          id: item.id,
-          programStudi: item.programStudi,
-          tahunKurikulum: item.tahunKurikulum,
-          kodeCpl: item.kodeCpl,
-          deskripsiCpl: item.deskripsiCpl,
-          kategoriCpl: item.kategoriCpl,
-          pemetaan: item.pemetaan,
-        };
-
-        return formatted;
-      })
-    : [];
-
-  return formattedData;
-};
-
-const createCpl = async (data: Omit<CplData, "id">): Promise<CplData> => {
-  const token = localStorage.getItem("token");
-  if (!token)
-    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    programStudi: data.programStudi,
-    tahunKurikulum: data.tahunKurikulum,
-    kodeCpl: data.kodeCpl,
-    deskripsiCpl: data.deskripsiCpl,
-    kategoriCpl: data.kategoriCpl,
-    pemetaan: data.pemetaan,
-  };
-
-  console.log("Payload dikirim:", payload);
-
-  const response = await Api.post(
-    "/akademik/capaian-pembelajaran-lulusan",
-    payload,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-
-  console.log("Response dari API:", response.data);
-
-  const newItemData = response.data?.data || response.data;
-  return {
-    id: newItemData.id,
-    programStudi: newItemData.programStudi,
-    tahunKurikulum: newItemData.tahunKurikulum,
-    kodeCpl: newItemData.kodeCpl,
-    deskripsiCpl: newItemData.deskripsiCpl,
-    kategoriCpl: newItemData.kategoriCpl,
-    pemetaan: newItemData.pemetaan,
-  };
-};
-
-const updateCpl = async ({
-  id,
-  data,
-}: {
-  id: string;
-  data: Omit<CplData, "id">;
-}): Promise<CplData> => {
-  const token = localStorage.getItem("token");
-  if (!token)
-    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const payload = {
-    programStudi: data.programStudi,
-    tahunKurikulum: data.tahunKurikulum,
-    kodeCpl: data.kodeCpl,
-    deskripsiCpl: data.deskripsiCpl,
-    kategoriCpl: data.kategoriCpl,
-    pemetaan: data.pemetaan,
-  };
-
-  await Api.put(`/akademik/capaian-pembelajaran-lulusan/${id}`, payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return { id, ...data };
-};
-
-const deleteCpl = async (id: string): Promise<void> => {
-  const token = localStorage.getItem("token");
-  if (!token)
-    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  await Api.delete(`/akademik/capaian-pembelajaran-lulusan/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
+import { Search, ArrowLeft, Save, Plus } from "lucide-react";
+import { getGraduateProfileData } from "../../../hooks/academic/useGraduateProfile.ts";
+import {
+  getObeCplData,
+  useAddObeCpl,
+  useUpdateObeCpl,
+  useDeleteObeCpl,
+  ObeCplData,
+} from "../../../hooks/academic/useObeCpl.ts";
+import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import SidebarOBE from "../../../components/admin-academic/academic/obe/SidebarOBE.tsx";
 
 const ObeCpl: React.FC = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { id } = useParams<{ id: string }>();
 
   // state
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [currentData, setCurrentData] = useState<CplData | null>(null);
+  const [currentData, setCurrentData] = useState<ObeCplData | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [selectedYear, setSelectedYear] = useState("2024");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Queries
   const {
-    data: cplData = [],
+    data: cplResponse,
     isLoading: loading,
     error: cplError,
-    refetch: refetchCplData,
-  } = useQuery({
-    queryKey: ["cplData", currentPage, itemsPerPage],
-    queryFn: () => fetchCplData(currentPage, itemsPerPage),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  } = getObeCplData(id!);
 
-  console.log("data CPL", cplData);
+  // Fetch PL data to be mapped
+  const {
+    data: graduateProfileResponse,
+    isLoading: isGraduateLoading,
+  } = getGraduateProfileData(id!);
+
+  const plList = graduateProfileResponse?.dataPl || [];
+  const cplData = cplResponse?.dataCpl || (Array.isArray(cplResponse) ? cplResponse : []);
+  const obeInfo = cplResponse?.header || graduateProfileResponse?.header || {};
 
   // Mutations
-  const createMutation = useMutation({
-    mutationFn: createCpl,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cplData"] });
-      handleReset();
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal menambah data:", error);
-      handleMutationError(error);
-    },
-  });
+  const createMutation = useAddObeCpl();
+  const updateMutation = useUpdateObeCpl();
+  const deleteMutation = useDeleteObeCpl();
 
-  const updateMutation = useMutation({
-    mutationFn: updateCpl,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cplData"] });
-      handleReset();
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal mengupdate data:", error);
-      handleMutationError(error);
-    },
-  });
+  // Loading states
+  if (loading || isGraduateLoading) {
+    return <LoadingSpinner />;
+  }
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteCpl,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cplData"] });
-      setErrorMessage("");
-    },
-    onError: (error: any) => {
-      console.error("Gagal menghapus data:", error);
-      handleMutationError(error);
-    },
-  });
-
-  // Helper function for error handling
-  const handleMutationError = (error: any) => {
-    if (error.response?.status === 400) {
-      setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
-    } else if (error.response?.status === 401) {
-      setErrorMessage("Token tidak valid. Silakan login ulang.");
-    } else if (error.response?.data?.message) {
-      setErrorMessage(`Error: ${error.response.data.message}`);
-    } else if (error.message) {
-      setErrorMessage(error.message);
-    } else {
-      setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
-    }
-  };
+  // Error states
+  if (cplError) {
+    return <div className="text-red-500">Gagal memuat data CPL</div>;
+  }
 
   // Event handlers
-  const handleNavigation = (path: string) => {
-    navigate(path);
-  };
-
   const handleBack = () => {
     navigate(AdminAcademicRoute.obeManagement.obeManagement);
   };
@@ -215,30 +68,62 @@ const ObeCpl: React.FC = () => {
     setIsEditing(false);
     setCurrentData({
       id: "",
-      programStudi: "",
-      tahunKurikulum: "",
-      kodeCpl: "",
-      deskripsiCpl: "",
-      kategoriCpl: "",
-      pemetaan: "",
+      kode: "",
+      deskripsi: "",
+      kategori: "",
+      profilLulusanIds: [],
     });
     setErrorMessage("");
   };
 
-  const handleEdit = (id: string) => {
-    const selectedData = cplData.find((item) => item.id === id);
+  const handleEdit = (editId: string) => {
+    const selectedData = cplData.find((item: any) => item.id === editId);
     if (selectedData) {
-      setCurrentData(selectedData);
+      setCurrentData({
+        id: selectedData.id,
+        kode: selectedData.kode,
+        deskripsi: selectedData.deskripsi,
+        kategori: selectedData.kategori,
+        profilLulusanIds: (selectedData.profilLulusan || []).map((pl: any) => pl.id),
+      });
       setIsEditing(true);
       setIsAdding(false);
       setErrorMessage("");
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (cplId: string) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(
+        { id: cplId, obeId: id! },
+        {
+          onSuccess: () => {
+            setErrorMessage("");
+          },
+          onError: (error) => {
+            console.error("Delete error:", error);
+            setErrorMessage("Gagal menghapus data. Silakan coba lagi.");
+          },
+        }
+      );
     }
+  };
+
+  const handleCheckboxChange = (plId: string, checked: boolean) => {
+    if (!currentData) return;
+
+    const currentIds = currentData.profilLulusanIds || [];
+    let nextIds = [];
+    if (checked) {
+      nextIds = [...currentIds, plId];
+    } else {
+      nextIds = currentIds.filter((x) => x !== plId);
+    }
+
+    setCurrentData({
+      ...currentData,
+      profilLulusanIds: nextIds,
+    });
   };
 
   const handleSave = async () => {
@@ -249,22 +134,43 @@ const ObeCpl: React.FC = () => {
 
     setErrorMessage("");
 
-    const dataToSave = {
-      programStudi: currentData.programStudi,
-      tahunKurikulum: currentData.tahunKurikulum,
-      kodeCpl: currentData.kodeCpl,
-      deskripsiCpl: currentData.deskripsiCpl,
-      kategoriCpl: currentData.kategoriCpl,
-      pemetaan: currentData.pemetaan,
+    const payload = {
+      kode: currentData.kode.trim(),
+      deskripsi: currentData.deskripsi.trim(),
+      kategori: currentData.kategori.trim(),
+      profilLulusanIds: currentData.profilLulusanIds || [],
+    };
+
+    const onSuccessCallback = () => {
+      handleReset();
+    };
+
+    const onErrorCallback = (error: any) => {
+      console.error("Save error:", error);
+      if (error.response?.data?.message) {
+        setErrorMessage(`Error: ${error.response.data.message}`);
+      } else {
+        setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
+      }
     };
 
     if (isEditing && currentData.id) {
-      updateMutation.mutate({ id: currentData.id, data: dataToSave });
+      updateMutation.mutate(
+        { id: currentData.id, obeId: id!, payload },
+        {
+          onSuccess: onSuccessCallback,
+          onError: onErrorCallback,
+        }
+      );
     } else if (isAdding) {
-      createMutation.mutate(dataToSave);
+      createMutation.mutate(
+        { obeId: id!, payload },
+        {
+          onSuccess: onSuccessCallback,
+          onError: onErrorCallback,
+        }
+      );
     }
-
-    setCurrentData(null);
   };
 
   const handleReset = () => {
@@ -285,18 +191,33 @@ const ObeCpl: React.FC = () => {
 
   const isFormValid = () => {
     return !!(
-      currentData?.kodeCpl &&
-      currentData?.deskripsiCpl &&
-      currentData?.kategoriCpl &&
-      currentData?.pemetaan
+      currentData?.kode?.trim() &&
+      currentData?.deskripsi?.trim() &&
+      currentData?.kategori?.trim()
     );
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const displayData = cplData.filter(
+    (item: any) =>
+      item.kode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.kategori?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const isLoading =
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending;
+
   return (
-    <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
+    <MainLayout isGreeting={false} titlePage="Capaian Pembelajaran Lulusan (CPL)">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
-          <div className="flex items-center ">
+          <div className="flex items-center">
             <button
               onClick={handleBack}
               className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md"
@@ -306,8 +227,10 @@ const ObeCpl: React.FC = () => {
             <div className="flex items-center">
               <input
                 type="search"
-                placeholder="Cari Mata Kuliah"
-                className="px-3 py-2 border border-black/50  w-64"
+                placeholder="Cari CPL"
+                className="px-3 py-2 border border-black/50 w-64"
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
               <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
                 <Search color="white" size={20} />
@@ -322,93 +245,64 @@ const ObeCpl: React.FC = () => {
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
             </button>
-            <button
-              onClick={handleSave}
-              className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center"
-            >
-              <Save className="mr-2" size={16} />
-              Simpan
-            </button>
+            {(isAdding || isEditing) && (
+              <button
+                onClick={handleSave}
+                disabled={!isFormValid() || isLoading}
+                className="bg-primary-blueSoft text-white px-4 py-2 rounded flex items-center disabled:opacity-50"
+              >
+                <Save className="mr-2" size={16} />
+                {isLoading ? "Menyimpan..." : "Simpan"}
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div
-              className="flex items-center bg-[#116E63]/30  mb-1 text-gray-600 cursor-pointer"
-              onClick={() =>
-                handleNavigation(
-                  AdminAcademicRoute.obeManagement.graduateProfile
-                )
-              }
-            >
-              <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p>Profil Lulusan</p>
-            </div>
-            <div
-              className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer"
-              onClick={() =>
-                handleNavigation(AdminAcademicRoute.obeManagement.cpl)
-              }
-            >
-              <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p className="text-black font-semibold">CPL</p>
-            </div>
-            <div
-              className="flex items-center bg-[#116E63]/30 mb-1  text-gray-600 cursor-pointer"
-              onClick={() =>
-                handleNavigation(AdminAcademicRoute.obeManagement.cpmk)
-              }
-            >
-              <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
-              <p>CPMK</p>
-            </div>
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {errorMessage}
           </div>
+        )}
 
-          <div className=" w-fullmd:w-[80%] p-3">
+        <div className="flex flex-col md:flex-row">
+          {/* Shared Sidebar Menu */}
+          <SidebarOBE id={id!} activeTab="cpl" />
+
+          <div className="w-full md:w-[80%] p-3">
             <div className="grid grid-cols-1 gap-2 bg-primary-green/10 p-4 md:grid-cols-2">
               <div className="flex justify-between">
                 <span className="font-semibold w-full text-left">
                   Kode Prodi:
                 </span>
-                <span className="w-full text-left">MK001</span>
+                <span className="w-full text-left">
+                  {obeInfo?.kodeProgramStudi || obeInfo?.kodeProdi || "-"}
+                </span>
               </div>
-              <div className="flex justify-between md:ml-8 ">
+              <div className="flex justify-between md:ml-8">
                 <span className="font-semibold w-full text-left">
                   Tahun Kurikulum:
                 </span>
-                <span className="w-full text-left">{selectedYear}</span>
+                <span className="w-full text-left">
+                  {obeInfo?.tahunKurikulum || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold w-full text-left">
                   Program Studi:
                 </span>
-                <span className="w-full text-left">Pemrograman Lanjut</span>
-              </div>
-              <div className="flex justify-between md:ml-8">
-                <span className="font-semibold w-full text-left">
-                  Ketua Prodi:
+                <span className="w-full text-left">
+                  {obeInfo?.programStudi || "-"}
                 </span>
-                <span className="w-full text-left">1</span>
               </div>
             </div>
 
-            <div className="mt-6 flex flex-col md:items-center gap-2 md:flex-row">
-              <h2 className="text-lg font-semibold">Tahun Kurikulum</h2>
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="border border-black/50 rounded-md px-2 py-1 w-full md:w-40"
-              >
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-              </select>
+            <div className="mt-6 flex flex-col md:items-center gap-2 md:flex-row justify-end">
               <button
                 onClick={handleAddCpl}
-                disabled={isAdding}
-                className={`ml-auto bg-primary-green text-white w-full md:w-48 px-4 py-2 rounded flex items-center hover:bg-primary-blue ${
-                  isAdding ? " cursor-not-allowed" : ""
+                disabled={isAdding || isEditing}
+                className={`w-full md:w-48 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue justify-center ${
+                  isAdding || isEditing ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
                 <Plus className="mr-2" size={16} />
@@ -416,14 +310,9 @@ const ObeCpl: React.FC = () => {
               </button>
             </div>
 
-            {/* Tampilkan error validasi */}
-            {errorMessage && (
-              <p className="text-red-600 mt-4 mx-4">{errorMessage}</p>
-            )}
-
             <div className="mt-4 overflow-x-auto">
               <TableObeCPL
-                data={cplData}
+                data={displayData}
                 tableHead={[
                   "Kode CPL",
                   "Deskripsi Capaian Pembelajaran Lulusan (CPL)",
@@ -441,7 +330,16 @@ const ObeCpl: React.FC = () => {
                 onInputChange={handleInputChange}
                 isAdding={isAdding}
                 isFormValid={isFormValid}
+                plList={plList}
+                onCheckboxChange={handleCheckboxChange}
               />
+            </div>
+
+            {/* Info */}
+            <div className="mt-4 text-sm text-gray-600">
+              <p>OBE ID: {id}</p>
+              <p>Total Data: {cplData.length}</p>
+              <p>Data Ditampilkan: {displayData.length}</p>
             </div>
           </div>
         </div>

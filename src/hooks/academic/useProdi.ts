@@ -11,7 +11,7 @@ export function getProdi() {
   return useQuery({
     queryKey: ["prodiData"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/program-studi");
+      const response = await Api.get("/program-studi");
       return response.data.data;
     },
   });
