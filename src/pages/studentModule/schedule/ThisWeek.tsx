@@ -67,22 +67,46 @@ const ThisWeek = () => {
   });
 
   // Helper function to transform API data to match the component's expected structure
-  const transformJadwalData = (data) => {
+  const transformJadwalData = (data: any) => {
     if (!data) return [];
 
-    const daysOrder = ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
+    // The new response wraps the day arrays inside a `schedule` object
+    const schedule = data.schedule || data;
 
-    return daysOrder.map(day => ({
-      tanggal: day.charAt(0).toUpperCase() + day.slice(1),
-      dataKuliah: data[day].map(kuliah => ({
-        mulai: kuliah.jamMulai,
-        selesai: kuliah.jamSelesai,
-        jenis: "Kuliah",
-        kuliah: `${kuliah.kodeMataKuliah} - ${kuliah.namaMataKuliah} (${kuliah.kelas})`,
-        ruang: kuliah.ruangan,
-        pengajar: kuliah.dosen,
-      }))
-    }));
+    // Ordered list of days with their display names and potential keys in the response
+    const daysMap = [
+      { key: "Senin", display: "Senin" },
+      { key: "Selasa", display: "Selasa" },
+      { key: "Rabu", display: "Rabu" },
+      { key: "Kamis", display: "Kamis" },
+      { key: "Jumat", display: "Jumat" },
+      { key: "Sabtu", display: "Sabtu" },
+      { key: "Minggu", display: "Minggu" }
+    ];
+
+    return daysMap.map(day => {
+      // Safely access either capitalized key or lowercase key
+      const dayKey = schedule[day.key] ? day.key : day.key.toLowerCase();
+      const list = schedule[dayKey] || [];
+
+      return {
+        tanggal: day.display,
+        dataKuliah: list.map((kuliah: any) => {
+          const kode = kuliah.kode || kuliah.kodeMataKuliah || "";
+          const nama = kuliah.mataKuliah || kuliah.namaMataKuliah || "";
+          const kelas = kuliah.kelas || "";
+
+          return {
+            mulai: kuliah.jamMulai || "",
+            selesai: kuliah.jamSelesai || "",
+            jenis: "Kuliah",
+            kuliah: `${kode} - ${nama} (${kelas})`,
+            ruang: kuliah.ruangan || "",
+            pengajar: kuliah.dosen || "",
+          };
+        })
+      };
+    });
   };
 
   const renderContent = () => {

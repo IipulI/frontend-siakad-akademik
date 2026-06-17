@@ -116,6 +116,7 @@ export interface IAvailableCourse {
         };
     }[];
     previousGrade?: string | null;
+    rincianId?: string;
 }
 
 export interface IKrsInfo {
@@ -136,20 +137,36 @@ export interface ISavedKrsResponse {
 }
 
 
-// Matches one item in the "rincianKrsDto" array
 export interface IKhsCourse {
-    namaMataKuliah: string;
-    kodeMataKuliah: string;
-    sks: number;
+    id: string;
+    kehadiran: string;
+    tugas: string;
+    uts: string;
+    uas: string;
+    nilai: string;
     hurufMutu: string;
-    angkaMutu: number;
-    jumlahAngkaMutu: number;
+    angkaMutu: string;
+    nilaiAkhir: string;
+    kelasKuliah: {
+        id: string;
+        nama: string;
+        mataKuliah: {
+            nama: string;
+            kode: string;
+            totalSks: number;
+        };
+    };
 }
 
-// Matches the "data" object in the API response
 export interface IKhsData {
-    rincianKrsDto: IKhsCourse[];
-    ips: number;
+    hasilStudi: {
+        semester: number;
+        ips: string;
+        ipk: string;
+        sksDiambil: number;
+        sksLulus: number;
+    };
+    rincianKrs: IKhsCourse[];
 }
 
 // This matches one course object from the "rincianKrsDto" array
@@ -160,6 +177,40 @@ export interface ITranscriptCourse {
     hurufMutu: string;
     angkaMutu: number;
     jumlahAngkaMutu: number;
+    semester: number;
+}
+
+// This matches the flat response items from the new transcript endpoint
+export interface IApiTranscriptItem {
+    id: string;
+    kehadiran: string | null;
+    tugas: string | null;
+    uts: string | null;
+    uas: string | null;
+    nilai: string | null;
+    hurufMutu: string | null;
+    angkaMutu: string | null;
+    nilaiAkhir: string | null;
+    siakKelasKuliahId: string;
+    "krsMahasiswa.semester": number;
+    "kelasKuliah.mataKuliah.id": string | null;
+    "kelasKuliah.mataKuliah.nama": string | null;
+    "kelasKuliah.mataKuliah.kode": string | null;
+    "kelasKuliah.mataKuliah.totalSks": number | null;
+    "kelasKuliah.mataKuliah.nilai_min": string | null;
+    krsMahasiswa?: {
+        semester: number;
+    };
+    kelasKuliah?: {
+        id?: string | null;
+        mataKuliah?: {
+            id?: string | null;
+            nama?: string | null;
+            kode?: string | null;
+            totalSks?: number | null;
+            nilai_min?: string | null;
+        };
+    };
 }
 
 // This matches the main "data" object from the API response
@@ -187,12 +238,13 @@ export interface IJadwalKuliah {
 }
 
 export interface IJadwalMingguan {
-    senin: IJadwalKuliah[];
-    selasa: IJadwalKuliah[];
-    rabu: IJadwalKuliah[];
-    kamis: IJadwalKuliah[];
-    jumat: IJadwalKuliah[];
-    sabtu: IJadwalKuliah[];
+    senin?: IJadwalKuliah[];
+    selasa?: IJadwalKuliah[];
+    rabu?: IJadwalKuliah[];
+    kamis?: IJadwalKuliah[];
+    jumat?: IJadwalKuliah[];
+    sabtu?: IJadwalKuliah[];
+    [key: string]: any;
 }
 
 export interface IGrafikAkademik {

@@ -7,14 +7,15 @@ export const studyResultService = {
      * Now handles 404 "Not Found" errors gracefully.
      */
     getStudyResultsByPeriod: async (
-        namaPeriode: string
+        periodeId: string
     ): Promise<IKhsData | null> => {
         try {
-            const response = await Api.get("/mahasiswa/khs", {
+            const response = await Api.get("/mahasiswa/hasil-studi", {
                 params: {
-                    namaPeriode: namaPeriode,
+                    periodeId: periodeId
                 },
             });
+            console.log(response.data.data);
             return response.data.data;
         } catch (error) {
             // If the error is a 404, return null to indicate no data was found

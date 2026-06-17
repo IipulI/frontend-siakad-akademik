@@ -8,4 +8,10 @@ export default defineConfig({
   define: {
     global: "window",
   },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
+    css: false,
+  },
 });
