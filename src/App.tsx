@@ -316,17 +316,17 @@ export default function App() {
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cpl)}
+        path={`${AdminAcademicRoute.obeManagement.cpl}/:id`}
         element={<ObeCpl />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cpmk)}
+        path={`${AdminAcademicRoute.obeManagement.cpmk}/:id`}
         element={<ObeCpmk />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cpmkMataKuliah)}
+        path={`${AdminAcademicRoute.obeManagement.cpmkMataKuliah}/:obeId/:mataKuliahId`}
         element={<ObeCpmkMatkul />}
       />
 

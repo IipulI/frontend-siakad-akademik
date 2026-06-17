@@ -48,13 +48,41 @@ export interface PaginatedResponse<T> {
 
 
 // --- EXISTING HOOKS ---
-export function getObe() {
+export function getObe(filters: { page: number; limit: number; tahunKurikulumId?: string; prodiId?: string }) {
   return useQuery({
-    queryKey: ["obe"],
+    queryKey: ["obeList", filters],
     queryFn: async () => {
-      const response = await Api.get("/akademik/manajemen-obe");
-      console.log("🔍 Raw OBE API data:", response.data.data);
-      return response.data.data;
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+      const response = await Api.get("/akademik/obe/manajemen-capaian", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          page: filters.page,
+          limit: filters.limit,
+          tahunKurikulumId: filters.tahunKurikulumId || undefined,
+          prodiId: filters.prodiId || undefined,
+        },
+      });
+
+      const rawData = response.data?.data?.rows || response.data?.rows || [];
+      const count = response.data?.data?.count || response.data?.count || 0;
+
+      const formattedData = rawData.map((item: any) => ({
+        id: item.idObe,
+        kodeProdi: item.kurikulum || "-", // Tampilkan tahun kurikulum sebagai penanda
+        programStudi: item.programStudi || "-",
+        pl: item.statusPengisian?.pl > 0,
+        cpl: item.statusPengisian?.cpl > 0,
+        plToCpl: item.statusPengisian?.persentasePlCpl > 0,
+        cpmk: item.statusPengisian?.persentaseCplMk > 0,
+        ketuaProgramStudi: item.ketuaProgramStudi || "-",
+      }));
+
+      return {
+        data: formattedData,
+        count,
+      };
     },
   });
 }

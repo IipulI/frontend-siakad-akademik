@@ -25,7 +25,7 @@ export function getProgramStudi() {
   return useQuery({
     queryKey: ["programStudi"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/program-studi");
+      const response = await Api.get("/program-studi");
       return response.data.data;
     },
   });

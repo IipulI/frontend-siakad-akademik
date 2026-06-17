@@ -31,14 +31,18 @@ export default function MainLayout({
     const userString = localStorage.getItem("user");
     const accountInfoString = localStorage.getItem("account_info");
 
-    // 2. Check if both items exist before proceeding
-    if (userString && accountInfoString) {
+    // Check if user exists before proceeding
+    if (userString) {
       const user = JSON.parse(userString);
-      const accountInfo = JSON.parse(accountInfoString);
-
       setUserRole(user.roles[0]);
-      // Set the user's name from the 'nama' property
-      setUserName(accountInfo.nama);
+
+      if (accountInfoString) {
+        const accountInfo = JSON.parse(accountInfoString);
+        setUserName(accountInfo.nama);
+      } else {
+        // Fallback to username if account_info is missing (e.g. for academic admin / admin prodi)
+        setUserName(user.username);
+      }
     } else {
       // If essential data is missing, redirect to login
       navigate("/");
