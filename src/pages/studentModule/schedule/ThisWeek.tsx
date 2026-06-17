@@ -5,24 +5,24 @@ import { useJadwal } from "../../../hooks/mahasiswa/useJadwal";
 import { useActivePeriod } from "../../../hooks/usePeriodeAkademik";
 
 const JadwalKuliah = ({ mulai, selesai, jenis, kuliah, ruang, pengajar }) => (
-    <tr className="border border-gray-400">
-      <td className="p-2 border border-gray-300">{mulai}</td>
-      <td className="p-2 border border-gray-300">{selesai}</td>
-      <td className="p-2 border border-gray-300">{jenis}</td>
-      <td className="p-2 border border-gray-300">{kuliah}</td>
-      <td className="p-2 border border-gray-300">{ruang}</td>
-      <td className="p-2 border border-gray-300">{pengajar}</td>
-    </tr>
+  <tr className="border border-gray-400">
+    <td className="p-2 border border-gray-300">{mulai}</td>
+    <td className="p-2 border border-gray-300">{selesai}</td>
+    <td className="p-2 border border-gray-300">{jenis}</td>
+    <td className="p-2 border border-gray-300">{kuliah}</td>
+    <td className="p-2 border border-gray-300">{ruang}</td>
+    <td className="p-2 border border-gray-300">{pengajar}</td>
+  </tr>
 );
 
 const JadwalHari = ({ tanggal, dataKuliah }) => (
-    <div className="my-6 rounded-lg">
-      <div className="border-t-3 border-primary-yellow py-2 font-semibold">
-        {tanggal}
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm border border-gray-400">
-          <thead className="bg-green-50">
+  <div className="my-6 rounded-lg">
+    <div className="border-t-3 border-primary-yellow py-2 font-semibold">
+      {tanggal}
+    </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm border border-gray-400">
+        <thead className="bg-green-50">
           <tr>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Mulai</th>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Selesai</th>
@@ -31,21 +31,21 @@ const JadwalHari = ({ tanggal, dataKuliah }) => (
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Ruang</th>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Pengajar</th>
           </tr>
-          </thead>
-          <tbody className="text-black font-semibold">
+        </thead>
+        <tbody className="text-black font-semibold">
           {dataKuliah.length > 0 ? (
-              dataKuliah.map((item, index) => <JadwalKuliah key={index} {...item} />)
+            dataKuliah.map((item, index) => <JadwalKuliah key={index} {...item} />)
           ) : (
-              <tr>
-                <td colSpan={6} className="text-center p-4 border-gray-300">
-                  Tidak ada jadwal kuliah pada hari ini
-                </td>
-              </tr>
+            <tr>
+              <td colSpan={6} className="text-center p-4 border-gray-300">
+                Tidak ada jadwal kuliah pada hari ini
+              </td>
+            </tr>
           )}
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
+  </div>
 );
 
 
@@ -130,19 +130,19 @@ const ThisWeek = () => {
     const jadwalMingguan = transformJadwalData(jadwalData);
 
     return (
-        <div className="mt-4">
-          {jadwalMingguan.map((hari, idx) => (
-              <JadwalHari key={idx} {...hari} />
-          ))}
-        </div>
+      <div className="mt-4">
+        {jadwalMingguan.map((hari, idx) => (
+          <JadwalHari key={idx} {...hari} />
+        ))}
+      </div>
     );
   };
 
   return (
-      <MainLayout isGreeting={false} titlePage={"Jadwal Minggu Ini"} className="">
-        <Biodata showLine={false} />
-        {renderContent()}
-      </MainLayout>
+    <MainLayout isGreeting={false} titlePage={"Jadwal Minggu Ini zikri"} className="">
+      <Biodata showLine={false} />
+      {renderContent()}
+    </MainLayout>
   );
 };
 
