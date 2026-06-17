@@ -139,7 +139,7 @@ const ThisWeek = () => {
   };
 
   return (
-    <MainLayout isGreeting={false} titlePage={"Jadwal Minggu Ini zikri"} className="">
+    <MainLayout isGreeting={false} titlePage={"Jadwal Minggu Ini"} className="">
       <Biodata showLine={false} />
       {renderContent()}
     </MainLayout>
