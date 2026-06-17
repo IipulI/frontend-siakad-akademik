@@ -1,146 +1,160 @@
-import React, { useState, useMemo, useEffect } from "react";
+// src/pages/admin-academic/academic/OBEManagement.tsx
+import React, { useState } from 'react';
 import MainLayout from "../../../components/layouts/MainLayout";
+import { getObe } from '../../../hooks/academic/useObeManagement';
+import { getProdi } from "../../../hooks/academic/useProdi";
+import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { TableOBE } from "../../../components/Table";
-import { Search } from "lucide-react";
-import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
-import { getObe } from "../../../hooks/academic/useObeManagement.ts";
-import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
-import { getProdi } from "../../../hooks/academic/useProdi.ts";
+import { Pagination } from "../../../components/admin-academic/Pagination";
+import { RefreshCw, Search } from 'lucide-react';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
-const OBEManagement: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedProdi, setSelectedProdi] = useState("all");
-  const [selectedCurriculum, setSelectedCurriculum] = useState("all");
-  const [graduateProfileStatuses, setGraduateProfileStatuses] = useState<{ [key: string]: boolean }>({});
+export const OBEManagement: React.FC = () => {
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 10,
+    tahunKurikulumId: '',
+    prodiId: '',
+  });
 
-  const { data: ObeData = [], isLoading: isObeLoading, error: obeError } = getObe();
-  const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
-  const { data: ProgramStudiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    const savedStatuses = JSON.parse(localStorage.getItem("graduateProfileStatuses") || "{}");
-    setGraduateProfileStatuses(savedStatuses);
-  }, []);
-
-  useEffect(() => {
-    const handleStatusUpdate = (event: CustomEvent) => {
-      const { programStudiId, hasData } = event.detail;
-      setGraduateProfileStatuses((prev) => {
-        const updated = {
-          ...prev,
-          [programStudiId]: hasData,
-        };
-
-        localStorage.setItem("graduateProfileStatuses", JSON.stringify(updated));
-        return updated;
-      });
-    };
-
-    window.addEventListener("graduateProfileStatusUpdated", handleStatusUpdate as EventListener);
-
-    return () => {
-      window.removeEventListener("graduateProfileStatusUpdated", handleStatusUpdate as EventListener);
-    };
-  }, []);
-
-  // Enhanced filtered data with status information
-  const filteredData = useMemo(() => {
-    return ObeData.map((item) => ({
-      ...item,
-      hasGraduateProfile: graduateProfileStatuses[item.id] || false,
-      pl: item.statusPl || false,
-      cpl: item.statusCpl || false,
-      plToCpl: item.statusPlCpl || false,
-      cpmk: item.statusCpmk || false,
-    }))
-      .filter((item) => selectedProdi === "all" || item.programStudi === selectedProdi)
-      .filter((item) => selectedCurriculum === "all" || item.tahunKurikulum === selectedCurriculum)
-      .filter((item) => item.programStudi.toLowerCase().includes(searchTerm.toLowerCase()) || item.kodeProgramStudi.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [ObeData, selectedProdi, selectedCurriculum, searchTerm, graduateProfileStatuses]);
-
-  const isLoading = isObeLoading || isCurriculumLoading || isProdiLoading;
-  const errorMsg = obeError ? "Gagal memuat data Obe" : curriculumError ? "Gagal memuat tahun kurikulum" : prodiError ? "Gagal memuat data program studi" : null;
-
-  if (isLoading) return <LoadingSpinner />;
-  if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  // Queries
+  const { data: prodiData = [], isLoading: isProdiLoading } = getProdi();
+  const { data: curriculumData = [], isLoading: isCurriculumLoading } = getCurriculumYear();
+  const { data: obeResponse, isLoading: isObeLoading, error: obeError, refetch } = getObe(filters);
 
   const handleProdiChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedProdi(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setFilters({ ...filters, prodiId: e.target.value, page: 1 });
   };
 
   const handleCurriculumChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCurriculum(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setFilters({ ...filters, tahunKurikulumId: e.target.value, page: 1 });
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+  const handlePageChange = (newPage: number) => {
+    setFilters({ ...filters, page: newPage });
   };
+
+  const handleRowsPerPageChange = (newLimit: number) => {
+    setFilters({ ...filters, limit: newLimit, page: 1 });
+  };
+
+  const handleRefresh = () => {
+    refetch();
+  };
+
+  // Filter data based on search term (since search is client side on mapped programStudi / ketuaProgramStudi)
+  const allObeData = obeResponse?.data || [];
+  const filteredObeData = allObeData.filter((item: any) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      item.programStudi?.toLowerCase().includes(term) ||
+      item.ketuaProgramStudi?.toLowerCase().includes(term) ||
+      item.kodeProdi?.toLowerCase().includes(term)
+    );
+  });
+
+  const isLoading = isProdiLoading || isCurriculumLoading || isObeLoading;
 
   return (
     <MainLayout isGreeting={false} titlePage="Manajemen OBE">
-      <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Tahun Kurikulum</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown" value={selectedCurriculum} onChange={handleCurriculumChange}>
-              <option value="all">-- Semua --</option>
-              {curriculumData.map((curriculum) => (
-                <option key={curriculum.id} value={curriculum.tahun}>
-                  {curriculum.tahun}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Program Studi</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown md:w-30" value={selectedProdi} onChange={handleProdiChange}>
-              <option value="all">-- Semua --</option>
-              {ProgramStudiData.map((prodi) => (
-                <option key={prodi.id} value={prodi.namaProgramStudi}>
-                  {prodi.namaProgramStudi}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Jenjang</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown">
-              <option value="all">-- Semua --</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-green px-5">
-        <div className="flex">
-          <input type="search" placeholder="Cari Program Studi" className="px-3 py-1 w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
-          <button className="bg-primary-yellow rounded-r-md w-10 flex items-center justify-center">
-            <Search color="white" size={20} />
-          </button>
+      <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-gray-800">Manajemen Capaian (OBE)</h1>
+          <p className="text-gray-500 text-sm mt-1">Daftar Program Studi & Kurikulum Aktif OBE</p>
         </div>
 
-        {/* Tabel OBE */}
-        <div className="mt-4">
-          <TableOBE data={paginatedData} error="Data kosong" />
+        {/* Filter Section */}
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-700">Tahun Kurikulum</label>
+              <select 
+                className="p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-600 bg-white"
+                value={filters.tahunKurikulumId}
+                onChange={handleCurriculumChange}
+              >
+                <option value="">-- Semua Tahun Kurikulum --</option>
+                {curriculumData.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.tahun}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-700">Program Studi</label>
+              <select 
+                className="p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-600 bg-white"
+                value={filters.prodiId}
+                onChange={handleProdiChange}
+              >
+                <option value="">-- Semua Program Studi --</option>
+                {prodiData.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.namaProgramStudi}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Pagination info and controls */}
-        <Pagination currentPage={currentPage} totalRows={filteredData.length} totalPages={totalPages} onPageChange={setCurrentPage} onRowsPerPageChange={setItemsPerPage} />
+        {/* Action Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+          <div className="flex items-center w-full md:w-1/2 gap-2">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Cari Program Studi / Kaprodi..."
+                className="w-full p-2.5 pl-4 pr-10 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <span className="absolute right-3 top-3 text-gray-400">
+                <Search size={16} />
+              </span>
+            </div>
+            <button 
+              onClick={handleRefresh}
+              className="bg-primary-blueDark rounded-xl w-10 h-10 flex items-center justify-center text-white hover:bg-opacity-90 transition"
+              disabled={isLoading}
+            >
+              <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
+            </button>
+          </div>
+        </div>
+
+        {/* Table Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {isLoading ? (
+            <div className="p-8 flex justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : obeError ? (
+            <div className="p-8 text-center text-red-500">
+              Gagal memuat data OBE. Silakan coba lagi.
+            </div>
+          ) : (
+            <TableOBE 
+              data={filteredObeData} 
+              error="Data tidak ditemukan." 
+            />
+          )}
+
+          {/* Pagination Footer */}
+          {!isLoading && !obeError && (
+            <Pagination
+              currentPage={filters.page}
+              totalRows={obeResponse?.count || 0}
+              totalPages={Math.ceil((obeResponse?.count || 0) / filters.limit)}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+            />
+          )}
+        </div>
       </div>
     </MainLayout>
   );
 };
-
-export default OBEManagement;

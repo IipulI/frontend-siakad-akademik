@@ -1,7 +1,12 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../../types/VarRoutes";
 
-export default function SidebarOBE({ id }) {
+interface SidebarOBEProps {
+  id: string;
+  activeTab: "pl" | "cpl" | "cpmk";
+}
+
+export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -9,7 +14,9 @@ export default function SidebarOBE({ id }) {
   return (
     <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
       <div
-        className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer"
+        className={`flex items-center mb-1 cursor-pointer ${
+          activeTab === "pl" ? "bg-[#116E63]/60 text-black" : "bg-[#116E63]/30 text-gray-600"
+        }`}
         onClick={() =>
           handleNavigation(
             `${AdminAcademicRoute.obeManagement.detailOBE}/${id}`
@@ -17,21 +24,25 @@ export default function SidebarOBE({ id }) {
         }
       >
         <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-        <p className="text-black font-semibold">Profil Lulusan</p>
+        <p className={activeTab === "pl" ? "text-black font-semibold" : ""}>Profil Lulusan</p>
       </div>
       <div
-        className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer"
-        onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpl)}
+        className={`flex items-center mb-1 cursor-pointer ${
+          activeTab === "cpl" ? "bg-[#116E63]/60 text-black" : "bg-[#116E63]/30 text-gray-600"
+        }`}
+        onClick={() => handleNavigation(`${AdminAcademicRoute.obeManagement.cpl}/${id}`)}
       >
         <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-        <p>CPL</p>
+        <p className={activeTab === "cpl" ? "text-black font-semibold" : ""}>CPL</p>
       </div>
       <div
-        className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer"
-        onClick={() => handleNavigation(AdminAcademicRoute.obeManagement.cpmk)}
+        className={`flex items-center mb-1 cursor-pointer ${
+          activeTab === "cpmk" ? "bg-[#116E63]/60 text-black" : "bg-[#116E63]/30 text-gray-600"
+        }`}
+        onClick={() => handleNavigation(`${AdminAcademicRoute.obeManagement.cpmk}/${id}`)}
       >
         <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-        <p>CPMK</p>
+        <p className={activeTab === "cpmk" ? "text-black font-semibold" : ""}>CPMK</p>
       </div>
     </div>
   );

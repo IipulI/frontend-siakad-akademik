@@ -5,7 +5,7 @@ export default function getProgramStudies() {
   return useQuery({
     queryKey: ["programStudies"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/program-studi");
+      const response = await Api.get("/program-studi");
       return response.data.data;
     },
   });

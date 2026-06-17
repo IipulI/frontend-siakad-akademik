@@ -229,11 +229,14 @@ const HeaderAdminAcademic = () => {
   // Tutup dropdown jika klik di luar
   useEffect(() => {
     const accountInfoString = localStorage.getItem("account_info");
+    const userString = localStorage.getItem("user");
 
     if (accountInfoString) {
       const accountInfo = JSON.parse(accountInfoString);
-
       setUserName(accountInfo.nama);
+    } else if (userString) {
+      const user = JSON.parse(userString);
+      setUserName(user.username);
     }
 
     const handleClickOutside = (event) => {
@@ -305,7 +308,7 @@ const HeaderAdminAcademic = () => {
               </button>
               {isProfileDropdownOpen && (
                 <ProfileDropdown
-                  nama={userName}
+                  userName={userName}
                   profileData={dropdownMenus.profile}
                   onClose={() => setIsProfileDropdownOpen(false)}
                 />

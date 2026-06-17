@@ -57,6 +57,11 @@ interface TableProps {
   // ObeCpmkMatkul
   onSaveNewCpmkMatkul?: () => void;
   newCpmkMatkul?: any;
+
+  // CPL dynamic mapping
+  plList?: Array<{ id: string; kode: string; profil: string }>;
+  onCheckboxChange?: (plId: string, checked: boolean) => void;
+  obeId?: string;
 }
 
 interface TableCurriculumYearProps {
@@ -1125,8 +1130,8 @@ export const TableGraduateProfile = ({
             <td className="p-2 border text-sm border-black/50">
               <input
                 type="text"
-                name="kodePl"
-                value={currentData.kodePl}
+                name="kode"
+                value={currentData.kode}
                 onChange={onInputChange}
                 className="border p-2 w-full"
                 placeholder="Kode PL"
@@ -1135,8 +1140,8 @@ export const TableGraduateProfile = ({
             <td className="p-2 border text-sm border-black/50">
               <input
                 type="text"
-                name="profilLulusan"
-                value={currentData.profilLulusan}
+                name="profil"
+                value={currentData.profil}
                 onChange={onInputChange}
                 className="border p-2 w-full"
                 placeholder="Profil Lulusan"
@@ -1189,8 +1194,8 @@ export const TableGraduateProfile = ({
                   <td className="p-2 border text-sm border-black/50">
                     <input
                       type="text"
-                      name="kodePl"
-                      value={currentData.kodePl}
+                      name="kode"
+                      value={currentData.kode}
                       onChange={onInputChange}
                       className="border p-2 w-full"
                     />
@@ -1198,8 +1203,8 @@ export const TableGraduateProfile = ({
                   <td className="p-2 border text-sm border-black/50">
                     <input
                       type="text"
-                      name="profilLulusan"
-                      value={currentData.profilLulusan}
+                      name="profil"
+                      value={currentData.profil}
                       onChange={onInputChange}
                       className="border p-2 w-full"
                     />
@@ -1242,10 +1247,10 @@ export const TableGraduateProfile = ({
               ) : (
                 <>
                   <td className="p-2 border text-sm border-black/50">
-                    {row.kodePl}
+                    {row.kode}
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    {row.profilLulusan}
+                    {row.profil}
                   </td>
                   <td className="p-2 border text-sm border-black/50">
                     {row.profesi}
@@ -1301,25 +1306,39 @@ export const TableObeCPL: React.FC<TableProps> = ({
   onReset,
   onInputChange,
   isFormValid,
+  plList = [],
+  onCheckboxChange,
 }) => {
   const isDataAvailable = data && data.length > 0;
 
-  const renderPemetaanCheckboxes = (selectedValues: string[] = []) => {
-    const options = ["CPL01", "CPL02", "CPL03"];
+  const renderPemetaanCheckboxes = (
+    plListToRender: Array<{ id: string; kode: string; profil: string }> = [],
+    selectedPlIds: string[] = [],
+    disabled = false
+  ) => {
     return (
-      <div className="flex flex-col items-centern">
-        {options.map((option) => (
-          <label key={option} className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="pemetaan"
-              value={option}
-              checked={selectedValues.includes(option)}
-              onChange={onInputChange}
-            />
-            {option}
-          </label>
-        ))}
+      <div className="flex flex-col gap-1 items-start text-xs font-normal">
+        {plListToRender.map((pl) => {
+          const isChecked = selectedPlIds.includes(pl.id);
+          return (
+            <label key={pl.id} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                name="profilLulusanIds"
+                value={pl.id}
+                checked={isChecked}
+                disabled={disabled}
+                onChange={(e) => {
+                  if (onCheckboxChange) {
+                    onCheckboxChange(pl.id, e.target.checked);
+                  }
+                }}
+                className="rounded text-primary-green focus:ring-primary-green"
+              />
+              <span className="font-semibold">{pl.kode}</span> - {pl.profil}
+            </label>
+          );
+        })}
       </div>
     );
   };
@@ -1350,8 +1369,8 @@ export const TableObeCPL: React.FC<TableProps> = ({
             <td className="p-2 border">
               <input
                 type="text"
-                name="kodeCpl"
-                value={currentData.kodeCpl}
+                name="kode"
+                value={currentData.kode || ""}
                 onChange={onInputChange}
                 className="w-full p-1 border rounded"
                 placeholder="Kode CPL"
@@ -1360,8 +1379,8 @@ export const TableObeCPL: React.FC<TableProps> = ({
             <td className="p-2 border">
               <input
                 type="text"
-                name="deskripsiCapaianPembelajaran"
-                value={currentData.deskripsiCapaianPembelajaran}
+                name="deskripsi"
+                value={currentData.deskripsi || ""}
                 onChange={onInputChange}
                 className="w-full p-1 border rounded"
                 placeholder="Deskripsi CPL"
@@ -1371,7 +1390,7 @@ export const TableObeCPL: React.FC<TableProps> = ({
               <input
                 type="text"
                 name="kategori"
-                value={currentData.kategori}
+                value={currentData.kategori || ""}
                 onChange={onInputChange}
                 className="w-full p-1 border rounded"
                 placeholder="Kategori"
@@ -1379,7 +1398,9 @@ export const TableObeCPL: React.FC<TableProps> = ({
             </td>
             <td className="p-2 border">
               {renderPemetaanCheckboxes(
-                currentData.pemetaan ? currentData.pemetaan.split(",") : []
+                plList,
+                currentData.profilLulusanIds || [],
+                false
               )}
             </td>
             <td className="p-2 border flex justify-center gap-2">
@@ -1407,8 +1428,8 @@ export const TableObeCPL: React.FC<TableProps> = ({
                   <td className="p-2 border">
                     <input
                       type="text"
-                      name="kodePl"
-                      value={currentData.kodePl}
+                      name="kode"
+                      value={currentData.kode || ""}
                       onChange={onInputChange}
                       className="w-full p-1 border rounded"
                     />
@@ -1416,8 +1437,8 @@ export const TableObeCPL: React.FC<TableProps> = ({
                   <td className="p-2 border">
                     <input
                       type="text"
-                      name="deskripsiCapaianPembelajaran"
-                      value={currentData.deskripsiCapaianPembelajaran}
+                      name="deskripsi"
+                      value={currentData.deskripsi || ""}
                       onChange={onInputChange}
                       className="w-full p-1 border rounded"
                     />
@@ -1426,16 +1447,16 @@ export const TableObeCPL: React.FC<TableProps> = ({
                     <input
                       type="text"
                       name="kategori"
-                      value={currentData.kategori}
+                      value={currentData.kategori || ""}
                       onChange={onInputChange}
                       className="w-full p-1 border rounded"
                     />
                   </td>
                   <td className="p-2 border">
                     {renderPemetaanCheckboxes(
-                      currentData.pemetaan
-                        ? currentData.pemetaan.split(",")
-                        : []
+                      plList,
+                      currentData.profilLulusanIds || [],
+                      false
                     )}
                   </td>
                   <td className="p-2 border ">
@@ -1457,14 +1478,16 @@ export const TableObeCPL: React.FC<TableProps> = ({
                 </>
               ) : (
                 <>
-                  <td className="p-2 border">{row.kodePl}</td>
-                  <td className="p-2 border">
-                    {row.deskripsiCapaianPembelajaran}
+                  <td className="p-2 border">{row.kode}</td>
+                  <td className="p-2 border text-left">
+                    {row.deskripsi}
                   </td>
                   <td className="p-2 border">{row.kategori}</td>
                   <td className="p-2 border">
                     {renderPemetaanCheckboxes(
-                      row.pemetaan ? row.pemetaan.split(",") : []
+                      plList,
+                      (row.profilLulusan || []).map((pl: any) => pl.id),
+                      true
                     )}
                   </td>
                   <td className="p-2 border text-sm ">
@@ -1511,11 +1534,12 @@ export const TableObeCpmk: React.FC<TableProps> = ({
   onCancelAdd,
   onEdit,
   onDelete,
+  obeId,
 }) => {
   const navigate = useNavigate();
 
-  const handleViewDetail = (id: string) => {
-    navigate(AdminAcademicRoute.obeManagement.cpmkMataKuliah);
+  const handleViewDetail = (mataKuliahId: string) => {
+    navigate(`${AdminAcademicRoute.obeManagement.cpmkMataKuliah}/${obeId}/${mataKuliahId}`);
   };
 
   return (

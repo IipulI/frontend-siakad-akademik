@@ -1,82 +1,82 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
-export interface GraduateProfileData {
+export interface ObeCplData {
   id: string;
   kode: string;
-  profil: string;
   deskripsi: string;
-  profesi: string;
+  kategori: string;
+  profilLulusan?: Array<{ id: string; kode: string; profil: string }>;
+  profilLulusanIds?: string[];
 }
 
-export interface GraduateProfilePayload {
-  siakObeId: string;
+export interface ObeCplPayload {
   kode: string;
-  profil: string;
   deskripsi: string;
-  profesi: string;
+  kategori: string;
+  profilLulusanIds: string[];
 }
 
-export function getGraduateProfileData(obeId: string) {
+export function getObeCplData(obeId: string) {
   return useQuery({
-    queryKey: ["graduateProfileData", obeId],
+    queryKey: ["obeCplData", obeId],
     queryFn: async () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
       
-      const response = await Api.get(`/akademik/obe/profil-lulusan/${obeId}`, { 
+      const response = await Api.get(`/akademik/obe/capaian-pembelajaran/${obeId}`, { 
         headers: { Authorization: `Bearer ${token}` } 
       });
 
-      return response.data.data; // Mengembalikan { header, dataPl }
+      return response.data.data; // Mengembalikan { header, dataCpl } atau array
     },
     enabled: !!obeId,
   });
 }
 
-export function useAddGraduateProfile() {
+export function useAddObeCpl() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: GraduateProfilePayload) => {
+    mutationFn: async ({ obeId, payload }: { obeId: string; payload: ObeCplPayload }) => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-      const response = await Api.post("/akademik/obe/profil-lulusan", payload, {
+      const response = await Api.post(`/akademik/obe/capaian-pembelajaran/${obeId}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       return response.data.data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["graduateProfileData", variables.siakObeId] });
+      queryClient.invalidateQueries({ queryKey: ["obeCplData", variables.obeId] });
       queryClient.invalidateQueries({ queryKey: ["obeList"] });
     },
   });
 }
 
-export function useUpdateGraduateProfile() {
+export function useUpdateObeCpl() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, obeId, data }: { id: string; obeId: string; data: Omit<GraduateProfilePayload, "siakObeId"> }) => {
+    mutationFn: async ({ id, obeId, payload }: { id: string; obeId: string; payload: ObeCplPayload }) => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-      const response = await Api.put(`/akademik/obe/profil-lulusan/${id}`, data, {
+      const response = await Api.put(`/akademik/obe/capaian-pembelajaran/${id}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       return response.data.data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["graduateProfileData", variables.obeId] });
+      queryClient.invalidateQueries({ queryKey: ["obeCplData", variables.obeId] });
       queryClient.invalidateQueries({ queryKey: ["obeList"] });
     },
   });
 }
 
-export function useDeleteGraduateProfile() {
+export function useDeleteObeCpl() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -84,12 +84,12 @@ export function useDeleteGraduateProfile() {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-      await Api.delete(`/akademik/obe/profil-lulusan/${id}`, {
+      await Api.delete(`/akademik/obe/capaian-pembelajaran/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["graduateProfileData", variables.obeId] });
+      queryClient.invalidateQueries({ queryKey: ["obeCplData", variables.obeId] });
       queryClient.invalidateQueries({ queryKey: ["obeList"] });
     },
   });

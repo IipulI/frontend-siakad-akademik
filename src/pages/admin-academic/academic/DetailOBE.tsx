@@ -1,26 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { TableGraduateProfile } from "../../../components/Table";
-import { GraduateProfileData } from "../../../components/types.ts";
 import { Search, ArrowLeft, Save, Plus } from "lucide-react";
-import { getProdi } from "../../../hooks/academic/useProdi.ts";
-import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import {
   getGraduateProfileData,
   useAddGraduateProfile,
   useDeleteGraduateProfile,
   useUpdateGraduateProfile,
+  GraduateProfileData,
 } from "../../../hooks/academic/useGraduateProfile.ts";
 import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { getObeById } from "../../../hooks/academic/useObeManagement.ts";
+import SidebarOBE from "../../../components/admin-academic/academic/obe/SidebarOBE.tsx";
 
 const DetailOBE: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const location = useLocation();
-  const obeDataFromState = location.state?.obeData;
 
   // State
   const [isEditing, setIsEditing] = useState(false);
@@ -29,110 +25,36 @@ const DetailOBE: React.FC = () => {
   );
   const [isAdding, setIsAdding] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedYear, setSelectedYear] = useState("");
-  const [filteredGraduateData, setFilteredGraduateData] = useState<
-    GraduateProfileData[]
-  >([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Queries
   const {
-    data: programStudiData = [],
-    isLoading: isProgramStudiLoading,
-    error: programStudiError,
-  } = getProdi();
-  const {
-    data: curriculumData = [],
-    isLoading: isCurriculumLoading,
-    error: curriculumError,
-  } = getCurriculumYear();
-  const {
-    data: graduateProfileData = [],
+    data: graduateProfileResponse,
     isLoading: isGraduateProfileLoading,
     error: graduateProfileError,
-  } = getGraduateProfileData(currentPage, itemsPerPage);
-
-  const {
-    data: obeData,
-    isLoading: isLoadingObeData,
-    isError: isErrorObeData,
-  } = getObeById(id!);
-
-  console.log("GRADUATE", graduateProfileData);
+  } = getGraduateProfileData(id!);
 
   // Mutations
   const createMutation = useAddGraduateProfile();
   const updateMutation = useUpdateGraduateProfile();
   const deleteMutation = useDeleteGraduateProfile();
 
-  // Get OBE info
-  const obeInfo = obeDataFromState || {
-    kodeProgramStudi: "Loading...",
-    programStudi: "Loading...",
-    tahunKurikulum: "Loading...",
-  };
-
-  // Filter data berdasarkan program studi ID dari params
-  useEffect(() => {
-    if (graduateProfileData && obeInfo.programStudi) {
-      const filtered = graduateProfileData.filter(
-        (item: GraduateProfileData) =>
-          item.programStudi?.toLowerCase() ===
-          obeInfo.programStudi.toLowerCase()
-      );
-      setFilteredGraduateData(filtered);
-    }
-  }, [graduateProfileData, obeInfo.programStudi]);
-
-  // Update status di parent component (OBE) ketika ada perubahan data
-  useEffect(() => {
-    if (id) {
-      const hasData = filteredGraduateData.length > 0;
-
-      // Update localStorage
-      const existingStatuses = JSON.parse(
-        localStorage.getItem("graduateProfileStatuses") || "{}"
-      );
-      existingStatuses[id] = hasData;
-      localStorage.setItem(
-        "graduateProfileStatuses",
-        JSON.stringify(existingStatuses)
-      );
-
-      // Trigger custom event
-      window.dispatchEvent(
-        new CustomEvent("graduateProfileStatusUpdated", {
-          detail: { programStudiId: id, hasData },
-        })
-      );
-    }
-  }, [filteredGraduateData, id]);
-
   // Loading states
-  if (
-    isProgramStudiLoading ||
-    isCurriculumLoading ||
-    isGraduateProfileLoading
-  ) {
+  if (isGraduateProfileLoading) {
     return <LoadingSpinner />;
   }
 
   // Error states
-  if (programStudiError) {
-    return <div className="text-red-500">Gagal memuat program studi</div>;
-  }
-  if (curriculumError) {
-    return <div className="text-red-500">Gagal memuat tahun kurikulum</div>;
-  }
   if (graduateProfileError) {
     return <div className="text-red-500">Gagal memuat profil lulusan</div>;
   }
 
+  const graduateProfileData = graduateProfileResponse?.dataPl || [];
+  const obeInfo = graduateProfileResponse?.header || {};
+
   // Event handlers
   const handleEdit = (editId: string) => {
-    const selectedData = filteredGraduateData.find(
+    const selectedData = graduateProfileData.find(
       (item) => item.id === editId
     );
     if (selectedData) {
@@ -145,15 +67,18 @@ const DetailOBE: React.FC = () => {
 
   const handleDelete = (deleteId: string) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-      deleteMutation.mutate(deleteId, {
-        onSuccess: () => {
-          // Status akan otomatis terupdate melalui useEffect
-        },
-        onError: (error) => {
-          console.error("Delete error:", error);
-          setErrorMessage("Gagal menghapus data. Silakan coba lagi.");
-        },
-      });
+      deleteMutation.mutate(
+        { id: deleteId, obeId: id! },
+        {
+          onSuccess: () => {
+            setErrorMessage("");
+          },
+          onError: (error) => {
+            console.error("Delete error:", error);
+            setErrorMessage("Gagal menghapus data. Silakan coba lagi.");
+          },
+        }
+      );
     }
   };
 
@@ -162,41 +87,37 @@ const DetailOBE: React.FC = () => {
     setIsEditing(false);
     setCurrentData({
       id: "",
-      siakProgramStudiId: id || "",
-      siakTahunKurikulumId: selectedYear || "",
-      kodePl: "",
+      kode: "",
       profil: "",
       profesi: "",
-      deskripsiPl: "",
+      deskripsi: "",
     });
     setErrorMessage("");
   };
 
   const isFormValid = () => {
     return !!(
-      currentData?.kodePl?.trim() &&
+      currentData?.kode?.trim() &&
       currentData?.profil?.trim() &&
       currentData?.profesi?.trim() &&
-      currentData?.deskripsiPl?.trim() &&
-      currentData?.siakTahunKurikulumId
+      currentData?.deskripsi?.trim()
     );
   };
 
   const handleSave = async () => {
     if (!currentData || !isFormValid()) {
-      setErrorMessage("Semua kolom harus diisi, termasuk tahun kurikulum.");
+      setErrorMessage("Semua kolom harus diisi.");
       return;
     }
 
     setErrorMessage("");
 
     const dataToSave = {
-      siakProgramStudiId: id || currentData.siakProgramStudiId,
-      siakTahunKurikulumId: currentData.siakTahunKurikulumId,
-      kodePl: currentData.kodePl.trim(),
+      siakObeId: id!,
+      kode: currentData.kode.trim(),
       profil: currentData.profil.trim(),
       profesi: currentData.profesi.trim(),
-      deskripsiPl: currentData.deskripsiPl.trim(),
+      deskripsi: currentData.deskripsi.trim(),
     };
 
     const onSuccessCallback = () => {
@@ -208,11 +129,7 @@ const DetailOBE: React.FC = () => {
 
     const onErrorCallback = (error: any) => {
       console.error("Save error:", error);
-      if (error.response?.status === 400) {
-        setErrorMessage("Data tidak valid. Periksa kembali input Anda.");
-      } else if (error.response?.status === 401) {
-        setErrorMessage("Token tidak valid. Silakan login ulang.");
-      } else if (error.response?.data?.message) {
+      if (error.response?.data?.message) {
         setErrorMessage(`Error: ${error.response.data.message}`);
       } else {
         setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
@@ -221,7 +138,16 @@ const DetailOBE: React.FC = () => {
 
     if (isEditing && currentData.id) {
       updateMutation.mutate(
-        { id: currentData.id, data: dataToSave },
+        {
+          id: currentData.id,
+          obeId: id!,
+          data: {
+            kode: dataToSave.kode,
+            profil: dataToSave.profil,
+            profesi: dataToSave.profesi,
+            deskripsi: dataToSave.deskripsi,
+          },
+        },
         {
           onSuccess: onSuccessCallback,
           onError: onErrorCallback,
@@ -259,14 +185,10 @@ const DetailOBE: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-  };
-
   // Filter data based on search term
-  const displayData = filteredGraduateData.filter(
+  const displayData = graduateProfileData.filter(
     (item) =>
-      item.kodePl.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.kode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.profil.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.profesi.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -330,31 +252,8 @@ const DetailOBE: React.FC = () => {
         )}
 
         <div className="flex flex-col md:flex-row">
-          {/* Sidebar Menu */}
-          <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer">
-              <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-              <p className="text-black font-semibold">Profil Lulusan</p>
-            </div>
-            <div
-              className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer"
-              onClick={() =>
-                handleNavigation(AdminAcademicRoute.obeManagement.cpl)
-              }
-            >
-              <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-              <p>CPL</p>
-            </div>
-            <div
-              className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer"
-              onClick={() =>
-                handleNavigation(AdminAcademicRoute.obeManagement.cpmk)
-              }
-            >
-              <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-              <p>CPMK</p>
-            </div>
-          </div>
+          {/* Shared Sidebar Menu */}
+          <SidebarOBE id={id!} activeTab="pl" />
 
           {/* Detail Data Profil Lulusan */}
           <div className="w-full md:w-[80%] p-3">
@@ -364,7 +263,7 @@ const DetailOBE: React.FC = () => {
                   Kode Prodi:
                 </span>
                 <span className="w-full text-left">
-                  {obeData?.kodeProgramStudi}
+                  {obeInfo?.kodeProgramStudi || obeInfo?.kodeProdi || "-"}
                 </span>
               </div>
               <div className="flex justify-between ml-0 md:ml-8">
@@ -372,7 +271,7 @@ const DetailOBE: React.FC = () => {
                   Tahun Kurikulum:
                 </span>
                 <span className="w-full text-left">
-                  {obeData?.tahunKurikulum}
+                  {obeInfo?.tahunKurikulum || "-"}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -380,30 +279,17 @@ const DetailOBE: React.FC = () => {
                   Program Studi:
                 </span>
                 <span className="w-full text-left">
-                  {obeInfo?.programStudi}
+                  {obeInfo?.programStudi || "-"}
                 </span>
               </div>
             </div>
 
-            <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center">
-              <h2 className="text-lg font-semibold">Tahun Kurikulum</h2>
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="border border-black/50 rounded-md px-2 py-1 w-full md:w-40"
-              >
-                <option value="">Pilih Tahun Kurikulum</option>
-                {curriculumData.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.tahun}
-                  </option>
-                ))}
-              </select>
+            <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center justify-end">
               <button
                 onClick={handleAdd}
-                disabled={isAdding || isEditing || !selectedYear}
-                className={`ml-auto w-full md:w-56 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue ${
-                  isAdding || isEditing || !selectedYear
+                disabled={isAdding || isEditing}
+                className={`w-full md:w-56 bg-primary-green text-white px-4 py-2 rounded flex items-center hover:bg-primary-blue justify-center ${
+                  isAdding || isEditing
                     ? "opacity-50 cursor-not-allowed"
                     : ""
                 }`}
@@ -438,8 +324,8 @@ const DetailOBE: React.FC = () => {
 
             {/* Info */}
             <div className="mt-4 text-sm text-gray-600">
-              <p>Program Studi ID: {id}</p>
-              <p>Total Data: {filteredGraduateData.length}</p>
+              <p>OBE ID: {id}</p>
+              <p>Total Data: {graduateProfileData.length}</p>
               <p>Data Ditampilkan: {displayData.length}</p>
             </div>
           </div>

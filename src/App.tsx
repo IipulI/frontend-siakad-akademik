@@ -48,7 +48,7 @@ import EditCourse from "./pages/admin-academic/academic/EditCourse";
 import DetailCourse from "./pages/admin-academic/academic/DetailCourse";
 import CplCpmkCourse from "./pages/admin-academic/academic/CplCpmkCourse";
 import RpsCourse from "./pages/admin-academic/academic/RpsCourse";
-import OBEManagement from "./pages/admin-academic/academic/OBEManagement";
+import {OBEManagement} from "./pages/admin-academic/academic/OBEManagement";
 import GraduateProfile from "./pages/admin-academic/academic/GraduateProfile";
 import ObeCpl from "./pages/admin-academic/academic/ObeCpl";
 import ObeCpmk from "./pages/admin-academic/academic/ObeCpmk";
@@ -310,17 +310,17 @@ export default function App() {
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cpl)}
+        path={`${AdminAcademicRoute.obeManagement.cpl}/:id`}
         element={<ObeCpl />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cpmk)}
+        path={`${AdminAcademicRoute.obeManagement.cpmk}/:id`}
         element={<ObeCpmk />}
       />
 
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cpmkMataKuliah)}
+        path={`${AdminAcademicRoute.obeManagement.cpmkMataKuliah}/:obeId/:mataKuliahId`}
         element={<ObeCpmkMatkul />}
       />
 
