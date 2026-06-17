@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../api/Index";
+import { generalService } from "../api/generalService";
+
 
 export function getAcademicPeriodeDropdown() {
   return useQuery({
@@ -15,11 +17,12 @@ export function getPeriodeAcademicActive() {
   return useQuery({
     queryKey: ["academicPeriodsActive"],
     queryFn: async () => {
-      const response = await Api.get("/periode-akademik/active-status");
-      return response.data.data;
+      const response = await generalService.getActivePeriod();
+      return response.data;
     },
   });
 }
+
 
 export function getProgramStudi() {
   return useQuery({

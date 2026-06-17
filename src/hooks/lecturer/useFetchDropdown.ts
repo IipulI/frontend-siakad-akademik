@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
+import { generalService } from "../../api/generalService";
 
 export const useAcademicPeriodDropdown = () =>
     useQuery({
@@ -14,10 +15,10 @@ export const useActiveStatus = () =>
     useQuery({
         queryKey: ["/periode-akademik/active-status"],
         queryFn: async () => {
-            const res = await Api.get(`/periode-akademik/active-status`)
-            return res.data
-    }
-})
+            return await generalService.getActivePeriod();
+        }
+});
+
 
 export const useStudyProgramDropdown = () =>
     useQuery({

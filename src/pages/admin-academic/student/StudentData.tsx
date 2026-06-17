@@ -1,7 +1,13 @@
 import MainLayout from "../../../components/layouts/MainLayout";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
-import { Plus, RefreshCw, Search, Trash2, Eye } from "lucide-react";
+import {
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
+  Eye,
+} from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useEffect, useRef, useState } from "react";
 import Status from "../../../components/admin-academic/student-data/Status";
@@ -18,10 +24,8 @@ import {
 } from "../../../components/admin-finance/Toastify";
 import ConfirmModal from "../../../components/admin-finance/ConfirmModal";
 import { getProgramStudi } from "../../../hooks/useFilter";
-import { useAuth } from "../../../context/AuthContext";
 
 export default function StudentData() {
-  const { hasPermission } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   // state untuk filter dan search
@@ -391,14 +395,6 @@ export default function StudentData() {
           </div>
 
           <div className="flex space-x-3">
-            {hasPermission("mahasiswa.create") && (
-              <ButtonClick
-                icon={<Plus size={15} strokeWidth={3} />}
-                color="bg-primary-green"
-                text="Tambah"
-                onClick={Create}
-              />
-            )}
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
               color="bg-primary-green"

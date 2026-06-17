@@ -11,19 +11,18 @@ interface GetJadwalParams {
 }
 
 /**
- * Fetches the weekly schedule for a student for a specific period.
- * GET /mahasiswa/jadwal?namaPeriode=...
+ * Fetches the weekly schedule for a student for a specific period from the new endpoint.
+ * GET /mahasiswa/jadwal-akademik/minggu?namaPeriode=...
  */
 const getJadwalMingguan = async (
     params: GetJadwalParams
-): Promise<IApiResponseWithData<IJadwalMingguan>> => { // <-- Corrected return type
+): Promise<IApiResponseWithData<IJadwalMingguan>> => {
     try {
         const response = await Api.get<IApiResponseWithData<IJadwalMingguan>>(
-            "/mahasiswa/jadwal",
+            "/mahasiswa/jadwal-akademik/minggu",
             {
                 params: {
                     namaPeriode: params.namaPeriode,
-                    hari: params.hari,
                 },
             }
         );

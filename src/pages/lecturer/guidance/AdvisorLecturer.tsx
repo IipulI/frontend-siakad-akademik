@@ -149,19 +149,16 @@ export default function AdvisorLecturer() {
           ))}
         </div>
           <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
-            <div className="flex justify-between">
-              <div className="flex gap-8">
-                {/* <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-primary-brown border p-1">
-                  <option value={"Semua"}>Semua</option>
-                </select> */}
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-4">
+              <div className="flex-1 max-w-md">
                 <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari Mahasiswa" />
               </div>
-              <div className="flex bg-primary-yellow items-center rounded p-1 px-2">
+              <div className="flex bg-primary-yellow items-center justify-between rounded p-1 px-2 h-10 w-full sm:w-auto self-end sm:self-auto">
                 <Settings color="white" size={17} />
                 <select
                   name="aksi"
                   id="aksi"
-                  className=" text-white rounded font-semibold text-sm w-16"
+                  className="text-white rounded font-semibold text-sm w-full sm:w-16 bg-transparent border-none outline-none cursor-pointer"
                   onChange={handleAction}
                 >
                   <option value="" className="bg-white text-black">
@@ -232,7 +229,11 @@ export default function AdvisorLecturer() {
                     studentData?.data.map((record: any, index: number) => (
                       <tr key={index} className="hover:bg-gray-100">
                         <td className="border border-gray-500 font-semibold p-2 text-center">
-                          <input type="checkbox" className="w-4 h-4" checked={selectedIds.includes(record?.krsTerbaru?.id)} onChange={handleSelectOne(record?.krsTerbaru?.id)} />
+                          {record?.krsTerbaru?.id ? (
+                            <input type="checkbox" className="w-4 h-4" checked={selectedIds.includes(record?.krsTerbaru?.id)} onChange={handleSelectOne(record?.krsTerbaru?.id)} />
+                          ) : (
+                            <input type="checkbox" className="w-4 h-4" disabled />
+                          )}
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-sm">
                           {record.nama}
@@ -260,7 +261,7 @@ export default function AdvisorLecturer() {
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           <div className="flex justify-center">
-                            {(record?.krsTerbaru.status === 'Diajukan' || record?.krsTerbaru.status === 'Disetujui') ? (
+                            {(record?.krsTerbaru?.status === 'Diajukan' || record?.krsTerbaru?.status === 'Disetujui') ? (
                               <Check color="green" size={20} />
                             ) : (
                               <X color="red" size={20} />
@@ -269,7 +270,7 @@ export default function AdvisorLecturer() {
                         </td>
                         <td className="border border-gray-500 font-semibold p-2 text-center">
                           <div className="flex justify-center">
-                            {record.krsTerbaru.status === 'Disetujui' ? (
+                            {record?.krsTerbaru?.status === 'Disetujui' ? (
                               <Check color="green" size={20} />
                             ) : (
                               <X color="red" size={20} />
@@ -284,7 +285,17 @@ export default function AdvisorLecturer() {
                             <ButtonClick
                               icon={<Pen size={16} />}
                               color="bg-primary-yellow"
-                              onClick={() => navigate(LecturerRoute.guidance.detailAdvisor) || localStorage.setItem("id_mahasiswa", record.id)}
+                              onClick={() => {
+                                localStorage.setItem("id_mahasiswa", record.id);
+                                localStorage.setItem("id_krs", record?.krsTerbaru?.id || "");
+                                localStorage.setItem("mahasiswa_nama", record.nama || "");
+                                localStorage.setItem("mahasiswa_nim", record.nim || record.username || "");
+                                localStorage.setItem("mahasiswa_semester", record.semester || "");
+                                localStorage.setItem("mahasiswa_batas_sks", record.batasSks || "");
+                                localStorage.setItem("mahasiswa_status_krs", record?.krsTerbaru?.status || "");
+                                localStorage.setItem("mahasiswa_pembimbing", record?.pembimbingDosen?.dosen?.nama || "");
+                                navigate(LecturerRoute.guidance.detailAdvisor);
+                              }}
                             />
                           </div>
                         </td>

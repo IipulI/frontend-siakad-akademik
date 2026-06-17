@@ -105,11 +105,9 @@ export const studentKrsService = {
         }
     },
 
-    updateKrsCourses: async (krsId: string, payload: any): Promise<IApiResponseSuccess> => {
+    updateKrsCourses: async (payload: IAddKrsPayload): Promise<IApiResponseSuccess> => {
         try {
-            const response = await Api.put<IApiResponseSuccess>(`/mahasiswa/krs/${krsId}`, {
-                kelasKuliahIds: payload.kelasIds || payload.kelasKuliahIds
-            });
+            const response = await Api.put<IApiResponseSuccess>(`/mahasiswa/krs`, payload);
             return response.data;
         } catch (error) {
             console.error('Error updating KRS:', error);

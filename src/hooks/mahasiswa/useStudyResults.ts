@@ -18,7 +18,7 @@ export const useStudyResults = () => {
     // (The rest of the hook remains exactly the same)
     useEffect(() => {
         if (periods && periods.length > 0 && !selectedPeriod) {
-            setSelectedPeriod(periods[0].namaPeriode);
+            setSelectedPeriod(periods[0].id);
         }
     }, [periods, selectedPeriod]);
 

@@ -83,32 +83,13 @@ export default function AnnouncementDetailPage() {
         isError: isErrorText,
     } = usePengumumanDetail(id);
 
-    // 5. Mengambil data gambar banner
-    const {
-        data: bannerBlob,
-        isLoading: isLoadingBanner,
-        isError: isErrorBanner,
-    } = usePengumumanBanner(id);
-
-    // State untuk menyimpan URL sementara dari gambar blob
-    const [bannerUrl, setBannerUrl] = useState<string | null>(null);
-
-    useEffect(() => {
-        // Efek ini membuat URL sementara dari data blob gambar yang diambil
-        if (bannerBlob) {
-            const url = URL.createObjectURL(bannerBlob);
-            setBannerUrl(url);
-
-            // Penting: Hapus URL sementara saat komponen dibongkar untuk mencegah kebocoran memori
-            return () => {
-                URL.revokeObjectURL(url);
-            };
-        }
-    }, [bannerBlob]);
-
     // 6. Menggabungkan status loading dan error dari kedua hook
-    const isLoading = isLoadingText || isLoadingBanner;
-    const isError = isErrorText || isErrorBanner;
+    const isLoading = isLoadingText;
+    const isError = isErrorText;
+
+    // Mendapatkan URL dasar untuk gambar dari VITE_API_BASE_URL (menghapus /api di akhir)
+    const baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api\/?$/, "") : "";
+    const bannerUrl = response?.data?.banner ? `${baseUrl}${response.data.banner}` : null;
 
     return (
         <MainLayout isGreeting={false} titlePage={"Detail Pengumuman"} className={""}>

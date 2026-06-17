@@ -18,7 +18,7 @@ export interface IPaginatedResponse<T> {
 
 export interface IAcademicPeriod {
     id: string;
-    namaPeriode: string;
+    nama: string;
 }
 
 export interface IAcademicActivePeriod {
@@ -33,9 +33,10 @@ export interface IAcademicActivePeriod {
 
 export interface IPengumuman {
     id: string;
-    user: string;
+    siakPegawaiId: string;
     judul: string;
     isi: string;
     isActive: boolean;
     isPriority: boolean;
+    banner: string;
 }

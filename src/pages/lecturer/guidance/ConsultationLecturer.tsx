@@ -48,26 +48,28 @@ const ConsultationLecturer = () => {
             {/* Main Table Section */}
             <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
                 {/* Action Bar */}
-                <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
-                    <div className="flex gap-4 items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mb-4 gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center flex-1">
                         <select
-                            className="rounded px-2 py-1 lg:text-base text-xs border border-black/50 shadow-md focus:outline-none w-32 bg-white text-gray-700"
+                            className="rounded px-2 py-1 lg:text-base text-xs border border-black/50 shadow-md focus:outline-none w-full sm:w-32 bg-white text-gray-700 h-10"
                         >
                             <option value="Semua">-- Semua --</option>
                             <option value="Disetujui">Disetujui</option>
                             <option value="Menunggu">Menunggu</option>
                         </select>
-                        <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari Konsultasi Pembimbing" />
+                        <div className="w-full sm:max-w-md flex-1">
+                            <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari Konsultasi Pembimbing" />
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
                         <button 
                             onClick={() => navigate(LecturerRoute.guidance.addConsultation)}
-                            className="bg-primary-green hover:bg-green-600 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition h-10"
+                            className="flex-1 sm:flex-initial justify-center bg-primary-green hover:bg-green-600 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition h-10"
                         >
                             <Plus size={16} /> Tambah
                         </button>
-                        <button className="bg-[#ff6b6b] hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition h-10">
+                        <button className="flex-1 sm:flex-initial justify-center bg-[#ff6b6b] hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition h-10">
                             <Trash2 size={16} /> Hapus
                         </button>
                     </div>
