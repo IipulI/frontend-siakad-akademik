@@ -448,6 +448,14 @@ export default function App() {
         element={<ClassLecturer />}
       />
       <Route
+        path={String(LecturerRoute.courses.detailClass)}
+        element={<DetailClassLecturer />}
+      />
+      <Route
+        path="/dosen/perkuliahan/kelas kuliah/detail"
+        element={<DetailClassLecturer />}
+      />
+      <Route
         path={String(LecturerRoute.guidance.detailAdvisor)}
         element={<DetailAdvisorLecturer />}
       />

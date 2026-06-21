@@ -53,15 +53,15 @@ export default function DetailCourseLecturer() {
                     <DataStudent
                       data={[
                         { label: 'Tahun Kurikulum', value: detail.data.tahunKurikulum },
-                        { label: 'Program Studi', value: detail.data.programStudi },
+                        { label: 'Program Studi', value: detail.data.programStudi || detail.data.unitPengampu },
                         { label: 'Kode Mata Kuliah', value: detail.data.kodeMataKuliah },
-                        { label: 'Semester', value: detail.data.semester },
-                        { label: 'Nama Mata Kuliah', value: detail.data.namaMataKuliah },
-                        { label: 'Prasyarat 1', value: detail.data.prasyaratMataKuliah1?.namaMataKuliah },
+                        { label: 'Semester', value: detail.data.semester || '-' },
+                        { label: 'Nama Mata Kuliah', value: detail.data.namaMataKuliah || detail.data.namaMataKuliahInd },
+                        { label: 'Prasyarat 1', value: detail.data.prasyaratMataKuliah1?.namaMataKuliah || '-' },
                         { label: 'SKS Tatap Muka', value: detail.data.sksTatapMuka },
-                        { label: 'Prasyarat 2', value: detail.data.prasyaratMataKuliah2?.namaMataKuliah },
+                        { label: 'Prasyarat 2', value: detail.data.prasyaratMataKuliah2?.namaMataKuliah || '-' },
                         { label: 'SKS Praktikum', value: detail.data.sksPraktikum },
-                        { label: 'Prasyarat 3', value: detail.data.prasyaratMataKuliah3?.namaMataKuliah },
+                        { label: 'Prasyarat 3', value: detail.data.prasyaratMataKuliah3?.namaMataKuliah || '-' },
                         { label: 'Total SKS', value: (Number(detail.data.sksTatapMuka) + Number(detail.data.sksPraktikum)), bold: true },
                         { label: 'Jenis Mata Kuliah', value: detail.data.jenisMataKuliah },
                       ]}
@@ -73,12 +73,12 @@ export default function DetailCourseLecturer() {
                   rps?.data ? (
                     <DataStudent
                       data={[
-                        { label: 'Periode Akademik', value: rps.data.periodeAkademik.namaPeriode},
-                        { label: 'Jenjang', value: rps.data.programStudi.jenjang.jenjang},
-                        { label: 'Dosen Penyusun', value: rps.data.pustakaPendukung},
-                        { label: 'Tanggal Penyusun', value: rps.data.tanggalPenyusun},
-                        { label: 'Tujuan Mata Kuliah', value: rps.data.tujuanMataKuliah},
-                        { label: 'Deskripsi Mata Kuliah', value: rps.data.deskripsiMataKuliah},
+                        { label: 'Periode Akademik', value: rps.data.rpsData?.periode?.nama || rps.data.periodeAkademik?.namaPeriode || '-' },
+                        { label: 'Jenjang / Unit Pengampu', value: rps.data.mataKuliah?.unitPengampu || rps.data.programStudi?.jenjang?.jenjang || '-' },
+                        { label: 'Dosen Penyusun', value: rps.data.rpsData?.pustakaPendukung || rps.data.pustakaPendukung || '-' },
+                        { label: 'Tanggal Penyusun', value: rps.data.rpsData?.tanggalPenyusunan || rps.data.tanggalPenyusun || '-' },
+                        { label: 'Tujuan Mata Kuliah', value: rps.data.rpsData?.tujuanMataKuliah || rps.data.tujuanMataKuliah || '-' },
+                        { label: 'Deskripsi Mata Kuliah', value: rps.data.rpsData?.deskripsiMataKuliah || rps.data.deskripsiMataKuliah || '-' },
                       ]}
                     />
                   ) : (

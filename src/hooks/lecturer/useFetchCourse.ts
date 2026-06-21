@@ -6,25 +6,26 @@ export const useCourseList = (page: number, keyword: string, size: number) =>
     useQuery({
         queryKey: ['dosen/mata-kuliah', page, keyword, size],
         queryFn: async () => {
-          const res = await Api.get(`/dosen/mata-kuliah?page=${page}&keyword=${keyword}&size=${size}`)
+          const res = await Api.get(`/akademik/dosen/mata-kuliah?page=${page}&keyword=${keyword}&size=${size}`)
           return res.data
         },
-})
+    })
 
 export const useCourseDetail = (id: string | null) =>
     useQuery({
         queryKey: ['dosen/mata-kuliah/detail', id],
         queryFn: async () => {
-          const res = await Api.get(`/dosen/mata-kuliah/${id}`)
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}`)
           return res.data
         },
-})
+    })
 
 export const useCourseRPS = (id: string | null) =>
     useQuery({
         queryKey: ['dosen/mata-kuliah/detail/rps', id],
         queryFn: async () => {
-          const res = await Api.get(`/dosen/mata-kuliah/${id}/rps`)
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/detail-rps`)
           return res.data
         },
-})
+    })
+

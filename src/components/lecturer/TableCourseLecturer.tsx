@@ -113,22 +113,22 @@ export default function TableCourseLecturer ({
                             />
                         </td> */}
                         <td className="p-2 border text-sm border-black/50">
-                            {row.tahunKurikulum}
+                            {row.tahunKurikulum || (row as any).kurikulum}
                         </td>
                         <td className="p-2 border text-sm border-black/50">
-                            {row.kodeMataKuliah}
+                            {row.kodeMataKuliah || (row as any).kodeMk}
                         </td>
                         <td className="p-2 border text-sm border-black/50">
                             {row.namaMataKuliah}
                         </td>
                         <td className="p-2 border text-sm border-black/50">
-                            {row.sksTatapMuka}
+                            {row.sksTatapMuka ?? (row as any).sks}
                         </td>
                         <td className="p-2 border text-sm border-black/50">
-                            {row.jenisMataKuliah}
+                            {row.jenisMataKuliah || (row as any).jenisMk}
                         </td>
                         <td className="p-2 border text-sm border-black/50">
-                            {row.programStudi}
+                            {row.programStudi || (row as any).prodiPengampu}
                         </td>
                         <td className="p-2 border text-center text-sm border-black/50">
                             <div className="flex items-center justify-center w-full">
