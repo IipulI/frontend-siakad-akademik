@@ -1,14 +1,9 @@
 import axios from "axios";
 
 export const Api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL, //gatau ini error kenapa jir env nya
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-// export const ApiExternal = axios.create({
-//   baseURL: import.meta.env.VITE_API_EXTERNAL_URL, //gatau ini error kenapa jir env nya
-// });
-
-// interceptor request: tambahkan token ke header authorization jika tersedia
 Api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -17,21 +12,29 @@ Api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error),
 );
 
-// interceptor response: cek jika token expired (status 401)
 Api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // optional: hapus token dan redirect ke login
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/";
+      // Cek dulu apakah ini request SSO atau request biasa
+      const isAuthRequest =
+        error.config?.url?.includes("/sso") ||
+        error.config?.url?.includes("/auth") ||
+        error.config?.url?.includes("/login");
+
+      // Hanya logout kalau bukan request data biasa yang memang belum ada endpoint-nya
+      // Cek apakah token masih ada — kalau ada tapi 401, baru logout
+      const token = localStorage.getItem("token");
+      if (token && !isAuthRequest) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("account_info");
+        window.location.href = "/";
+      }
     }
     return Promise.reject(error);
-  }
+  },
 );

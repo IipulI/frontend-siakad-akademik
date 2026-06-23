@@ -92,6 +92,7 @@ export default function App() {
   return (
     <Routes>
       {/* Index Route */}
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<LoginPage />} />
 
       {/* Route Dashboard*/}
