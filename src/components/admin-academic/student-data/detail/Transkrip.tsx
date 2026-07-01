@@ -1,10 +1,21 @@
 import { useLocation } from "react-router-dom";
 import { BriefStudentData } from "./BriefStudentData";
 import { getTranskip } from "../../../../hooks/admin-akademik/useStudentDetail";
+import { useQuery } from "@tanstack/react-query";
+import { transcriptService } from "../../../../api/mahasiswa/transcriptService";
 
 export default function Transkrip() {
   const { state } = useLocation();
   const { data: transkip } = getTranskip(state);
+
+  // const {data:transcript , isLoading} = useQuery({
+  //   queryKey: ["transkip", state],
+  //   queryFn: () => transcriptService.getTranscript(),
+  // })
+
+  // log
+
+
 
   return (
     <div className="p-4 border-1 rounded-sm shadow-sm">

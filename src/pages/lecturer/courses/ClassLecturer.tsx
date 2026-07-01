@@ -29,7 +29,7 @@ const ClassLecturer = () => {
   
   const periodeOptions = periodeAkademikDropdown?.data?.map((item: IAcademicPeriod) => ({
     value: item.id,
-    label: item.namaPeriode,
+    label: item.nama || item.namaPeriode,
   })) || [];
 
   const studyProgramOptions = programStudiDropdown?.data?.map((item: IStudyProgram) => ({

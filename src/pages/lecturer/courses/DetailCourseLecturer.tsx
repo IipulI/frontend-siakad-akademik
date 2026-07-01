@@ -73,7 +73,7 @@ export default function DetailCourseLecturer() {
                   rps?.data ? (
                     <DataStudent
                       data={[
-                        { label: 'Periode Akademik', value: rps.data.periodeAkademik.namaPeriode},
+                        { label: 'Periode Akademik', value: rps.data.periodeAkademik.nama || rps.data.periodeAkademik.namaPeriode},
                         { label: 'Jenjang', value: rps.data.programStudi.jenjang.jenjang},
                         { label: 'Dosen Penyusun', value: rps.data.pustakaPendukung},
                         { label: 'Tanggal Penyusun', value: rps.data.tanggalPenyusun},

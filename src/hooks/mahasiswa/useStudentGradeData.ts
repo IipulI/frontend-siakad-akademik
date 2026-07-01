@@ -17,7 +17,7 @@ export const useStudentGradeData = () => {
     // Automatically select the first period from the list once it's loaded
     useEffect(() => {
         if (periods && periods.length > 0 && !selectedPeriod) {
-            setSelectedPeriod(periods[0].namaPeriode);
+            setSelectedPeriod(periods[0].nama || periods[0].namaPeriode || '');
         }
     }, [periods, selectedPeriod]);
 

@@ -36,8 +36,8 @@ const StudentGrade = () => {
                 disabled={isLoadingGrades}
             >
               {periods.map((period) => (
-                  <option key={period.id} value={period.namaPeriode}>
-                    {period.namaPeriode}
+                  <option key={period.id} value={period.nama || period.namaPeriode}>
+                    {period.nama || period.namaPeriode}
                   </option>
               ))}
             </select>

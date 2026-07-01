@@ -15,7 +15,7 @@ const ScheduleLecturer = () => {
   
   const periodeOptions = periodeAkademikDropdown?.data?.map((item: any) => ({
     value: item.id,
-    label: item.namaPeriode,
+    label: item.nama || item.namaPeriode,
   })) || [];
   
   useEffect(() => {

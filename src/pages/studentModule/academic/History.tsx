@@ -54,8 +54,8 @@ export default function History() {
                 className="p-1 text-sm rounded-sm text-gray-500 w-70 border-2"
             >
               {periods.map((period) => (
-                  <option key={period.id} value={period.namaPeriode}>
-                    {period.namaPeriode}
+                  <option key={period.id} value={period.nama || period.namaPeriode}>
+                    {period.nama || period.namaPeriode}
                   </option>
               ))}
             </select>
