@@ -8,6 +8,8 @@ export const transcriptService = {
     getTranscript: async (): Promise<ITranscriptData> => {
         const response = await Api.get("/mahasiswa/hasil-studi/transkrip");
 
+
+
         // Handle wrapping in standard api response (response.data.data) or raw array (response.data)
         const rawData: IApiTranscriptItem[] = Array.isArray(response.data)
             ? response.data

@@ -80,7 +80,7 @@ export default function StudentBill() {
     filters.periodeAkademik
   );
 
-  const {data:periodeAkademikDropdown} = getAcademicPeriodeDropdown();
+  const { data: periodeAkademikDropdown } = getAcademicPeriodeDropdown();
 
   useEffect(() => {
     if (!isLoading) {
@@ -109,8 +109,8 @@ export default function StudentBill() {
   const periode = [
     { value: "", label: "-- Pilih Periode Akademik --" },
     ...(periodeAkademikDropdown?.map((data) => ({
-      value: data.namaPeriode,
-      label: data.namaPeriode,
+      value: data.nama || data.namaPeriode || '',
+      label: data.nama || data.namaPeriode || '',
     })) || []),
   ];
 
@@ -429,11 +429,10 @@ export default function StudentBill() {
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 disabled={isLoading || TandaiLunas.isPending}
-                className={`flex items-center rounded p-1 px-2 w-fit text-white font-semibold text-sm transition-colors ${
-                  isLoading || TandaiLunas.isPending
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-yellow-500 hover:bg-yellow-600"
-                }`}
+                className={`flex items-center rounded p-1 px-2 w-fit text-white font-semibold text-sm transition-colors ${isLoading || TandaiLunas.isPending
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-yellow-500 hover:bg-yellow-600"
+                  }`}
               >
                 <Settings color="white" size={17} />
                 <span className="ml-1">
@@ -441,9 +440,8 @@ export default function StudentBill() {
                 </span>
                 <ChevronDown
                   size={16}
-                  className={`ml-1 transition-transform ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
+                  className={`ml-1 transition-transform ${isOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -452,11 +450,10 @@ export default function StudentBill() {
                   <button
                     onClick={tandaiLunasTagihan}
                     disabled={selectedItems.length === 0}
-                    className={`block w-full text-left px-3 py-2 text-xs transition-colors ${
-                      selectedItems.length === 0
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-black hover:bg-gray-100"
-                    }`}
+                    className={`block w-full text-left px-3 py-2 text-xs transition-colors ${selectedItems.length === 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-black hover:bg-gray-100"
+                      }`}
                   >
                     Tandai Lunas ({selectedItems.length})
                   </button>

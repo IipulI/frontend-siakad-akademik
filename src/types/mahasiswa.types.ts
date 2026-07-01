@@ -72,7 +72,8 @@ export interface IApiKrsHistoryResponse {
 
 export interface IAcademicPeriod {
     id: string | number;
-    namaPeriode: string;
+    nama?: string;
+    namaPeriode?: string;
 }
 
 export interface IMataKuliah {
@@ -128,7 +129,7 @@ export interface IKrsInfo {
 }
 
 export interface IAddKrsPayload {
-    kelasIds: string[];
+    kelasKuliahIds: string[];
 }
 
 export interface ISavedKrsResponse {

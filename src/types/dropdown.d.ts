@@ -1,6 +1,7 @@
 interface IAcademicPeriod {
     id: string
-    namaPeriode: string
+    nama?: string
+    namaPeriode?: string
 }
 
 interface IStudyProgram {

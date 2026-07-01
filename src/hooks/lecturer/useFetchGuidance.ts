@@ -41,6 +41,7 @@ export const useAcademicGuidanceDetail = (id: string | null) =>
         const res = await Api.get(`/dosen/pembimbing-akademik/detail-krs/${id}`)
         return res.data
       },
+      enabled: !!id,
 })
 
 export const useAcceptKRS = (onSuccess, onError) => {

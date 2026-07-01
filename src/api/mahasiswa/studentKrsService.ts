@@ -50,9 +50,9 @@ export const studentKrsService = {
                     sort: params.sort || 'createdAt,desc',
                 },
             });
-            
+
             const rawData = response.data;
-            
+
             // Jika backend mengembalikan data dalam format { status, message, data: [] }
             // Kita transform menjadi IPaginatedResponse
             return {
@@ -71,15 +71,19 @@ export const studentKrsService = {
      * Mengambil daftar KRS yang sudah disimpan (status menunggu/draft)
      * GET /mahasiswa/krs/status-menunggu
      */
-    getSavedCourses: async (): Promise<ISavedKrsResponse> => {
+    getSavedCourses: async (): Promise<any> => {
         try {
-            const response = await Api.get<{ data: IAvailableCourse[] }>('/mahasiswa/krs/tersimpan');
-            const courses = response.data.data;
-            
+            const response = await Api.get<any>('/mahasiswa/krs/status-menunggu');
+            const dataObj = response.data.data;
+            const courses = dataObj?.rincianKrsMahasiswa || [];
+
             // Hitung total SKS dari data yang ada
-            const totalSks = courses.reduce((sum, item) => sum + (item.mataKuliah?.totalSks || 0), 0);
-            
+            const totalSks = courses.reduce((sum: number, item: any) => sum + (item.mataKuliah?.totalSks || 0), 0);
+
             return {
+                id: dataObj?.id,
+                status: dataObj?.status,
+                rincianKrsMahasiswa: courses,
                 krs: courses,
                 totalSks: totalSks
             };
@@ -105,9 +109,9 @@ export const studentKrsService = {
         }
     },
 
-    updateKrsCourses: async (payload: IAddKrsPayload): Promise<IApiResponseSuccess> => {
+    updateKrsCourses: async (krsId: string, payload: IAddKrsPayload): Promise<IApiResponseSuccess> => {
         try {
-            const response = await Api.put<IApiResponseSuccess>(`/mahasiswa/krs`, payload);
+            const response = await Api.put<IApiResponseSuccess>(`/mahasiswa/krs/`, payload);
             return response.data;
         } catch (error) {
             console.error('Error updating KRS:', error);

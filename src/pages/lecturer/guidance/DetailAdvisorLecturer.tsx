@@ -20,9 +20,7 @@ const DetailAdvisorLecturer = () => {
   const krsId = localStorage.getItem("id_krs");
   const navigate = useNavigate();
 
-  // Prefer querying with KRS ID as the detail-krs endpoint is resource-specific, fallback to student ID
-  const queryId = krsId || studentId;
-  const { data, isPending } = useAcademicGuidanceDetail(queryId);
+  const { data, isPending } = useAcademicGuidanceDetail(studentId);
 
   const { mutate: accept, isPending: pendingAccept } = useAcceptKRS(
     (response: any) => {
