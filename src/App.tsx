@@ -92,6 +92,7 @@ export default function App() {
   return (
     <Routes>
       {/* Index Route */}
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<LoginPage />} />
 
       {/* Route Dashboard*/}
@@ -446,6 +447,14 @@ export default function App() {
       <Route
         path={String(LecturerRoute.courses.class)}
         element={<ClassLecturer />}
+      />
+      <Route
+        path={String(LecturerRoute.courses.detailClass)}
+        element={<DetailClassLecturer />}
+      />
+      <Route
+        path="/dosen/perkuliahan/kelas kuliah/detail"
+        element={<DetailClassLecturer />}
       />
       <Route
         path={String(LecturerRoute.guidance.detailAdvisor)}

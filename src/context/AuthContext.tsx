@@ -18,18 +18,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [permissions, setPermissions] = useState<string[]>([]);
 
   const setAuth = (data: any) => {
-    setUser(data.user);
+    setUser(data.user || data);
 
-    const roleNames = data.detail.map((d: any) => d.role.name);
+    const roleNames = data.detail
+      ? data.detail.map((d: any) => d.role.name)
+      : [data.access?.role_name || ""];
     setRoles(roleNames);
 
-    // Ambil permission name berdasarkan role_has_permission
-    const perms = data.detail.flatMap((d: any) => {
-      const allowedIds = d.role_has_permission.map((p: any) => p.permission_id);
-      return d.app_modul.permission
-        .filter((perm: any) => allowedIds.includes(perm.id))
-        .map((perm: any) => perm.name);
-    });
+    const perms = data.detail
+      ? data.detail.flatMap((d: any) => {
+          const allowedIds =
+            d.role_has_permission?.map((p: any) => p.permission_id) || [];
+          return (
+            d.app_modul?.permission
+              ?.filter((perm: any) => allowedIds.includes(perm.id))
+              .map((perm: any) => perm.name) || []
+          );
+        })
+      : data.access?.permissions || [];
 
     setPermissions(perms);
   };
