@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -26,40 +26,34 @@ const CourseManagement: React.FC = () => {
   const [selectedProdi, setSelectedProdi] = useState("all");
 
   // --- queries ---
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const {
+    data: courseResponse,
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = getCourseData({
+    page: currentPage,
+    size: itemsPerPage,
+    tahunKurikulum: selectedCurriculum,
+    programStudi: selectedProdi,
+    jenisMataKuliah: selectedCourseType,
+    search: searchTerm,
+  });
+  const courseData = courseResponse?.data ?? [];
+  const coursePagination = courseResponse?.pagination;
+
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: programStudiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
 
   // --- mutation ---
   const deleteMutation = useDeleteCourse();
 
-  // --- filtered function ---
-  const filteredData = useMemo(() => {
-    return courseData
-      .filter((item) => {
-        return selectedCurriculum === "all" || item.tahunKurikulum === selectedCurriculum;
-      })
-      .filter((item) => {
-        return selectedProdi === "all" || item.programStudi === selectedProdi;
-      })
-      .filter((item) => {
-        if (selectedCourseType === "all") return true;
-        if (selectedCourseType === "Wajib") return item.opsiMataKuliah !== null;
-        if (selectedCourseType === "Pilihan") return item.opsiMataKuliah === null;
-        return true;
-      })
-
-      .filter((item) => {
-        return item.namaMataKuliah.toLowerCase().includes(searchTerm.toLowerCase());
-      });
-  }, [courseData, selectedCurriculum, selectedCourseType, selectedProdi, searchTerm]);
 
   // --- select handler ---
   const toggleSelectAll = () => {
-    if (selectedIds.length === filteredData.length) {
+    if (selectedIds.length === courseData.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredData.map((item) => item.id));
+      setSelectedIds(courseData.map((item) => item.id));
     }
   };
 
@@ -99,6 +93,7 @@ const CourseManagement: React.FC = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1);
   };
 
   // --- Filter Handlers ---
@@ -123,13 +118,12 @@ const CourseManagement: React.FC = () => {
     setSelectedCourseType("all");
     setSelectedProdi("all");
     setCurrentPage(1);
-    queryClient.refetchQueries({ queryKey: ["courseData"] });
+    queryClient.invalidateQueries({ queryKey: ["courseData"] });
   };
 
-  // --- Pagination logic ---
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  // --- Pagination logic (server-side) ---
+  const totalPages = coursePagination?.totalPage ?? 1;
+  const totalItems = coursePagination?.totalItems ?? 0;
 
   return (
     <MainLayout isGreeting={false} titlePage="Mata Kuliah" className="">
@@ -161,8 +155,8 @@ const CourseManagement: React.FC = () => {
             <select className="flex-1 rounded px-3 py-2 border border-primary-brown md:w-10 w-10" value={selectedProdi} onChange={handleProdiChange}>
               <option value="all">-- Semua --</option>
               {programStudiData.map((item) => (
-                <option key={item.id} value={item.namaProgramStudi}>
-                  {item.namaProgramStudi}
+                <option key={item.id} value={item.id}>
+                  {item.nama}
                 </option>
               ))}
             </select>
@@ -210,7 +204,7 @@ const CourseManagement: React.FC = () => {
 
         <div className="mt-8">
           <TableCourseManagement
-            data={paginatedData}
+            data={courseData}
             tableHead={["Combo BOX", "Kurikulum", "Kode", "Mata Kuliah", "SKS", "Jenis MK", "Prodi Pengampu", "Aksi"]}
             error="Data tidak ditemukan."
             onDelete={handleDelete}
@@ -227,8 +221,9 @@ const CourseManagement: React.FC = () => {
 
         <Pagination
           currentPage={currentPage}
-          totalRows={filteredData.length}
+          totalRows={totalItems}
           totalPages={totalPages}
+          rowsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
           onRowsPerPageChange={(newSize) => {
             setItemsPerPage(newSize);

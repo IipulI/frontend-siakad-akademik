@@ -86,7 +86,7 @@ export function useGetAcademicAdvisor({
       if (statusMahasiswa?.trim())
         params.statusMahasiswa = statusMahasiswa.trim();
 
-      const response = await Api.get("/akademik/pembimbing-akademik/all", {
+      const response = await Api.get("/akademik/pembimbing-akademik/", {
         params,
       });
       return response.data;

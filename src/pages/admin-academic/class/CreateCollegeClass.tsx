@@ -181,6 +181,13 @@ const CreateCollegeClass = () => {
     },
   ];
 
+  console.log(subjects?.map((matkul) => matkul.programStudi.nama) ?? [])
+  console.log(selectedProgramStudyName)
+  console.log(subjects?.filter(
+      (matkul) =>
+          matkul.programStudi.nama === selectedProgramStudyName
+  ) ?? [])
+
   return (
     <MainLayout titlePage="Data Kelas" isGreeting={false}>
       <div className="space-y-4">
@@ -216,7 +223,7 @@ const CreateCollegeClass = () => {
                 options={academicPeriods}
                 required
                 value={academicPeriodId}
-                getOptionLabel={(opt) => opt.namaPeriode}
+                getOptionLabel={(opt) => opt.nama}
                 getOptionValue={(opt) => opt.id}
                 onChange={(val) => setAcademicPeriodId(val?.id ?? "")}
               />
@@ -235,11 +242,11 @@ const CreateCollegeClass = () => {
                 // defaultValue=""
                 value={programStudyId}
                 required
-                getOptionLabel={(opt) => opt.namaProgramStudi}
+                getOptionLabel={(opt) => opt.nama}
                 getOptionValue={(opt) => opt.id}
                 onChange={(val) => {
                   setProgramStudyId(val?.id ?? "");
-                  setSelectedProgramStudyName(val?.namaProgramStudi ?? "");
+                  setSelectedProgramStudyName(val?.nama ?? "");
                 }}
               />
               <TextInput
@@ -275,17 +282,17 @@ const CreateCollegeClass = () => {
                 options={
                   subjects?.filter(
                     (matkul) =>
-                      matkul.namaProgramStudi === selectedProgramStudyName
+                      matkul.programStudi.nama === selectedProgramStudyName
                   ) ?? []
                 }
                 required={true}
                 value={subject}
-                getOptionLabel={(opt) => opt.namaMataKuliah}
-                getOptionValue={(opt) => opt.mataKuliahId}
+                getOptionLabel={(opt) => opt.nama}
+                getOptionValue={(opt) => opt.id}
                 label="Mata Kuliah"
                 onChange={(val) => {
                   console.log("Selected Mata Kuliah:", val);
-                  setSubject(val?.mataKuliahId ?? "");
+                  setSubject(val?.id ?? "");
                 }}
               />
 

@@ -137,7 +137,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           <button
             className="border p-1 disabled:bg-gray-200"
             onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages === 0}
           >
             <ChevronRight size={16} color="#116e63" />
           </button>
@@ -145,7 +145,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           <button
             className="border p-1 disabled:bg-gray-200"
             onClick={() => onPageChange(totalPages)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages === 0}
           >
             <ChevronsRight size={16} color="#116e63" />
           </button>

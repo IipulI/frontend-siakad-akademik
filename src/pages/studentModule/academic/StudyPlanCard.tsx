@@ -452,6 +452,8 @@ const StudyPlanCardTable = ({
                                     <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
                                     <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
                                     <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Semester</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Grade</th>
                                 </tr>
                             </thead>
                             <tbody className="font-semibold text-sm">
@@ -465,6 +467,8 @@ const StudyPlanCardTable = ({
                                             <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
                                             <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
                                             <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.semester}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.previousGrade}</td>
                                         </tr>
                                     );
                                 })}

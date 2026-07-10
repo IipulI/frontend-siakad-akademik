@@ -356,7 +356,7 @@ export default function CreateStudent() {
               label="Program Studi"
               options={programStudiDropdown}
               required
-              getOptionLabel={(opt) => opt.namaProgramStudi}
+              getOptionLabel={(opt) => opt.nama}
               getOptionValue={(opt) => opt.id}
               value={formData.siakProgramStudiId}
               onChange={(value) =>
@@ -368,11 +368,11 @@ export default function CreateStudent() {
               label="Periode Masuk"
               options={periodeOptions}
               required={true}
-              getOptionLabel={(opt) => opt.namaPeriode}
-              getOptionValue={(opt) => opt.kodePeriode}
+              getOptionLabel={(opt) => opt.nama}
+              getOptionValue={(opt) => opt.kode}
               value={formData.periodeMasuk}
               onChange={(value) =>
-                handleInputChange("periodeMasuk", value?.kodePeriode ?? "")
+                handleInputChange("periodeMasuk", value?.kode ?? "")
               }
             />
             <SelectInput
