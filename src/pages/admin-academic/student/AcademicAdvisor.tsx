@@ -439,19 +439,19 @@ export default function AcademikAdvisor() {
                       <input type="checkbox" className="w-4 h-4" />
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {record.mahasiswa}
+                      {record.nama}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
                       {record.angkatan}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.statusMahasiswa}
+                      {record?.statusMahasiswa?.nama}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
                       {record.semester}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.totalSks}
+                      {record?.krsTerbaru?.sksDiambil}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
                       {record.batasSks}
@@ -460,14 +460,14 @@ export default function AcademikAdvisor() {
                       {record.totalSks}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.ips}
+                      {record?.hasilStudiTerbaru?.ips}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.ipk}
+                      {record?.hasilStudiTerbaru?.ipk}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
                       <div className="flex justify-center">
-                        {record.statusDiajukan ? (
+                        {record?.krsTerbaru?.status == 'Diajukan' || record?.krsTerbaru?.status == 'Disetujui' ? (
                           <Check color="green" size={20} />
                         ) : (
                           <X color="red" size={20} />
@@ -476,7 +476,7 @@ export default function AcademikAdvisor() {
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-center">
                       <div className="flex justify-center">
-                        {record.statusDisetujui ? (
+                        {record?.krsTerbaru?.status == 'Disetujui' ? (
                           <Check color="green" size={20} />
                         ) : (
                           <X color="red" size={20} />
@@ -484,7 +484,7 @@ export default function AcademikAdvisor() {
                       </div>
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {record.pembimbingAkademik}
+                      {record?.pembimbingDosen?.dosen?.nama ?? '-'}
                     </td>
                     <td className="border border-gray-500 font-semibold p-2 text-sm">
                       {"-"}

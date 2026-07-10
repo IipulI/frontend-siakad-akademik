@@ -60,7 +60,7 @@ const DetailCourse: React.FC = () => {
   // --- Calculate values from fetched data ---
   const sksTatapMuka = courseDetail.sksTatapMuka || 0;
   const sksPraktikum = courseDetail.sksPraktikum || 0;
-  const totalSks = sksTatapMuka + sksPraktikum;
+  const totalSks = courseDetail.totalSks ?? (sksTatapMuka + sksPraktikum);
 
   return (
     <MainLayout isGreeting={false} titlePage="Detail Mata Kuliah" className="">
@@ -106,18 +106,18 @@ const DetailCourse: React.FC = () => {
           <div className="w-full bg-white py-2 px-2 md:w-[80%]">
             <div className="bg-[#DFF0D8] p-5 mb-6 text-black">
               <h2>
-                Kode, Nama & Total SKS tidak bisa diubah karena mata kuliah sudah digunakan di kurikulum <strong>S1 {courseDetail.programStudi}</strong>
+                Kode, Nama & Total SKS tidak bisa diubah karena mata kuliah sudah digunakan di kurikulum <strong>S1 {courseDetail.programStudi?.nama}</strong>
               </h2>
             </div>
 
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Tahun Kurikulum:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.tahunKurikulum}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.tahunKurikulum?.tahun}</p>
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3 md:gap-10">
                 <label className="font-semibold w-40">Unit Pengampu:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.programStudi}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.programStudi?.nama}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -125,7 +125,7 @@ const DetailCourse: React.FC = () => {
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Kode Mata Kuliah:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.kodeMataKuliah}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.kode}</p>
               </div>
               <div className="w-full md:w-1/2 flex items-center gap-3 md:gap-11">
                 <label className="font-semibold w-40">Semester:</label>
@@ -137,11 +137,11 @@ const DetailCourse: React.FC = () => {
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Nama Mata Kuliah:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.namaMataKuliah}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.nama}</p>
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40 md:w-48 whitespace-nowrap">Mata Kuliah Prasyarat 1:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyaratMataKuliah1?.namaMataKuliah || "-"}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyarat1?.nama || "-"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -153,7 +153,7 @@ const DetailCourse: React.FC = () => {
               </div>
               <div className="w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40 md:w-48 whitespace-nowrap">Mata Kuliah Prasyarat 2:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyaratMataKuliah2?.namaMataKuliah || "-"}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyarat2?.nama || "-"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -165,7 +165,7 @@ const DetailCourse: React.FC = () => {
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40 md:w-48 whitespace-nowrap">Mata Kuliah Prasyarat 3:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyaratMataKuliah3?.namaMataKuliah || "-"}</p>
+                <p className="px-3 py-2 rounded flex-1">{courseDetail.prasyarat3?.nama || "-"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
@@ -176,7 +176,7 @@ const DetailCourse: React.FC = () => {
               </div>
               <div className="w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Jenis Mata Kuliah:</label>
-                <p className="px-3 py-2 rounded flex-1 md:ml-8">{courseDetail.opsiMataKuliah === null || courseDetail.opsiMataKuliah === undefined ? "" : courseDetail.opsiMataKuliah ? "Wajib" : "Pilihan"}</p>
+                <p className="px-3 py-2 rounded flex-1 md:ml-8">{courseDetail.opsiWajib ? "Wajib" : "Pilihan"}</p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />

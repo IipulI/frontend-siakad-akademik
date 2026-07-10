@@ -236,7 +236,7 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             <InputFilter
               select={false}
-              value={data.periodeAkademik}
+              value={data.periodeAkademik.nama}
               label="Periode Akademik"
             />
             <InputFilter
@@ -246,7 +246,7 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
             />
             <InputFilter
               select={false}
-              value={data.programStudi.namaProgramStudi}
+              value={data.mataKuliah.programStudi.nama}
               label="Program Studi"
             />
             <InputFilter
@@ -255,7 +255,7 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
               value={data.kapasitas}
             />
             <InputFilter
-              value={data.periodeAkademik}
+              value={data.mataKuliah.tahunKurikulum.tahun}
               select={false}
               label="Tahun Kurikulum"
             />
@@ -267,7 +267,7 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
             <InputFilter
               select={false}
               label="Mata Kuliah"
-              value={data.mataKuliah.namaMataKuliah}
+              value={data.mataKuliah.nama}
             />
             <InputFilter
               value={data.tanggalSelesai}
