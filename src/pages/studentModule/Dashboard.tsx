@@ -24,6 +24,9 @@ const Dashboard = () => {
   const [examType, setExamType] = useState<'UTS' | 'UAS'>('UTS');
   const [currentDate, setCurrentDate] = useState<string | undefined>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [weekDays, setWeekDays] = useState<{ date: Date; label: string }[]>([]);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
 
   // --- DATA FETCHING HOOKS ---
   const {
@@ -33,7 +36,9 @@ const Dashboard = () => {
   } = useJadwal({
     type: 'daily',
     namaPeriode: "2024 Genap", // This should be dynamic in a real app
-    hari: new Date().toLocaleDateString("id-ID", { weekday: 'long' }).toLowerCase()
+    hari: (weekDays[selectedDayIndex]?.date ?? new Date())
+        .toLocaleDateString("id-ID", { weekday: 'long' })
+        .toLowerCase()
   });
 
   const {
@@ -58,8 +63,26 @@ const Dashboard = () => {
     const options: Intl.DateTimeFormatOptions = {
       weekday: "long", day: "numeric", month: "long", year: "numeric",
     };
-    const today = new Date().toLocaleDateString("id-ID", options);
-    setCurrentDate(today);
+
+    const today = new Date();
+    const day = today.getDay(); // 0 = Sunday, 1 = Monday...
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diffToMonday);
+
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return { date: d, label: d.toLocaleDateString("id-ID", options) };
+    });
+
+    const todayIndex = days.findIndex(
+        (d) => d.date.toDateString() === today.toDateString()
+    );
+
+    setWeekDays(days);
+    setSelectedDayIndex(todayIndex >= 0 ? todayIndex : 0);
+    setCurrentDate(days[todayIndex >= 0 ? todayIndex : 0].label);
   }, []);
 
   const viewOptions = {
@@ -110,9 +133,38 @@ const Dashboard = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <CalendarDays color="#001b36" size={18} />
-                  <h1 className="font-semibold text-primary-blue">{currentDate}</h1>
+                <div className="relative">
+                  <div
+                      className="flex items-center space-x-2 cursor-pointer"
+                      onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+                  >
+                    <CalendarDays color="#001b36" size={18} />
+                    <h1 className="font-semibold text-primary-blue">{currentDate}</h1>
+                    <ChevronDown
+                        color="#001b36"
+                        size={16}
+                        className={`transition-transform ${isDateDropdownOpen ? "rotate-180" : ""}`}
+                    />
+                  </div>
+                  {isDateDropdownOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md border z-10">
+                        {weekDays.map((day, index) => (
+                            <div
+                                key={index}
+                                className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                                    index === selectedDayIndex ? "text-primary-blue font-semibold" : ""
+                                }`}
+                                onClick={() => {
+                                  setSelectedDayIndex(index);
+                                  setCurrentDate(day.label);
+                                  setIsDateDropdownOpen(false);
+                                }}
+                            >
+                              {day.label}
+                            </div>
+                        ))}
+                      </div>
+                  )}
                 </div>
               </div>
               <div className="space-y-4">
@@ -132,7 +184,7 @@ const Dashboard = () => {
                             classes={item.kelas}
                             meet={"-"}
                             absent={"-"}
-                            sks={"-"}
+                            sks={item.sks}
                           />
                         ))
                       ) : (

@@ -24,17 +24,19 @@ export default function History() {
   // Menggunakan hook lain untuk data biodata
   const { biodata, isLoading: isLoadingBiodata } = useStudentRetakeData();
 
+  console.log("krsHistoryData", krsHistoryData);
+
   // Menyiapkan data untuk tabel dari hasil hook
   const tableData = krsHistoryData?.krs.map((item, index) => ({
     no: index + 1,
-    kodeMk: item.kodeMataKuliah,
-    mataKuliah: item.namaMataKuliah,
-    kelas: item.kelas,
-    sks: item.sks,
-    hari: item.hari,
-    jam: item.jam,
-    ruangan: item.ruangan,
-    dosen: item.dosenPengajar,
+    kodeMk: item?.kelasKuliah?.mataKuliah?.kode,
+    mataKuliah: item?.kelasKuliah?.mataKuliah?.nama,
+    kelas: item?.kelasKuliah?.nama,
+    sks: item?.kelasKuliah?.mataKuliah?.totalSks,
+    hari: item?.kelasKuliah?.jadwalUtama?.hari,
+    jam: item?.kelasKuliah?.jadwalUtama?.jamMulai + " - " + item?.kelasKuliah?.jadwalUtama?.jamSelesai,
+    ruangan: item?.kelasKuliah?.jadwalUtama?.ruangan?.nama,
+    dosen: item?.kelasKuliah?.jadwalUtama?.dosen?.nama,
   })) || [];
 
   return (
@@ -54,7 +56,7 @@ export default function History() {
                 className="p-1 text-sm rounded-sm text-gray-500 w-70 border-2"
             >
               {periods.map((period) => (
-                  <option key={period.id} value={period.nama || period.namaPeriode}>
+                  <option key={period.id} value={period.id}>
                     {period.nama || period.namaPeriode}
                   </option>
               ))}

@@ -79,7 +79,7 @@ export const studentAcademicService = {
             const response = await Api.get<{ data: IApiKrsHistoryResponse }>(
                 '/mahasiswa/krs/riwayat-krs/',
                 {
-                    params: { namaPeriode: periode },
+                    params: { periodeId: periode },
                 }
             );
             // Mengembalikan keseluruhan objek data, termasuk totalSks dan batasSks

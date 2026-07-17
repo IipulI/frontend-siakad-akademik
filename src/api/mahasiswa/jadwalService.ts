@@ -44,7 +44,7 @@ const getJadwalHarian = async (params: {
 }): Promise<IApiResponseWithData<IJadwalKuliah[]>> => {
     try {
         const response = await Api.get<IApiResponseWithData<IJadwalKuliah[]>>(
-            "/mahasiswa/jadwal",
+            "/mahasiswa/jadwal-akademik/harian",
             { params }
         );
         return response.data;
