@@ -32,7 +32,11 @@ const DashboardLecturer = () => {
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
-      return { date: d, label: d.toLocaleDateString("id-ID", options) };
+      return {
+        date: d,
+        label: d.toLocaleDateString("id-ID", options),
+        dayName: d.toLocaleDateString("id-ID", { weekday: "long" }),
+      };
     });
 
     const todayIndex = days.findIndex(
@@ -42,6 +46,7 @@ const DashboardLecturer = () => {
     setWeekDays(days);
     setSelectedDayIndex(todayIndex >= 0 ? todayIndex : 0);
     setCurrentDate(days[todayIndex >= 0 ? todayIndex : 0].label);
+    setDay(days[todayIndex >= 0 ? todayIndex : 0].dayName);
   }, []);
   
 
@@ -51,6 +56,10 @@ const DashboardLecturer = () => {
   const { data: courseSchedule } = useScheduleList(statusAktif?.data.id)
 
   const todaySchedule = courseSchedule?.data && day ? courseSchedule.data[day] : [];
+
+  console.log("courseSchedule", courseSchedule)
+  console.log("today :", day)
+  console.log("todaySchedule", todaySchedule)
 
   return (
     <>
@@ -110,8 +119,9 @@ const DashboardLecturer = () => {
                       time={`${item.jamMulai} - ${item.jamSelesai}`}
                       lecturer={item.dosen}
                       room={item.ruangan}
-                      subject={item.namaMataKuliah}
+                      subject={item.mataKuliah}
                       classes={item.kelas}
+                      sks={item.sks}
                     />
                   ))}
                 </div>
