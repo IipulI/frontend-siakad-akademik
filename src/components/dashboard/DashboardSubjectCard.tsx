@@ -20,73 +20,46 @@ interface DashboardSubjectCardProps {
 }
 
 const DashboardSubjectCard = ({
-  time,
-  lecturer,
-  room,
-  meet,
-  absent,
-  sks,
-  subject,
-  classes,
-}: DashboardSubjectCardProps) => {
-  const datas = [
-    { time: time, lecturer: lecturer },
-    { room: room, meet: meet },
-    { absent: absent, sks: sks },
-  ];
+                                time,
+                                lecturer,
+                                room,
+                                meet,
+                                absent,
+                                sks,
+                                subject,
+                                classes,
+                              }: DashboardSubjectCardProps) => {
+
+  // Internal helper component to keep the layout consistent and code clean
+  const DataBlock = ({ icon: Icon, label, value }: { icon: any, label: string, value?: string }) => (
+      <div className="flex flex-col">
+        <div className="flex space-x-2 items-center font-medium text-gray-900">
+          <Icon size={18} color="#112233" />
+          <span>{label}</span>
+        </div>
+        {/* ml-[26px] perfectly aligns the text below the label (18px icon + 8px gap) */}
+        <span className="ml-[26px] mt-0.5 text-gray-700">
+        {value || "-"}
+      </span>
+      </div>
+  );
 
   return (
-    <div className="flex justify-between md:text-base text-sm">
-      <div className="w-full">
-        <div className="space-y-3 shadow-md border w-full rounded-xl p-4">
-          <h1 className="font-semibold text-primary-blue">
-            {subject + ` (` + classes + `)`}
-          </h1>
-          <div className="w-full space-y-6 text-[#222222] tracking-wide font-medium">
-            {datas.map((data, key) => (
-              <div className="whitespace-nowrap" key={key}>
-                {data.time && data.lecturer && (
-                  <div className="md:grid md:grid-cols-3 grid-cols-1">
-                    <div className="flex space-x-2 items-center">
-                      <Clock3 size={18} color="#112233" />
-                      <h1>{data.time}</h1>
-                    </div>
-                    <div className="flex space-x-2 items-center">
-                      <User size={18} color="#112233" />
-                      <h1>{data.lecturer}</h1>
-                    </div>
-                  </div>
-                )}
-                {data.room && data.meet && (
-                  <div className="md:grid md:grid-cols-3 grid-cols-1">
-                    <div className="flex space-x-2 items-center">
-                      <DoorOpen size={18} color="#112233" />
-                      <h1>{data.room}</h1>
-                    </div>
-                    <div className="flex space-x-2 items-center">
-                      <NotepadText size={18} color="#112233" />
-                      <h1>{data.meet}</h1>
-                    </div>
-                  </div>
-                )}
-                {data.absent && data.sks && (
-                  <div className="md:grid md:grid-cols-3 grid-cols-1">
-                    <div className="flex space-x-2 items-center">
-                      <CircleCheck size={18} color="#112233" />
-                      <h1>{data.absent}</h1>
-                    </div>
-                    <div className="flex space-x-2 items-center">
-                      <Bookmark size={18} color="#112233" />
-                      <h1>{data.sks}</h1>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+      <div className="space-y-6 shadow-sm border border-gray-200 w-full rounded-xl p-5 md:text-base text-sm bg-white">
+        <h1 className="font-bold text-lg text-gray-900">
+          {subject} ({classes})
+        </h1>
+
+        {/* 2-Column Grid Layout for Desktop, 1-Column for Mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-4">
+          <DataBlock icon={Clock3} label="Waktu" value={time} />
+          <DataBlock icon={User} label="Dosen Pengampu" value={lecturer} />
+          <DataBlock icon={DoorOpen} label="Ruang" value={room} />
+          {/*<DataBlock icon={NotepadText} label="Topik/Agenda" value={meet} />*/}
+          {/*<DataBlock icon={CircleCheck} label="Status" value={absent} />*/}
+          <DataBlock icon={Bookmark} label="SKS" value={sks} />
         </div>
       </div>
-    </div>
   );
 };
 

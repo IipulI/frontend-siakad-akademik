@@ -17,7 +17,7 @@ const getGrafikAkademik = async (): Promise<IApiResponseWithData<IGrafikAkademik
 const getInfoTagihan = async (): Promise<IApiResponseWithData<IInfoTagihan>> => {
     try {
         const response = await Api.get<IApiResponseWithData<IInfoTagihan>>(
-            "/mahasiswa/dashboard/info-tagihan"
+            "/mahasiswa/pembayaran/card"
         );
         return response.data;
     } catch (error) {

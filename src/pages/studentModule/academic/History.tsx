@@ -24,17 +24,19 @@ export default function History() {
   // Menggunakan hook lain untuk data biodata
   const { biodata, isLoading: isLoadingBiodata } = useStudentRetakeData();
 
+  console.log("krsHistoryData", krsHistoryData);
+
   // Menyiapkan data untuk tabel dari hasil hook
   const tableData = krsHistoryData?.krs?.map((item, index) => ({
     no: index + 1,
-    kodeMk: item.kodeMataKuliah,
-    mataKuliah: item.namaMataKuliah,
-    kelas: item.kelas,
-    sks: item.sks,
-    hari: item.hari,
-    jam: item.jam,
-    ruangan: item.ruangan,
-    dosen: item.dosenPengajar,
+    kodeMk: item?.kelasKuliah?.mataKuliah?.kode,
+    mataKuliah: item?.kelasKuliah?.mataKuliah?.nama,
+    kelas: item?.kelasKuliah?.nama,
+    sks: item?.kelasKuliah?.mataKuliah?.totalSks,
+    hari: item?.kelasKuliah?.jadwalUtama?.hari,
+    jam: item?.kelasKuliah?.jadwalUtama?.jamMulai + " - " + item?.kelasKuliah?.jadwalUtama?.jamSelesai,
+    ruangan: item?.kelasKuliah?.jadwalUtama?.ruangan?.nama,
+    dosen: item?.kelasKuliah?.jadwalUtama?.dosen?.nama,
   })) || [];
 
   return (
@@ -42,24 +44,24 @@ export default function History() {
       <div className="w-full bg-white min-h-screen py-2 rounded-sm border-t-4 border-primary-yellow">
         <Biodata biodata={biodata} isLoading={isLoadingBiodata} showLine={false} />
 
-        <div className="flex gap-4 my-4 p-3 border-2 items-center">
-          <label htmlFor="periode" className="font-semibold">
-            Periode Akademik
-          </label>
-          <select
-            id="periode"
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            disabled={isLoading}
-            className="p-1 text-sm rounded-sm text-gray-500 w-70 border-2"
-          >
-            {periods.map((period) => (
-              <option key={period.id} value={period.id}>
-                {period.nama || period.namaPeriode}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="flex gap-4 my-4 p-3 border-2 items-center">
+            <label htmlFor="periode" className="font-semibold">
+              Periode Akademik
+            </label>
+            <select
+                id="periode"
+                value={selectedPeriod}
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                disabled={isLoading}
+                className="p-1 text-sm rounded-sm text-gray-500 w-70 border-2"
+            >
+              {periods.map((period) => (
+                  <option key={period.id} value={period.id}>
+                    {period.nama || period.namaPeriode}
+                  </option>
+              ))}
+            </select>
+          </div>
 
         {/* Banner validasi. Untuk saat ini statis sesuai UI. Bisa dibuat dinamis jika API memberikan status validasi. */}
         <div className="w-full bg-[#D9F7DE] p-4">
