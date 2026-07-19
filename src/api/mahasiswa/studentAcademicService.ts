@@ -1,7 +1,8 @@
 // src/api/mahasiswa/studentAcademicService.ts
 import { Api } from '../Index';
 // Import the new interface that matches the API response
-import { IStudentBiodata,
+import {
+    IStudentBiodata,
     IApiRetakeCourse,
     IStudentGradeCourse,
     IApiKrsHistoryResponse,
