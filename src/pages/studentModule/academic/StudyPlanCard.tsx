@@ -444,36 +444,48 @@ const StudyPlanCardTable = ({
                             <button className="bg-primary-green w-8 cursor-pointer flex items-center justify-center"><Search color="white" size={18} /></button>
                             <button className="bg-primary-blueDark w-8 cursor-pointer rounded-r flex items-center justify-center"><RefreshCw color="white" size={20} /></button>
                         </div>
-                        <table className="min-w-full bg-white">
-                            <thead className="bg-gray-100 text-sm">
-                                <tr>
-                                    <th className="px-3 py-2 border border-primary-green"><input type="checkbox" onChange={toggleSelectAll} checked={isAllSelected} /></th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Semester</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Grade</th>
-                                </tr>
-                            </thead>
-                            <tbody className="font-semibold text-sm">
-                                {courses.map((course) => {
-                                    const isAlreadySaved = savedCourseIds.has(course.mataKuliah.id);
-                                    return (
-                                        <tr key={course.id} className={`transition ${isAlreadySaved ? 'bg-gray-200 text-gray-500' : 'text-center hover:bg-gray-50'}`}>
-                                            <td className="px-3 py-2 border border-primary-green"><input type="checkbox" checked={selectedCourses.includes(course.id)} onChange={() => handleCheckboxChange(course.id)} disabled={isAlreadySaved} /></td>
+                        <div className="w-full overflow-x-auto border border-primary-green rounded-md shadow-sm">
+                            <table className="min-w-[800px] lg:min-w-full bg-white">
+                                <thead className="bg-gray-100 text-sm">
+                                    <tr>
+                                        <th className="px-3 py-2 border border-primary-green"><input type="checkbox" onChange={toggleSelectAll} checked={isAllSelected} /></th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Kode Matkul</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Semester</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Grade</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Prasyarat</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="font-semibold text-sm">
+                                    {courses.map((course) => {
+                                        const isAlreadySaved = savedCourseIds.has(course.mataKuliah.id);
+                                        const prerequisites = [
+                                            course.mataKuliah.prasyarat1?.nama || course.mataKuliah.prasyarat1?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat2?.nama || course.mataKuliah.prasyarat2?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat3?.nama || course.mataKuliah.prasyarat3?.namaMataKuliah
+                                        ].filter(Boolean);
+                                        const prasyaratText = prerequisites.length > 0 ? prerequisites.join(", ") : "-";
 
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
-                                            <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.semester}</td>
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.previousGrade}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                                        return (
+                                            <tr key={course.id} className={`transition ${isAlreadySaved ? 'bg-gray-200 text-gray-500' : 'text-center hover:bg-gray-50'}`}>
+                                                <td className="px-3 py-2 border border-primary-green"><input type="checkbox" checked={selectedCourses.includes(course.id)} onChange={() => handleCheckboxChange(course.id)} disabled={isAlreadySaved} /></td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.kode}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.semester ?? '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.previousGrade || '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{prasyaratText}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                         <div className="flex justify-between items-center mt-4">
                             {(krsInfo.statusKrs === "Belum Mengisi") && (
                                 <button
@@ -505,65 +517,84 @@ const StudyPlanCardTable = ({
                 )}
 
                 {activeButton === "krsTersimpan" && (
-                    <table className="min-w-full bg-white mt-4">
-                        <thead className="bg-gray-100 text-sm">
-                            <tr>
-                                <th className="px-3 py-2 border border-primary-green"><input type="checkbox" /></th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="font-semibold text-sm">
-                            {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
-                                savedCoursesData.krs.map((course) => (
-                                    <tr key={course.id} className="text-center hover:bg-gray-50 transition">
-                                        <td className="px-3 py-2 border border-primary-green"><input type="checkbox" /></td>
-                                        <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
-                                        <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
-                                        <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.totalSks}</td>
-                                        <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
-                                        <td className="px-4 py-2 border border-primary-green flex justify-center">
-                                            <button
-                                                onClick={() => {
-                                                    Swal.fire({
-                                                        title: "Apakah Anda yakin?",
-                                                        text: `Mata kuliah ${course.mataKuliah.nama} (${course.nama}) akan dihapus dari KRS Tersimpan.`,
-                                                        icon: "warning",
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: "#ff4d4f",
-                                                        cancelButtonColor: "#4b6bfb",
-                                                        confirmButtonText: "Ya, Hapus!",
-                                                        cancelButtonText: "Batal"
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            deleteCourse(course.id);
-                                                        }
-                                                    });
-                                                }}
-                                                className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white font-semibold p-2 rounded-md shadow-md cursor-pointer transition"
-                                            >
-                                                <Trash className="w-5 h-5" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (<tr><td colSpan={6} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
-                        </tbody>
-                        <tfoot className="text-sm font-bold bg-white border">
-                            <tr>
-                                <td colSpan={3} className="px-4 py-2 text-left font-bold">Total SKS Tersimpan:</td>
-                                <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
-                                <td colSpan={2} className="px-4 py-2 text-right">
-                                    <button onClick={handleSubmitKrs} disabled={isSubmittingKrs} className="flex items-center gap-2 bg-primary-green hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md shadow-md ml-auto disabled:opacity-50">
-                                        <Check className="w-5 h-5" />{isSubmittingKrs ? 'Mengajukan...' : 'Ajukan KRS'}
-                                    </button>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div className="w-full overflow-x-auto border border-primary-green rounded-md shadow-sm mt-4">
+                        <table className="min-w-[800px] lg:min-w-full bg-white">
+                            <thead className="bg-gray-100 text-sm">
+                                <tr>
+                                    <th className="px-3 py-2 border border-primary-green"><input type="checkbox" /></th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Kode Matkul</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Semester</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Grade</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Prasyarat</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody className="font-semibold text-sm">
+                                {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
+                                    savedCoursesData.krs.map((course) => {
+                                        const prerequisites = [
+                                            course.mataKuliah.prasyarat1?.nama || course.mataKuliah.prasyarat1?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat2?.nama || course.mataKuliah.prasyarat2?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat3?.nama || course.mataKuliah.prasyarat3?.namaMataKuliah
+                                        ].filter(Boolean);
+                                        const prasyaratText = prerequisites.length > 0 ? prerequisites.join(", ") : "-";
+
+                                        return (
+                                            <tr key={course.id} className="text-center hover:bg-gray-50 transition">
+                                                <td className="px-3 py-2 border border-primary-green"><input type="checkbox" /></td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.kode}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.semester ?? '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.previousGrade || '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{prasyaratText}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green flex justify-center">
+                                                    <button
+                                                        onClick={() => {
+                                                            Swal.fire({
+                                                                title: "Apakah Anda yakin?",
+                                                                text: `Mata kuliah ${course.mataKuliah.nama} (${course.nama}) akan dihapus dari KRS Tersimpan.`,
+                                                                icon: "warning",
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: "#ff4d4f",
+                                                                cancelButtonColor: "#4b6bfb",
+                                                                confirmButtonText: "Ya, Hapus!",
+                                                                cancelButtonText: "Batal"
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    deleteCourse(course.id);
+                                                                }
+                                                            });
+                                                        }}
+                                                        className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white font-semibold p-2 rounded-md shadow-md cursor-pointer transition"
+                                                    >
+                                                        <Trash className="w-5 h-5" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (<tr><td colSpan={10} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
+                            </tbody>
+                            <tfoot className="text-sm font-bold bg-white border">
+                                <tr>
+                                    <td colSpan={4} className="px-4 py-2 text-left font-bold">Total SKS Tersimpan:</td>
+                                    <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
+                                    <td colSpan={5} className="px-4 py-2 text-right">
+                                        <button onClick={handleSubmitKrs} disabled={isSubmittingKrs} className="flex items-center gap-2 bg-primary-green hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md shadow-md ml-auto disabled:opacity-50">
+                                            <Check className="w-5 h-5" />{isSubmittingKrs ? 'Mengajukan...' : 'Ajukan KRS'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 )}
             </div>
         );
@@ -577,46 +608,61 @@ const StudyPlanCardTable = ({
                         KRS Disetujui/Diajukan
                     </button>
                 </div>
-                <table className="min-w-full bg-white">
-                    <thead className="bg-gray-100 text-sm">
-                        <tr>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">Dosen Pengajar</th>
-                        </tr>
-                    </thead>
-                    <tbody className="font-semibold text-sm">
-                        {/*{savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (*/}
-                        {/*    savedCoursesData.krs.map((course) => (*/}
-                        {/*        <tr key={course.id} className="text-center hover:bg-gray-50 transition">*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.namaMataKuliah} ({course.namaKelas})</td>*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.hari ? `${course.hari}, ${course.jamMulai} - ${course.jamSelesai}` : '-'}</td>*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.sksTatapMuka + course.mataKuliah.sksPraktikum}</td>*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.dosenPengajar}</td>*/}
-                        {/*        </tr>*/}
-                        {/*    ))*/}
-                        {/*) : ( <tr><td colSpan={4} className="text-center p-4">Tidak ada data KRS yang tersimpan.</td></tr> )}*/}
+                <div className="w-full overflow-x-auto border border-primary-green rounded-md shadow-sm">
+                    <table className="min-w-[800px] lg:min-w-full bg-white">
+                        <thead className="bg-gray-100 text-sm">
+                            <tr>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Kode Matkul</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Prasyarat</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Dosen Pengajar</th>
+                            </tr>
+                        </thead>
+                        <tbody className="font-semibold text-sm">
+                            {/*{savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (*/}
+                            {/*    savedCoursesData.krs.map((course) => (*/}
+                            {/*        <tr key={course.id} className="text-center hover:bg-gray-50 transition">*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.namaMataKuliah} ({course.namaKelas})</td>*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.hari ? `${course.hari}, ${course.jamMulai} - ${course.jamSelesai}` : '-'}</td>*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.sksTatapMuka + course.mataKuliah.sksPraktikum}</td>*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.dosenPengajar}</td>*/}
+                            {/*        </tr>*/}
+                            {/*    ))*/}
+                            {/*) : ( <tr><td colSpan={4} className="text-center p-4">Tidak ada data KRS yang tersimpan.</td></tr> )}*/}
 
-                        {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
-                            savedCoursesData.krs.map((course) => (
-                                <tr key={course.id} className="text-center hover:bg-gray-50 transition">
-                                    <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
-                                    <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
-                                    <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.totalSks}</td>
-                                    <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
-                                </tr>
-                            ))
-                        ) : (<tr><td colSpan={6} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
-                    </tbody>
-                    <tfoot className="text-sm font-bold bg-white border">
-                        <tr>
-                            <td colSpan={2} className="px-4 py-2 text-left font-bold">Total SKS Diajukan:</td>
-                            <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                            {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
+                                savedCoursesData.krs.map((course) => {
+                                    const prerequisites = [
+                                        course.mataKuliah.prasyarat1?.nama || course.mataKuliah.prasyarat1?.namaMataKuliah,
+                                        course.mataKuliah.prasyarat2?.nama || course.mataKuliah.prasyarat2?.namaMataKuliah,
+                                        course.mataKuliah.prasyarat3?.nama || course.mataKuliah.prasyarat3?.namaMataKuliah
+                                    ].filter(Boolean);
+                                    const prasyaratText = prerequisites.length > 0 ? prerequisites.join(", ") : "-";
+
+                                    return (
+                                        <tr key={course.id} className="text-center hover:bg-gray-50 transition">
+                                            <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.kode}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{prasyaratText}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
+                                            <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.totalSks}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (<tr><td colSpan={6} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
+                        </tbody>
+                        <tfoot className="text-sm font-bold bg-white border">
+                            <tr>
+                                <td colSpan={4} className="px-4 py-2 text-left font-bold">Total SKS Diajukan:</td>
+                                <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         );
     };
