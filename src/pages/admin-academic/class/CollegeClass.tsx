@@ -284,33 +284,33 @@ const CollegeClassTable = ({ data }) => {
                   />
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.periodeAkademik}
+                  {student.periodeAkademik.nama}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.mataKuliah.kodeMataKuliah}
+                  {student.mataKuliah.kode}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                  {student.mataKuliah.namaMataKuliah}
+                  {student.mataKuliah.nama}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                  {`${student.programStudi.jenjang.jenjang} - ${student.programStudi.namaProgramStudi}`}
+                  {`${student.mataKuliah.programStudi.jenjang.jenjang} - ${student.mataKuliah.programStudi.nama}`}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
                   {student.nama}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {student.dosen.map((dosen, i) => (
-                    <span key={i} className="block">
-                      {dosen}
-                    </span>
-                  ))}
+                  {/*{student.dosen.map((dosen, i) => (*/}
+                  {/*  <span key={i} className="block">*/}
+                  {/*    {dosen}*/}
+                  {/*  </span>*/}
+                  {/*))}*/}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {student.jadwalMingguan.map((jadwal, i) => (
-                    <span key={i} className="block">
-                      {jadwal}
-                    </span>
-                  ))}
+                  {/*{student.jadwalMingguan.map((jadwal, i) => (*/}
+                  {/*  <span key={i} className="block">*/}
+                  {/*    {jadwal}*/}
+                  {/*  </span>*/}
+                  {/*))}*/}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
                   {student.kapasitas}
