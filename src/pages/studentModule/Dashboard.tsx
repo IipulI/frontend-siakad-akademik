@@ -163,7 +163,6 @@ const Dashboard = () => {
                 status="info"
               />
             </div>
-
             <div>
               {dummyTagihanData.sisaTagihan > 0 ? (
                 <DashboardBillCard
