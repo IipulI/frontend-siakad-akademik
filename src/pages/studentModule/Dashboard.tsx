@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
-import { CalendarDays, ChevronDown } from "lucide-react";
-import { getPlainTextSummary } from "../../utils/textUtils";
-import { usePengumumanMahasiswa } from "../../hooks/usePengumuman";
+import { CalendarDays, ChevronDown, TriangleAlert } from "lucide-react";
+import { getPlainTextSummary } from "../../utils/textUtils"; // 1. Import the new helper function
 
 // --- Child Components ---
 import DashboardSubjectCard from "../../components/dashboard/DashboardSubjectCard";
@@ -10,10 +9,19 @@ import DashboardBillCard from "../../components/dashboard/DashboardBillCard";
 import DashboardCardAcademic from "../../components/dashboard/DashboardCardAcademic";
 import DashboardAnnouncementCard from "../../components/dashboard/DashboardAnnouncementCard";
 import IPSChart from "../../components/chart/IPSChart";
+import ExamToggleButton from "../../components/ExamToggleButton";
+import ExamScheduleCard from "../../components/ExamScheduleCard";
+
+// --- Custom Hooks for Data Fetching ---
+import { useJadwal } from "../../hooks/mahasiswa/useJadwal";
+import { useGrafikAkademik } from "../../hooks/mahasiswa/useGrafikAkademik";
+import { useInfoTagihan } from "../../hooks/mahasiswa/useInfoTagihan";
+import { usePengumumanMahasiswa } from "../../hooks/usePengumuman";
 
 const Dashboard = () => {
   // --- LOCAL UI STATE ---
   const [activeView, setActiveView] = useState<'kuliah' | 'ujian'>('kuliah');
+  const [examType, setExamType] = useState<'UTS' | 'UAS'>('UTS');
   const [currentDate, setCurrentDate] = useState<string | undefined>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [weekDays, setWeekDays] = useState<{ date: Date; label: string }[]>([]);
@@ -50,41 +58,6 @@ const Dashboard = () => {
     size: 5,
     sort: 'createdAt,desc'
   });
-
-  // --- DUMMY DATA ---
-  const dummyJadwalKuliah = [
-    {
-      jamMulai: "08:00",
-      jamSelesai: "09:40",
-      dosen: "Dr. Ir. Budi Raharjo",
-      ruangan: "Lab Komputer 1",
-      namaMataKuliah: "Pemrograman Berorientasi Objek",
-      kelas: "TIF221 - Reguler A",
-    },
-    {
-      jamMulai: "10:00",
-      jamSelesai: "11:40",
-      dosen: "Fety Fatimah, S.Kom., M.Kom.",
-      ruangan: "Ruang A3",
-      namaMataKuliah: "Jaringan Komputer + Praktikum",
-      kelas: "TIF211 - Reguler A",
-    }
-  ];
-
-  const dummyGrafikData = {
-    ips: [3.20, 3.40, 3.10, 3.50, 3.70],
-    ipk: "3.45",
-    mataKuliahKumulatif: 24,
-    sksKumulatif: 78,
-  };
-
-  const dummyTagihanData = {
-    totalTagihan: 5600000,
-    totalLunas: 3200000,
-    sisaTagihan: 2400000,
-    tanggalTenggat: "25 Juli 2026",
-  };
-
 
   useEffect(() => {
     const options: Intl.DateTimeFormatOptions = {
@@ -229,76 +202,88 @@ const Dashboard = () => {
             </div>
 
             <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
-            <div className="w-full flex flex-col sm:flex-row gap-4">
-              <DashboardBillCard
-                title={"Total Tagihan"}
-                price={dummyTagihanData.totalTagihan}
-                status="info"
-              />
-              <DashboardBillCard
-                title={"Total Lunas"}
-                price={dummyTagihanData.totalLunas}
-                status="info"
-              />
-            </div>
+            {isLoadingTagihan && <div>Loading financial status...</div>}
+            {isErrorTagihan && <div style={{ color: 'red' }}>Failed to load financial status.</div>}
+            {tagihanData && (
+              <>
+                <div className="w-full flex flex-col sm:flex-row gap-4">
+                  <DashboardBillCard
+                    title={"Total Tagihan"}
+                    price={tagihanData.totalTagihan}
+                    status="info"
+                  />
+                  <DashboardBillCard
+                    title={"Total Lunas"}
+                    price={tagihanData.totalLunas}
+                    status="info"
+                  />
+                </div>
 
-            <div>
-              {dummyTagihanData.sisaTagihan > 0 ? (
-                <DashboardBillCard
-                  title={"Sisa Tagihan"}
-                  price={dummyTagihanData.sisaTagihan}
-                  status="payable"
-                  date={dummyTagihanData.tanggalTenggat}
-                />
-              ) : (
-                <DashboardBillCard
-                  title={"Status Tagihan"}
-                  price={0}
-                  status="paid"
-                />
-              )}
-            </div>
+                <div>
+                  {tagihanData.sisaTagihan > 0 ? (
+                    <DashboardBillCard
+                      title={"Sisa Tagihan"}
+                      price={tagihanData.sisaTagihan}
+                      status="payable" // Kirim status 'payable'
+                      date={tagihanData.tanggalTenggat}
+                    />
+                  ) : (
+                    <DashboardBillCard
+                      title={"Status Tagihan"}
+                      price={0}
+                      status="paid" // Kirim status 'paid'
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* --- RIGHT COLUMN (SIDEBAR) --- */}
           <div className="md:col-span-2 space-y-4">
-            <div>
-              <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
-            </div>
-            <IPSChart ipsData={dummyGrafikData.ips} />
-            <div className="space-y-4">
-              <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
-              <div className="grid grid-cols-2 gap-4">
-                <DashboardCardAcademic title={"IPK"} number={dummyGrafikData.ipk} color={"text-red-700"} />
-                <DashboardCardAcademic
-                  title={"IPS"}
-                  number={dummyGrafikData.ips[dummyGrafikData.ips.length - 1] || 0}
-                  color=""
-                />
-                <DashboardCardAcademic title={"Jumlah MK Komulatif"} number={dummyGrafikData.mataKuliahKumulatif} color="" />
-                <DashboardCardAcademic title={"Jumlah SKS Komulatif"} number={dummyGrafikData.sksKumulatif} color="" />
-              </div>
-            </div>
+            {isLoadingGrafik && <div>Loading academic data...</div>}
+            {isErrorGrafik && <div style={{ color: 'red' }}>Failed to load academic data.</div>}
+            {grafikData && (
+              <>
+                <div>
+                  <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
+                </div>
+                <IPSChart ipsData={grafikData.ips} />
+                <div className="space-y-4">
+                  <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
+                  <div className="grid grid-cols-2 gap-4">
+                    <DashboardCardAcademic title={"IPK"} number={grafikData.ipk} color={"text-red-700"} />
+                    <DashboardCardAcademic
+                      title={"IPS"}
+                      number={grafikData.ips[grafikData.ips.length - 1] || 0}
+                      color=""
+                    />
+                    <DashboardCardAcademic title={"Jumlah MK Komulatif"} number={grafikData.mataKuliahKumulatif} color="" />
+                    <DashboardCardAcademic title={"Jumlah SKS Komulatif"} number={grafikData.sksKumulatif} color="" />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="space-y-4">
               <h1 className="font-semibold md:p-0 p-2">Pengumuman</h1>
               <div className="p-8 bg-white shadow-md rounded-md space-y-6">
-                {isLoadingPengumuman && <div className="text-gray-500">Memuat pengumuman...</div>}
-                {isErrorPengumuman && <div className="text-red-500">Gagal memuat pengumuman.</div>}
-                {!isLoadingPengumuman && !isErrorPengumuman && (
-                  pengumumanResponse?.data && pengumumanResponse.data.length > 0 ? (
-                    pengumumanResponse.data.map((item) => (
-                      <DashboardAnnouncementCard
-                        key={item.id}
-                        title={item.judul}
-                        description={getPlainTextSummary(item.isi, 100)}
-                        date={""}
-                      />
-                    ))
-                  ) : (
-                    <p className="text-gray-500 italic">Tidak ada pengumuman.</p>
-                  )
-                )}
+                {/* 3. Add loading and error handling */}
+                {isLoadingPengumuman && <div>Loading announcements...</div>}
+                {isErrorPengumuman && <div style={{ color: 'red' }}>Failed to load announcements.</div>}
+
+                {/* 4. Map over the fetched data */}
+                {pengumumanResponse?.data.map((item) => (
+                  <DashboardAnnouncementCard
+                    key={item.id}
+                    title={item.judul}
+                    description={getPlainTextSummary(item.isi, 100)} // Truncate to 100 characters
+                    // Note: The API does not provide a date for each announcement.
+                    // You may need to adjust the DashboardAnnouncementCard component
+                    // or request this field from the backend.
+                    date={""}
+                  />
+                ))}
               </div>
             </div>
           </div>
