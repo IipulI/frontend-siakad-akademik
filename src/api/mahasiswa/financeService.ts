@@ -1,6 +1,6 @@
 import { Api } from "../Index";
 import { IApiResponseWithData } from "../../types/common.types";
-import { ITagihan, ITagihanDetail } from "../../types/mahasiswa.types";
+import { IPaymentNotifyPayload, ITagihan, ITagihanDetail } from "../../types/mahasiswa.types";
 
 // --- Interface untuk parameter filter ---
 interface HistoriParams {
@@ -15,7 +15,7 @@ interface HistoriParams {
 const getTagihanAktif = async (): Promise<IApiResponseWithData<ITagihan[]>> => {
     try {
         const response = await Api.get<IApiResponseWithData<ITagihan[]>>(
-            "/mahasiswa/keuangan/tagihan-aktif"
+            "/mahasiswa/pembayaran/tagihan-aktif"
         );
         return response.data;
     } catch (error) {
@@ -61,8 +61,23 @@ const getDetailTagihan = async (
     }
 };
 
+const notifyPaymentStep3 = async (payload: IPaymentNotifyPayload): Promise<any> => {
+    try {
+        // Ganti URL endpoint sesuai dengan API backend Anda
+        const response = await Api.post(
+            "/mahasiswa/pembayaran/notify-step-3",
+            payload
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error notifying payment step 3:", error);
+        throw error;
+    }
+};
+
 export const financeService = {
     getTagihanAktif,
     getHistoriTagihan,
     getDetailTagihan,
+    notifyPaymentStep3,
 };

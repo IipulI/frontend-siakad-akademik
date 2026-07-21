@@ -16,7 +16,7 @@ export const useKrsHistoryData = () => {
     // Otomatis pilih periode pertama saat daftar sudah termuat
     useEffect(() => {
         if (periods && periods.length > 0 && !selectedPeriod) {
-            setSelectedPeriod(String(periods[0].id));
+            setSelectedPeriod(periods[0].id || '');
         }
     }, [periods, selectedPeriod]);
 
