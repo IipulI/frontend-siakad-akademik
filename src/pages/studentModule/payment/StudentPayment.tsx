@@ -20,33 +20,9 @@ export default function StudentPayment() {
   const [metodePembayaran, setMetodePembayaran] = useState('');
   const [batasWaktu, setBatasWaktu] = useState<Date | null>(null);
 
-  // Menggunakan data dummy yang sinkron dengan dashboard (sisa tagihan = 2.400.000)
-  const tagihanAktif: ITagihan[] = [
-    {
-      kodeInvoice: "INV-2026-001",
-      metodeBayar: null,
-      namaPeriode: "2024 Genap",
-      tanggalTenggat: "2026-07-25",
-      tanggalBayar: null,
-      kodeKomponen: "SPP",
-      namaTagihan: "Sumbangan Pembinaan Pendidikan (SPP)",
-      nominalTagihan: 1500000,
-      lunas: "belum lunas",
-    },
-    {
-      kodeInvoice: "INV-2026-002",
-      metodeBayar: null,
-      namaPeriode: "2024 Genap",
-      tanggalTenggat: "2026-07-25",
-      tanggalBayar: null,
-      kodeKomponen: "UTS",
-      namaTagihan: "Biaya Ujian Tengah Semester (UTS)",
-      nominalTagihan: 900000,
-      lunas: "belum lunas",
-    }
-  ];
-  const isLoading = false;
-  const isError = false;
+  // Fetch langsung dari API backend — [] jika KRS belum disetujui
+  const { data: fetchedTagihan, isLoading, isError } = useTagihanAktif();
+  const tagihanAktif: ITagihan[] = fetchedTagihan ?? [];
 
   const { mutate: notifyStep3 } = useNotifyPaymentStep3();
 

@@ -16,8 +16,8 @@ const navItems = [
     {
         id: "2",
         name: "Bimbingan Akademik",
-        dropdownKey: "bimbingan",
-        hasDropdown: true,
+        path: String(LecturerRoute.guidance.advisor),
+        hasDropdown: false,
     },
     {
         id: "3",
@@ -35,41 +35,41 @@ const navItems = [
 
 
 const dropdownMenus = {
-    bimbingan: {
-        title: "KONSULTASI",
-        items: [
-            {
-                icon: "icon_timetable.png",
-                title: "Pembimbing Akademik",
-                description: "Daftar Mahasiswa Bimbingan",
-                to: String(LecturerRoute.guidance.advisor),
-            },
-            {
-                icon: "icon_annon.png",
-                title: "Konsultasi",
-                description: "Konsultasi dengan Mahasiswa",
-                to: String(LecturerRoute.guidance.consultation),
-            },
-            {
-                icon: "icon_week.png",
-                title: "Proposal Tugas Akhir",
-                description: "Pengajuan Tugas Akhir Mahasiswa",
-                to: String(LecturerRoute.guidance.proposal),
-            },
-            {
-                icon: "icon_calendar.png",
-                title: "Daftar Tugas Akhir",
-                description: "Progres Tugas Akhir Mahasiswa",
-                to: String(LecturerRoute.guidance.finalProject),
-            },
-            {
-                icon: "icon_timetable.png",
-                title: "Kegiatan Pendukung",
-                description: "Monitoring Kegiatan Mahasiswa",
-                to: String(LecturerRoute.guidance.supporter),
-            },
-        ],
-    },
+    // bimbingan: {
+    //     title: "KONSULTASI",
+    //     items: [
+    //         {
+    //             icon: "icon_timetable.png",
+    //             title: "Pembimbing Akademik",
+    //             description: "Daftar Mahasiswa Bimbingan",
+    //             to: String(LecturerRoute.guidance.advisor),
+    //         },
+    //         {
+    //             icon: "icon_annon.png",
+    //             title: "Konsultasi",
+    //             description: "Konsultasi dengan Mahasiswa",
+    //             to: String(LecturerRoute.guidance.consultation),
+    //         },
+    //         {
+    //             icon: "icon_week.png",
+    //             title: "Proposal Tugas Akhir",
+    //             description: "Pengajuan Tugas Akhir Mahasiswa",
+    //             to: String(LecturerRoute.guidance.proposal),
+    //         },
+    //         {
+    //             icon: "icon_calendar.png",
+    //             title: "Daftar Tugas Akhir",
+    //             description: "Progres Tugas Akhir Mahasiswa",
+    //             to: String(LecturerRoute.guidance.finalProject),
+    //         },
+    //         {
+    //             icon: "icon_timetable.png",
+    //             title: "Kegiatan Pendukung",
+    //             description: "Monitoring Kegiatan Mahasiswa",
+    //             to: String(LecturerRoute.guidance.supporter),
+    //         },
+    //     ],
+    // },
     perkuliahan: {
         title: "PERKULIAHAN",
         items: [
