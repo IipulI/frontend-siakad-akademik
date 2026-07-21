@@ -67,6 +67,7 @@ export default function FormDomicili({
         "https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json"
       );
       const data = await response.json();
+      console.log('provinsi :', data)
       setProvinces(data);
     } catch (error) {
       console.error("Error fetching provinces:", error);
@@ -283,6 +284,8 @@ export default function FormDomicili({
             <SelectInput
               label="Provinsi"
               options={provinceOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
               value={formData?.provinsiKtp}
               onChange={handleKtpProvinceChange}
             />

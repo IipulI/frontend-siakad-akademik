@@ -760,12 +760,12 @@ export const TableCourseManagement: React.FC<TableProps> = ({
             data.map((row) => {
               const {
                 id,
-                kurikulum,
+                tahunKurikulum,
                 kode,
-                mataKuliah,
-                sks,
-                jenisMK,
-                prodiPengampu,
+                nama,
+                totalSks,
+                jenis,
+                programStudi,
               } = row;
               const isChecked = selectedIds?.includes(id) ?? false;
 
@@ -780,25 +780,25 @@ export const TableCourseManagement: React.FC<TableProps> = ({
                     />
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    {kurikulum}
+                    {tahunKurikulum.tahun}
                   </td>
                   <td className="p-2 border text-sm border-black/50">{kode}</td>
                   <td className="p-2 border text-sm border-black/50">
-                    {mataKuliah}
+                    {nama}
                   </td>
-                  <td className="p-2 border text-sm border-black/50">{sks}</td>
+                  <td className="p-2 border text-sm border-black/50">{totalSks}</td>
                   <td className="p-2 border text-sm border-black/50">
-                    {jenisMK}
+                    {jenis}
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    {prodiPengampu}
+                    {programStudi.nama}
                   </td>
                   <td className="p-2 border text-sm border-black/50 text-center">
                     <div className="flex justify-center gap-2">
                       <div
                         onClick={() =>
                           navigate(
-                            AdminAcademicRoute.courseManagement.detailCourse
+                            `${AdminAcademicRoute.courseManagement.detailCourse}/${id}`
                           )
                         }
                         className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8"

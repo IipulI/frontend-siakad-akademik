@@ -10,7 +10,7 @@ export default function getAcademicPeriods() {
   return useQuery({
     queryKey: ["academicPeriods"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/periode-akademik/dropdown");
+      const response = await Api.get("/akademik/periode-akademik");
       return response.data.data;
     },
   });
