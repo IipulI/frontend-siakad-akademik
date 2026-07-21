@@ -126,7 +126,7 @@ export default function TableClass ({
                     />
                   </td> */}
                   <td className="p-2 border text-center text-sm border-black/50">
-                    {row.mataKuliah.tahunKurikulum}
+                    {row.mataKuliah.tahunKurikulum?.tahun}
                   </td>
                   <td className="p-2 border text-center text-sm border-black/50">
                     {row.mataKuliah.kodeMataKuliah}
