@@ -31,6 +31,8 @@ const navItems = [
 ];
 
 // Define menu data
+// Items yang memiliki `children` akan menampilkan sub-menu level 2
+// Untuk item dengan children, `to` bersifat opsional (tidak perlu diisi)
 const dropdownMenus = {
   mahasiswa: {
     title: "MAHASISWA",
@@ -71,16 +73,56 @@ const dropdownMenus = {
         to: String(AdminAcademicRoute.prodiCurriculum),
       },
       {
+        // Item dengan sub-menu level 2
         icon: "icon_annon.png",
         title: "Manajemen OBE",
         description: "Managemen OBE",
-        to: String(AdminAcademicRoute.obeManagement.obeManagement),
+        children: [
+          {
+            icon: "icon_annon.png",
+            title: "Manajemen OBE",
+            description: "Halaman Utama OBE",
+            to: String(AdminAcademicRoute.obeManagement.obeManagement),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Profil Lulusan",
+            description: "Data Profil Lulusan",
+            to: String(AdminAcademicRoute.obeManagement.graduateProfile),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "CPL",
+            description: "Capaian Pembelajaran Lulusan",
+            to: String(AdminAcademicRoute.obeManagement.cpl),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "CPMK",
+            description: "Capaian Pembelajaran Mata Kuliah",
+            to: String(AdminAcademicRoute.obeManagement.cpmk),
+          },
+        ],
       },
       {
+        // Item dengan sub-menu level 2
         icon: "icon_calendar.png",
         title: "Manajemen RPS",
         description: "Manajemen RPS",
-        to: String(AdminAcademicRoute.rpsManagement.rpsManagement),
+        children: [
+          {
+            icon: "icon_calendar.png",
+            title: "Daftar RPS",
+            description: "Lihat Semua RPS",
+            to: String(AdminAcademicRoute.rpsManagement.rpsManagement),
+          },
+          {
+            icon: "icon_calendar.png",
+            title: "Tambah RPS",
+            description: "Buat RPS Baru",
+            to: String(AdminAcademicRoute.rpsManagement.addRps),
+          },
+        ],
       },
     ],
   },
@@ -90,37 +132,37 @@ const dropdownMenus = {
       {
         icon: "icon_annon.png",
         title: "Tahun Ajaran",
-        description: "lorem ipsum dolor sit amet",
+        description: "Manajemen Tahun Ajaran",
         to: "/admin-akademik/tahun-ajaran",
       },
       {
         icon: "icon_annon.png",
         title: "Periode Akademik",
-        description: "lorem ipsum dolor sit amet",
+        description: "Manajemen Periode Akademik",
         to: "/admin-akademik/periode-akademik",
       },
       {
         icon: "icon_annon.png",
         title: "Jenjang Pendidikan",
-        description: "lorem ipsum dolor sit amet",
+        description: "Manajemen Jenjang Pendidikan",
         to: "/admin-akademik/jenjang-pendidikan",
       },
       {
         icon: "icon_annon.png",
         title: "Batas SKS",
-        description: "lorem ipsum dolor sit amet",
+        description: "Pengaturan Batas SKS",
         to: "/admin-akademik/batas-sks",
       },
       {
         icon: "icon_calendar.png",
         title: "Skala Penilaian",
-        description: "lorem ipsum dolor sit amet",
+        description: "Pengaturan Skala Penilaian",
         to: "/admin-akademik/skala-penilaian",
       },
       {
         icon: "icon_calendar.png",
         title: "Komposisi Nilai",
-        description: "lorem ipsum dolor sit amet",
+        description: "Pengaturan Komposisi Nilai",
         to: "/admin-akademik/komposisi-nilai",
       },
     ],
