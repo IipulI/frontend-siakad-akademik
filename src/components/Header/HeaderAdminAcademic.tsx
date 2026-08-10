@@ -10,77 +10,227 @@ const navItems = [
   {
     id: "1",
     name: "Beranda",
-    path: "/admin-akademik/dashboard",
+    path: String(AdminAcademicRoute.dashboardAdminAcademic),
     hasDropdown: false,
   },
-  { id: "2", name: "Mahasiswa", dropdownKey: "mahasiswa", hasDropdown: true },
-  { id: "3", name: "Akademik", dropdownKey: "akademik", hasDropdown: true },
-  {
-    id: "4",
-    name: "Kelas kuliah",
-    path: String(AdminAcademicRoute.collegeClass.class),
-    hasDropdown: false,
-  },
-  {
-    id: "5",
-    name: "Pengumuman",
-    path: "/admin-akademik/pengumuman",
-    hasDropdown: false,
-  },
-  { id: "6", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
+  { id: "2", name: "Portal", dropdownKey: "portal", hasDropdown: true },
+  { id: "3", name: "Perkuliahan", dropdownKey: "perkuliahan", hasDropdown: true },
+  { id: "4", name: "Data Pelengkap", dropdownKey: "dataPelengkap", hasDropdown: true },
+  { id: "5", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
+  // Menu berisi item lama yang belum masuk ke struktur menu baru
+  { id: "6", name: "Lainnya", dropdownKey: "lainnya", hasDropdown: true },
 ];
 
 // Define menu data
+// Items yang memiliki `children` akan menampilkan sub-menu level 2
+// Untuk item dengan children, `to` bersifat opsional (tidak perlu diisi)
 const dropdownMenus = {
-  mahasiswa: {
-    title: "MAHASISWA",
+  portal: {
+    title: "PORTAL",
     items: [
       {
-        icon: "icon_annon.png",
-        title: "Data Mahasiswa",
+        title: "Mahasiswa",
         description: "Manajemen Data Mahasiswa",
         to: String(AdminAcademicRoute.student.studentData),
       },
       {
-        icon: "icon_calendar.png",
-        title: "Pembimbing Akademik",
-        description: "Set Pembimbing Mahasiswa Dosen",
-        to: String(AdminAcademicRoute.student.academicAdvisor),
+        title: "Pengumuman",
+        description: "Manajemen Pengumuman",
+        to: String(AdminAcademicRoute.announcement),
+      },
+      {
+        title: "Dosen",
+        description: "Manajemen Data Dosen",
+        to: String(AdminAcademicRoute.portal.dosen),
       },
     ],
   },
-  akademik: {
-    title: "AKADEMIK",
+  perkuliahan: {
+    title: "PERKULIAHAN",
     items: [
       {
-        icon: "icon_annon.png",
-        title: "Tahun Kurikulum",
-        description: "Tahun Kurikulum",
-        to: String(AdminAcademicRoute.curriculumYear),
+        // Item dengan sub-menu level 2
+        title: "Manajemen Kurikulum",
+        description: "Manajemen Kurikulum",
+        children: [
+          {
+            title: "Mata Kuliah",
+            description: "Manajemen Mata Kuliah",
+            to: String(AdminAcademicRoute.courseManagement.courseManagement),
+          },
+          {
+            title: "Kurikulum Prodi",
+            description: "Kurikulum Program Studi",
+            to: String(AdminAcademicRoute.prodiCurriculum),
+          },
+          {
+            title: "Manajemen OBE",
+            description: "Managemen OBE",
+            to: String(AdminAcademicRoute.obeManagement.obeManagement),
+          },
+          {
+            title: "Tahun Kurikulum",
+            description: "Tahun Kurikulum",
+            to: String(AdminAcademicRoute.curriculumYear),
+          },
+        ],
       },
       {
-        icon: "icon_annon.png",
-        title: "Mata Kuliah",
-        description: "Manajemen Mata Kuliah",
-        to: String(AdminAcademicRoute.courseManagement.courseManagement),
+        // Item dengan sub-menu level 2
+        title: "Data Kelas",
+        description: "Data Kelas",
+        children: [
+          {
+            title: "Kelas Kuliah",
+            description: "Manajemen Kelas Kuliah",
+            to: String(AdminAcademicRoute.collegeClass.class),
+          },
+          {
+            title: "Monitoring Ruang",
+            description: "Monitoring Ruang Kuliah",
+            to: String(AdminAcademicRoute.classData.monitoringRoom),
+          },
+        ],
       },
       {
-        icon: "icon_annon.png",
-        title: "Kurikulum Program Studi",
-        description: "Kurikulum Program Studi",
-        to: String(AdminAcademicRoute.prodiCurriculum),
+        // Item dengan sub-menu level 2
+        title: "Administrasi",
+        description: "Administrasi Mahasiswa",
+        children: [
+          {
+            title: "Status Semester",
+            description: "Status Semester Mahasiswa",
+            to: String(AdminAcademicRoute.administration.semesterStatus),
+          },
+          {
+            title: "Pembimbing Akademik",
+            description: "Set Pembimbing Mahasiswa Dosen",
+            to: String(AdminAcademicRoute.student.academicAdvisor),
+          },
+          {
+            title: "Evaluasi Mahasiswa",
+            description: "Evaluasi Mahasiswa",
+            to: String(AdminAcademicRoute.administration.studentEvaluation),
+          },
+          {
+            title: "Transfer Mahasiswa",
+            description: "Transfer Mahasiswa",
+            to: String(AdminAcademicRoute.administration.studentTransfer),
+          },
+          {
+            title: "Mahasiswa Keluar",
+            description: "Mahasiswa Keluar",
+            to: String(AdminAcademicRoute.administration.studentDropout),
+          },
+        ],
+      },
+    ],
+  },
+  dataPelengkap: {
+    title: "DATA PELENGKAP",
+    items: [
+      {
+        // Item dengan sub-menu level 2
+        title: "Perguruan Tinggi",
+        description: "Data Perguruan Tinggi",
+        children: [
+          {
+            title: "Jenjang Pendidikan",
+            description: "Manajemen Jenjang Pendidikan",
+            to: String(AdminAcademicRoute.setting.level),
+          },
+          {
+            title: "Sistem Kuliah",
+            description: "Manajemen Sistem Kuliah",
+            to: String(AdminAcademicRoute.institution.studySystem),
+          },
+          {
+            title: "Ruang Kuliah",
+            description: "Manajemen Ruang Kuliah",
+            to: String(AdminAcademicRoute.institution.classroom),
+          },
+        ],
       },
       {
-        icon: "icon_annon.png",
-        title: "Manajemen OBE",
-        description: "Managemen OBE",
-        to: String(AdminAcademicRoute.obeManagement.obeManagement),
+        // Item dengan sub-menu level 2
+        title: "Perkuliahan",
+        description: "Data Pelengkap Perkuliahan",
+        children: [
+          {
+            title: "Jenis Mata Kuliah",
+            description: "Manajemen Jenis Mata Kuliah",
+            to: String(AdminAcademicRoute.lectureSetting.courseType),
+          },
+          {
+            title: "Slot Waktu",
+            description: "Manajemen Slot Waktu",
+            to: String(AdminAcademicRoute.lectureSetting.timeSlot),
+          },
+          {
+            title: "Jenis Pertemuan",
+            description: "Manajemen Jenis Pertemuan",
+            to: String(AdminAcademicRoute.lectureSetting.meetingType),
+          },
+        ],
       },
       {
-        icon: "icon_calendar.png",
-        title: "Manajemen RPS",
-        description: "Manajemen RPS",
-        to: String(AdminAcademicRoute.rpsManagement.rpsManagement),
+        // Item dengan sub-menu level 2
+        title: "Biodata",
+        description: "Data Pelengkap Biodata",
+        children: [
+          {
+            title: "Agama",
+            description: "Manajemen Data Agama",
+            to: String(AdminAcademicRoute.biodataSetting.religion),
+          },
+          {
+            title: "Suku",
+            description: "Manajemen Data Suku",
+            to: String(AdminAcademicRoute.biodataSetting.ethnicity),
+          },
+          {
+            title: "Penghasilan",
+            description: "Manajemen Data Penghasilan",
+            to: String(AdminAcademicRoute.biodataSetting.income),
+          },
+          {
+            title: "Pekerjaan",
+            description: "Manajemen Data Pekerjaan",
+            to: String(AdminAcademicRoute.biodataSetting.occupation),
+          },
+          {
+            title: "Jas Almamater",
+            description: "Manajemen Data Jas Almamater",
+            to: String(AdminAcademicRoute.biodataSetting.almamaterJacket),
+          },
+        ],
+      },
+      {
+        // Item dengan sub-menu level 2
+        title: "Mahasiswa",
+        description: "Data Pelengkap Mahasiswa",
+        children: [
+          {
+            title: "Status Mahasiswa",
+            description: "Manajemen Status Mahasiswa",
+            to: String(AdminAcademicRoute.studentSetting.studentStatus),
+          },
+          {
+            title: "Jenis Tinggal",
+            description: "Manajemen Jenis Tinggal",
+            to: String(AdminAcademicRoute.studentSetting.residenceType),
+          },
+          {
+            title: "Transportasi",
+            description: "Manajemen Data Transportasi",
+            to: String(AdminAcademicRoute.studentSetting.transportation),
+          },
+          {
+            title: "Kebutuhan Khusus",
+            description: "Manajemen Kebutuhan Khusus",
+            to: String(AdminAcademicRoute.studentSetting.specialNeeds),
+          },
+        ],
       },
     ],
   },
@@ -88,40 +238,52 @@ const dropdownMenus = {
     title: "PENGATURAN",
     items: [
       {
-        icon: "icon_annon.png",
-        title: "Tahun Ajaran",
-        description: "lorem ipsum dolor sit amet",
-        to: "/admin-akademik/tahun-ajaran",
-      },
-      {
-        icon: "icon_annon.png",
         title: "Periode Akademik",
-        description: "lorem ipsum dolor sit amet",
-        to: "/admin-akademik/periode-akademik",
+        description: "Manajemen Periode Akademik",
+        to: String(AdminAcademicRoute.setting.period),
+      },
+    ],
+  },
+  // Menu sementara untuk item lama yang belum dimasukkan ke struktur menu baru
+  lainnya: {
+    title: "LAINNYA",
+    items: [
+      {
+        // Item dengan sub-menu level 2
+        title: "Manajemen RPS",
+        description: "Manajemen RPS",
+        children: [
+          {
+            title: "Daftar RPS",
+            description: "Lihat Semua RPS",
+            to: String(AdminAcademicRoute.rpsManagement.rpsManagement),
+          },
+          {
+            title: "Tambah RPS",
+            description: "Buat RPS Baru",
+            to: String(AdminAcademicRoute.rpsManagement.addRps),
+          },
+        ],
       },
       {
-        icon: "icon_annon.png",
-        title: "Jenjang Pendidikan",
-        description: "lorem ipsum dolor sit amet",
-        to: "/admin-akademik/jenjang-pendidikan",
+        title: "Tahun Ajaran",
+        description: "Manajemen Tahun Ajaran",
+        to: String(AdminAcademicRoute.setting.year),
       },
       {
-        icon: "icon_annon.png",
         title: "Batas SKS",
-        description: "lorem ipsum dolor sit amet",
-        to: "/admin-akademik/batas-sks",
+        description: "Pengaturan Batas SKS",
+        to: String(AdminAcademicRoute.setting.limit),
       },
       {
-        icon: "icon_calendar.png",
         title: "Skala Penilaian",
-        description: "lorem ipsum dolor sit amet",
-        to: "/admin-akademik/skala-penilaian",
+        description: "Pengaturan Skala Penilaian",
+        to: String(AdminAcademicRoute.setting.scale),
       },
       {
-        icon: "icon_calendar.png",
         title: "Komposisi Nilai",
-        description: "lorem ipsum dolor sit amet",
-        to: "/admin-akademik/komposisi-nilai",
+        description: "Pengaturan Komposisi Nilai",
+        to: String(AdminAcademicRoute.setting.composition),
       },
     ],
   },

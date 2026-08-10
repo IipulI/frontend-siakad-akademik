@@ -1,7 +1,8 @@
 // src/hooks/admin-akademik/useGradeCompositions.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gradeCompositionService } from '../../api/admin-academic/gradeCompositionService';
-import { IGradeComposition, IGradeCompositionPayload, IApiResponseSuccess } from '../../types/models';
+import { IGradeComposition, IGradeCompositionPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 interface UseGradeCompositionsParams {
     tahunKurikulumId?: string;

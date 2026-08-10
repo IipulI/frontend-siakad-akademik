@@ -1,7 +1,7 @@
 import { BriefStudentData } from "./BriefStudentData";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { getAcademicPeriodeDropdown } from "../../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown } from "../../../../hooks/useGeneral";
 import { getKhs } from "../../../../hooks/admin-akademik/useStudentDetail";
 
 export default function StudyResultCard() {

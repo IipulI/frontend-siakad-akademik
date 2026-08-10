@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getActiveBill } from "../../../../hooks/admin-akademik/useStudentDetail";
 import { formatToRupiah } from "../../../admin-finance/FormatToRupiah";
-import { getAcademicPeriodeDropdown } from "../../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown } from "../../../../hooks/useGeneral";
 
 export default function FinantialHistoryPayments() {
   const [filters, setFilters] = useState({

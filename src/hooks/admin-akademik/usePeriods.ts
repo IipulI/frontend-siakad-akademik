@@ -1,7 +1,8 @@
 // src/hooks/admin-academic/usePeriods.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { periodService } from '../../api/admin-academic/periodService'; // Import the new service
-import { IPeriod, IPeriodPayload, IPaginatedResponse, IApiResponseSuccess } from '../../types/models'; // Import new types
+import { IPeriod, IPeriodPayload } from '../../types/models';
+import { IPaginatedResponse, IApiResponseSuccess } from '../../types/common.types';
 
 interface UsePeriodsParams {
     page: number;

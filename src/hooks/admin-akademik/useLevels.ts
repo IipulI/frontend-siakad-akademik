@@ -1,7 +1,8 @@
 // src/hooks/admin-academic/useLevels.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { levelService } from '../../api/admin-academic/levelService'; // Import the new service
-import { ILevel, ILevelPayload, IApiResponseSuccess } from '../../types/models'; // Import new types
+import { ILevel, ILevelPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 export const useLevels = () => {
     const queryClient = useQueryClient();

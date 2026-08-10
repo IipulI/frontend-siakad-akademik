@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface OptionProps {
   value: string;
@@ -85,27 +86,60 @@ interface SelectProps<T> {
 
 export function SelectInput<T>({
   label,
-  options,
+  options = [],
   required = false,
   value,
   defaultValue = "",
   error,
   name,
-  getOptionLabel = (opt: T) => String(opt), // ✅ fallback
-  getOptionValue = (opt: T) => String(opt), // ✅ fallback
+  getOptionLabel = (opt: T) => String(opt),
+  getOptionValue = (opt: T) => String(opt),
   onChange,
 }: SelectProps<T>) {
   const isControlled = value !== undefined;
   const selectValue = isControlled ? value : defaultValue ?? "";
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
-    const selectedOption = options.find(
-      (option) => getOptionValue(option) === selectedValue
-    );
-    if (onChange) {
-      onChange(selectedOption ?? null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const getLabel = (option: T) => String(getOptionLabel(option) ?? "");
+
+  const selectedOption = options.find(
+    (option) => getOptionValue(option) === selectValue
+  );
+
+  const filteredOptions = options.filter((option) =>
+    getLabel(option).toLowerCase().includes(search.toLowerCase())
+  );
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+        setSearch("");
+      }
     }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelect = (option: T) => {
+    if (onChange) {
+      onChange(option);
+    }
+    setIsOpen(false);
+    setSearch("");
+  };
+
+  const handleClear = () => {
+    if (onChange) {
+      onChange(null);
+    }
+    setSearch("");
   };
 
   return (
@@ -118,25 +152,63 @@ export function SelectInput<T>({
       ) : (
         ""
       )}
-      <div className="flex flex-col">
-        <select
-          className={`bg-white border text-sm sm:text-base ${
-            error ? "border-red-500" : "border-gray-300"
-          } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1`}
-          value={selectValue}
-          onChange={handleChange}
-          required={required}
-        >
-          <option value="">{`-- Pilih ${label} --`}</option>
-          {options?.map((option) => {
-            const val = getOptionValue(option);
-            return (
-              <option key={val} value={val}>
-                {getOptionLabel(option)}
-              </option>
-            );
-          })}
-        </select>
+      <div className="flex flex-col" ref={containerRef}>
+        <div className="relative">
+          <input
+            type="text"
+            name={name}
+            className={`w-full bg-white border text-sm sm:text-base ${
+              error ? "border-red-500" : "border-gray-300"
+            } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1 pr-12`}
+            placeholder={`-- Pilih ${label} --`}
+            value={isOpen ? search : selectedOption ? getLabel(selectedOption) : ""}
+            onFocus={() => {
+              setIsOpen(true);
+              setSearch("");
+            }}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+            {selectedOption && !isOpen && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="text-black/40 hover:text-black/60 text-xs"
+                aria-label="Clear"
+              >
+                ✕
+              </button>
+            )}
+            <ChevronDown
+              size={16}
+              className={`pointer-events-none text-black/40 transition-transform ${
+                isOpen ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+          {isOpen && (
+            <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded border border-gray-300 bg-white text-sm sm:text-base shadow">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => {
+                  const val = getOptionValue(option);
+                  return (
+                    <li
+                      key={val}
+                      onMouseDown={() => handleSelect(option)}
+                      className={`cursor-pointer p-1 px-2 hover:bg-blue-100 ${
+                        val === selectValue ? "bg-blue-50 font-semibold" : ""
+                      }`}
+                    >
+                      {getLabel(option)}
+                    </li>
+                  );
+                })
+              ) : (
+                <li className="p-1 px-2 text-black/40">Tidak ada hasil</li>
+              )}
+            </ul>
+          )}
+        </div>
         {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
       </div>
     </div>

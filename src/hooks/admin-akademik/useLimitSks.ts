@@ -1,7 +1,8 @@
 // src/hooks/admin-academic/useLimitSKS.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { limitSksService } from '../../api/admin-academic/limitSksService';
-import { ILimitSKS, ILimitSKSPayload, IApiResponseSuccess } from '../../types/models'; // IPaginatedResponse is no longer needed here
+import { ILimitSKS, ILimitSKSPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 // Remove UseLimitSKSParams as it's no longer paginated
 // interface UseLimitSKSParams { ... }

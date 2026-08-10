@@ -1,6 +1,7 @@
 // src/api/admin-akademik/gradeCompositionService.ts
 import { Api } from '../Index';
-import { IGradeComposition, IGradeCompositionPayload, IApiResponseSuccess } from '../../types/models';
+import { IGradeComposition, IGradeCompositionPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 interface GetGradeCompositionsParams {
     tahunKurikulumId?: string;

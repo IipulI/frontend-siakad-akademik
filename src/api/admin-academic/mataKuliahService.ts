@@ -1,6 +1,7 @@
 // src/api/admin-akademik/mataKuliahService.ts
 import { Api } from '../Index';
-import { IMataKuliah, IPaginatedResponse } from '../../types/models';
+import { IMataKuliahAdmin } from '../../types/models';
+import { IPaginatedResponse } from '../../types/common.types';
 
 interface GetMataKuliahParams {
     programStudi: string;
@@ -11,9 +12,9 @@ interface GetMataKuliahParams {
 }
 
 export const mataKuliahService = {
-    getMataKuliah: async (params: GetMataKuliahParams): Promise<IPaginatedResponse<IMataKuliah>> => {
+    getMataKuliah: async (params: GetMataKuliahParams): Promise<IPaginatedResponse<IMataKuliahAdmin>> => {
         try {
-            const response = await Api.get<IPaginatedResponse<IMataKuliah>>('/akademik/mata-kuliah', {
+            const response = await Api.get<IPaginatedResponse<IMataKuliahAdmin>>('/akademik/mata-kuliah', {
                 params: {
                     programStudi: params.programStudi,
                     tahunKurikulum: params.tahunKurikulum,

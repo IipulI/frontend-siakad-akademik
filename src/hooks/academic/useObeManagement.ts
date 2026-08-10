@@ -1,51 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
-
-// --- EXISTING INTERFACES ---
-// Tambahkan/Ubah di src/hooks/academic/useObeManagement.ts
-
-export interface MataKuliahOBE {
-  id: string; // atau uuid dari backend
-  siakProgramStudiId: string;
-  siakTahunKurikulumId: string;
-  kode: string;
-  nama: string;
-  namaEn: string | null;
-  jenis: string;
-  
-  // Field SKS sesuai JSON Postman
-  sksTatapMuka: number;
-  sksPraktikum: number;
-  sksPraktikLapangan: number;
-  sksSimulasi: number;
-  
-  // Untuk data relasi yang di-join oleh backend (biasanya muncul di GET)
-  prodi?: { nama: string }; 
-  tahunKurikulum?: { tahun: string };
-  
-  // Asumsi field status balikan dari backend (atau jika belum ada dari BE, di-handle null dulu)
-  statusRps?: 'Belum Terisi' | 'Sudah Terisi';
-  statusCpl?: 'Belum Terisi' | 'Sudah Terisi';
-  statusCpmk?: 'Belum Terisi' | 'Sudah Terisi';
-}
-
-// Filter sudah aman, sesuai dengan parameter Combo Maut di JSON
-export interface ObeFilters {
-  page: number;
-  limit: number;
-  prodiId?: string;
-  tahunKurikulumId?: string;
-  jenis?: string;
-  search?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
+import { ObeFilters } from "../../types/obe.types";
 
 // --- EXISTING HOOKS ---
 export function getObe(filters: { page: number; limit: number; tahunKurikulumId?: string; prodiId?: string }) {
@@ -65,8 +20,8 @@ export function getObe(filters: { page: number; limit: number; tahunKurikulumId?
         },
       });
 
-      const rawData = response.data?.data?.rows || response.data?.rows || [];
-      const count = response.data?.data?.count || response.data?.count || 0;
+      const rawData = response.data?.data ||  [];
+      const count = response.data?.pagination?.totalItem || 0;
 
       const formattedData = rawData.map((item: any) => ({
         id: item.idObe,
@@ -78,6 +33,8 @@ export function getObe(filters: { page: number; limit: number; tahunKurikulumId?
         cpmk: item.statusPengisian?.persentaseCplMk > 0,
         ketuaProgramStudi: item.ketuaProgramStudi || "-",
       }));
+
+      console.log("hooks :", response?.data);
 
       return {
         data: formattedData,

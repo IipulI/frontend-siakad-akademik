@@ -313,7 +313,7 @@ const PeriodAdminAcademic: React.FC = () => {
                 {pagination && (
                     <Pagination
                         currentPage={pagination.currentPage}
-                        totalPages={pagination.totalPages}
+                        totalPages={pagination.totalPage}
                         onPageChange={(page) => {
                             setCurrentPage(page);
                         }}

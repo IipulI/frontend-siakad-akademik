@@ -35,7 +35,7 @@ import {
   getAcademicPeriodeDropdown,
   getProgramStudi,
   getYearCuriculum,
-} from "../../../hooks/useFilter";
+} from "../../../hooks/useGeneral";
 
 export default function CreateStudent() {
   const [activeTab, setActiveTab] = useState("general-information");

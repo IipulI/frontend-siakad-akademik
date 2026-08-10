@@ -2,86 +2,147 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-// Props interface for dropdown menu items
-interface DropdownMenuItemProps {
-  icon: string;
+// Props interface for dropdown menu sub-items (level 2)
+interface DropdownSubItemProps {
   title: string;
   description: string;
   to: string;
-  iconBasePath?: string;
 }
 
-// Create separate component for dropdown menu items
-const DropdownMenuItem = ({
-  icon,
+// Props interface for dropdown menu items (level 1)
+interface DropdownMenuItemProps {
+  title: string;
+  description: string;
+  to?: string;
+  children?: DropdownSubItemProps[];
+}
+
+// Create component for dropdown sub-menu items (level 2)
+const DropdownSubMenuItem = ({
   title,
   description,
   to,
-  iconBasePath = "/img/",
-}: DropdownMenuItemProps) => (
+}: DropdownSubItemProps) => (
   <Link
     to={to}
-    className="px-3 py-3 border-b-1 mb-5 border-gray-400 group text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between group first:mt-0"
+    className="px-3 py-2.5 text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between group"
   >
-    <div className="flex items-center gap-5">
-      <img src={`${iconBasePath}${icon}`} alt="" className="w-6" />
+    <div>
+      <p className="font-semibold text-sm">{title}</p>
+      <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
+        {description}
+      </p>
+    </div>
+  </Link>
+);
+
+// Create separate component for dropdown menu items
+const DropdownMenuItem = ({
+  title,
+  description,
+  to,
+  children,
+}: DropdownMenuItemProps) => {
+  const [isSubOpen, setIsSubOpen] = useState(false);
+  const hasChildren = children && children.length > 0;
+
+  // If item has children, render as a hoverable parent with sub-menu
+  if (hasChildren) {
+    return (
+      <div
+        className="relative border-b-1 mb-1 last:border-b-0 last:mb-0 border-gray-400"
+        onMouseEnter={() => setIsSubOpen(true)}
+        onMouseLeave={() => setIsSubOpen(false)}
+      >
+        <div
+          className={`px-3 py-3 group text-sm flex items-center justify-between cursor-pointer ${
+            isSubOpen ? "bg-[#6FCF97] rounded-sm" : "hover:bg-[#6FCF97] hover:rounded-sm"
+          }`}
+        >
+          <div>
+            <p className="font-semibold">{title}</p>
+            <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
+              {description}
+            </p>
+          </div>
+          {/* Arrow pointing right to indicate sub-menu */}
+          <svg
+            className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
+          </svg>
+        </div>
+
+        {/* Sub-menu (level 2) */}
+        {isSubOpen && (
+          <div className="absolute left-full top-0 ml-1 w-72 bg-primary-green rounded-md shadow-lg px-2 pt-3 pb-3 z-[60]">
+            {children.map((subItem, index) => (
+              <DropdownSubMenuItem
+                key={index}
+                title={subItem.title}
+                description={subItem.description}
+                to={subItem.to}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Regular item without children (original behavior)
+  return (
+    <Link
+      to={to || "#"}
+      className="px-3 py-3 border-b-1 mb-1 last:border-b-0 last:mb-0 border-gray-400 group text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between first:mt-0"
+    >
       <div>
         <p className="font-semibold">{title}</p>
         <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
           {description}
         </p>
       </div>
-    </div>
-    <svg
-      className="w-4 h-4 ml-1 transition-transform duration-200 -rotate-90 opacity-0 group-hover:opacity-100"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M19 9l-7 7-7-7"
-      ></path>
-    </svg>
-  </Link>
-);
+    </Link>
+  );
+};
 
 // Props interface for dropdown menu
 interface DropdownMenuProps {
   isOpen: boolean;
-  title: string;
   items: {
-    icon: string;
     title: string;
     description: string;
-    to: string;
+    to?: string;
+    children?: {
+      title: string;
+      description: string;
+      to: string;
+    }[];
   }[];
-  iconBasePath?: string;
 }
 
 // Create separate component for dropdown menus
-const DropdownMenu = ({
-  isOpen,
-  title,
-  items,
-  iconBasePath,
-}: DropdownMenuProps) => {
+const DropdownMenu = ({ isOpen, items }: DropdownMenuProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg py-1 z-50 p-2">
-      <h1 className="px-3 py-3 font-semibold text-gray-300 text-md">{title}</h1>
+    <div className="absolute mt-7 w-80 bg-primary-green rounded-md shadow-lg px-2 pt-3 pb-3 z-50">
       {items.map((item, index) => (
         <DropdownMenuItem
           key={index}
-          icon={item.icon}
           title={item.title}
           description={item.description}
           to={item.to}
-          iconBasePath={iconBasePath}
+          children={item.children}
         />
       ))}
     </div>
@@ -121,10 +182,14 @@ interface DropdownMenuData {
   [key: string]: {
     title: string;
     items: {
-      icon: string;
       title: string;
       description: string;
-      to: string;
+      to?: string;
+      children?: {
+        title: string;
+        description: string;
+        to: string;
+      }[];
     }[];
   };
 }
@@ -133,7 +198,6 @@ interface DropdownMenuData {
 interface NavbarProps {
   navItems: NavItem[];
   dropdownMenus: DropdownMenuData;
-  iconBasePath?: string;
   className?: string;
   containerClassName?: string;
   activeItemClassName?: string;
@@ -143,8 +207,7 @@ interface NavbarProps {
 const Navbar = ({
   navItems,
   dropdownMenus,
-  iconBasePath = "/img/",
-  className = "xl:flex space-x-12 text-white hidden bg-primary-green w-fit text-sm p-2.5 rounded-full",
+  className = "xl:flex space-x-6 text-white hidden bg-primary-green w-fit text-sm py-2.5 px-6 rounded-full",
   containerClassName = "px-40",
   activeItemClassName = "",
   defaultClassName = "",
@@ -175,17 +238,11 @@ const Navbar = ({
                 </button>
                 <DropdownMenu
                   isOpen={openDropdown === item.dropdownKey}
-                  title={
-                    item.dropdownKey
-                      ? dropdownMenus[item.dropdownKey].title
-                      : ""
-                  }
                   items={
                     item.dropdownKey
                       ? dropdownMenus[item.dropdownKey]?.items
                       : []
                   }
-                  iconBasePath={iconBasePath}
                 />
               </>
             ) : (

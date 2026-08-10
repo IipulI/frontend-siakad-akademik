@@ -1,6 +1,7 @@
 // hooks/useFetchComponentBill.ts
 import { Api } from "../../api/Index";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { IPaginatedResponse } from "../../types/common.types";
 
 export interface ComponentBillData {
   id: string;
@@ -15,17 +16,7 @@ export interface CreateComponentBillData {
   nominal: number;
 }
 
-export interface PaginationResponse {
-  status: string;
-  message: string;
-  data: ComponentBillData[];
-  pagination: {
-    currentPage: number;
-    perPage: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
+export type PaginationResponse = IPaginatedResponse<ComponentBillData>;
 
 // GET - dengan pagination
 export function useGetComponentBill(

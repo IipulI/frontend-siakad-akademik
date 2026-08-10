@@ -1,7 +1,8 @@
 // src/hooks/admin-academic/useGradingScales.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gradingScaleService } from '../../api/admin-academic/gradingScaleService'; // Import the service
-import { IGradingScale, IGradingScalePayload, IPaginatedResponse, IApiResponseSuccess } from '../../types/models';
+import { IGradingScale, IGradingScalePayload } from '../../types/models';
+import { IPaginatedResponse, IApiResponseSuccess } from '../../types/common.types';
 
 /**
  * Interface for parameters passed to the useGradingScales hook.

@@ -55,6 +55,8 @@ export const OBEManagement: React.FC = () => {
     );
   });
 
+  console.log("raw :", obeResponse)
+
   const isLoading = isProdiLoading || isCurriculumLoading || isObeLoading;
 
   return (
@@ -93,7 +95,7 @@ export const OBEManagement: React.FC = () => {
                 <option value="">-- Semua Program Studi --</option>
                 {prodiData.map((item) => (
                   <option key={item.id} value={item.id}>
-                    {item.namaProgramStudi}
+                    {item.nama}
                   </option>
                 ))}
               </select>

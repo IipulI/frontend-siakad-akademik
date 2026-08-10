@@ -1,4 +1,3 @@
-import { id } from "date-fns/locale";
 export interface CurriculumData {
   tanggalAkhir: string | undefined;
   tanggalAwal: string | undefined;
@@ -26,7 +25,8 @@ export interface ProgramStudiData {
   jenjang: string;
 }
 
-export interface GraduateProfileData {
+// Distinct from useGraduateProfile.ts's GraduateProfileData (different field names — see GraduateProfile.tsx vs DetailOBE.tsx/ObeCpl.tsx/ObeCpmk.tsx).
+export interface GraduateProfileDataLegacy {
   id: string;
   siakProgramStudiId: string;
   siakTahunKurikulumId: string;
@@ -54,7 +54,9 @@ interface prasyaratMataKuliah3 {
   namaMataKuliah: string;
 }
 
-export interface CourseData {
+// Distinct from useCourseManagement.ts's CourseData (that one has nested programStudi/tahunKurikulum objects;
+// this flat-string shape is what the RPS/CPL-CPMK detail endpoints return).
+export interface RpsCourseData {
   id: string;
   programStudi: string;
   tahunKurikulum: string;
@@ -130,7 +132,7 @@ export interface RpsData {
       nidn: string;
     }
   ];
-  mataKuliah: CourseData;
+  mataKuliah: RpsCourseData;
   kelas: [
     {
       id: string;
@@ -144,6 +146,6 @@ export interface RpsData {
 export interface CurriculumProdiData {
   id: string;
   semester: string;
-  mataKuliah: CourseData;
+  mataKuliah: RpsCourseData;
   totalSks: number;
 }

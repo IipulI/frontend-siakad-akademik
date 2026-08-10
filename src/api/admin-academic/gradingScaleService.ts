@@ -3,9 +3,8 @@ import { Api } from '../Index'; // Your Axios instance
 import {
     IGradingScale,
     IGradingScalePayload,
-    IPaginatedResponse, // Indicates a paginated GET response
-    IApiResponseSuccess,
 } from '../../types/models';
+import { IPaginatedResponse, IApiResponseSuccess } from '../../types/common.types';
 
 /**
  * Interface for parameters when fetching Grading Scales.
