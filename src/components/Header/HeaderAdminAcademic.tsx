@@ -73,8 +73,46 @@ const dropdownMenus = {
       {
         icon: "icon_annon.png",
         title: "Manajemen OBE",
-        description: "Managemen OBE",
+        description: "Manajemen OBE",
         to: String(AdminAcademicRoute.obeManagement.obeManagement),
+        subItems: [
+          {
+            icon: "icon_annon.png",
+            title: "Mata Kuliah",
+            description: "Manajemen Mata Kuliah",
+            to: String(AdminAcademicRoute.obeManagement.obeManagement), // Original OBEManagement (mata kuliah list)
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Kurikulum Prodi",
+            description: "Kurikulum Program Studi",
+            to: String(AdminAcademicRoute.obeManagement.kurikulumProdi),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Template Evaluasi",
+            description: "Template Evaluasi",
+            to: String(AdminAcademicRoute.obeManagement.templateEvaluasi),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Manajemen Capaian",
+            description: "Manajemen OBE",
+            to: String(AdminAcademicRoute.obeManagement.manajemenCapaian),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Set Grup MK Wajib Pilihan",
+            description: "Set Grup MK Wajib Pilihan",
+            to: String(AdminAcademicRoute.obeManagement.setGrupMk),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Tahun Kurikulum",
+            description: "Tahun Kurikulum",
+            to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
+          },
+        ],
       },
       {
         icon: "icon_calendar.png",

@@ -60,12 +60,22 @@ export const AdminAcademicRoute = {
     rpsCourse: "/admin-akademik/mata-kuliah/rps-mata-kuliah",
   },
   obeManagement: {
-    obeManagement: "/admin-akademik/obe/manajemen-obe",
+    obeManagement: "/admin-akademik/obe/manajemen-obe", // Keep this for legacy / other features if needed
+    manajemenCapaian: "/admin-akademik/obe/manajemen-capaian",
+    templateEvaluasi: "/admin-akademik/obe/template-evaluasi",
+    kurikulumProdi: "/admin-akademik/obe/kurikulum-prodi",
+    setGrupMk: "/admin-akademik/obe/set-grup-mk",
+    tahunKurikulum: "/admin-akademik/obe/tahun-kurikulum",
+    detailObeCourse: "/admin-akademik/obe/detail-mata-kuliah",
     detailOBE: "/admin-akademik/obe/detail-obe",
     graduateProfile: "/admin-akademik/obe/profil-lulusan",
     cpl: "/admin-akademik/obe/cpl",
+    cplMataKuliah: "/admin-akademik/obe/cpl-mata-kuliah",
     cpmk: "/admin-akademik/obe/cpmk",
     cpmkMataKuliah: "/admin-akademik/obe/cpmk-mata-kuliah",
+    detailRps: "/admin-akademik/obe/detail-rps",
+    rencanaPembelajaran: "/admin-akademik/obe/rencana-pembelajaran",
+    rencanaEvaluasi: "/admin-akademik/obe/rencana-evaluasi",
   },
   prodiCurriculum: "/admin-akademik/kurikulum-prodi",
   rpsManagement: {

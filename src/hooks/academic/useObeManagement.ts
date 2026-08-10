@@ -65,13 +65,22 @@ export function getObe(filters: { page: number; limit: number; tahunKurikulumId?
         },
       });
 
-      const rawData = response.data?.data?.rows || response.data?.rows || [];
-      const count = response.data?.data?.count || response.data?.count || 0;
+      // ResponseBuilder wraps paginated data as:
+      // { status, message, data: <items[]>, pagination: {...}, errors: {} }
+      // So items are directly at response.data.data (array)
+      const rawData: any[] = Array.isArray(response.data?.data)
+        ? response.data.data
+        : response.data?.data?.rows || response.data?.rows || [];
+      const count = response.data?.pagination?.totalItems
+        || response.data?.data?.count
+        || response.data?.count
+        || rawData.length;
 
       const formattedData = rawData.map((item: any) => ({
-        id: item.idObe,
-        kodeProdi: item.kurikulum || "-", // Tampilkan tahun kurikulum sebagai penanda
-        programStudi: item.programStudi || "-",
+        id: item.idObe,                           // OBE UUID (null jika belum ada OBE)
+        kodeProdi: item.kodeProdi || null,         // kode prodi e.g. "55201"
+        tahunKurikulum: item.kurikulum || "-",     // tahun kurikulum e.g. "2025"
+        programStudi: item.programStudi || "-",    // "S1 - Teknik Informatika"
         pl: item.statusPengisian?.pl > 0,
         cpl: item.statusPengisian?.cpl > 0,
         plToCpl: item.statusPengisian?.persentasePlCpl > 0,

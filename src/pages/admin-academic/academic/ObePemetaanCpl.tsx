@@ -1,43 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate, useParams } from "react-router-dom";
-import { Search, ArrowLeft, Plus, Sparkles, AlertCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { Api } from "../../../api/Index";
-import LoadingSpinner from "../../../components/LoadingSpinner";
-import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
+import { ArrowLeft, Edit, Sparkles, AlertCircle, Search } from "lucide-react";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
+import { getCplCpmkCourse } from "../../../hooks/academic/useCplCpmkCourse";
+import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
-export default function ObeCpmkMatkul() {
+export default function ObePemetaanCpl() {
   const navigate = useNavigate();
   const { obeId, mataKuliahId } = useParams<{ obeId: string; mataKuliahId: string }>();
 
-  // Fetch Course Data for Summary Box
+  // Fetch Course Data
   const { data: courseDetail, isLoading: isCourseLoading, error: courseError } = getCourseDataById(mataKuliahId || "");
 
-  // Fetch CPMK mapping (CPL Headers + CPMKs)
-  const { data: mappingData, isLoading: isMappingLoading } = useQuery({
-    queryKey: ["cpmkMapping", mataKuliahId],
-    queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await Api.get(`/akademik/obe/mata-kuliah/${mataKuliahId}/pemetaan-cpmk`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data.data;
-    },
-    enabled: !!mataKuliahId,
-  });
+  // Fetch CPL mapped to this course
+  const { data: cplCpmkData, isLoading: isCplLoading, error: cplError } = getCplCpmkCourse(mataKuliahId || "");
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.obeManagement.obeManagement);
   };
 
-  const isLoading = isCourseLoading || isMappingLoading;
+  const isLoading = isCourseLoading || isCplLoading;
 
   if (isLoading) {
     return (
-      <MainLayout isGreeting={false} titlePage="Pemetaan CPMK">
+      <MainLayout isGreeting={false} titlePage="Pemetaan CPL">
         <div className="flex justify-center p-12">
           <LoadingSpinner />
         </div>
@@ -47,7 +36,7 @@ export default function ObeCpmkMatkul() {
 
   if (courseError || !courseDetail) {
     return (
-      <MainLayout isGreeting={false} titlePage="Pemetaan CPMK">
+      <MainLayout isGreeting={false} titlePage="Pemetaan CPL">
         <div className="p-8 text-center text-red-500">
           Gagal memuat data Mata Kuliah. Silakan coba lagi.
         </div>
@@ -55,15 +44,14 @@ export default function ObeCpmkMatkul() {
     );
   }
 
-  const cplHeaders = mappingData?.cplHeaders || [];
-  const cpmkList = mappingData?.cpmkList || [];
+  const cplList = cplCpmkData?.capaianPembelajaranLulusan || [];
 
   return (
-    <MainLayout isGreeting={false} titlePage="Pemetaan CPMK">
+    <MainLayout isGreeting={false} titlePage="Pemetaan CPL">
       <div className="p-0 min-h-screen">
         <div className="mb-6 mt-[-10px]">
           <p className="text-gray-500 text-sm">
-            Admin - Akademik &gt; Obe &gt; Manajemen Obe &gt; Pemetaan CPMK
+            Admin - Akademik &gt; Obe &gt; Manajemen Obe &gt; Pemetaan CPL
           </p>
         </div>
 
@@ -96,8 +84,8 @@ export default function ObeCpmkMatkul() {
               >
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
-              <button className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
-                <Plus size={16} /> Tambah Data
+              <button className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+                <Edit size={16} /> Ubah Data
               </button>
               <button className="bg-indigo-600 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <Sparkles size={16} /> Generate AI
@@ -113,7 +101,7 @@ export default function ObeCpmkMatkul() {
             <SidebarObeCourse 
               obeId={obeId || "default"}
               mataKuliahId={mataKuliahId || ""}
-              activeTab="cpmk"
+              activeTab="cpl"
             />
             
             {/* Main Content */}
@@ -140,7 +128,7 @@ export default function ObeCpmkMatkul() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#00c0ef]">Tahun Kurikulum</span>
-                    <span className="text-gray-800">{courseDetail.tahunKurikulum || "2025"}</span>
+                    <span className="text-gray-800">Tahun {courseDetail.tahunKurikulum || "2025"}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#00c0ef]">Unit Pengampu</span>
@@ -149,68 +137,35 @@ export default function ObeCpmkMatkul() {
                 </div>
               </div>
 
-              {/* Alert Info for Empty Data */}
-              {cpmkList.length === 0 && (
-                <div className="bg-[#fff7e6] border border-[#ffe0b2] text-[#e65100] px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <p>Anda belum menambahkan data CPMK. Silakan klik tombol <strong>Tambah Data</strong> di atas untuk menambah data.</p>
-                </div>
-              )}
+              {/* Alert Info */}
+              <div className="bg-[#fff7e6] border border-[#ffe0b2] text-[#e65100] px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
+                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <p>Anda masih dapat menyesuaikan CPL sesuai kebutuhan Anda.</p>
+              </div>
 
-              {/* CPMK Table */}
+              {/* CPL Table */}
               <div className="overflow-x-auto border border-gray-200 rounded-sm">
-                <table className="min-w-full bg-white border-collapse border border-gray-200">
+                <table className="min-w-full bg-white border-collapse">
                   <thead>
-                    <tr className="bg-[#0b5c77] text-white text-sm font-semibold text-center border-b border-gray-400">
-                      <th className="p-3 border-r border-gray-400 align-middle" rowSpan={2}>Kode CPMK</th>
-                      <th className="p-3 border-r border-gray-400 align-middle" rowSpan={2}>Deskripsi CPMK</th>
-                      <th className="p-3 border-r border-gray-400 align-middle" rowSpan={2}>Target CPMK</th>
-                      <th className="p-2 border-b border-r border-gray-400" colSpan={cplHeaders.length > 0 ? cplHeaders.length : 1}>
-                        Pemetaan CPMK ke CPL
-                      </th>
-                      <th className="p-3 border-l border-gray-400 align-middle" rowSpan={2}>Bobot CPMK</th>
-                    </tr>
-                    <tr className="bg-[#0b5c77] text-white text-xs font-semibold text-center">
-                      {cplHeaders.length > 0 ? (
-                        cplHeaders.map((cpl: any) => (
-                          <th key={cpl.id} className="p-2 border-r border-gray-400 min-w-[60px] max-w-[80px]">
-                            {cpl.kode || cpl.kodeCpl || "CPL"}
-                          </th>
-                        ))
-                      ) : (
-                        <th className="p-2 border-r border-gray-400">-</th>
-                      )}
+                    <tr className="bg-[#0b5c77] text-white text-sm font-semibold text-left">
+                      <th className="p-3 border-b border-gray-300 w-16 text-center">No.</th>
+                      <th className="p-3 border-b border-gray-300 w-32">Kode CPL</th>
+                      <th className="p-3 border-b border-gray-300">Deskripsi Capaian Pembelajaran Lulusan (CPL)</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm text-gray-700">
-                    {cpmkList.length > 0 ? (
-                      cpmkList.map((item: any, idx: number) => (
-                        <tr key={item.id || idx} className="border-b border-gray-200 hover:bg-gray-50 text-center">
-                          <td className="p-3 border-r border-gray-200 font-semibold">{item.kode || "-"}</td>
-                          <td className="p-3 border-r border-gray-200 text-left">{item.deskripsi || "-"}</td>
-                          <td className="p-3 border-r border-gray-200">{item.target || 0}%</td>
-                          
-                          {/* Map over CPL Headers to show mapped bobot for each */}
-                          {cplHeaders.length > 0 ? (
-                            cplHeaders.map((cpl: any) => {
-                              const mapping = item.cplPemetaan?.find((m: any) => m.idCpl === cpl.id || m.cplId === cpl.id);
-                              return (
-                                <td key={cpl.id} className="p-3 border-r border-gray-200">
-                                  {mapping ? mapping.bobotCpl || mapping.bobot || 0 : 0}
-                                </td>
-                              );
-                            })
-                          ) : (
-                            <td className="p-3 border-r border-gray-200">-</td>
-                          )}
-
-                          <td className="p-3 font-semibold text-center">{item.bobot || 0}</td>
+                    {cplList.length > 0 ? (
+                      cplList.map((cpl, index) => (
+                        <tr key={cpl.id || index} className="border-b border-gray-200 hover:bg-gray-50">
+                          <td className="p-3 text-center">{index + 1}</td>
+                          <td className="p-3 font-semibold">{cpl.kodeCpl || "-"}</td>
+                          <td className="p-3 text-justify">{cpl.deskripsiCpl || "-"}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={cplHeaders.length > 0 ? 4 + cplHeaders.length : 5} className="p-4 text-center text-gray-600 font-medium">
-                          Belum ada data
+                        <td colSpan={3} className="p-6 text-center text-gray-500 italic">
+                          Belum ada data Pemetaan CPL.
                         </td>
                       </tr>
                     )}

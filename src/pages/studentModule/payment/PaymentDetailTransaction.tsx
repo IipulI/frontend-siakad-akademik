@@ -1,5 +1,5 @@
 import React from "react";
-import LogoUika from "../../../../public/img/logo_uika.png";
+const LogoUika = "/img/logo_uika.png";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { StudentRoute } from "../../../types/VarRoutes";
