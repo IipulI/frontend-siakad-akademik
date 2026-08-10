@@ -121,8 +121,8 @@ const Exam = () => {
                 />
               </div>
             </div>
-            <h1 className="font-semibold">Status Keuangan</h1>
-            <div className="w-full flex gap-4">
+            <h1 className="font-semibold text-lg md:text-xl">Status Keuangan</h1>
+            <div className="w-full flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4">
               <DashboardBillCard title={"Total Tagihan"} price={46750000} />
               <DashboardBillCard title={"Total Lunas"} price={45450000} />
             </div>

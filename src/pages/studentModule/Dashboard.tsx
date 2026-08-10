@@ -24,6 +24,9 @@ const Dashboard = () => {
   const [examType, setExamType] = useState<'UTS' | 'UAS'>('UTS');
   const [currentDate, setCurrentDate] = useState<string | undefined>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [weekDays, setWeekDays] = useState<{ date: Date; label: string }[]>([]);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
 
   // --- DATA FETCHING HOOKS ---
   const {
@@ -33,7 +36,9 @@ const Dashboard = () => {
   } = useJadwal({
     type: 'daily',
     namaPeriode: "2024 Genap", // This should be dynamic in a real app
-    hari: new Date().toLocaleDateString("id-ID", { weekday: 'long' }).toLowerCase()
+    hari: (weekDays[selectedDayIndex]?.date ?? new Date())
+        .toLocaleDateString("id-ID", { weekday: 'long' })
+        .toLowerCase()
   });
 
   const {
@@ -58,8 +63,26 @@ const Dashboard = () => {
     const options: Intl.DateTimeFormatOptions = {
       weekday: "long", day: "numeric", month: "long", year: "numeric",
     };
-    const today = new Date().toLocaleDateString("id-ID", options);
-    setCurrentDate(today);
+
+    const today = new Date();
+    const day = today.getDay(); // 0 = Sunday, 1 = Monday...
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diffToMonday);
+
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return { date: d, label: d.toLocaleDateString("id-ID", options) };
+    });
+
+    const todayIndex = days.findIndex(
+        (d) => d.date.toDateString() === today.toDateString()
+    );
+
+    setWeekDays(days);
+    setSelectedDayIndex(todayIndex >= 0 ? todayIndex : 0);
+    setCurrentDate(days[todayIndex >= 0 ? todayIndex : 0].label);
   }, []);
 
   const viewOptions = {
@@ -73,172 +96,200 @@ const Dashboard = () => {
   };
 
   return (
-      <MainLayout isGreeting={true} titlePage={""} className={""}>
-        <div className="w-full">
-          <div className="w-full grid md:grid-cols-5 grid-cols-1 gap-8">
-            {/* --- LEFT COLUMN (MAIN CONTENT) --- */}
-            <div className="md:col-span-3 space-y-4">
-              <h1 className="font-semibold md:text-start text-center md:text-base text-2xl">
-                Jadwal
-              </h1>
-              <div className="md:p-8 p-12 bg-white shadow-xl rounded-xl ">
-                <div className="flex md:flex-row flex-col justify-between items-center p-2 mb-4">
-                  <div className="relative">
-                    <div
-                        className="flex space-x-2 items-center cursor-pointer"
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    >
-                      <h1 className="font-semibold text-primary-blue">
-                        {viewOptions[activeView]}
-                      </h1>
-                      <ChevronDown color="#001b36" size={18} />
-                    </div>
-                    {isDropdownOpen && (
-                        <div className="absolute top-full mt-2 w-48 bg-white shadow-lg rounded-md border z-10">
-                          <div
-                              className="p-2 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => handleOptionClick('kuliah')}
-                          >
-                            Jadwal Kuliah
-                          </div>
-                          <div
-                              className="p-2 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => handleOptionClick('ujian')}
-                          >
-                            Jadwal Ujian
-                          </div>
-                        </div>
-                    )}
+    <MainLayout isGreeting={true} titlePage={""} className={""}>
+      <div className="w-full">
+        <div className="w-full grid md:grid-cols-5 grid-cols-1 gap-8">
+          {/* --- LEFT COLUMN (MAIN CONTENT) --- */}
+          <div className="md:col-span-3 space-y-4">
+            <h1 className="font-semibold md:text-start text-center md:text-base text-2xl">
+              Jadwal
+            </h1>
+            <div className="md:p-8 p-12 bg-white shadow-xl rounded-xl">
+              <div className="flex md:flex-row flex-col justify-between items-center p-2 mb-4">
+                <div className="relative">
+                  <div
+                    className="flex space-x-2 items-center cursor-pointer"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <h1 className="font-semibold text-primary-blue">
+                      {viewOptions[activeView]}
+                    </h1>
+                    <ChevronDown color="#001b36" size={18} />
                   </div>
-                  <div className="flex items-center space-x-2">
+                  {isDropdownOpen && (
+                    <div className="absolute top-full mt-2 w-48 bg-white shadow-lg rounded-md border z-10">
+                      <div
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleOptionClick('kuliah')}
+                      >
+                        Jadwal Kuliah
+                      </div>
+                      <div
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleOptionClick('ujian')}
+                      >
+                        Jadwal Ujian
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="relative">
+                  <div
+                      className="flex items-center space-x-2 cursor-pointer"
+                      onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+                  >
                     <CalendarDays color="#001b36" size={18} />
                     <h1 className="font-semibold text-primary-blue">{currentDate}</h1>
+                    <ChevronDown
+                        color="#001b36"
+                        size={16}
+                        className={`transition-transform ${isDateDropdownOpen ? "rotate-180" : ""}`}
+                    />
                   </div>
-                </div>
-                <div className="space-y-4">
-                  {activeView === 'kuliah' && (
-                      <>
-                        {isLoadingJadwal && <p>Loading schedule...</p>}
-                        {isErrorJadwal && <p style={{ color: 'red' }}>Gagal memuat jadwal kuliah.</p>}
-                        {!isLoadingJadwal && !isErrorJadwal && (
-                            jadwalKuliah && jadwalKuliah.length > 0 ? (
-                                jadwalKuliah.map((item, index) => (
-                                    <DashboardSubjectCard
-                                        key={index}
-                                        time={`${item.jamMulai} - ${item.jamSelesai}`}
-                                        lecturer={item.dosen}
-                                        room={item.ruangan}
-                                        subject={item.namaMataKuliah}
-                                        classes={item.kelas}
-                                        meet={"-"}
-                                        absent={"-"}
-                                        sks={"-"}
-                                    />
-                                ))
-                            ) : (
-                                <p>Tidak ada jadwal kuliah hari ini.</p>
-                            )
-                        )}
-                      </>
-                  )}
-                  {activeView === 'ujian' && (
-                      <div>
-                        {/* The exam schedule components remain static for now */}
-                        <p>Exam schedule will be integrated next.</p>
+                  {isDateDropdownOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md border z-10">
+                        {weekDays.map((day, index) => (
+                            <div
+                                key={index}
+                                className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                                    index === selectedDayIndex ? "text-primary-blue font-semibold" : ""
+                                }`}
+                                onClick={() => {
+                                  setSelectedDayIndex(index);
+                                  setCurrentDate(day.label);
+                                  setIsDateDropdownOpen(false);
+                                }}
+                            >
+                              {day.label}
+                            </div>
+                        ))}
                       </div>
                   )}
                 </div>
               </div>
-
-              <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
-              {isLoadingTagihan && <div>Loading financial status...</div>}
-              {isErrorTagihan && <div style={{ color: 'red' }}>Failed to load financial status.</div>}
-              {tagihanData && (
+              <div className="space-y-4">
+                {activeView === 'kuliah' && (
                   <>
-                    <div className="w-full flex gap-4">
-                      <DashboardBillCard
-                          title={"Total Tagihan"}
-                          price={tagihanData.totalTagihan}
-                          status="info"
-                      />
-                      <DashboardBillCard
-                          title={"Total Lunas"}
-                          price={tagihanData.totalLunas}
-                          status="info"
-                      />
-                    </div>
-
-                    <div>
-                      {tagihanData.sisaTagihan > 0 ? (
-                          <DashboardBillCard
-                              title={"Sisa Tagihan"}
-                              price={tagihanData.sisaTagihan}
-                              status="payable" // Kirim status 'payable'
-                              date={tagihanData.tanggalTenggat}
+                    {isLoadingJadwal && <p>Loading schedule...</p>}
+                    {isErrorJadwal && <p style={{ color: 'red' }}>Gagal memuat jadwal kuliah.</p>}
+                    {!isLoadingJadwal && !isErrorJadwal && (
+                      jadwalKuliah && jadwalKuliah.length > 0 ? (
+                        jadwalKuliah.map((item, index) => (
+                          <DashboardSubjectCard
+                            key={index}
+                            time={`${item.jamMulai} - ${item.jamSelesai}`}
+                            lecturer={item.dosen}
+                            room={item.ruangan}
+                            subject={item.namaMataKuliah}
+                            classes={item.kelas}
+                            meet={"-"}
+                            absent={"-"}
+                            sks={item.sks}
                           />
+                        ))
                       ) : (
-                          <DashboardBillCard
-                              title={"Status Tagihan"}
-                              price={0}
-                              status="paid" // Kirim status 'paid'
-                          />
-                      )}
-                    </div>
+                        <p>Tidak ada jadwal kuliah hari ini.</p>
+                      )
+                    )}
                   </>
-              )}
+                )}
+                {activeView === 'ujian' && (
+                  <div>
+                    <p className="text-gray-500 italic">Jadwal ujian belum tersedia.</p>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* --- RIGHT COLUMN (SIDEBAR) --- */}
-            <div className="md:col-span-2 space-y-4">
-              {isLoadingGrafik && <div>Loading academic data...</div>}
-              {isErrorGrafik && <div style={{ color: 'red' }}>Failed to load academic data.</div>}
-              {grafikData && (
-                  <>
-                    <div>
-                      <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
-                    </div>
-                    <IPSChart ipsData={grafikData.ips} />
-                    <div className="space-y-4">
-                      <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
-                      <div className="grid grid-cols-2 gap-4">
-                        <DashboardCardAcademic title={"IPK"} number={grafikData.ipk} color={"text-red-700"} />
-                        <DashboardCardAcademic
-                            title={"IPS"}
-                            number={grafikData.ips[grafikData.ips.length - 1] || 0}
-                            color=""
-                        />
-                        <DashboardCardAcademic title={"Jumlah MK Komulatif"} number={grafikData.mataKuliahKumulatif} color="" />
-                        <DashboardCardAcademic title={"Jumlah SKS Komulatif"} number={grafikData.sksKumulatif} color="" />
-                      </div>
-                    </div>
-                  </>
-              )}
-
-              <div className="space-y-4">
-                <h1 className="font-semibold md:p-0 p-2">Pengumuman</h1>
-                <div className="p-8 bg-white shadow-md rounded-md space-y-6">
-                  {/* 3. Add loading and error handling */}
-                  {isLoadingPengumuman && <div>Loading announcements...</div>}
-                  {isErrorPengumuman && <div style={{ color: 'red' }}>Failed to load announcements.</div>}
-
-                  {/* 4. Map over the fetched data */}
-                  {pengumumanResponse?.data.map((item) => (
-                      <DashboardAnnouncementCard
-                          key={item.id}
-                          title={item.judul}
-                          description={getPlainTextSummary(item.isi, 100)} // Truncate to 100 characters
-                          // Note: The API does not provide a date for each announcement.
-                          // You may need to adjust the DashboardAnnouncementCard component
-                          // or request this field from the backend.
-                          date={""}
-                      />
-                  ))}
+            <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
+            {isLoadingTagihan && <div>Loading financial status...</div>}
+            {isErrorTagihan && <div style={{ color: 'red' }}>Failed to load financial status.</div>}
+            {tagihanData && (
+              <>
+                <div className="w-full flex flex-col sm:flex-row gap-4">
+                  <DashboardBillCard
+                    title={"Total Tagihan"}
+                    price={tagihanData.totalTagihan}
+                    status="info"
+                  />
+                  <DashboardBillCard
+                    title={"Total Lunas"}
+                    price={tagihanData.totalLunas}
+                    status="info"
+                  />
                 </div>
+
+                <div>
+                  {tagihanData.sisaTagihan > 0 ? (
+                    <DashboardBillCard
+                      title={"Sisa Tagihan"}
+                      price={tagihanData.sisaTagihan}
+                      status="payable" // Kirim status 'payable'
+                      date={tagihanData.tanggalTenggat}
+                    />
+                  ) : (
+                    <DashboardBillCard
+                      title={"Status Tagihan"}
+                      price={0}
+                      status="paid" // Kirim status 'paid'
+                    />
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* --- RIGHT COLUMN (SIDEBAR) --- */}
+          <div className="md:col-span-2 space-y-4">
+            {isLoadingGrafik && <div>Loading academic data...</div>}
+            {isErrorGrafik && <div style={{ color: 'red' }}>Failed to load academic data.</div>}
+            {grafikData && (
+              <>
+                <div>
+                  <h1 className="font-semibold md:p-0 p-2">Grafik Akademik</h1>
+                </div>
+                <IPSChart ipsData={grafikData.ips} />
+                <div className="space-y-4">
+                  <h1 className="font-semibold md:p-0 p-2">Akademik</h1>
+                  <div className="grid grid-cols-2 gap-4">
+                    <DashboardCardAcademic title={"IPK"} number={grafikData.ipk} color={"text-red-700"} />
+                    <DashboardCardAcademic
+                      title={"IPS"}
+                      number={grafikData.ips[grafikData.ips.length - 1] || 0}
+                      color=""
+                    />
+                    <DashboardCardAcademic title={"Jumlah MK Komulatif"} number={grafikData.mataKuliahKumulatif} color="" />
+                    <DashboardCardAcademic title={"Jumlah SKS Komulatif"} number={grafikData.sksKumulatif} color="" />
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="space-y-4">
+              <h1 className="font-semibold md:p-0 p-2">Pengumuman</h1>
+              <div className="p-8 bg-white shadow-md rounded-md space-y-6">
+                {/* 3. Add loading and error handling */}
+                {isLoadingPengumuman && <div>Loading announcements...</div>}
+                {isErrorPengumuman && <div style={{ color: 'red' }}>Failed to load announcements.</div>}
+
+                {/* 4. Map over the fetched data */}
+                {pengumumanResponse?.data.map((item) => (
+                  <DashboardAnnouncementCard
+                    key={item.id}
+                    title={item.judul}
+                    description={getPlainTextSummary(item.isi, 100)} // Truncate to 100 characters
+                    // Note: The API does not provide a date for each announcement.
+                    // You may need to adjust the DashboardAnnouncementCard component
+                    // or request this field from the backend.
+                    date={""}
+                  />
+                ))}
               </div>
             </div>
           </div>
         </div>
-      </MainLayout>
+      </div>
+    </MainLayout>
   );
 };
 

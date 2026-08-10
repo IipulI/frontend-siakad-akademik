@@ -8,10 +8,14 @@ export const transcriptService = {
     getTranscript: async (): Promise<ITranscriptData> => {
         const response = await Api.get("/mahasiswa/hasil-studi/transkrip");
 
+
+
         // Handle wrapping in standard api response (response.data.data) or raw array (response.data)
-        const rawData: IApiTranscriptItem[] = Array.isArray(response.data)
-            ? response.data
-            : (response.data.data || []);
+        const responseBody = response.data;
+        const dataObj = responseBody?.data || responseBody;
+        const rawData: IApiTranscriptItem[] = Array.isArray(dataObj)
+            ? dataObj
+            : (dataObj?.rincianKrs || []);
 
         const rincianKrsDto: ITranscriptCourse[] = rawData.map((item) => {
             const sks = item["kelasKuliah.mataKuliah.totalSks"] !== null && item["kelasKuliah.mataKuliah.totalSks"] !== undefined

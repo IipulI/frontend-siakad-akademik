@@ -4,6 +4,8 @@ import HorizontalLine from "../../../components/profile/HorizontalLine";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { studentKrsService } from "../../../api/mahasiswa/studentKrsService";
 import { IAvailableCourse, ISavedKrsResponse, IAddKrsPayload, IKrsInfo } from "../../../types/mahasiswa.types";
+import { ToastNotif, showToast } from "../../../components/admin-finance/Toastify";
+import Swal from "sweetalert2";
 import {
     Check,
     RefreshCw,
@@ -41,6 +43,15 @@ const StudyPlanCard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+    // States for custom delete modal
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [courseToDelete, setCourseToDelete] = useState<{ id: string; nama: string } | null>(null);
+
+    const handleDeleteClick = (courseId: string, courseName: string) => {
+        setCourseToDelete({ id: courseId, nama: courseName });
+        setIsDeleteModalOpen(true);
+    };
+
     // --- DATA FETCHING QUERIES ---
     const { data: krsInfo, isLoading: isLoadingInfo } = useQuery({
         queryKey: ['krsInfo'],
@@ -65,41 +76,107 @@ const StudyPlanCard = () => {
     const { mutate: addCourses, isLoading: isAddingCourses } = useMutation({
         mutationFn: (payload: IAddKrsPayload) => studentKrsService.addCoursesToKrs(payload),
         onSuccess: (data) => {
-            alert(data.message || "KRS berhasil disimpan!");
+            Swal.fire({
+                title: "Berhasil!",
+                text: data.message || "KRS berhasil disimpan!",
+                icon: "success",
+                confirmButtonColor: "#00c274",
+            });
             queryClient.invalidateQueries({ queryKey: ['krsInfo'] });
             queryClient.invalidateQueries({ queryKey: ['savedKrs'] });
         },
-        onError: (error) => {
+        onError: (error: any) => {
             console.error("Gagal menyimpan KRS:", error);
-            alert("Gagal menyimpan KRS. Silakan coba lagi.");
+            Swal.fire({
+                title: "Gagal!",
+                text: error.response?.data?.message || error.message || "Gagal menyimpan KRS. Silakan coba lagi.",
+                icon: "error",
+                confirmButtonColor: "#4b6bfb",
+            });
         }
     });
 
     const { mutate: submitKrs, isLoading: isSubmittingKrs } = useMutation({
         mutationFn: studentKrsService.submitKrsForApproval,
         onSuccess: (data) => {
-            alert(data.message || "KRS telah berhasil diajukan.");
+            Swal.fire({
+                title: "Berhasil!",
+                text: data.message || "KRS telah berhasil diajukan.",
+                icon: "success",
+                confirmButtonColor: "#00c274",
+            });
             queryClient.invalidateQueries({ queryKey: ['krsInfo'] });
             queryClient.invalidateQueries({ queryKey: ['savedKrs'] });
         },
-        onError: (error) => {
+        onError: (error: any) => {
             console.error("Gagal mengajukan KRS:", error);
-            alert("Gagal mengajukan KRS. Silakan coba lagi.");
+            Swal.fire({
+                title: "Gagal!",
+                text: error.response?.data?.message || error.message || "Gagal mengajukan KRS. Silakan coba lagi.",
+                icon: "error",
+                confirmButtonColor: "#4b6bfb",
+            });
         },
     });
 
     const { mutate: updateKrsCourses, isLoading: isUpdatingKrsCourses } = useMutation({
-        mutationFn: (payload: IAddKrsPayload) => studentKrsService.updateKrsCourses(payload),
-        onSuccess: (data) => {
-            alert(data.message || "KRS berhasil disimpan");
-            queryClient.invalidateQueries({ queryKey: ['krsInfo'] });
-            queryClient.invalidateQueries({ queryKey: ['savedKrs'] })
+        mutationFn: (payload: IAddKrsPayload) => {
+            const krsId = savedKrsData?.id;
+            if (!krsId) {
+                throw new Error("ID KRS tidak ditemukan");
+            }
+            return studentKrsService.updateKrsCourses(krsId, payload);
         },
-        onError: (error) => {
+        onSuccess: (data) => {
+            Swal.fire({
+                title: "Berhasil!",
+                text: data.message || "KRS berhasil diperbarui.",
+                icon: "success",
+                confirmButtonColor: "#00c274",
+            });
+            queryClient.invalidateQueries({ queryKey: ['krsInfo'] });
+            queryClient.invalidateQueries({ queryKey: ['savedKrs'] });
+        },
+        onError: (error: any) => {
             console.error('Gagal menyimpan KRS:', error);
-            alert("Gagal menyimpan KRS. Silahkan coba lagi")
+            Swal.fire({
+                title: "Gagal!",
+                text: error.message || "Gagal menyimpan KRS. Silahkan coba lagi",
+                icon: "error",
+                confirmButtonColor: "#4b6bfb",
+            });
         }
-    })
+    });
+
+    const { mutate: deleteKrsCourse, isLoading: isDeletingKrsCourse } = useMutation({
+        mutationFn: (kelasId: string) => {
+            const krsId = savedKrsData?.id;
+            if (!krsId) {
+                throw new Error("ID KRS tidak ditemukan");
+            }
+            return studentKrsService.deleteKrs(krsId, [kelasId]);
+        },
+        onSuccess: (data) => {
+            Swal.fire({
+                title: "Berhasil!",
+                text: data.message || "Mata kuliah berhasil dihapus dari KRS Tersimpan.",
+                icon: "success",
+                confirmButtonColor: "#00c274",
+            });
+            queryClient.invalidateQueries({ queryKey: ['krsInfo'] });
+            queryClient.invalidateQueries({ queryKey: ['savedKrs'] });
+            queryClient.invalidateQueries({ queryKey: ['availableCourses'] });
+        },
+        onError: (error: any) => {
+            console.error("Gagal menghapus mata kuliah:", error);
+            Swal.fire({
+                title: "Gagal!",
+                text: error.response?.data?.message || error.message || "Gagal menghapus mata kuliah. Silakan coba lagi.",
+                icon: "error",
+                confirmButtonColor: "#4b6bfb",
+            });
+        }
+    });
 
     // Determine UI state from fetched data
     const isLoading = isLoadingInfo || isLoadingCourses || isLoadingSaved;
@@ -167,6 +244,7 @@ const StudyPlanCard = () => {
                     setSearchTerm={setSearchTerm}
                     page={page}
                     setPage={setPage}
+                    deleteCourse={deleteKrsCourse}
                 />
             )}
         </MainLayout>
@@ -216,6 +294,7 @@ interface StudyPlanCardTableProps {
     setSearchTerm: (term: string) => void;
     page: number;
     setPage: (page: number) => void;
+    deleteCourse: (kelasId: string) => void;
 }
 
 const StudyPlanCardTable = ({
@@ -234,6 +313,7 @@ const StudyPlanCardTable = ({
     setSearchTerm,
     page,
     setPage,
+    deleteCourse,
 }: StudyPlanCardTableProps) => {
     const [activeButton, setActiveButton] = useState("pilihKelas");
     const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
@@ -262,25 +342,46 @@ const StudyPlanCardTable = ({
 
     const handleSaveKrs = () => {
         if (selectedCourses.length === 0) {
-            alert("Silakan pilih minimal satu kelas untuk disimpan.");
+            Swal.fire({
+                title: "Peringatan",
+                text: "Silakan pilih minimal satu kelas untuk disimpan.",
+                icon: "warning",
+                confirmButtonColor: "#ff9f1c"
+            });
             return;
         }
-        addCourses({ kelasIds: selectedCourses });
+        addCourses({ kelasKuliahIds: selectedCourses });
         setSelectedCourses([]);
     };
 
     const handleSubmitKrs = () => {
-        if (window.confirm("Apakah Anda yakin ingin mengajukan KRS ini? Anda tidak akan bisa mengubahnya lagi setelah diajukan.")) {
-            submitKrs();
-        }
+        Swal.fire({
+            title: "Apakah Anda yakin?",
+            text: "Apakah Anda yakin ingin mengajukan KRS ini? Anda tidak akan bisa mengubahnya lagi setelah diajukan.",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#00c274",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Ya, Ajukan!",
+            cancelButtonText: "Batal"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitKrs();
+            }
+        });
     };
 
     const handleUpdateKrs = () => {
         if (selectedCourses.length === 0) {
-            alert("Silakan pilih minimal satu kelas...");
+            Swal.fire({
+                title: "Peringatan",
+                text: "Silakan pilih minimal satu kelas...",
+                icon: "warning",
+                confirmButtonColor: "#ff9f1c"
+            });
             return;
         }
-        updateCourse({ kelasIds: selectedCourses });
+        updateCourse({ kelasKuliahIds: selectedCourses });
         setSelectedCourses([]);
     }
 
@@ -343,32 +444,48 @@ const StudyPlanCardTable = ({
                             <button className="bg-primary-green w-8 cursor-pointer flex items-center justify-center"><Search color="white" size={18} /></button>
                             <button className="bg-primary-blueDark w-8 cursor-pointer rounded-r flex items-center justify-center"><RefreshCw color="white" size={20} /></button>
                         </div>
-                        <table className="min-w-full bg-white">
-                            <thead className="bg-gray-100 text-sm">
-                                <tr>
-                                    <th className="px-3 py-2 border border-primary-green"><input type="checkbox" onChange={toggleSelectAll} checked={isAllSelected} /></th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
-                                    <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
-                                </tr>
-                            </thead>
-                            <tbody className="font-semibold text-sm">
-                                {courses.map((course) => {
-                                    const isAlreadySaved = savedCourseIds.has(course.mataKuliah.id);
-                                    return (
-                                        <tr key={course.id} className={`transition ${isAlreadySaved ? 'bg-gray-200 text-gray-500' : 'text-center hover:bg-gray-50'}`}>
-                                            <td className="px-3 py-2 border border-primary-green"><input type="checkbox" checked={selectedCourses.includes(course.id)} onChange={() => handleCheckboxChange(course.id)} disabled={isAlreadySaved} /></td>
-                                            
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
-                                            <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
-                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                        <div className="w-full overflow-x-auto border border-primary-green rounded-md shadow-sm">
+                            <table className="min-w-[800px] lg:min-w-full bg-white">
+                                <thead className="bg-gray-100 text-sm">
+                                    <tr>
+                                        <th className="px-3 py-2 border border-primary-green"><input type="checkbox" onChange={toggleSelectAll} checked={isAllSelected} /></th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Kode Matkul</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Semester</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Grade</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Prasyarat</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
+                                        <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="font-semibold text-sm">
+                                    {courses.map((course) => {
+                                        const isAlreadySaved = savedCourseIds.has(course.mataKuliah.id);
+                                        const prerequisites = [
+                                            course.mataKuliah.prasyarat1?.nama || course.mataKuliah.prasyarat1?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat2?.nama || course.mataKuliah.prasyarat2?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat3?.nama || course.mataKuliah.prasyarat3?.namaMataKuliah
+                                        ].filter(Boolean);
+                                        const prasyaratText = prerequisites.length > 0 ? prerequisites.join(", ") : "-";
+
+                                        return (
+                                            <tr key={course.id} className={`transition ${isAlreadySaved ? 'bg-gray-200 text-gray-500' : 'text-center hover:bg-gray-50'}`}>
+                                                <td className="px-3 py-2 border border-primary-green"><input type="checkbox" checked={selectedCourses.includes(course.id)} onChange={() => handleCheckboxChange(course.id)} disabled={isAlreadySaved} /></td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.kode}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.semester ?? '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.previousGrade || '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{prasyaratText}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                         <div className="flex justify-between items-center mt-4">
                             {(krsInfo.statusKrs === "Belum Mengisi") && (
                                 <button
@@ -400,45 +517,84 @@ const StudyPlanCardTable = ({
                 )}
 
                 {activeButton === "krsTersimpan" && (
-                    <table className="min-w-full bg-white mt-4">
-                        <thead className="bg-gray-100 text-sm">
-                            <tr>
-                                <th className="px-3 py-2 border border-primary-green"><input type="checkbox" /></th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
-                                <th className="px-4 py-3 font-semibold border border-primary-green">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="font-semibold text-sm">
-                            {savedCoursesData?.rincianKrsMahasiswa && savedCoursesData.rincianKrsMahasiswa.length > 0 ? (
-                                savedCoursesData.rincianKrsMahasiswa.map((course) => (
-                                    <tr key={course.id} className="text-center hover:bg-gray-50 transition">
-                                        <td className="px-3 py-2 border border-primary-green"><input type="checkbox" /></td>
-                                        <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
-                                        <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
-                                        <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.totalSks}</td>
-                                        <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
-                                        <td className="px-4 py-2 border border-primary-green flex justify-center">
-                                            <button className="flex items-center gap-2 bg-red-400 text-white font-semibold p-2 rounded-md shadow-md"><Trash className="w-5 h-5" /></button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (<tr><td colSpan={6} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
-                        </tbody>
-                        <tfoot className="text-sm font-bold bg-white border">
-                            <tr>
-                                <td colSpan={3} className="px-4 py-2 text-left font-bold">Total SKS Tersimpan:</td>
-                                <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
-                                <td colSpan={2} className="px-4 py-2 text-right">
-                                    <button onClick={handleSubmitKrs} disabled={isSubmittingKrs} className="flex items-center gap-2 bg-primary-green hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md shadow-md ml-auto disabled:opacity-50">
-                                        <Check className="w-5 h-5" />{isSubmittingKrs ? 'Mengajukan...' : 'Ajukan KRS'}
-                                    </button>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div className="w-full overflow-x-auto border border-primary-green rounded-md shadow-sm mt-4">
+                        <table className="min-w-[800px] lg:min-w-full bg-white">
+                            <thead className="bg-gray-100 text-sm">
+                                <tr>
+                                    <th className="px-3 py-2 border border-primary-green"><input type="checkbox" /></th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Kode Matkul</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Semester</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Grade</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Prasyarat</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Dosen</th>
+                                    <th className="px-4 py-3 font-semibold border border-primary-green">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody className="font-semibold text-sm">
+                                {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
+                                    savedCoursesData.krs.map((course) => {
+                                        const prerequisites = [
+                                            course.mataKuliah.prasyarat1?.nama || course.mataKuliah.prasyarat1?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat2?.nama || course.mataKuliah.prasyarat2?.namaMataKuliah,
+                                            course.mataKuliah.prasyarat3?.nama || course.mataKuliah.prasyarat3?.namaMataKuliah
+                                        ].filter(Boolean);
+                                        const prasyaratText = prerequisites.length > 0 ? prerequisites.join(", ") : "-";
+
+                                        return (
+                                            <tr key={course.id} className="text-center hover:bg-gray-50 transition">
+                                                <td className="px-3 py-2 border border-primary-green"><input type="checkbox" /></td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.kode}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.semester ?? '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.totalSks}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-center">{course.previousGrade || '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{prasyaratText}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                                <td className="px-4 py-2 border border-primary-green flex justify-center">
+                                                    <button
+                                                        onClick={() => {
+                                                            Swal.fire({
+                                                                title: "Apakah Anda yakin?",
+                                                                text: `Mata kuliah ${course.mataKuliah.nama} (${course.nama}) akan dihapus dari KRS Tersimpan.`,
+                                                                icon: "warning",
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: "#ff4d4f",
+                                                                cancelButtonColor: "#4b6bfb",
+                                                                confirmButtonText: "Ya, Hapus!",
+                                                                cancelButtonText: "Batal"
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    deleteCourse(course.id);
+                                                                }
+                                                            });
+                                                        }}
+                                                        className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white font-semibold p-2 rounded-md shadow-md cursor-pointer transition"
+                                                    >
+                                                        <Trash className="w-5 h-5" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (<tr><td colSpan={10} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
+                            </tbody>
+                            <tfoot className="text-sm font-bold bg-white border">
+                                <tr>
+                                    <td colSpan={4} className="px-4 py-2 text-left font-bold">Total SKS Tersimpan:</td>
+                                    <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
+                                    <td colSpan={5} className="px-4 py-2 text-right">
+                                        <button onClick={handleSubmitKrs} disabled={isSubmittingKrs} className="flex items-center gap-2 bg-primary-green hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md shadow-md ml-auto disabled:opacity-50">
+                                            <Check className="w-5 h-5" />{isSubmittingKrs ? 'Mengajukan...' : 'Ajukan KRS'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 )}
             </div>
         );
@@ -452,51 +608,66 @@ const StudyPlanCardTable = ({
                         KRS Disetujui/Diajukan
                     </button>
                 </div>
-                <table className="min-w-full bg-white">
-                    <thead className="bg-gray-100 text-sm">
-                        <tr>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
-                            <th className="px-4 py-3 font-semibold border border-primary-green">Dosen Pengajar</th>
-                        </tr>
-                    </thead>
-                    <tbody className="font-semibold text-sm">
-                        {/*{savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (*/}
-                        {/*    savedCoursesData.krs.map((course) => (*/}
-                        {/*        <tr key={course.id} className="text-center hover:bg-gray-50 transition">*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.namaMataKuliah} ({course.namaKelas})</td>*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.hari ? `${course.hari}, ${course.jamMulai} - ${course.jamSelesai}` : '-'}</td>*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.sksTatapMuka + course.mataKuliah.sksPraktikum}</td>*/}
-                        {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.dosenPengajar}</td>*/}
-                        {/*        </tr>*/}
-                        {/*    ))*/}
-                        {/*) : ( <tr><td colSpan={4} className="text-center p-4">Tidak ada data KRS yang tersimpan.</td></tr> )}*/}
+                <div className="w-full overflow-x-auto border border-primary-green rounded-md shadow-sm">
+                    <table className="min-w-[800px] lg:min-w-full bg-white">
+                        <thead className="bg-gray-100 text-sm">
+                            <tr>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Kode Matkul</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Nama Matkul</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Prasyarat</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Jadwal</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">SKS</th>
+                                <th className="px-4 py-3 font-semibold border border-primary-green">Dosen Pengajar</th>
+                            </tr>
+                        </thead>
+                        <tbody className="font-semibold text-sm">
+                            {/*{savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (*/}
+                            {/*    savedCoursesData.krs.map((course) => (*/}
+                            {/*        <tr key={course.id} className="text-center hover:bg-gray-50 transition">*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.namaMataKuliah} ({course.namaKelas})</td>*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.hari ? `${course.hari}, ${course.jamMulai} - ${course.jamSelesai}` : '-'}</td>*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.sksTatapMuka + course.mataKuliah.sksPraktikum}</td>*/}
+                            {/*            <td className="px-4 py-2 border border-primary-green text-left">{course.dosenPengajar}</td>*/}
+                            {/*        </tr>*/}
+                            {/*    ))*/}
+                            {/*) : ( <tr><td colSpan={4} className="text-center p-4">Tidak ada data KRS yang tersimpan.</td></tr> )}*/}
 
-                        {savedCoursesData?.rincianKrsMahasiswa && savedCoursesData.rincianKrsMahasiswa.length > 0 ? (
-                            savedCoursesData.rincianKrsMahasiswa.map((course) => (
-                                <tr key={course.id} className="text-center hover:bg-gray-50 transition">
-                                    <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
-                                    <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
-                                    <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.totalSks}</td>
-                                    <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
-                                </tr>
-                            ))
-                        ) : (<tr><td colSpan={6} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
-                    </tbody>
-                    <tfoot className="text-sm font-bold bg-white border">
-                        <tr>
-                            <td colSpan={2} className="px-4 py-2 text-left font-bold">Total SKS Diajukan:</td>
-                            <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                            {savedCoursesData?.krs && savedCoursesData.krs.length > 0 ? (
+                                savedCoursesData.krs.map((course) => {
+                                    const prerequisites = [
+                                        course.mataKuliah.prasyarat1?.nama || course.mataKuliah.prasyarat1?.namaMataKuliah,
+                                        course.mataKuliah.prasyarat2?.nama || course.mataKuliah.prasyarat2?.namaMataKuliah,
+                                        course.mataKuliah.prasyarat3?.nama || course.mataKuliah.prasyarat3?.namaMataKuliah
+                                    ].filter(Boolean);
+                                    const prasyaratText = prerequisites.length > 0 ? prerequisites.join(", ") : "-";
+
+                                    return (
+                                        <tr key={course.id} className="text-center hover:bg-gray-50 transition">
+                                            <td className="px-4 py-2 border border-primary-green text-center">{course.mataKuliah.kode}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.mataKuliah.nama} ({course.nama})</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{prasyaratText}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0] ? `${course.jadwalKuliah[0].hari}, ${course.jadwalKuliah[0].jamMulai} - ${course.jadwalKuliah[0].jamSelesai}` : '-'}</td>
+                                            <td className="px-4 py-2 border border-primary-green">{course.mataKuliah.totalSks}</td>
+                                            <td className="px-4 py-2 border border-primary-green text-left">{course.jadwalKuliah[0]?.dosen?.nama || '-'}</td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (<tr><td colSpan={6} className="text-center p-4">Belum ada KRS yang disimpan.</td></tr>)}
+                        </tbody>
+                        <tfoot className="text-sm font-bold bg-white border">
+                            <tr>
+                                <td colSpan={4} className="px-4 py-2 text-left font-bold">Total SKS Diajukan:</td>
+                                <td className="px-4 py-2 text-center font-bold">{savedCoursesData?.totalSks ?? 0}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         );
     };
 
-    return notValidatedKRS();
+    return krsValidated ? validatedKRS() : notValidatedKRS();
 };
 
 // Make sure the default export is at the end of the file.

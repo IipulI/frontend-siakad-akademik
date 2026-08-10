@@ -4,7 +4,7 @@ import PaymentSteps from '../../../components/payment/PaymentSteps';
 import PaymentTable from '../../../components/payment/PaymentTable';
 import PaymentConfirmation from '../../../components/payment/PaymentConfirmation';
 import PaymentReceipt from '../../../components/payment/PaymentReceipt';
-import { useTagihanAktif } from '../../../hooks/mahasiswa/useKeuanganMahasiswa';
+import { useNotifyPaymentStep3, useTagihanAktif } from '../../../hooks/mahasiswa/useKeuanganMahasiswa';
 import { ITagihan } from '../../../types/mahasiswa.types';
 
 const PAYMENT_SESSION_KEY = 'paymentSession';
@@ -20,7 +20,11 @@ export default function StudentPayment() {
   const [metodePembayaran, setMetodePembayaran] = useState('');
   const [batasWaktu, setBatasWaktu] = useState<Date | null>(null);
 
-  const { data: tagihanAktif = [], isLoading, isError } = useTagihanAktif();
+  // Fetch langsung dari API backend — [] jika KRS belum disetujui
+  const { data: fetchedTagihan, isLoading, isError } = useTagihanAktif();
+  const tagihanAktif: ITagihan[] = fetchedTagihan ?? [];
+
+  const { mutate: notifyStep3 } = useNotifyPaymentStep3();
 
   const total = useMemo(() => {
     return tagihanAktif.reduce((acc: number, item: ITagihan) => acc + item.nominalTagihan, 0);
@@ -71,12 +75,23 @@ export default function StudentPayment() {
     setStep(2);
   };
 
+  const handleStepChange = (newStep: number) => {
+    if (newStep === 3) {
+      // Hit API menggunakan mutation, berjalan di background (fire-and-forget)
+      notifyStep3({
+        metode: metodePembayaran,
+        total: total
+      });
+    }
+    setStep(newStep);
+  };
+
   const labelMetode = opsiPembayaran.find(opt => opt.value === metodePembayaran)?.label || metodePembayaran;
 
   return (
       <MainLayout titlePage="Tagihan Mahasiswa" isGreeting={false}>
         <div className="space-y-4">
-          <PaymentSteps step={step} setStep={setStep} />
+          <PaymentSteps step={step} setStep={handleStepChange} />
           {step === 1 && (
               <PaymentTable
                   paymentOptions={opsiPembayaran}
@@ -94,6 +109,7 @@ export default function StudentPayment() {
                   method={metodePembayaran}
                   total={total}
                   deadline={batasWaktu}
+                  onCheckStatus={() => handleStepChange(3)}
               />
           )}
           {/* Contoh jika ada Langkah 3 */}

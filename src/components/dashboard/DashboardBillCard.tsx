@@ -35,8 +35,8 @@ export default function DashboardBillCard({
       <>
         {/* 3. Tampilan utama kartu */}
         <div className={`p-4 shadow-md bg-white w-full rounded-xl space-y-2 border ${status === 'payable' ? 'border-red-500' : 'border-gray-200'}`}>
-          <h1 className="text-primary-blue font-semibold text-sm">{title}</h1>
-          <h1 className="text-[#4f4f4f] text-2xl font-semibold">
+          <h1 className="text-primary-blue font-semibold text-xs sm:text-sm">{title}</h1>
+          <h1 className="text-[#4f4f4f] text-base sm:text-xl md:text-2xl font-bold tracking-tight break-all truncate" title={`Rp. ${formattedPrice}`}>
             Rp. {formattedPrice}
           </h1>
 

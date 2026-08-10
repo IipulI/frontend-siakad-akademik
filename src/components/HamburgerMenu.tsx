@@ -55,7 +55,7 @@ const DropdownToggle = ({ title, isOpen, onClick }: DropdownToggleProps) => (
       xmlns="http://www.w3.org/2000/svg"
       className={`h-5 w-5 transition-transform duration-300 ${
         isOpen ? "transform rotate-180" : ""
-      }`}
+        }`}
       viewBox="0 0 20 20"
       fill="currentColor"
     >
@@ -204,7 +204,7 @@ const HamburgerMenu = ({
           isOpen
             ? "opacity-100 visible"
             : "opacity-0 invisible pointer-events-none -translate-y-50"
-        } ${customClasses.container || ""}`}
+          } ${customClasses.container || ""}`}
       >
         {/* Close button */}
         <CloseButton
@@ -230,7 +230,7 @@ const HamburgerMenu = ({
         <nav
           className={`w-full border-t border-gray-200 ${
             customClasses.navContainer || ""
-          }`}
+            }`}
         >
           <ul className="w-full text-gray-800">
             {navItems.map((item) => (

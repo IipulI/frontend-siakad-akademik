@@ -119,6 +119,14 @@ const ThisWeek = () => {
       return <div className="text-center p-8 text-red-500">Error: {error.message}</div>;
     }
 
+    if (jadwalData?.status === 'Draft') {
+      return (
+        <div className="text-center p-8 border border-primary-yellow bg-yellow-50 text-yellow-700 font-semibold rounded-lg mt-4">
+          Jadwal kuliah tidak dapat ditampilkan karena KRS masih dalam status Draft.
+        </div>
+      );
+    }
+
     if (jadwalData?.status === 'Diajukan') {
       return (
         <div className="text-center p-8 border border-primary-yellow bg-yellow-50 text-yellow-700 font-semibold rounded-lg mt-4">

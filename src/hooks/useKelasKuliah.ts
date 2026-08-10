@@ -176,7 +176,7 @@ export function getSubjects() {
   return useQuery({
     queryKey: ["subjects"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/mata-kuliah/all");
+      const response = await Api.get("/akademik/mata-kuliah");
       return response.data.data;
     },
   });

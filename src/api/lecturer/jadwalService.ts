@@ -1,28 +1,21 @@
-// src/api/mahasiswa/jadwalService.ts
-
 import { Api } from "../Index"; // Your main Axios instance
 import { IApiResponseWithData } from "../../types/common.types";
 import { IJadwalKuliah, IJadwalMingguan } from "../../types/mahasiswa.types";
 
-// Interface for the service function parameters
 interface GetJadwalParams {
-    namaPeriode: string;
+    periodeId: string;
     hari: string;
 }
 
-/**
- * Fetches the weekly schedule for a student for a specific period from the new endpoint.
- * GET /mahasiswa/jadwal-akademik/minggu?namaPeriode=...
- */
 const getJadwalMingguan = async (
     params: GetJadwalParams
 ): Promise<IApiResponseWithData<IJadwalMingguan>> => {
     try {
         const response = await Api.get<IApiResponseWithData<IJadwalMingguan>>(
-            "/mahasiswa/jadwal-akademik/minggu",
+            "/dosen/jadwal-akademik/minggu",
             {
                 params: {
-                    namaPeriode: params.namaPeriode,
+                    periodeId: params.periodeId,
                 },
             }
         );
@@ -34,17 +27,13 @@ const getJadwalMingguan = async (
     }
 };
 
-/**
- * Fetches the schedule for a single day.
- * GET /mahasiswa/jadwal?periodeAkademik=...&hari=...
- */
 const getJadwalHarian = async (params: {
-    namaPeriode: string;
+    periodeId: string;
     hari: string;
 }): Promise<IApiResponseWithData<IJadwalKuliah[]>> => {
     try {
         const response = await Api.get<IApiResponseWithData<IJadwalKuliah[]>>(
-            "/mahasiswa/jadwal-akademik/harian",
+            "/dosen/jadwal-akademik/harian",
             { params }
         );
         return response.data;

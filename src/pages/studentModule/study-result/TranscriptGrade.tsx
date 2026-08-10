@@ -3,9 +3,18 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import Biodata from "../../../components/biodata/Biodata";
 import { useTranscript } from "../../../hooks/mahasiswa/useTranscript";
 import { ITranscriptCourse } from "../../../types/mahasiswa.types";
+import { useQuery } from "@tanstack/react-query";
+import { transcriptService } from "../../../api/mahasiswa/transcriptService";
 
 const TranscriptGrade = () => {
   const { transcriptData, isLoading, isError } = useTranscript();
+
+  // const { data: transcripts, isLoading } = useQuery({
+  //   queryKey: ["transkrip"],
+  //   queryFn: () => transcriptService.getTranscript(),
+  // })
+
+  // console.log("transkrip data", transcripts)
 
   if (isLoading) {
     return (

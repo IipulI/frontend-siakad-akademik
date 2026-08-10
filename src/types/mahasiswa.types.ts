@@ -71,8 +71,9 @@ export interface IApiKrsHistoryResponse {
 }
 
 export interface IAcademicPeriod {
-    id: string | number;
-    namaPeriode: string;
+    id: string;
+    nama?: string;
+    namaPeriode?: string;
 }
 
 export interface IMataKuliah {
@@ -128,7 +129,7 @@ export interface IKrsInfo {
 }
 
 export interface IAddKrsPayload {
-    kelasIds: string[];
+    kelasKuliahIds: string[];
 }
 
 export interface ISavedKrsResponse {
@@ -280,6 +281,11 @@ export interface ITagihanDetail extends ITagihan {
         nama: string;
         programStudi: string;
     };
+}
+
+export interface IPaymentNotifyPayload {
+    metode: string;
+    total: number;
 }
 
 export interface PaginatedBillsResponse {
