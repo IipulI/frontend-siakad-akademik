@@ -1,12 +1,8 @@
-interface IAcademicPeriod {
-    id: string
-    nama?: string
-    namaPeriode?: string
-}
+// IAcademicPeriod now lives in common.types.ts (single source of truth).
 
 interface IStudyProgram {
     id: string
     namaProgramStudi: string
 }
 
-export type { IAcademicPeriod, IStudyProgram }
+export type { IStudyProgram }

@@ -1,6 +1,7 @@
 // src/hooks/admin-akademik/useMataKuliahByProdiAndTahun.ts
 import { useQuery } from "@tanstack/react-query";
-import { IMataKuliah, IPaginatedResponse } from "../../types/models";
+import { IMataKuliahAdmin } from "../../types/models";
+import { IPaginatedResponse } from "../../types/common.types";
 import { mataKuliahService } from "../../api/admin-academic/mataKuliahService";
 
 interface UseMataKuliahParams {
@@ -20,11 +21,11 @@ export const useMataKuliahByProdiAndTahun = ({
                                              }: UseMataKuliahParams) => {
     const queryKey = ['mataKuliahByProdiAndTahun', programStudiName, tahunKurikulumName, page, size, sort];
 
-    const { data, isLoading, error, refetch } = useQuery<IPaginatedResponse<IMataKuliah>, Error>({ // v5 syntax
+    const { data, isLoading, error, refetch } = useQuery<IPaginatedResponse<IMataKuliahAdmin>, Error>({ // v5 syntax
         queryKey: queryKey,
         queryFn: async () => {
             if (!programStudiName || !tahunKurikulumName) {
-                return { status: 'success', message: 'No program studi or tahun kurikulum selected', data: [], pagination: { currentPage: 0, perPage: 0, totalPages: 0, totalItems: 0 } };
+                return { status: 'success', message: 'No program studi or tahun kurikulum selected', data: [], pagination: { currentPage: 0, perPage: 0, totalPage: 0, totalItems: 0 } };
             }
             return mataKuliahService.getMataKuliah({
                 programStudi: programStudiName,

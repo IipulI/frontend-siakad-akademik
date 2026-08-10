@@ -1,18 +1,11 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Api } from "../../api/Index";
-
-export interface ProgramStudiData {
-  id: string;
-  namaProgramStudi: string;
-  jenjang: string;
-}
+import { useQuery } from "@tanstack/react-query";
+import { programStudiService } from "../../api/admin-academic/programStudiService";
+import { IProgramStudi } from "../../types/models";
 
 export function getProdi() {
-  return useQuery({
+  return useQuery<IProgramStudi[], Error>({
     queryKey: ["prodiData"],
-    queryFn: async () => {
-      const response = await Api.get("/program-studi");
-      return response.data.data;
-    },
+    queryFn: programStudiService.getProgramStudi,
+    staleTime: Infinity,
   });
 }

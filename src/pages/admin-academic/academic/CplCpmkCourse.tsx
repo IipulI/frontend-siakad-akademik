@@ -4,7 +4,7 @@ import { Api } from "../../../api/Index";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CourseData } from "../../../components/types.ts";
+import { RpsCourseData as CourseData } from "../../../components/types.ts";
 import { TableCpl, TableCpmk } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Edit } from "lucide-react";
 import { getCplCpmkCourse } from "../../../hooks/academic/useCplCpmkCourse.ts";

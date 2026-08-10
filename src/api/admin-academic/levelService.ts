@@ -3,8 +3,8 @@ import { Api } from '../Index'; // Your Axios instance
 import {
     ILevel,
     ILevelPayload,
-    IApiResponseSuccess,
 } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 export const levelService = {
     /**

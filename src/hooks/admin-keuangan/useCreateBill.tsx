@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
+import { IPaginatedResponse } from "../../types/common.types";
 
 export interface InvoiceData {
   siakMahasiswaIds: string[];
@@ -28,22 +29,12 @@ export interface DataKomponenTagihan {
   selected?: boolean;
 }
 
-export interface FormData {
+export interface CreateBillFormData {
   tanggalTenggat: string;
   tahap: string;
 }
 
-export interface PaginationResponse {
-  status: string;
-  message: string;
-  data: StudentData[];
-  pagination: {
-    currentPage: number;
-    perPage: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
+export type PaginationResponse = IPaginatedResponse<StudentData>;
 
 // GET - dengan pagination
 export function useCreateBill(

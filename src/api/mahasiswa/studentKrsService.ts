@@ -53,13 +53,16 @@ export const studentKrsService = {
 
             const rawData = response.data;
 
-            // Jika backend mengembalikan data dalam format { status, message, data: [] }
-            // Kita transform menjadi IPaginatedResponse
             return {
+                status: rawData.status ?? 'success',
+                message: rawData.message ?? '',
                 data: rawData.data || [],
-                totalItems: rawData.pagination?.totalItems || (rawData.data?.length || 0),
-                totalPages: rawData.pagination?.totalPage || 1,
-                currentPage: rawData.pagination?.currentPage || 1,
+                pagination: {
+                    currentPage: rawData.pagination?.currentPage || 1,
+                    perPage: rawData.pagination?.perPage || (rawData.data?.length || 0),
+                    totalPage: rawData.pagination?.totalPage || 1,
+                    totalItems: rawData.pagination?.totalItems || (rawData.data?.length || 0),
+                },
             };
         } catch (error) {
             console.error('Error fetching available courses:', error);

@@ -21,6 +21,17 @@ import {
 import { SelectInput } from "./admin-academic/student-data/Input";
 import { getAcademicPeriods, getProgramStudi } from "../hooks/useGeneral";
 import { AdminAcademicRoute } from "../types/VarRoutes";
+import {
+  CurriculumData,
+  PeriodeAkademik,
+  RpsData,
+  CplData,
+  CpmkData,
+  CurriculumProdiData,
+} from "./types";
+import { CourseData } from "../hooks/academic/useCourseManagement";
+import { CplCpmkCourseResponse } from "../hooks/academic/useCplCpmkCourse";
+import { IPengumuman } from "../types/common.types";
 
 interface TableProps {
   data: Array<Record<string, any>>;

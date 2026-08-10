@@ -7,7 +7,8 @@ import SelectOption from "../../../components/lecturer/SelectOption";
 import SearchBar from "../../../components/SearchBar";
 import { useClassList } from "../../../hooks/lecturer/useFetchClass";
 import { useAcademicPeriodDropdown, useStudyProgramDropdown } from "../../../hooks/lecturer/useFetchDropdown";
-import { IAcademicPeriod, IStudyProgram } from "../../../types/dropdown";
+import { IStudyProgram } from "../../../types/dropdown";
+import { IAcademicPeriod } from "../../../types/common.types";
 
 const ClassLecturer = () => {
   const [currentPage, setCurrentPage] = useState(1);

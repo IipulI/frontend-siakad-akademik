@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
+import { IPaginatedResponse } from "../../types/common.types";
 
 interface AcademicAdvisor {
   mahasiswa: string;
@@ -15,17 +16,7 @@ interface AcademicAdvisor {
   pembimbingAkademik: string;
 }
 
-export interface PaginationResponse {
-  status: string;
-  message: string;
-  data: AcademicAdvisor[];
-  pagination: {
-    currentPage: number;
-    perPage: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
+export type PaginationResponse = IPaginatedResponse<AcademicAdvisor>;
 
 // Interface untuk parameter hook
 interface AcademicAdvisorParams {

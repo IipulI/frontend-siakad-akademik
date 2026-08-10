@@ -180,12 +180,10 @@ export interface DropdownMenuData {
   [key: string]: {
     title: string;
     items: {
-      icon: string;
       title: string;
       description: string;
       to?: string;
       children?: {
-        icon: string;
         title: string;
         description: string;
         to: string;

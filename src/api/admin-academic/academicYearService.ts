@@ -1,6 +1,7 @@
 // src/api/admin-akademik/academicYearService.ts
 import { Api } from '../Index';
-import { IAcademicYear, IPaginatedResponse, IAcademicYearPayload, IApiResponseSuccess } from '../../types/models';
+import { IAcademicYear, IAcademicYearPayload } from '../../types/models';
+import { IPaginatedResponse, IApiResponseSuccess } from '../../types/common.types';
 
 interface GetAcademicYearsParams {
     keyword?: string;

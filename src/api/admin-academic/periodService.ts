@@ -3,9 +3,8 @@ import { Api } from '../Index'; // Your Axios instance
 import {
     IPeriod,
     IPeriodPayload,
-    IPaginatedResponse,
-    IApiResponseSuccess,
 } from '../../types/models';
+import { IPaginatedResponse, IApiResponseSuccess } from '../../types/common.types';
 
 /**
  * Interface for parameters when fetching academic periods.

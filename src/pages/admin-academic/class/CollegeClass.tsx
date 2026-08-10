@@ -41,17 +41,16 @@ const CollegeClass = () => {
     periodeAkademik: "",
     programStudi: "",
     tahunKuriKulum: "",
+    sistemKuliah: "",
   });
-  const systemOptions = [{ value: "", label: "Semua Sistem Kuliah" }];
-  const prodiOptions = [{ value: "", label: "Universitas Ibnu Khaldun" }];
-  const curiculumOptions = [{ value: "", label: "Semua Kurikulum" }];
+  const systemOptions = [
+    { value: "Reguler", label: "Reguler" },
+    { value: "Karyawan", label: "Karyawan" },
+  ];
 
-  const { data: periods, isLoading: isLoadingPeriods } =
-    getAcademicPeriodeDropdown();
-
+  const { data: periods, isLoading: isLoadingPeriods } = getAcademicPeriodeDropdown();
   const { data: programs, isLoading: isLoadingPrograms } = getProgramStudi();
-  const { data: curiculums, isLoading: isLoadingCuriculums } =
-    getYearCuriculum();
+  const { data: curiculums, isLoading: isLoadingCuriculums } = getYearCuriculum();
 
   const handleChangeFilter = (fieldName, selectedValue) => {
     setFilter((prev) => ({
@@ -90,8 +89,8 @@ const CollegeClass = () => {
         {/* FILTER SECTION */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-white border-t-2 border-primary-yellow p-3 rounded shadow-sm">
           <SelectInput
-            getOptionLabel={(opt) => opt.namaPeriode}
-            getOptionValue={(opt) => opt.namaPeriode}
+            getOptionLabel={(opt) => opt.nama}
+            getOptionValue={(opt) => opt.kode}
             onChange={(val) =>
               handleChangeFilter("periodeAkademik", val.namaPeriode)
             }
@@ -101,13 +100,20 @@ const CollegeClass = () => {
           />
           <SelectInput
             options={programs}
-            getOptionLabel={(opt) => opt.namaProgramStudi}
+            getOptionLabel={(opt) => opt.nama}
             getOptionValue={(opt) => opt.id}
             onChange={(val) => handleChangeFilter("programStudi", val.id)}
             value={filter.programStudi}
             label="Program Studi"
           />
-          <SelectInput options={systemOptions} label="Sistem Kuliah" />
+          <SelectInput
+              options={systemOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
+              label="Sistem Kuliah"
+              value={filter.sistemKuliah}
+              onChange={(val) => handleChangeFilter("sistemKuliah", val?.value ?? "")}
+          />
           <SelectInput
             options={curiculums}
             getOptionLabel={(opt) => opt.tahun}

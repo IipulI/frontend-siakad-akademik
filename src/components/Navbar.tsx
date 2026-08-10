@@ -182,12 +182,10 @@ interface DropdownMenuData {
   [key: string]: {
     title: string;
     items: {
-      icon: string;
       title: string;
       description: string;
       to?: string;
       children?: {
-        icon: string;
         title: string;
         description: string;
         to: string;
@@ -209,7 +207,7 @@ interface NavbarProps {
 const Navbar = ({
   navItems,
   dropdownMenus,
-  className = "xl:flex space-x-6 text-white hidden bg-primary-green w-fit text-sm p-2.5 rounded-full",
+  className = "xl:flex space-x-6 text-white hidden bg-primary-green w-fit text-sm py-2.5 px-6 rounded-full",
   containerClassName = "px-40",
   activeItemClassName = "",
   defaultClassName = "",
