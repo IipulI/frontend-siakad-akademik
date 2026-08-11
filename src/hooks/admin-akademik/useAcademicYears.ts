@@ -1,7 +1,8 @@
 // src/hooks/admin-akademik/useAcademicYears.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { academicYearService } from '../../api/admin-academic/academicYearService';
-import { IAcademicYear, IPaginatedResponse, IAcademicYearPayload, IApiResponseSuccess } from '../../types/models';
+import { IAcademicYear, IAcademicYearPayload } from '../../types/models';
+import { IPaginatedResponse, IApiResponseSuccess } from '../../types/common.types';
 
 interface UseAcademicYearsParams {
     keyword?: string;

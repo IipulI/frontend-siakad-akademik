@@ -1,6 +1,6 @@
 import { data, useLocation } from "react-router-dom";
 import { BriefStudentData } from "./BriefStudentData";
-import { getAcademicPeriodeDropdown } from "../../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown } from "../../../../hooks/useGeneral";
 import { getMengulang } from "../../../../hooks/admin-akademik/useStudentDetail";
 import { useState } from "react";
 

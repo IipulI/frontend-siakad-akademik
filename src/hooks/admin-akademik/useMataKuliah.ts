@@ -1,7 +1,7 @@
 // src/hooks/admin-academic/useMataKuliah.ts
 import { useQuery } from '@tanstack/react-query';
 import { mataKuliahService } from '../../api/admin-academic/mataKuliahService';
-import { IMataKuliah } from '../../types/models';
+import { IMataKuliahAdmin } from '../../types/models';
 
 /**
  * Interface untuk parameter hook useMataKuliah.
@@ -18,7 +18,7 @@ export const useMataKuliah = (params: UseMataKuliahParams) => {
     // Query akan aktif hanya jika tahunKurikulumId dan programStudiId tersedia
     const queryEnabled = !!params.tahunKurikulumId && !!params.programStudiId && (params.enabled !== false);
 
-    return useQuery<IMataKuliah[], Error>({
+    return useQuery<IMataKuliahAdmin[], Error>({
         queryKey: ['mataKuliah', params.tahunKurikulumId, params.programStudiId],
         queryFn: () => mataKuliahService.getMataKuliah(params),
         enabled: queryEnabled, // Query hanya akan berjalan jika queryEnabled true

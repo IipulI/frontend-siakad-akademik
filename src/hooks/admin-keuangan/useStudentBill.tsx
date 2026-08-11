@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
+import { IPaginatedResponse } from "../../types/common.types";
 
 export interface StudentBillDataDetail {
   kodeInvoice: string;
@@ -40,17 +41,7 @@ export interface StudentBillData {
   lunas: boolean;
 }
 
-export interface PaginationResponse {
-  status: string;
-  message: string;
-  data: StudentBillData[];
-  pagination: {
-    currentPage: number;
-    perPage: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
+export type PaginationResponse = IPaginatedResponse<StudentBillData>;
 
 // GET - dengan pagination dan filter
 export function useGetStudentBill(

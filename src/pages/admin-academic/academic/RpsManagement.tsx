@@ -10,8 +10,8 @@ import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import { getRps, useDeleteRps } from "../../../hooks/academic/useRpsManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
-import { getPeriodeAkdemikCoba } from "../../../hooks/academic/usePeriodeAkademikCoba.ts";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import getAcademicPeriods from "../../../hooks/usePeriodeAkademik.ts";
 
 const RpsManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const RpsManagement: React.FC = () => {
   const { data: rpsData = [], isLoading: isRpsLoading, error: rpsError } = getRps();
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
-  const { data: periodeAkademikData = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getPeriodeAkdemikCoba();
+  const { data: periodeAkademikData = [], isLoading: isPeriodeAkademikLoading, error: periodeAkademikError } = getAcademicPeriods();
 
   // --- Mutation ---
   const deleteMutation = useDeleteRps();

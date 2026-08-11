@@ -1,32 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index.tsx";
-import { CurriculumData, PeriodeAkademik, ProgramStudiData, DosenData, CourseData, KelasData } from "../../components/types.ts";
-
-export interface RpsData {
-  id: string;
-  siakProgramStudiId: string;
-  siakPeriodeAkademikId: string;
-  siakTahunKurikulumId: string;
-  siakMataKuliahId: string;
-  tahunKurikulum: CurriculumData;
-  periodeAkademik: PeriodeAkademik;
-  programStudi: ProgramStudiData;
-  tanggalPenyusun: string;
-  deskripsiMataKuliah: string;
-  tujuanMataKuliah: string;
-  materiPembelajaran: string;
-  pustakaUtama: string;
-  pustakaPendukung: string;
-  dosenPenyusun: Array<{
-    id: string;
-    nama: string;
-    nidn: string;
-  }>;
-  mataKuliah: CourseData;
-  kelas: Array<{ id: string; nama: string }>;
-  sks: number;
-  dokumenRps?: string;
-}
 
 export interface AddRpsPayload {
   siakProgramStudiId: string;

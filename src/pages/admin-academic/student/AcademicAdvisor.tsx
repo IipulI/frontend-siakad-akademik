@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import { useGetAcademicAdvisor } from "../../../hooks/admin-akademik/usePembimbingAkademik";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { getAcademicPeriodeDropdown, getPeriodeAcademicActive } from "../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown, getPeriodeAcademicActive } from "../../../hooks/useGeneral";
 
 export default function AcademikAdvisor() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -433,81 +433,81 @@ export default function AcademikAdvisor() {
                   </td>
                 </tr>
               ) : (
-                studentRecords.map((record, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <input type="checkbox" className="w-4 h-4" />
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {record.nama}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.angkatan}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record?.statusMahasiswa?.nama}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.semester}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record?.krsTerbaru?.sksDiambil}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.batasSks}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record.totalSks}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record?.hasilStudiTerbaru?.ips}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      {record?.hasilStudiTerbaru?.ipk}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex justify-center">
-                        {record?.krsTerbaru?.status == 'Diajukan' || record?.krsTerbaru?.status == 'Disetujui' ? (
-                          <Check color="green" size={20} />
-                        ) : (
-                          <X color="red" size={20} />
-                        )}
-                      </div>
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex justify-center">
-                        {record?.krsTerbaru?.status == 'Disetujui' ? (
-                          <Check color="green" size={20} />
-                        ) : (
-                          <X color="red" size={20} />
-                        )}
-                      </div>
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {record?.pembimbingDosen?.dosen?.nama ?? '-'}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-sm">
-                      {"-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center text-sm">
-                      {"-"}
-                    </td>
-                    <td className="border border-gray-500 font-semibold p-2 text-center">
-                      <div className="flex justify-center space-x-2">
-                        <ButtonClick
-                          icon={<Pen size={16} />}
-                          color="bg-primary-yellow"
-                          onClick={Edit}
-                        />
-                        <ButtonClick
-                          icon={<Eye size={16} />}
-                          color="bg-primary-blueSoft"
-                          onClick={Detail}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                  studentRecords.map((record, index) => (
+                      <tr key={index} className="hover:bg-gray-100">
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          <input type="checkbox" className="w-4 h-4" />
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-sm">
+                          {record.nama}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record.angkatan}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record?.statusMahasiswa?.nama}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record.semester}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record?.krsTerbaru?.sksDiambil}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record.batasSks}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record.totalSks}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record?.hasilStudiTerbaru?.ips}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          {record?.hasilStudiTerbaru?.ipk}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          <div className="flex justify-center">
+                            {record?.krsTerbaru?.status == 'Diajukan' || record?.krsTerbaru?.status == 'Disetujui' ? (
+                                <Check color="green" size={20} />
+                            ) : (
+                                <X color="red" size={20} />
+                            )}
+                          </div>
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          <div className="flex justify-center">
+                            {record?.krsTerbaru?.status == 'Disetujui' ? (
+                                <Check color="green" size={20} />
+                            ) : (
+                                <X color="red" size={20} />
+                            )}
+                          </div>
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-sm">
+                          {record?.pembimbingDosen?.dosen?.nama ?? '-'}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-sm">
+                          {"-"}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center text-sm">
+                          {"-"}
+                        </td>
+                        <td className="border border-gray-500 font-semibold p-2 text-center">
+                          <div className="flex justify-center space-x-2">
+                            <ButtonClick
+                                icon={<Pen size={16} />}
+                                color="bg-primary-yellow"
+                                onClick={Edit}
+                            />
+                            <ButtonClick
+                                icon={<Eye size={16} />}
+                                color="bg-primary-blueSoft"
+                                onClick={Detail}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                  ))
               )}
             </tbody>
           </table>
@@ -517,7 +517,7 @@ export default function AcademikAdvisor() {
         {pagination && (
           <Pagination
             currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
+            totalPages={pagination.totalPage}
             onPageChange={handlePageChange}
             rowsPerPage={pagination.perPage}
             totalRows={pagination.totalItems}

@@ -30,7 +30,7 @@ import Repeat from "../../../components/admin-academic/student-data/detail/Repea
 import EditKRS from "../../../components/admin-academic/student-data/detail/EditKRS";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useLocation } from "react-router-dom";
-import { getProgramStudi } from "../../../hooks/useFilter";
+import { getProgramStudi } from "../../../hooks/useGeneral";
 import { getFotoProfil } from "../../../hooks/admin-akademik/useMahasiswa";
 
 export default function DetailStudent() {

@@ -3,7 +3,7 @@ import { BriefStudentData } from "./BriefStudentData";
 import {
   getAcademicPeriodeDropdown,
   getPeriodeAcademicActive,
-} from "../../../../hooks/useFilter";
+} from "../../../../hooks/useGeneral";
 import { getNilaiKuliah } from "../../../../hooks/admin-akademik/useStudentDetail";
 import { useState } from "react";
 

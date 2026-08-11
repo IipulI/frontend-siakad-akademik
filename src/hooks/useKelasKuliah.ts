@@ -65,6 +65,7 @@ export function getCollegeClass(filter: {
   periodeAkademik?: string;
   programStudi?: string;
   tahunKuriKulum?: string;
+  sistemKuliah?: string;
 }) {
   // Debounce selama 500ms
   const [debouncedFilter] = useDebounce(filter, 500);

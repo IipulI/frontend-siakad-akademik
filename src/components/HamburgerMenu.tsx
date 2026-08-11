@@ -3,22 +3,33 @@ import { Link } from "react-router-dom";
 
 // Interface for dropdown menu items
 interface DropdownMenuItemProps {
-  icon: string;
   title: string;
   description: string;
   to: string;
   onClick?: () => void;
-  iconBasePath?: string;
 }
 
-// Component for rendering submenu items
+// Interface for sub-item children
+interface SubItemChild {
+  title: string;
+  description: string;
+  to: string;
+}
+
+// Interface for dropdown menu item with optional children
+interface DropdownMenuItemWithChildren {
+  title: string;
+  description: string;
+  to?: string;
+  children?: SubItemChild[];
+}
+
+// Component for rendering submenu items (leaf items)
 const SubMenuItem = ({
-  icon,
   title,
   description,
   to,
   onClick,
-  iconBasePath = "/img/",
 }: DropdownMenuItemProps) => (
   <li>
     <Link
@@ -26,14 +37,63 @@ const SubMenuItem = ({
       className="px-3 py-3 text-sm flex items-center justify-between group"
       onClick={onClick}
     >
-      <div className="flex items-center gap-5">
-        <img src={`${iconBasePath}${icon}`} alt="" className="w-6 invert" />
-        <div>
-          <p>{title}</p>
-          <p className="text-xs font-extralight">{description}</p>
-        </div>
+      <div>
+        <p>{title}</p>
+        <p className="text-xs font-extralight">{description}</p>
       </div>
     </Link>
+  </li>
+);
+
+// Component for rendering a parent item with nested children (level 2)
+const SubMenuItemWithChildren = ({
+  item,
+  onItemClick,
+  isOpen,
+  onToggle,
+}: {
+  item: DropdownMenuItemWithChildren;
+  onItemClick?: () => void;
+  isOpen: boolean;
+  onToggle: () => void;
+}) => (
+  <li>
+    <div
+      className="px-3 py-3 text-sm flex items-center justify-between cursor-pointer"
+      onClick={onToggle}
+    >
+      <div>
+        <p className="font-medium">{item.title}</p>
+        <p className="text-xs font-extralight">{item.description}</p>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className={`h-4 w-4 transition-transform duration-300 ${
+          isOpen ? "transform rotate-180" : ""
+        }`}
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </div>
+    {isOpen && item.children && (
+      <ul className="ml-6 mb-2 space-y-1 border-l-2 border-gray-300 pl-2">
+        {item.children.map((child, idx) => (
+          <SubMenuItem
+            key={idx}
+            title={child.title}
+            description={child.description}
+            to={child.to}
+            onClick={onItemClick}
+          />
+        ))}
+      </ul>
+    )}
   </li>
 );
 
@@ -120,10 +180,14 @@ export interface DropdownMenuData {
   [key: string]: {
     title: string;
     items: {
-      icon: string;
       title: string;
       description: string;
-      to: string;
+      to?: string;
+      children?: {
+        title: string;
+        description: string;
+        to: string;
+      }[];
     }[];
   };
 }
@@ -135,7 +199,6 @@ export interface HamburgerMenuProps {
   logo?: string;
   title?: string;
   subtitle?: string;
-  iconBasePath?: string;
   onMenuItemClick?: () => void;
   customClasses?: {
     container?: string;
@@ -156,12 +219,15 @@ const HamburgerMenu = ({
   logo,
   title,
   subtitle,
-  iconBasePath = "/img/", // Keeping this default as it's commonly needed
   onMenuItemClick,
   customClasses = {},
 }: HamburgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>(
+    {}
+  );
+  // Track open sub-dropdowns (level 2) in hamburger menu
+  const [openSubDropdowns, setOpenSubDropdowns] = useState<Record<string, boolean>>(
     {}
   );
 
@@ -170,6 +236,7 @@ const HamburgerMenu = ({
     // Reset all dropdowns when closing the menu
     if (isOpen) {
       setOpenDropdowns({});
+      setOpenSubDropdowns({});
     }
     // Prevent scrolling on body when menu is open
     document.body.style.overflow = isOpen ? "auto" : "hidden";
@@ -179,6 +246,13 @@ const HamburgerMenu = ({
     setOpenDropdowns((prev) => ({
       ...prev,
       [id]: !prev[id],
+    }));
+  };
+
+  const toggleSubDropdown = (key: string) => {
+    setOpenSubDropdowns((prev) => ({
+      ...prev,
+      [key]: !prev[key],
     }));
   };
 
@@ -248,17 +322,32 @@ const HamburgerMenu = ({
                       dropdownMenus[item.dropdownKey] && (
                         <ul className="ml-4 mb-3 space-y-2 text-gray-600">
                           {dropdownMenus[item.dropdownKey].items.map(
-                            (subItem, idx) => (
-                              <SubMenuItem
-                                key={idx}
-                                icon={subItem.icon}
-                                title={subItem.title}
-                                description={subItem.description}
-                                to={String(subItem.to)}
-                                onClick={handleMenuItemClick}
-                                iconBasePath={iconBasePath}
-                              />
-                            )
+                            (subItem, idx) => {
+                              const hasChildren = subItem.children && subItem.children.length > 0;
+                              const subKey = `${item.id}-${idx}`;
+
+                              if (hasChildren) {
+                                return (
+                                  <SubMenuItemWithChildren
+                                    key={idx}
+                                    item={subItem}
+                                    onItemClick={handleMenuItemClick}
+                                    isOpen={openSubDropdowns[subKey] || false}
+                                    onToggle={() => toggleSubDropdown(subKey)}
+                                  />
+                                );
+                              }
+
+                              return (
+                                <SubMenuItem
+                                  key={idx}
+                                  title={subItem.title}
+                                  description={subItem.description}
+                                  to={String(subItem.to)}
+                                  onClick={handleMenuItemClick}
+                                />
+                              );
+                            }
                           )}
                         </ul>
                       )}

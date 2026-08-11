@@ -509,7 +509,7 @@ const StudyPlanCardTable = ({
                             )}
                             <div className="flex items-center gap-2">
                                 <button onClick={() => setPage(page - 1)} disabled={!pagination?.links?.prev} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-                                <span>Page {pagination?.currentPage} of {pagination?.totalPages}</span>
+                                <span>Page {pagination?.currentPage} of {pagination?.totalPage}</span>
                                 <button onClick={() => setPage(page + 1)} disabled={!pagination?.links?.next} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
                             </div>
                         </div>

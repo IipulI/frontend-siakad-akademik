@@ -6,12 +6,12 @@ import {
     IProgramStudi,
     IGradeComposition,
     IOption,
-    IMataKuliah,
+    IMataKuliahAdmin,
     ISingleAssignmentPayload,
     IMataKuliahCompositionDetailsResponse,
 } from "../../../types/models";
 import { useAcademicYears } from "../../../hooks/admin-akademik/useAcademicYears";
-import { useProgramStudi } from "../../../hooks/admin-akademik/useProgramStudi";
+import { getProdi as useProgramStudi } from "../../../hooks/academic/useProdi";
 import { useGradeCompositions } from "../../../hooks/admin-akademik/useGradeCompositions";
 import { useMataKuliahByProdiAndTahun } from "../../../hooks/admin-akademik/useMataKuliahByProdiAndTahun";
 import { useAssignSingleComposition } from "../../../hooks/admin-akademik/useAssignSingleComposition";
@@ -53,7 +53,7 @@ const SetCompositionAdminAcademic: React.FC = () => {
             tahunKurikulumName: selectedTahunKurikulumName,
             size: 100
         });
-    const mataKuliahs: IMataKuliah[] = mataKuliahListResponse || [];
+    const mataKuliahs: IMataKuliahAdmin[] = mataKuliahListResponse || [];
 
     const firstMataKuliahId = mataKuliahs.length > 0 ? mataKuliahs[0].id : undefined;
 

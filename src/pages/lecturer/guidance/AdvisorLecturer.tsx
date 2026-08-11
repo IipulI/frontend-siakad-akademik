@@ -11,7 +11,8 @@ import { LecturerRoute } from "../../../types/VarRoutes";
 import SearchBar from "../../../components/SearchBar";
 import { useAcademicGuidanceList, useAcceptKRS, useRejectKRS } from "../../../hooks/lecturer/useFetchGuidance";
 import { useAcademicPeriodDropdown, useStudyProgramDropdown } from "../../../hooks/lecturer/useFetchDropdown";
-import { IAcademicPeriod, IStudyProgram } from "../../../types/dropdown";
+import { IStudyProgram } from "../../../types/dropdown";
+import { IAcademicPeriod } from "../../../types/common.types";
 
 export default function AdvisorLecturer() {
   const navigate = useNavigate()

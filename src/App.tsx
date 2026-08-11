@@ -105,6 +105,7 @@ import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/Ad
 import NotFound from "./pages/NotFound";
 import DetailOBE from "./pages/admin-academic/academic/DetailOBE";
 import Forbidden from "./pages/ForbiddenPage";
+import ComingSoon from "./pages/ComingSoon";
 
 export default function App() {
   return (
@@ -450,6 +451,88 @@ export default function App() {
       <Route
         path={`${AdminAcademicRoute.rpsManagement.detailRps}/:id`}
         element={<DetailRps />}
+      />
+
+      {/* Route untuk admin akademik - menu baru yang halamannya belum dibuat (placeholder) */}
+      <Route
+        path={String(AdminAcademicRoute.portal.dosen)}
+        element={<ComingSoon title="Dosen" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.classData.monitoringRoom)}
+        element={<ComingSoon title="Monitoring Ruang" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.semesterStatus)}
+        element={<ComingSoon title="Status Semester" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentEvaluation)}
+        element={<ComingSoon title="Evaluasi Mahasiswa" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentTransfer)}
+        element={<ComingSoon title="Transfer Mahasiswa" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentDropout)}
+        element={<ComingSoon title="Mahasiswa Keluar" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.institution.studySystem)}
+        element={<ComingSoon title="Sistem Kuliah" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.institution.classroom)}
+        element={<ComingSoon title="Ruang Kuliah" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.lectureSetting.courseType)}
+        element={<ComingSoon title="Jenis Mata Kuliah" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.lectureSetting.timeSlot)}
+        element={<ComingSoon title="Slot Waktu" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.lectureSetting.meetingType)}
+        element={<ComingSoon title="Jenis Pertemuan" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.religion)}
+        element={<ComingSoon title="Agama" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.ethnicity)}
+        element={<ComingSoon title="Suku" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.income)}
+        element={<ComingSoon title="Penghasilan" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.occupation)}
+        element={<ComingSoon title="Pekerjaan" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.almamaterJacket)}
+        element={<ComingSoon title="Jas Almamater" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.studentStatus)}
+        element={<ComingSoon title="Status Mahasiswa" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.residenceType)}
+        element={<ComingSoon title="Jenis Tinggal" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.transportation)}
+        element={<ComingSoon title="Transportasi" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.specialNeeds)}
+        element={<ComingSoon title="Kebutuhan Khusus" />}
       />
 
       {/* Route Untuk Admin Keuangan */}

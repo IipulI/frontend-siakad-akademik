@@ -9,16 +9,22 @@ export interface IApiResponseWithData<T> extends IApiResponseSuccess {
     data: T;
 }
 
-export interface IPaginatedResponse<T> {
-    data: T[];
-    totalItems: number;
-    totalPages: number;
+export interface IPagination {
     currentPage: number;
+    perPage: number;
+    totalPage: number;
+    totalItems: number;
+}
+
+export interface IPaginatedResponse<T> extends IApiResponseSuccess {
+    data: T[];
+    pagination: IPagination;
 }
 
 export interface IAcademicPeriod {
     id: string;
-    nama: string;
+    nama?: string;
+    namaPeriode?: string;
 }
 
 export interface IAcademicActivePeriod {

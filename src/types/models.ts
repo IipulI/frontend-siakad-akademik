@@ -1,23 +1,7 @@
 // src/types/models.ts
 
 // --- Common Interfaces ---
-export interface IApiResponseSuccess {
-    status: string;
-    message: string;
-    // data?: any; // Opsional: jika response sukses juga mengembalikan data
-}
-
-export interface IPaginatedResponse<T> {
-    status: string;
-    message: string;
-    data: T[];
-    pagination: {
-        currentPage: number;
-        perPage: number;
-        totalPages: number;
-        totalItems: number;
-    };
-}
+// IApiResponseSuccess and IPaginatedResponse now live in common.types.ts (single source of truth).
 
 /**
  * Interface standar untuk item-item dalam dropdown (select options).
@@ -148,8 +132,8 @@ export interface IGradeCompositionPayload {
     persentase: number;
 }
 
-// --- Mata Kuliah ---
-export interface IMataKuliah {
+// --- Mata Kuliah (admin catalog entry — distinct from mahasiswa.types.ts's student-facing IMataKuliah) ---
+export interface IMataKuliahAdmin {
     id: string;
     programStudi: string; // Name, not ID
     tahunKurikulum: string; // Year string, not ID

@@ -4,7 +4,6 @@ import { TableAnnouncement } from "../../../components/Table"; // Adjusted impor
 import { ArrowLeft, RefreshCw, Search } from "lucide-react";
 import { usePengumumanMahasiswa } from "../../../hooks/usePengumuman";
 import { IPengumuman } from "../../../types/common.types";
-import getAnnouncements from "../../../hooks/useMahasiswa";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function Announcement() {
@@ -40,8 +39,8 @@ export default function Announcement() {
 
   // Data untuk ditampilkan
   const announcements = useMemo(() => response?.data || [], [response]);
-  const currentPageFromAPI = response?.currentPage ?? 1;
-  const totalPagesFromAPI = response?.totalPages ?? 1;
+  const currentPageFromAPI = response?.pagination?.currentPage ?? 1;
+  const totalPagesFromAPI = response?.pagination?.totalPage ?? 1;
 
   const tableHead = ["Tanggal", "Judul", "Penulis", "Aksi"];
 

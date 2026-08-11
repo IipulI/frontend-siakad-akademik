@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { studentAcademicService } from '../../api/mahasiswa/studentAcademicService';
-import { IAcademicPeriod, IApiKrsHistoryResponse } from '../../types/mahasiswa.types';
+import { IApiKrsHistoryResponse } from '../../types/mahasiswa.types';
+import { IAcademicPeriod } from '../../types/common.types';
 
 export const useKrsHistoryData = () => {
     const [selectedPeriod, setSelectedPeriod] = useState<string>('');

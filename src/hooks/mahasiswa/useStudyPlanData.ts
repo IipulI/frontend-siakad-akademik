@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { studentKrsService } from '../../api/mahasiswa/studentKrsService';
-import { IAddKrsPayload, IAcademicPeriod, IApiKrsHistoryResponse } from '../../types/mahasiswa.types';
+import { IAddKrsPayload, IApiKrsHistoryResponse } from '../../types/mahasiswa.types';
+import { IAcademicPeriod } from '../../types/common.types';
 
 // A utility hook for debouncing input to prevent excessive API calls
 const useDebounce = (value: string, delay: number) => {

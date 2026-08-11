@@ -1,6 +1,7 @@
 // src/api/admin-akademik/bulkAssignmentService.ts
-import { Api } '../Index';
-import { IBulkAssignmentPayload, IApiResponseSuccess } from '../../types/models';
+import { Api } from '../Index';
+import { IBulkAssignmentPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 export const bulkAssignmentService = {
     assignCompositionToCourses: async (payload: IBulkAssignmentPayload): Promise<IApiResponseSuccess> => {

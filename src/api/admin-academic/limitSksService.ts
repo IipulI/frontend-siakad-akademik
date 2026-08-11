@@ -3,8 +3,8 @@ import { Api } from '../Index';
 import {
     ILimitSKS,
     ILimitSKSPayload,
-    IApiResponseSuccess, // IPaginatedResponse is no longer needed here
 } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 // Remove GetLimitSKSParams as it's no longer paginated
 // interface GetLimitSKSParams { ... }

@@ -102,6 +102,41 @@ export const AdminAcademicRoute = {
     setComposition:
       "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
   } as routeType,
+  // --- Menu baru yang belum punya halaman sungguhan, sementara diarahkan ke placeholder ---
+  portal: {
+    dosen: "/admin-akademik/dosen",
+  } as routeType,
+  classData: {
+    monitoringRoom: "/admin-akademik/monitoring-ruang",
+  } as routeType,
+  administration: {
+    semesterStatus: "/admin-akademik/status-semester",
+    studentEvaluation: "/admin-akademik/evaluasi-mahasiswa",
+    studentTransfer: "/admin-akademik/transfer-mahasiswa",
+    studentDropout: "/admin-akademik/mahasiswa-keluar",
+  } as routeType,
+  institution: {
+    studySystem: "/admin-akademik/sistem-kuliah",
+    classroom: "/admin-akademik/ruang-kuliah",
+  } as routeType,
+  lectureSetting: {
+    courseType: "/admin-akademik/jenis-mata-kuliah",
+    timeSlot: "/admin-akademik/slot-waktu",
+    meetingType: "/admin-akademik/jenis-pertemuan",
+  } as routeType,
+  biodataSetting: {
+    religion: "/admin-akademik/agama",
+    ethnicity: "/admin-akademik/suku",
+    income: "/admin-akademik/penghasilan",
+    occupation: "/admin-akademik/pekerjaan",
+    almamaterJacket: "/admin-akademik/jas-almamater",
+  } as routeType,
+  studentSetting: {
+    studentStatus: "/admin-akademik/status-mahasiswa",
+    residenceType: "/admin-akademik/jenis-tinggal",
+    transportation: "/admin-akademik/transportasi",
+    specialNeeds: "/admin-akademik/kebutuhan-khusus",
+  } as routeType,
 };
 
 export const AdminFinanceRoute: routeType = {
