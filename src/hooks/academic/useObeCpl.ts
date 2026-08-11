@@ -5,16 +5,17 @@ export interface ObeCplData {
   id: string;
   kode: string;
   deskripsi: string;
+  deskripsiEn?: string;
   kategori: string;
-  profilLulusan?: Array<{ id: string; kode: string; profil: string }>;
-  profilLulusanIds?: string[];
+  targetCpl?: number;
 }
 
 export interface ObeCplPayload {
   kode: string;
   deskripsi: string;
+  deskripsiEn?: string;
   kategori: string;
-  profilLulusanIds: string[];
+  targetCpl: number;
 }
 
 export function getObeCplData(obeId: string) {
@@ -63,7 +64,28 @@ export function useUpdateObeCpl() {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
 
-      const response = await Api.put(`/akademik/obe/capaian-pembelajaran/${id}`, payload, {
+      const response = await Api.put(`/akademik/obe/${obeId}/capaian-pembelajaran/${id}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["obeCplData", variables.obeId] });
+      queryClient.invalidateQueries({ queryKey: ["obeList"] });
+    },
+  });
+}
+
+export function useUpdateObeCplTarget() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, obeId, targetCpl }: { id: string; obeId: string; targetCpl: number }) => {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+
+      const response = await Api.patch(`/akademik/obe/capaian-pembelajaran/${id}/target`, { targetCpl }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

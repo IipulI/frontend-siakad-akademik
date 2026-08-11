@@ -1168,6 +1168,16 @@ export const TableGraduateProfile = ({
               />
             </td>
             <td className="p-2 border text-sm border-black/50">
+              <input
+                type="text"
+                name="deskripsiEn"
+                value={currentData.deskripsiEn || ""}
+                onChange={onInputChange}
+                className="border p-2 w-full"
+                placeholder="Deskripsi (EN) - opsional"
+              />
+            </td>
+            <td className="p-2 border text-sm border-black/50">
               <div className="flex gap-2 justify-center">
                 <button
                   onClick={onSave}
@@ -1228,6 +1238,15 @@ export const TableGraduateProfile = ({
                     />
                   </td>
                   <td className="p-2 border text-sm border-black/50">
+                    <input
+                      type="text"
+                      name="deskripsiEn"
+                      value={currentData.deskripsiEn || ""}
+                      onChange={onInputChange}
+                      className="border p-2 w-full"
+                    />
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">
                     <div className="flex gap-2 justify-center">
                       <button
                         onClick={onSave}
@@ -1253,10 +1272,13 @@ export const TableGraduateProfile = ({
                     {row.profil}
                   </td>
                   <td className="p-2 border text-sm border-black/50">
-                    {row.profesi}
+                    {row.profesi || "-"}
                   </td>
                   <td className="p-2 border text-sm border-black/50">
                     {row.deskripsi}
+                  </td>
+                  <td className="p-2 border text-sm border-black/50">
+                    {row.deskripsiEn || "-"}
                   </td>
                   <td className="p-2 border text-sm border-black/50">
                     <div className="flex gap-2 justify-center">
@@ -1306,42 +1328,8 @@ export const TableObeCPL: React.FC<TableProps> = ({
   onReset,
   onInputChange,
   isFormValid,
-  plList = [],
-  onCheckboxChange,
 }) => {
   const isDataAvailable = data && data.length > 0;
-
-  const renderPemetaanCheckboxes = (
-    plListToRender: Array<{ id: string; kode: string; profil: string }> = [],
-    selectedPlIds: string[] = [],
-    disabled = false
-  ) => {
-    return (
-      <div className="flex flex-col gap-1 items-start text-xs font-normal">
-        {plListToRender.map((pl) => {
-          const isChecked = selectedPlIds.includes(pl.id);
-          return (
-            <label key={pl.id} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                name="profilLulusanIds"
-                value={pl.id}
-                checked={isChecked}
-                disabled={disabled}
-                onChange={(e) => {
-                  if (onCheckboxChange) {
-                    onCheckboxChange(pl.id, e.target.checked);
-                  }
-                }}
-                className="rounded text-primary-green focus:ring-primary-green"
-              />
-              <span className="font-semibold">{pl.kode}</span> - {pl.profil}
-            </label>
-          );
-        })}
-      </div>
-    );
-  };
 
   return (
     <table className="w-full border border-gray-300">
@@ -1397,11 +1385,26 @@ export const TableObeCPL: React.FC<TableProps> = ({
               />
             </td>
             <td className="p-2 border">
-              {renderPemetaanCheckboxes(
-                plList,
-                currentData.profilLulusanIds || [],
-                false
-              )}
+              <input
+                type="number"
+                name="targetCpl"
+                min={0}
+                max={100}
+                value={currentData.targetCpl ?? ""}
+                onChange={onInputChange}
+                className="w-20 p-1 border rounded"
+                placeholder="0-100"
+              />
+            </td>
+            <td className="p-2 border">
+              <input
+                type="text"
+                name="deskripsiEn"
+                value={currentData.deskripsiEn || ""}
+                onChange={onInputChange}
+                className="w-full p-1 border rounded"
+                placeholder="Deskripsi (EN) - opsional"
+              />
             </td>
             <td className="p-2 border flex justify-center gap-2">
               <button
@@ -1453,11 +1456,24 @@ export const TableObeCPL: React.FC<TableProps> = ({
                     />
                   </td>
                   <td className="p-2 border">
-                    {renderPemetaanCheckboxes(
-                      plList,
-                      currentData.profilLulusanIds || [],
-                      false
-                    )}
+                    <input
+                      type="number"
+                      name="targetCpl"
+                      min={0}
+                      max={100}
+                      value={currentData.targetCpl ?? ""}
+                      onChange={onInputChange}
+                      className="w-20 p-1 border rounded"
+                    />
+                  </td>
+                  <td className="p-2 border">
+                    <input
+                      type="text"
+                      name="deskripsiEn"
+                      value={currentData.deskripsiEn || ""}
+                      onChange={onInputChange}
+                      className="w-full p-1 border rounded"
+                    />
                   </td>
                   <td className="p-2 border ">
                     <div className="flex gap-2 justify-center">
@@ -1483,13 +1499,8 @@ export const TableObeCPL: React.FC<TableProps> = ({
                     {row.deskripsi}
                   </td>
                   <td className="p-2 border">{row.kategori}</td>
-                  <td className="p-2 border">
-                    {renderPemetaanCheckboxes(
-                      plList,
-                      (row.profilLulusan || []).map((pl: any) => pl.id),
-                      true
-                    )}
-                  </td>
+                  <td className="p-2 border">{row.targetCpl ?? "-"}</td>
+                  <td className="p-2 border text-left">{row.deskripsiEn || "-"}</td>
                   <td className="p-2 border text-sm ">
                     <div className="flex gap-2 justify-center">
                       <button

@@ -3,7 +3,7 @@ import { AdminAcademicRoute } from "../../../../types/VarRoutes";
 
 interface SidebarOBEProps {
   id: string;
-  activeTab: "pl" | "cpl" | "cpmk";
+  activeTab: "pl" | "cpl" | "plCpl" | "cpmk";
 }
 
 export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
@@ -23,6 +23,11 @@ export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
       key: "cpl",
       label: "CPL",
       path: `${AdminAcademicRoute.obeManagement.cpl}/${id}`,
+    },
+    {
+      key: "plCpl",
+      label: "Pemetaan PL → CPL",
+      path: `${AdminAcademicRoute.obeManagement.plToCpl}/${id}`,
     },
     {
       key: "cpmk",

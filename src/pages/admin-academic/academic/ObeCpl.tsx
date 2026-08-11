@@ -3,7 +3,6 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { TableObeCPL } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Plus } from "lucide-react";
-import { getGraduateProfileData } from "../../../hooks/academic/useGraduateProfile.ts";
 import {
   getObeCplData,
   useAddObeCpl,
@@ -33,15 +32,8 @@ const ObeCpl: React.FC = () => {
     error: cplError,
   } = getObeCplData(id!);
 
-  // Fetch PL data to be mapped
-  const {
-    data: graduateProfileResponse,
-    isLoading: isGraduateLoading,
-  } = getGraduateProfileData(id!);
-
-  const plList = graduateProfileResponse?.dataPl || [];
   const cplData = cplResponse?.dataCpl || (Array.isArray(cplResponse) ? cplResponse : []);
-  const obeInfo = cplResponse?.header || graduateProfileResponse?.header || {};
+  const obeInfo = cplResponse?.header || {};
 
   // Mutations
   const createMutation = useAddObeCpl();
@@ -49,7 +41,7 @@ const ObeCpl: React.FC = () => {
   const deleteMutation = useDeleteObeCpl();
 
   // Loading states
-  if (loading || isGraduateLoading) {
+  if (loading) {
     return <LoadingSpinner />;
   }
 
@@ -70,8 +62,9 @@ const ObeCpl: React.FC = () => {
       id: "",
       kode: "",
       deskripsi: "",
+      deskripsiEn: "",
       kategori: "",
-      profilLulusanIds: [],
+      targetCpl: undefined,
     });
     setErrorMessage("");
   };
@@ -83,8 +76,9 @@ const ObeCpl: React.FC = () => {
         id: selectedData.id,
         kode: selectedData.kode,
         deskripsi: selectedData.deskripsi,
+        deskripsiEn: selectedData.deskripsiEn || "",
         kategori: selectedData.kategori,
-        profilLulusanIds: (selectedData.profilLulusan || []).map((pl: any) => pl.id),
+        targetCpl: selectedData.targetCpl,
       });
       setIsEditing(true);
       setIsAdding(false);
@@ -109,26 +103,9 @@ const ObeCpl: React.FC = () => {
     }
   };
 
-  const handleCheckboxChange = (plId: string, checked: boolean) => {
-    if (!currentData) return;
-
-    const currentIds = currentData.profilLulusanIds || [];
-    let nextIds = [];
-    if (checked) {
-      nextIds = [...currentIds, plId];
-    } else {
-      nextIds = currentIds.filter((x) => x !== plId);
-    }
-
-    setCurrentData({
-      ...currentData,
-      profilLulusanIds: nextIds,
-    });
-  };
-
   const handleSave = async () => {
     if (!currentData || !isFormValid()) {
-      setErrorMessage("Semua kolom harus diisi.");
+      setErrorMessage("Kode, Deskripsi, Kategori, dan Target CPL (0-100) harus diisi.");
       return;
     }
 
@@ -138,7 +115,8 @@ const ObeCpl: React.FC = () => {
       kode: currentData.kode.trim(),
       deskripsi: currentData.deskripsi.trim(),
       kategori: currentData.kategori.trim(),
-      profilLulusanIds: currentData.profilLulusanIds || [],
+      targetCpl: Number(currentData.targetCpl),
+      ...(currentData.deskripsiEn?.trim() ? { deskripsiEn: currentData.deskripsiEn.trim() } : {}),
     };
 
     const onSuccessCallback = () => {
@@ -190,10 +168,16 @@ const ObeCpl: React.FC = () => {
   };
 
   const isFormValid = () => {
+    const target = Number(currentData?.targetCpl);
     return !!(
       currentData?.kode?.trim() &&
       currentData?.deskripsi?.trim() &&
-      currentData?.kategori?.trim()
+      currentData?.kategori?.trim() &&
+      currentData?.targetCpl !== undefined &&
+      currentData?.targetCpl !== "" &&
+      !isNaN(target) &&
+      target >= 0 &&
+      target <= 100
     );
   };
 
@@ -317,7 +301,8 @@ const ObeCpl: React.FC = () => {
                   "Kode CPL",
                   "Deskripsi Capaian Pembelajaran Lulusan (CPL)",
                   "Kategori",
-                  "Pemetaan PL ke CPL",
+                  "Target CPL",
+                  "Deskripsi (EN)",
                   "Aksi",
                 ]}
                 error="Data tidak ditemukan."
@@ -330,8 +315,6 @@ const ObeCpl: React.FC = () => {
                 onInputChange={handleInputChange}
                 isAdding={isAdding}
                 isFormValid={isFormValid}
-                plList={plList}
-                onCheckboxChange={handleCheckboxChange}
               />
             </div>
 

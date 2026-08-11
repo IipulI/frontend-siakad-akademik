@@ -120,6 +120,56 @@ const dropdownMenus = {
         description: "Manajemen RPS",
         to: String(AdminAcademicRoute.rpsManagement.rpsManagement),
       },
+      {
+        icon: "icon_annon.png",
+        title: "Penilaian & Monitoring OBE",
+        description: "Penilaian OBE",
+        to: String(AdminAcademicRoute.obeManagement.nilaiKelas),
+        subItems: [
+          {
+            icon: "icon_annon.png",
+            title: "Input Nilai per Komponen (Jalur A)",
+            description: "Input Nilai per Komponen",
+            to: String(AdminAcademicRoute.obeManagement.nilaiKelas),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Soal per Komponen (Jalur C)",
+            description: "Soal per Komponen Evaluasi",
+            to: String(AdminAcademicRoute.obeManagement.soalKomponen),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Input Nilai per Soal (Jalur C)",
+            description: "Input Nilai per Soal",
+            to: String(AdminAcademicRoute.obeManagement.nilaiSoal),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Integrasi CBT (Jalur D)",
+            description: "Integrasi CBT",
+            to: String(AdminAcademicRoute.obeManagement.integrasiCbt),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Monitoring & Export PDF",
+            description: "Monitoring & Export PDF",
+            to: String(AdminAcademicRoute.obeManagement.monitoring),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Cek Soal (QA)",
+            description: "Cek Soal yang Sudah Ada",
+            to: String(AdminAcademicRoute.obeManagement.cekSoal),
+          },
+          {
+            icon: "icon_annon.png",
+            title: "Reset Nilai",
+            description: "Reset Nilai (Dev/Admin Tool)",
+            to: String(AdminAcademicRoute.obeManagement.resetNilai),
+          },
+        ],
+      },
     ],
   },
   pengaturan: {

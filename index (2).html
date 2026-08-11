@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Tes Response untuk BE — OBE & Jalur C</title>
+<style>
+  :root { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f5f7; color: #1a1a1a; }
+  header { background: #1f2937; color: #fff; padding: 12px 20px; position: sticky; top: 0; z-index: 20; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  header h1 { font-size: 15px; margin: 0; flex: 1 1 auto; }
+  header input { padding: 6px 8px; border-radius: 4px; border: 1px solid #555; width: 320px; background: #111827; color: #fff; }
+
+  .layout { display: flex; min-height: calc(100vh - 49px); }
+
+  #sidebar { width: 270px; flex: 0 0 270px; background: #fff; border-right: 1px solid #d8dbe0; padding: 10px 0; overflow-y: auto; }
+  #sidebar h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #8a8f98; margin: 16px 16px 6px; }
+  #sidebar h4:first-child { margin-top: 6px; }
+  .navItem { display: block; width: 100%; text-align: left; background: none; border: none; padding: 9px 16px; font-size: 13px; cursor: pointer; color: #333; border-left: 3px solid transparent; }
+  .navItem:hover { background: #f4f5f7; }
+  .navItem.active { background: #eef2ff; border-left-color: #2563eb; color: #1d4ed8; font-weight: 600; }
+  .navGroup.jalurA .navItem.active { border-left-color: #d97706; color: #b45309; background: #fffbeb; }
+  .navGroup.jalurC .navItem.active { border-left-color: #15803d; color: #15803d; background: #f0fdf4; }
+  .navGroup.jalurD .navItem.active { border-left-color: #2563eb; color: #1d4ed8; background: #eff6ff; }
+  .navGroup.monitoring .navItem.active { border-left-color: #7c3aed; color: #7c3aed; background: #f5f3ff; }
+  .navGroup.devtools .navItem.active { border-left-color: #dc2626; color: #b91c1c; background: #fef2f2; }
+
+  #content { flex: 1 1 auto; padding: 22px 26px 80px; max-width: 980px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .pageTitle { font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+  .pageSub { font-size: 12px; color: #777; margin: 0 0 16px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .card { background: #fff; border: 1px solid #d8dbe0; border-radius: 8px; padding: 16px 18px; margin-bottom: 14px; }
+
+  label { display: block; font-size: 12px; font-weight: 600; color: #444; margin: 8px 0 3px; }
+  input, select, textarea { width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #c9cdd3; border-radius: 5px; font-size: 13px; }
+  textarea { font-family: ui-monospace, Menlo, Consolas, monospace; min-height: 110px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > div { flex: 1 1 160px; }
+
+  button.send { margin-top: 12px; background: #2563eb; color: #fff; border: none; padding: 9px 16px; border-radius: 5px; font-weight: 600; cursor: pointer; }
+  button.send:hover { background: #1d4ed8; }
+  button.alt { background: #6b7280; }
+  button.alt:hover { background: #4b5563; }
+  button.pdf { background: #7c3aed; }
+  button.pdf:hover { background: #6d28d9; }
+
+  .out { background: #0b1021; color: #d8e1ff; padding: 12px; border-radius: 6px; margin-top: 10px; max-height: 480px; overflow: auto; font-size: 12px; }
+  .out .mentah { white-space: pre-wrap; word-break: break-all; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  table.tabelHasil { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
+  table.tabelHasil th, table.tabelHasil td { border: 1px solid #2a3356; padding: 5px 7px; text-align: left; vertical-align: top; }
+  table.tabelHasil th { background: #1a2347; position: sticky; top: 0; }
+  table.tabelHasil tr:nth-child(even) { background: #11163a; }
+  table.tabelHasil .selUuid { cursor: pointer; text-decoration: underline dotted; }
+
+  table.tabelEdit { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; color: #1a1a1a; background: #fff; }
+  table.tabelEdit th, table.tabelEdit td { border: 1px solid #d8dbe0; padding: 4px 5px; text-align: left; vertical-align: top; }
+  table.tabelEdit th { background: #1f2947; color: #fff; }
+  table.tabelEdit tfoot td { background: #f4f5f7; font-weight: 700; }
+  table.tabelEdit input, table.tabelEdit select { font-size: 11px; padding: 4px; }
+  table.tabelEdit .subRow td:first-child { padding-left: 16px; color: #555; }
+
+  .rumusBox { background:#fff; border:1px solid #d8dbe0; border-radius:6px; padding:16px 20px; margin:10px 0; overflow-x:auto; }
+  .rumusBox .persamaan { font-family:'Cambria Math','STIX Two Math',Georgia,serif; font-size:17px; color:#1a1a1a; white-space:nowrap; display:flex; align-items:center; gap:8px; }
+  .rumusBox .persamaan + .persamaan { margin-top:14px; }
+  .rumusBox .ket { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11px; color:#777; margin-top:6px; }
+  .rumusVar { font-style:italic; }
+  .rumusFrac { display:inline-flex; flex-direction:column; text-align:center; vertical-align:middle; margin:0 3px; }
+  .rumusFrac .num { border-bottom:1.4px solid #1a1a1a; padding:0 6px 3px; line-height:1.3; }
+  .rumusFrac .den { padding:3px 6px 0; line-height:1.3; }
+  .rumusSum { font-size:26px; line-height:0.6; position:relative; top:5px; margin:0 2px; }
+  .rumusSum sub, .rumusSum sup { font-size:11px; font-style:italic; }
+  sub.rvar, sup.rvar { font-style:italic; }
+
+  .checkboxList label { display: flex; align-items: center; gap: 6px; font-weight: 400; padding: 4px 0; font-size: 13px; }
+  .checkboxList input[type="checkbox"] { width: auto; }
+
+  details.rawJson { background: transparent; border: none; margin-top: 8px; }
+  details.rawJson summary { padding: 4px 0; font-size: 11px; color: #9fb1ff; cursor: pointer; }
+
+  .status-ok { color: #34d399; font-weight: 700; }
+  .status-bad { color: #f87171; font-weight: 700; }
+
+  #idPanel { position: fixed; right: 0; top: 49px; bottom: 0; width: 260px; background: #fff; border-left: 1px solid #d8dbe0; padding: 14px; overflow-y: auto; }
+  #idPanel h3 { margin-top: 0; font-size: 13px; }
+  .chip { display: block; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 5px; padding: 6px 8px; margin-bottom: 6px; font-size: 11px; cursor: pointer; word-break: break-all; }
+  .chip:hover { background: #dbeafe; }
+  .chip b { display: block; color: #1e3a8a; font-size: 10px; }
+  #content { margin-right: 260px; }
+
+  .hint { font-size: 11px; color: #777; margin-top: 6px; line-height: 1.5; }
+  .btnRowAdd { background: #e5e7eb; border: 1px dashed #9ca3af; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 6px; }
+  .badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+  .badge.A { background: #fef3c7; color: #92400e; }
+  .badge.C { background: #dcfce7; color: #166534; }
+  .badge.D { background: #dbeafe; color: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tes Response untuk BE — OBE &amp; Jalur A/C (Penilaian)</h1>
+  <input id="baseUrl" value="https://api-siak.uika-bogor.ac.id/api/akademik" />
+</header>
+
+<div class="layout">
+  <nav id="sidebar">
+    <h4>Setup &amp; Login</h4>
+    <button class="navItem active" data-page="login" onclick="gotoPage('login')">0. Login</button>
+    <button class="navItem" data-page="datadasar" onclick="gotoPage('datadasar')">0A. Cari Data Dasar</button>
+    <button class="navItem" data-page="obeid" onclick="gotoPage('obeid')">0B. Cari obeId</button>
+
+    <h4>OBE Dasar</h4>
+    <button class="navItem" data-page="pl" onclick="gotoPage('pl')">1. Profil Lulusan (PL)</button>
+    <button class="navItem" data-page="cpl" onclick="gotoPage('cpl')">2. Capaian Pembelajaran (CPL)</button>
+    <button class="navItem" data-page="plcpl" onclick="gotoPage('plcpl')">3. Pemetaan PL → CPL</button>
+
+    <h4>Setup Mata Kuliah</h4>
+    <button class="navItem" data-page="mkcpl" onclick="gotoPage('mkcpl')">3B. Pemetaan CPL per MK</button>
+    <button class="navItem" data-page="cpmk" onclick="gotoPage('cpmk')">4. Pemetaan CPMK</button>
+    <button class="navItem" data-page="rencanaevaluasi" onclick="gotoPage('rencanaevaluasi')">5. Rencana Evaluasi</button>
+
+    <h4>Jalur A — Nilai per Komponen</h4>
+    <div class="navGroup jalurA">
+      <button class="navItem" data-page="jalurA" onclick="gotoPage('jalurA')">6A. Input Nilai per Komponen</button>
+    </div>
+
+    <h4>Jalur C — Nilai per Soal</h4>
+    <div class="navGroup jalurC">
+      <button class="navItem" data-page="soal" onclick="gotoPage('soal')">6C. Soal per Komponen</button>
+      <button class="navItem" data-page="nilaisoal" onclick="gotoPage('nilaisoal')">7C. Input Nilai per Soal</button>
+    </div>
+
+    <h4>Jalur D — Integrasi CBT</h4>
+    <div class="navGroup jalurD">
+      <button class="navItem" data-page="jalurD" onclick="gotoPage('jalurD')">6D. Nilai dari CBT</button>
+      <button class="navItem" data-page="rumusjalurD" onclick="gotoPage('rumusjalurD')">6D-2. Rumus &amp; Cara Hitung Lengkap</button>
+    </div>
+
+    <h4>Monitoring &amp; PDF</h4>
+    <div class="navGroup monitoring">
+      <button class="navItem" data-page="monitoring" onclick="gotoPage('monitoring')">8. Monitoring &amp; Export PDF</button>
+    </div>
+
+    <h4>Dev &amp; Testing</h4>
+    <div class="navGroup devtools">
+      <button class="navItem" data-page="ceksoal" onclick="gotoPage('ceksoal')">9. Cek Soal yang Sudah Ada</button>
+      <button class="navItem" data-page="resetnilai" onclick="gotoPage('resetnilai')">10. Reset Nilai</button>
+    </div>
+
+    <h4>Mahasiswa — Lihat Punya Sendiri</h4>
+    <div class="navGroup mahasiswaSendiri">
+      <button class="navItem" data-page="mhsSendiri" onclick="gotoPage('mhsSendiri')">11. KHS &amp; Transkrip (login sbg Mahasiswa)</button>
+    </div>
+  </nav>
+
+  <div id="content">
+
+    <section class="page active" id="page-login">
+      <h2 class="pageTitle">0. Login</h2>
+      <p class="pageSub">POST /api/auth/login</p>
+      <div class="card">
+        <div class="row">
+          <div><label>username atau email</label><input id="login_username" placeholder="username/email"></div>
+          <div><label>password</label><input id="login_password" type="password" placeholder="password"></div>
+        </div>
+        <button class="send" onclick="login()">Login &amp; Ambil Token</button>
+        <p class="hint">Token otomatis tersimpan &amp; dipakai di semua tombol GET setelah login berhasil. Kalau sudah punya token dari tempat lain, bisa tempel langsung di kolom bawah.</p>
+        <label>Token (Authorization Bearer) — terisi otomatis setelah login</label>
+        <input id="authToken" placeholder="isi otomatis setelah login, atau tempel manual">
+        <div class="out" id="out_login">(belum login)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-datadasar">
+      <h2 class="pageTitle">0A. Cari Data Dasar</h2>
+      <p class="pageSub">GET /jenjang · /tahun-kurikulum · /kurikulum-prodi/list · /periode-akademik · /mata-kuliah</p>
+      <div class="card">
+        <p class="hint">Mulai dari sini supaya semua uuid yang dibutuhkan halaman lain (prodiId, tahunKurikulumId, jenjangId, mataKuliahId, periodeAkademikId) sudah dikenal sistem nama-otomatis di panel kanan. Tiap dropdown punya kotak "cari" sendiri — ketik nama/kode, dropdownnya otomatis ikut tersaring (klik GET dulu sekali biar datanya ada, baru cari).</p>
+        <button class="send alt" onclick="getJenjang()">GET Daftar Jenjang</button>
+        <div class="out" id="out_jenjang">(belum ada response)</div>
+        <input placeholder="cari jenjang, mis. 'S1'" oninput="cariDiRegistry('jenjang', this.value)" style="margin-top:6px">
+
+        <button class="send alt" style="margin-top:16px" onclick="getTahunKurikulum()">GET Daftar Tahun Kurikulum</button>
+        <div class="out" id="out_tahunkurikulum">(belum ada response)</div>
+        <input placeholder="cari tahun kurikulum, mis. '2025'" oninput="cariDiRegistry('tahunKurikulum', this.value)" style="margin-top:6px">
+
+        <div class="row" style="margin-top:16px">
+          <div><label>jenjangId (dari hasil GET Jenjang di atas)</label><select id="prodi_jenjangId" class="dd-jenjang" data-placeholder="-- pilih Jenjang --"></select></div>
+          <div><label>tahunKurikulumId (dari hasil GET Tahun Kurikulum di atas)</label><select id="prodi_tkId" class="dd-tahunKurikulum" data-placeholder="-- pilih Tahun Kurikulum --"></select></div>
+        </div>
+        <input id="prodi_search" placeholder="cari nama program studi, mis. 'Informatika' (opsional)" style="margin-top:6px">
+        <button class="send alt" style="margin-top:6px" onclick="getProgramStudi()">GET Daftar Program Studi</button>
+        <div class="out" id="out_prodi">(belum ada response)</div>
+
+        <button class="send alt" style="margin-top:16px" onclick="getPeriodeAkademik()">GET Daftar Periode Akademik</button>
+        <div class="out" id="out_periode">(belum ada response)</div>
+        <input placeholder="cari periode, mis. '2025 Ganjil'" oninput="cariDiRegistry('periodeAkademik', this.value)" style="margin-top:6px">
+
+        <div class="row" style="margin-top:16px">
+          <div><input id="mk_search" placeholder="cari nama/kode mata kuliah, mis. 'Kalkulus' (opsional)"></div>
+          <div><label style="font-size:12px;color:#666">tahunKurikulumId (opsional, dari dropdown atas)</label><select id="mk_tkId" class="dd-tahunKurikulum" data-placeholder="-- semua Tahun Kurikulum --"></select></div>
+        </div>
+        <p class="hint" style="margin:4px 0">Mata kuliah TIDAK punya field "Periode" (periode itu konsepnya nempel di Kelas Kuliah — kapan kelasnya dibuka, bukan di katalog mata kuliahnya). Kalau mau cari mata kuliah yang dibuka di periode tertentu, pakai "Cari Kelas Kuliah" di halaman 6A (filter periode ada di sana).</p>
+        <button class="send alt" style="margin-top:6px" onclick="getMataKuliah()">GET Daftar Mata Kuliah</button>
+        <div class="out" id="out_matakuliah">(belum ada response)</div>
+
+        <input id="dosen_search" placeholder="cari nama/NIDN dosen, mis. 'Fety' (opsional, kosongkan utk ambil semua)" style="margin-top:16px">
+        <button class="send alt" style="margin-top:6px" onclick="getDosen()">GET Daftar Dosen</button>
+        <div class="out" id="out_dosen">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-obeid">
+      <h2 class="pageTitle">0B. Cari obeId</h2>
+      <p class="pageSub">GET /obe/manajemen-capaian</p>
+      <div class="card">
+        <p class="hint">obeId itu kombinasi 1 Program Studi + 1 Tahun Kurikulum. Isi salah satu/semua filter (boleh kosong semua), hasilnya muncul di kolom "idObe" — klik chip di panel kanan utk copy.</p>
+        <div class="row">
+          <div><label>prodiId (opsional)</label><select id="cariobe_prodiId" class="dd-prodi" data-placeholder="-- semua Prodi --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → ke halaman 0A dulu</button></div>
+          <div><label>tahunKurikulumId (opsional)</label><select id="cariobe_tkId" class="dd-tahunKurikulum" data-placeholder="-- semua Tahun Kurikulum --"></select></div>
+          <div><label>jenjangId (opsional)</label><select id="cariobe_jenjangId" class="dd-jenjang" data-placeholder="-- semua Jenjang --"></select></div>
+        </div>
+        <button class="send alt" onclick="getManajemenCapaian()">GET Daftar OBE dari Server</button>
+        <div class="out" id="out_cariobe">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-pl">
+      <h2 class="pageTitle">1. Profil Lulusan (PL)</h2>
+      <p class="pageSub">GET /obe/profil-lulusan/:obeId · POST /obe/profil-lulusan</p>
+      <div class="card">
+        <div class="row">
+          <div><label>siakObeId (dari halaman 0B)</label><select id="pl_obeId" class="dd-obe" data-placeholder="-- pilih OBE --"></select><button class="btnRowAdd" onclick="gotoPage('obeid')">kosong? → ke halaman 0B dulu</button></div>
+          <div><label>kode</label><input id="pl_kode" placeholder="PL01"></div>
+        </div>
+        <button class="send alt" onclick="getPL()">GET Daftar PL dari Server</button>
+        <label>profil</label><input id="pl_profil" placeholder="Praktisi Bisnis Digital">
+        <label>deskripsi (IND)</label><textarea id="pl_deskripsi" placeholder="Mampu menjadi ..."></textarea>
+        <label>deskripsiEn (opsional)</label><textarea id="pl_deskripsiEn" placeholder="Graduates are able to ..."></textarea>
+        <label>profesi (opsional, pisahkan dengan koma)</label><input id="pl_profesi" placeholder="Programmer, IT Consultant, dst">
+        <button class="send" onclick="kirimPL()">Buat Payload POST PL (utk Postman)</button>
+        <div class="out" id="out_pl">(belum ada payload)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-cpl">
+      <h2 class="pageTitle">2. Capaian Pembelajaran Lulusan (CPL)</h2>
+      <p class="pageSub">GET/POST /obe/capaian-pembelajaran/:obeId</p>
+      <div class="card">
+        <label>obeId (path param, dari halaman 0B)</label><select id="cpl_obeId" class="dd-obe" data-placeholder="-- pilih OBE --"></select><button class="btnRowAdd" onclick="gotoPage('obeid')">kosong? → ke halaman 0B dulu</button>
+        <button class="send alt" onclick="getCPL()">GET Daftar CPL dari Server</button>
+        <div class="row">
+          <div><label>kode</label><input id="cpl_kode" placeholder="CPL01"></div>
+          <div><label>kategori</label><input id="cpl_kategori" placeholder="Sikap / Pengetahuan / dst"></div>
+          <div><label>targetCpl (skala 0-100, BUKAN skala IPK 0-4!)</label><input id="cpl_target" placeholder="mis. 80" type="number" min="0" max="100"></div>
+        </div>
+        <label>deskripsi (IND)</label><textarea id="cpl_deskripsi"></textarea>
+        <label>deskripsiEn</label><textarea id="cpl_deskripsiEn"></textarea>
+        <button class="send" onclick="kirimCPL()">Buat Payload POST CPL (utk Postman)</button>
+        <div class="out" id="out_cpl">(belum ada payload)</div>
+
+        <p class="hint" style="margin-top:16px">Mau ubah/perbaiki CPL yang SUDAH ADA (bukan bikin baru)? Pilih dulu di dropdown bawah ini (isi dari hasil GET di atas), lalu isi field yang mau diubah di kolom kode/kategori/target/deskripsi di atas, baru klik salah satu tombol berikut.</p>
+        <label>cplId (CPL yang mau diupdate)</label><select id="cpl_updateId" class="dd-cpl" data-placeholder="-- pilih CPL existing --"></select>
+        <div class="row" style="margin-top:8px">
+          <div><button class="send" onclick="kirimUpdateTargetCpl()">Buat Payload PATCH Target CPL saja (ringkas)</button></div>
+          <div><button class="send alt" onclick="kirimUpdateCpl()">Buat Payload PUT Update CPL Lengkap</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-plcpl">
+      <h2 class="pageTitle">3. Pemetaan PL → CPL</h2>
+      <p class="pageSub">GET/POST /obe/pemetaan/pl-ke-cpl/:obeId</p>
+      <div class="card">
+        <label>obeId (path param, dari halaman 0B)</label><select id="plcpl_obeId" class="dd-obe" data-placeholder="-- pilih OBE --"></select><button class="btnRowAdd" onclick="gotoPage('obeid')">kosong? → ke halaman 0B dulu</button>
+        <button class="send alt" onclick="getPemetaanPlCpl()">GET Matriks Pemetaan PL-CPL dari Server</button>
+
+        <p class="hint" style="margin-top:14px">Isi langsung di tabel (baris = PL, kolom = CPL) — tidak perlu copy-paste UUID atau tulis JSON manual.</p>
+        <div id="tabelPlCplContainer">(klik "GET Matriks" dulu di atas)</div>
+        <button class="send" style="margin-top:14px" onclick="kirimPemetaanPlCpl()">Buat Payload POST Pemetaan PL-CPL (utk Postman)</button>
+        <div class="out" id="out_plcpl">(belum ada payload)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-mkcpl">
+      <h2 class="pageTitle">3B. Pemetaan CPL per Mata Kuliah</h2>
+      <p class="pageSub">GET/POST /mata-kuliah/:id/pemetaan-cpl</p>
+      <div class="card">
+        <p class="hint">Beda dari halaman 3 (itu level OBE). Ini pilih CPL mana yang dipakai 1 MK — hasilnya menentukan kolom CPL yang muncul di halaman 4 (Pemetaan CPMK). GET dulu di sini sebelum lanjut.</p>
+        <label>mataKuliahId (path param, dari halaman 0A)</label><select id="mkcpl_mkId" class="dd-mataKuliah" data-placeholder="-- pilih Mata Kuliah --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → ke halaman 0A dulu</button>
+        <button class="send alt" onclick="getPemetaanCplMk()">GET Daftar CPL + status terpetakan dari Server</button>
+        <div class="checkboxList" id="checkboxCplMk">(GET dulu)</div>
+        <button class="send" onclick="kirimPemetaanCplMk()" style="margin-top:10px">Buat Payload POST Pemetaan CPL (utk Postman)</button>
+        <div class="out" id="out_mkcpl">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-cpmk">
+      <h2 class="pageTitle">4. Pemetaan CPMK per Mata Kuliah (termasuk Sub-CPMK)</h2>
+      <p class="pageSub">GET/POST /obe/mata-kuliah/:id/pemetaan-cpmk</p>
+      <div class="card">
+        <label>mataKuliahId (path param, dari halaman 0A)</label><select id="cpmk_mkId" class="dd-mataKuliah" data-placeholder="-- pilih Mata Kuliah --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → ke halaman 0A dulu</button>
+        <div class="row">
+          <div><label>levelPemetaan</label>
+            <select id="cpmk_level" onchange="renderTabelCpmk()"><option value="CPMK">CPMK (langsung ke induk)</option><option value="Sub-CPMK">Sub-CPMK</option></select>
+          </div>
+          <div><label>metodePembobotan</label>
+            <select id="cpmk_metode"><option value="Manual">Manual</option><option value="Otomatis">Otomatis</option></select>
+          </div>
+        </div>
+        <button class="send alt" onclick="getPemetaanCpmk()">GET Pemetaan CPMK dari Server (tarik kolom CPL + data existing)</button>
+        <p class="hint"><b>Dari mana "Bobot CPMK"?</b> Dihitung OTOMATIS = jumlah kolom CPL di baris itu (atau jumlah Sub-CPMK kalau levelPemetaan = Sub-CPMK) — sesuai validasi backend: total pemetaan CPL per baris harus = Bobot CPMK baris itu. Total SEMUA baris (footer) harus pas 100%.</p>
+        <p class="hint"><b>Kolom "Target"</b> — target minimal capaian CPMK (0-100). Hanya menggagalkan MK kalau dipakai lewat Jalur B (nilai-cpmk langsung) yang tidak dipakai di tool ini. Untuk Jalur A &amp; Jalur C, Target murni informasi rapor, tidak otomatis menggagalkan apa pun.</p>
+        <div id="tabelCpmkContainer">(GET dulu, atau langsung "+ Tambah CPMK" utk mulai dari kosong)</div>
+        <button class="btnRowAdd" onclick="tambahCpmkRow()">+ Tambah CPMK</button>
+        <button class="send" style="margin-top:14px" onclick="kirimPemetaanCpmk()">Buat Payload POST Pemetaan CPMK (utk Postman)</button>
+        <div class="out" id="out_cpmk">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-rencanaevaluasi">
+      <h2 class="pageTitle">5. Rencana Evaluasi (Komponen + Bobot CPMK)</h2>
+      <p class="pageSub">GET/POST /koordinator-mk/mata-kuliah/:id/rencana-evaluasi</p>
+      <div class="card">
+        <label>mataKuliahId (path param, dari halaman 0A)</label><select id="re_mkId" class="dd-mataKuliah" data-placeholder="-- pilih Mata Kuliah --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → ke halaman 0A dulu</button>
+        <label>siakPeriodeAkademikId (dari halaman 0A)</label><select id="re_periodeId" class="dd-periodeAkademik" data-placeholder="-- pilih Periode Akademik --"></select>
+        <button class="send alt" onclick="getRencanaEvaluasi()">GET Rencana Evaluasi dari Server (lihat data existing)</button>
+        <div class="out" id="out_re" style="margin-bottom:14px">(belum ada response)</div>
+
+        <h3 style="font-size:14px;margin-top:18px">📋 Data yang SUDAH ADA di server (read-only)</h3>
+        <p class="hint">Tabel ini murni tampilan dari hasil GET di atas — tidak bisa diedit di sini. Kalau mau ubah, edit di tabel "Tambah/Ubah" di bawah (baris dengan Metode+Jenis yang sama akan MENIMPA baris ini saat di-POST, bukan menduplikasi).</p>
+        <div id="tabelEvaluasiExistingContainer" style="margin-top:8px">(klik "GET Rencana Evaluasi" di atas dulu)</div>
+
+        <h3 style="font-size:14px;margin-top:22px">✏️ Tambah / Ubah (disusun di sini, lalu di-generate jadi payload POST)</h3>
+        <p class="hint">Kolom CPMK di tabel bawah ditarik dari halaman 4 (CPMK induk, atau Sub-CPMK kalau levelPemetaan = Sub-CPMK). Klik refresh kalau baru ubah tabel halaman 4.</p>
+        <p class="hint"><b>Dari mana "Bobot Evaluasi"?</b> Dihitung OTOMATIS = jumlah kolom CPMK di baris itu. <b>Beda arti</b> dari "Bobot CPMK" di halaman 4 — di sini satuannya "poin nilai akhir yang disumbang komponen ini ke CPMK itu" (TIDAK harus proporsional sama, itu wajar/independen). Total semua baris (footer) harus pas 100%.</p>
+        <p class="hint"><b>Syarat Lulus</b> — cuma <b>"Menjadi syarat lulus"</b> yang benar-benar berlaku di backend (skor &lt;60 = paksa huruf E, tidak lulus MK). <b>"Lulus dgn nilai minimum"</b> masih cuma label, belum ada logic backend-nya.</p>
+        <button class="btnRowAdd" onclick="renderTabelEvaluasi()">🔄 Refresh kolom CPMK dari halaman 4</button>
+        <button class="btnRowAdd" onclick="salinDariDataExisting()">⬇️ Salin data existing di atas ke tabel ini (biar tinggal edit, bukan mulai dari kosong)</button>
+        <div id="tabelEvaluasiContainer" style="margin-top:8px">(klik refresh atau "+ Tambah Metode Evaluasi")</div>
+        <button class="btnRowAdd" onclick="tambahEvaluasiRow()">+ Tambah Metode Evaluasi</button>
+        <button class="send" style="margin-top:14px" onclick="kirimRencanaEvaluasi()">Buat Payload POST Rencana Evaluasi (utk Postman)</button>
+      </div>
+    </section>
+
+    <section class="page" id="page-jalurA">
+      <h2 class="pageTitle">6A. Jalur A — Input Nilai per Komponen <span class="badge A">JALUR A</span></h2>
+      <p class="pageSub">GET /dosen/kelas/:kelasId/nilai · POST /dosen/kelas/:kelasId/nilai/:krsId</p>
+
+      <div class="card" style="background:#fffbeb;border-color:#fbbf24">
+        <h3 style="font-size:14px;margin:0 0 8px">📌 Kalau MK-nya pakai Jalur D (CBT), halaman ini CUMA buat Kehadiran</h3>
+        <p style="margin:6px 0">Tabel di bawah nanti nampilin SEMUA komponen MK itu (UTS/UAS/Tugas/Kehadiran, dst) karena halaman ini generik. Tapi kalau MK-nya sudah pakai integrasi CBT (Jalur D, halaman 6D):</p>
+        <p style="margin:6px 0"><b>✅ ISI</b> cuma baris <b>Kehadiran/Partisipasi</b> di sini (angka presensi mentah, mis. 80) — komponen ini gak punya soal, gak bisa lewat CBT sama sekali.</p>
+        <p style="margin:6px 0"><b>🚫 JANGAN ISI</b> baris UTS/UAS/Tugas di sini kalau nilainya sudah/akan dikirim lewat breakdown CBT (halaman 6D) — nilai CPMK dari komponen itu sudah dihitung akurat dari breakdown soal di sana. Isi manual di sini cuma relevan buat MK yang <b>gak</b> pakai CBT sama sekali (Jalur A murni, di luar cakupan integrasi CBT).</p>
+        <p style="margin:6px 0">Kehadiran yang diisi di sini otomatis ikut ke Nilai Akhir MK <i>kalau MK-nya gak pakai Jalur D</i>. Kalau MK-nya pakai Jalur D, Nilai Akhir MK malah datang dari CBT sendiri (halaman 6D bagian 2) — angka Kehadiran di sini cuma dipakai buat hitungan Nilai CPMK (dan itu pun cuma kalau dipetakan ke CPMK di halaman 5, lihat halaman 6D-2 poin FAQ Kehadiran).</p>
+      </div>
+
+      <div class="card">
+        <p class="hint">Jalur A = dosen ketik 1 angka per komponen evaluasi langsung (TUGAS/UTS/UAS/KEHADIRAN/dst), TANPA rincian soal. Sistem otomatis sebar nilai CPMK secara <b>proporsional</b> (estimasi, bukan akurat per soal — beda dengan Jalur C).</p>
+
+        <label>Cari Kelas Kuliah dulu (opsional, supaya kelasId di bawah jadi dropdown)</label>
+        <input id="kelaslookup_search" placeholder="cari nama mata kuliah, mis. 'Rangkaian' (kosongkan utk ambil semua)">
+        <button class="send alt" onclick="getKelasKuliahLookup()">GET Daftar Kelas Kuliah</button>
+        <p class="hint">Total kelas-kuliah di sistem bisa lebih dari yang ditampilkan sekali GET — kalau MK yang dicari belum kelihatan, isi kotak cari di atas dulu.</p>
+        <div class="out" id="out_kelaslookup">(belum ada response)</div>
+
+        <label style="margin-top:14px">kelasId (Kelas Kuliah)</label><select id="jalurA_kelasId" class="dd-kelas" data-placeholder="-- pilih Kelas Kuliah --"></select>
+        <button class="send alt" onclick="getPesertaKelasJalurA()">GET Peserta Kelas + Komponen Evaluasi dari Server</button>
+        <div class="out" id="out_jalurA_peserta">(belum ada response)</div>
+
+        <p class="hint" style="margin-top:14px">Pilih <b>krsId</b> (dropdown otomatis terisi NIM+Nama setelah GET di atas), lalu isi skor tiap komponen di tabel bawah (kolom otomatis ikut hasil GET).</p>
+        <label>krsId (Rincian KRS Mahasiswa yang mau diisi nilainya — kosong? klik "GET Peserta Kelas" di atas dulu, dan pastikan kelasId yang dipilih benar diampu/ada pesertanya)</label><select id="jalurA_krsId" class="dd-krs" data-placeholder="-- pilih Mahasiswa --"></select>
+        <div id="tabelJalurAContainer">(GET dulu di atas supaya kolom komponen muncul)</div>
+        <button class="send" style="margin-top:14px" onclick="kirimNilaiJalurA()">Buat Payload POST Nilai per Komponen (utk Postman)</button>
+        <div class="out" id="out_jalurA_kirim">(belum ada payload)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-soal">
+      <h2 class="pageTitle">6C. Jalur C — Soal per Komponen Evaluasi <span class="badge C">JALUR C</span></h2>
+      <p class="pageSub">GET /soal/komponen/:rencanaEvaluasiId · POST/PUT/DELETE /soal/...</p>
+      <div class="card">
+        <p class="hint">Jalur C = susun rubrik soal dulu per komponen (boleh PG/Esai/Beranak, dipetakan ke CPMK/Sub-CPMK), baru input skor per soal di halaman 7C — nilai CPMK dihitung akurat dari skor soal asli, bukan estimasi proporsional.</p>
+        <details class="rawJson">
+          <summary>📖 Cara isi tiap jenis soal/unit (klik utk buka) — PG, Esai, Beranak, Presentasi/Tugas/PPT</summary>
+          <div class="mentah" style="white-space:normal">
+            <p><b>a. PG (Pilihan Ganda)</b> — pilih jenis "OBJEKTIF". Isi pertanyaan + opsi A/B/C/D/dst + kunci jawaban yang benar. Saat input nilai di 7C, dosen TIDAK ketik skor — cukup pilih jawaban mahasiswa, skor dihitung OTOMATIS oleh sistem (benar = skor maksimal penuh, salah = 0, tidak ada nilai sebagian).</p>
+            <p><b>b. Esai</b> — pilih jenis "RUBRIK". Isi pertanyaan. "Jawaban Acuan/Rubrik" itu OPSIONAL dan cuma catatan pribadi dosen (bukan dicocokkan otomatis, beda dengan kunci PG) — buat panduan dosen sendiri saat menilai jawaban asli mahasiswa di luar sistem ini. Skor diisi MANUAL oleh dosen (0 sampai Skor Maksimal, boleh nilai sebagian/parsial).</p>
+            <p><b>c. Soal Beranak</b> (mis. Soal 3 punya sub-pertanyaan 3a, 3b, 3c) — sekarang bisa <b>1x kirim saja</b>, tidak perlu 2 langkah:
+              <br>1) Buat baris soal INDUK dulu di tabel (urutannya harus di ATAS anak-anaknya), isi Skor Maksimal = <b>0</b> kalau induk cuma wadah/pengantar (supaya tidak ikut dihitung dobel).
+              <br>2) Buat baris soal ANAK di bawahnya, di field "Induk soal (kalau ini soal beranak)" pilih nomor induknya dari dropdown atas (otomatis menunjuk ke soal di tabel yang sama, tidak perlu UUID/ID sama sekali). Anak boleh campur PG dan Esai bebas.
+              <br>Dropdown bawah ("atau pilih dari soal server") cuma dipakai kalau induknya soal LAMA yang sudah ada di server dari sesi sebelumnya, bukan dari tabel yang sedang diisi sekarang.</p>
+            <p><b>d. Bukan soal tertulis</b> — Presentasi/PPT, Tugas, Proyek, Praktikum — pilih jenis "RUBRIK" juga (sama seperti Esai), tapi kosongkan "Pertanyaan" dan isi <b>Label</b> dengan nama kriteria penilaian, contoh: Label "Penguasaan Materi" Skor Maks 30, Label "Kualitas Slide" Skor Maks 20, Label "Manajemen Waktu" Skor Maks 20, dst — tiap kriteria jadi 1 baris "soal" tersendiri. Dinilai manual sama seperti Esai.</p>
+            <p>Pemetaan ke CPMK berlaku sama untuk semua jenis di atas: isi poin (bobotPoin) per CPMK, total tidak boleh melebihi Skor Maksimal unit itu.</p>
+            <p>⚠️ <b>parentSoalId</b> dan <b>cpmkId</b> di bawah ini sekarang bisa diisi manual (selain pilih dropdown) — kalau ID asli belum ada (misal CPMK belum di-GET, atau soal induk belum dibuat di server), boleh tulis ID palsu/sementara dulu (mis. "CPMK01", "INDUK-3") supaya tetap bisa bikin contoh payload lengkap. <b>Ingat ganti ke ID asli (UUID) sebelum benar-benar dikirim ke server</b>, karena server validasi UUID asli yang sudah ada — ID palsu akan ditolak (404/400) kalau dikirim sungguhan.</p>
+          </div>
+        </details>
+        <label>rencanaEvaluasiId (id komponen, dari hasil GET halaman 5)</label><select id="soal_reId" class="dd-rencanaEvaluasi" data-placeholder="-- pilih Komponen Evaluasi --" onchange="getSoal()"></select><button class="btnRowAdd" onclick="gotoPage('rencanaevaluasi')">kosong? → ke halaman 5 dulu (pilih MK+Periode, klik GET)</button>
+        <button class="send alt" onclick="getSoal()">GET Daftar Soal dari Server (komponen ini)</button>
+        <div class="out" id="out_soalList">(belum ada response)</div>
+
+        <p class="hint" style="margin-top:14px">Bisa bikin <b>banyak soal sekaligus</b> di komponen yang dipilih di atas — campur PG &amp; Esai bebas. Klik baris jenis "PG" utk isi opsi jawaban A/B/C/D + kunci; baris "Esai" utk isi pertanyaan + jawaban acuan (opsional, buat catatan dosen sendiri).</p>
+        <button class="btnRowAdd" onclick="ambilCpmkUntukSoal()">Dropdown CPMK di bawah kosong? klik di sini buat ambil daftar CPMK (pakai Mata Kuliah dari halaman 5)</button>
+        <div id="tabelSoalBatchContainer">(pilih komponen dulu, lalu klik "+ Tambah Soal")</div>
+        <button class="btnRowAdd" onclick="tambahSoalBaru()">+ Tambah Soal</button>
+        <button class="send" style="margin-top:14px" onclick="kirimSoalBatch()">Buat Payload POST Banyak Soal Sekaligus (utk Postman)</button>
+        <div class="out" id="out_soal">(belum ada payload)</div>
+
+        <hr style="margin-top:20px">
+        <p class="hint"><b>Ubah/Hapus 1 soal yang sudah ada di server</b> (bukan bikin baru):</p>
+        <label>soalId (dari hasil GET di atas / dropdown)</label><select id="soal_id" class="dd-soal" data-placeholder="-- pilih soal existing --"></select>
+        <button class="send alt" onclick="updateSoalDariBatch()">Buat Payload PUT Update Soal Ini (ambil isian dari baris no. 1 tabel di atas)</button>
+        <button class="send alt" onclick="deleteSoal()">Buat Payload DELETE Soal Ini</button>
+      </div>
+    </section>
+
+    <section class="page" id="page-nilaisoal">
+      <h2 class="pageTitle">7C. Jalur C — Input Nilai per Soal <span class="badge C">JALUR C</span></h2>
+      <p class="pageSub">POST /soal/nilai/:krsId — hasil: Nilai Akhir MK + Nilai CPMK akurat</p>
+      <div class="card">
+        <label>krsId (Rincian KRS Mahasiswa — dari dropdown halaman 6A kalau sudah pernah GET peserta kelas)</label><select id="nilai_krsId" class="dd-krs" data-placeholder="-- pilih Mahasiswa (atau isi manual di bawah) --"></select>
+        <button class="btnRowAdd" onclick="gotoPage('jalurA')">kosong? → ke halaman 6A dulu (pilih kelas, klik GET Peserta Kelas)</button>
+        <input id="nilai_krsId_manual" placeholder="atau tempel uuid manual di sini" style="margin-top:6px" onchange="document.getElementById('nilai_krsId').value=''">
+
+        <p class="hint" style="margin-top:14px">Tarik daftar soal dari komponen manapun (boleh berkali-kali utk TUGAS, UTS, UAS, KEHADIRAN, dst — semua soal yang sudah ditarik akan menumpuk jadi 1 tabel di bawah, lalu dikirim sekaligus jadi 1 payload).</p>
+        <div class="row">
+          <div><select id="nilaisoal_reId" class="dd-rencanaEvaluasi" data-placeholder="-- pilih Komponen Evaluasi --"></select>
+            <button class="btnRowAdd" onclick="gotoPage('rencanaevaluasi')">kosong? → ke halaman 5 dulu</button></div>
+          <div><button class="send alt" onclick="tarikSoalKeNilai()">+ Tarik Soal dari Komponen Ini</button></div>
+        </div>
+        <button class="btnRowAdd" onclick="kosongkanSoalNilai()">🗑 Kosongkan semua (mulai ulang)</button>
+
+        <div id="tabelNilaiSoalContainer" style="margin-top:10px">(belum ada soal ditarik)</div>
+        <button class="send" style="margin-top:14px" onclick="kirimNilaiSoal()">Buat Payload POST Input Nilai per Soal (utk Postman)</button>
+        <div class="out" id="out_nilai">(belum ada payload)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-jalurD">
+      <h2 class="pageTitle">6D. Jalur D — Nilai dari CBT <span class="badge D">JALUR D</span></h2>
+      <p class="pageSub">POST /cbt/komponen/:rencanaEvaluasiId/nilai · POST /cbt/nilai-akhir</p>
+
+      <div class="card" style="background:#fffbeb;border-color:#fbbf24">
+        <h3 style="font-size:14px;margin:0 0 8px">📌 Vir, baca ini dulu sebelum ngoding</h3>
+        <p style="margin:6px 0">Alurnya cuma 3 langkah, gak ribet:</p>
+        <p style="margin:6px 0"><b>1. GET dulu daftar komponennya</b> — pakai endpoint yang sama kayak biasa: <code>GET /koordinator-mk/mata-kuliah/:mataKuliahId/rencana-evaluasi?periodeId=...</code>. Dari situ lu dapet id buat tiap komponen (UTS, UAS, Tugas, Kehadiran), masing-masing beda id. Simpen id-idnya di sistem lu, itu yang dipakai buat langkah 2.</p>
+        <p style="margin:6px 0"><b>2. UTS/UAS/dll udah dikoreksi → POST breakdown-nya ke <code>/cbt/komponen/{id-nya}/nilai</code></b> — isinya CUMA breakdown per soal (skor yang didapat mahasiswa, skor maksimal soal itu, dan soal itu ngukur Sub-CPMK yang mana). Gak usah kirim nilai akhir di sini. 1 soal bisa nunjuk ke lebih dari 1 Sub-CPMK kalau soalnya emang nyerempet beberapa topik sekaligus. Kirim ulang buat mahasiswa yang sama otomatis nge-replace yang lama, gak dobel.</p>
+        <p style="margin:6px 0"><b>3. Nilai akhir → kirim TERPISAH ke <code>POST /cbt/nilai-akhir</code></b> — ini gak nyambung sama langkah 2 sama sekali. Ini level per-mata-kuliah (bukan per komponen), jadi kirim kapan aja lu udah final ngitung nilai semester mahasiswa itu. <b>Cukup kirim angkanya doang (0-100)</b> — huruf mutu (A/AB/B/dst) GAK USAH lu kirim, itu NL-SIAK yang otomatis nentuin sendiri dari skala penilaian yang berlaku. NL-SIAK gak ngitung ulang angka finalnya, cuma nyimpen apa adanya dari lu.</p>
+        <p style="margin:6px 0">Intinya: breakdown Sub-CPMK (langkah 2) itu cuma buat NL-SIAK ngitung capaian CPMK. Nilai akhir/huruf mutu (langkah 3) udah final dari CBT, dua-duanya independen, gak saling ganggu satu sama lain.</p>
+        <p style="margin:6px 0"><b>4. Kehadiran gak usah lu kirim sama sekali</b> — itu di luar Jalur D ini. Kehadiran tetap diinput manual angka jadi (misal 80) langsung di NL-SIAK sama dosen/kaprodi, bukan dari CBT, soalnya lu emang gak punya data presensi. Nanti angka itu otomatis ikut kegabung ke capaian Sub-CPMK bareng breakdown yang lu kirim, jadi lu gak perlu mikirin ini — tinggal fokus ke UTS/UAS/Tugas aja yang beneran lu koreksi.</p>
+        <details style="margin-top:6px">
+          <summary style="cursor:pointer;font-size:12px;color:#92700c">kenapa Kehadiran gitu? (klik, ada chat asli sama Pak Fitrah)</summary>
+          <div style="background:#fff;border:1px solid #fbbf24;border-radius:6px;padding:10px;margin-top:6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;line-height:1.6;color:#444">
+            [16/07/26, 17.13.13] Pak Fitrah Dosen TI: Itu gk bisa Dr sistem virza, kehadiran harus di tempat lu langsung. Ambil nilai akhir misal kehadiran 80, dikali bobot per sub cpmk dibagi total subcpmk<br>
+            [16/07/26, 17.13.38] Pak Fitrah Dosen TI: Jd angka 80 nya dimasukkan manual aja dulu<br>
+            [16/07/26, 17.13.56] Pak Fitrah Dosen TI: Angka presensi<br>
+            [16/07/26, 17.14.10] Satria: baik pak
+          </div>
+        </details>
+        <p style="margin:6px 0">Mau coba-coba dulu sebelum ngoding beneran? Tinggal isi form di bawah ini manual, nanti keluar contoh JSON payload persis yang harus dikirim — tinggal contek formatnya.</p>
+      </div>
+
+      <div class="card">
+        <p class="hint">Jalur D = soal &amp; koreksi benar/salah jawaban dilakukan sepenuhnya di CBT (NL-SIAK tidak pernah menyimpan soal). <b>Sengaja dipisah jadi 2 hal yang tidak saling sentuh</b> (hasil konsultasi 2026-07-16): <b>(1) breakdown per Sub-CPMK</b> — dipakai HANYA buat hitung capaian CPMK, rumus identik Jalur C: <code>skor diperoleh × (bobotPoin ÷ skorMaksimal)</code>, dijumlah per Sub-CPMK, di-rollup ke CPMK induk. <b>(2) Nilai akhir + huruf mutu + angka mutu MK</b> — itu 100% hasil hitungan CBT sendiri, NL-SIAK cuma sinkron apa adanya (bagian bawah halaman ini), <b>tidak dihitung ulang dari komponen sama sekali</b>. Kirim ulang (koreksi) breakdown utk kombinasi mahasiswa+komponen yang sama akan MENGGANTIKAN data lama, bukan menumpuk jadi duplikat.</p>
+
+        <label>Cari Kelas Kuliah dulu (dipakai bareng Bagian 1 &amp; 2 di bawah, supaya krsId jadi dropdown NIM+Nama)</label>
+        <input id="cbt_kelaslookup_search" placeholder="cari nama mata kuliah, mis. 'Kalkulus' (kosongkan utk ambil semua)">
+        <button class="send alt" onclick="getKelasKuliahLookup()">GET Daftar Kelas Kuliah</button>
+        <div class="row" style="margin-top:6px">
+          <div><select id="cbt_kelasId" class="dd-kelas" data-placeholder="-- pilih Kelas Kuliah --"></select></div>
+          <div><button class="send alt" onclick="getPesertaKelasJalurD()">GET Peserta Kelas (isi dropdown krsId di bawah)</button></div>
+        </div>
+        <div class="out" id="out_jalurD_peserta">(belum ada response)</div>
+
+        <hr style="margin-top:20px">
+        <h3 style="font-size:14px">1A. Input Cepat — UTS + UAS + Tugas dalam 1 Form (khusus Kalkulus I / TIK101)</h3>
+        <p class="hint">Isi 1 mahasiswa, SEMUA 18 soal (4 UTS + 5 UAS + 9 Tugas) sekaligus di 1 tabel — Sub-CPMK &amp; Bobot Poin-nya SUDAH otomatis keisi (sesuai pemetaan resmi server), tinggal ketik skor yang didapat. Klik tombol di bawah nanti keluar <b>3 payload terpisah</b> (UTS/UAS/Tugas, karena endpoint aslinya memang per-komponen) — tempel satu-satu ke Postman, aman dikirim ketiganya (gak ngubah cara kerja sistem, cuma mempercepat cara Anda ngisi).</p>
+        <label>krsId (Mahasiswa)</label><select id="cepat_krsId" class="dd-krs" data-placeholder="-- pilih Mahasiswa (dari GET Peserta Kelas di atas) --" onchange="renderTabelInputCepat()"></select>
+        <div id="tabelInputCepatContainer" style="margin-top:8px">(pilih krsId dulu)</div>
+        <button class="send" style="margin-top:14px" onclick="buatPayloadInputCepat()">Buat 3 Payload Sekaligus (UTS + UAS + Tugas)</button>
+        <div class="out" id="out_inputcepat">(belum ada payload)</div>
+
+        <hr style="margin-top:20px">
+        <h3 style="font-size:14px">1. Breakdown Sub-CPMK (per komponen — buat hitung CPMK)</h3>
+        <p class="hint">rencanaEvaluasiId di bawah ini <b>CUMA dipakai di Bagian 1 ini</b> (termasuk "Lihat breakdown" &amp; "Reset" di bawahnya) — TIDAK dipakai sama sekali di Bagian 2 (Sinkron Nilai Akhir), itu level Mata Kuliah, bukan per komponen.</p>
+        <label>rencanaEvaluasiId (komponen evaluasi — UTS/UAS/dst, dari hasil GET halaman 5)</label><select id="cbt_reId" class="dd-rencanaEvaluasi" data-placeholder="-- pilih Komponen Evaluasi --" onchange="renderTabelCbtBatch()"></select><button class="btnRowAdd" onclick="gotoPage('rencanaevaluasi')">kosong? → ke halaman 5 dulu (pilih MK+Periode, klik GET)</button>
+        <button class="btnRowAdd" style="margin-top:8px" onclick="ambilCpmkUntukSoal()">Dropdown Sub-CPMK di bawah kosong? klik di sini buat ambil daftar CPMK (pakai Mata Kuliah dari halaman 5)</button>
+        <div id="tabelCbtBatchContainer">(pilih komponen dulu, lalu klik "+ Tambah Mahasiswa")</div>
+        <button class="btnRowAdd" onclick="tambahCbtRow()">+ Tambah Mahasiswa</button>
+        <button class="send" style="margin-top:14px" onclick="kirimNilaiCbt()">Buat Payload POST Breakdown dari CBT (utk Postman)</button>
+        <div class="out" id="out_jalurD">(belum ada payload)</div>
+
+        <hr style="margin-top:20px">
+        <h3 style="font-size:14px">📋 Lihat breakdown yang sudah masuk (komponen ini)</h3>
+        <p class="hint">Baca ulang hasil yang sudah tersimpan dari komponen (rencanaEvaluasiId) yang dipilih di atas — sekaligus peringatan otomatis kalau ternyata ada komponen "kembar" (metode+jenis+periode sama) yang bisa bikin nilai dobel-hitung. Kolom "Nilai Akhir MK" di tabel itu dari `RincianKrsMahasiswa` (hasil sinkron di Bagian 2 bawah), bukan dihitung dari breakdown ini.</p>
+        <button class="send alt" onclick="getNilaiDariCbt()">GET Breakdown dari CBT (komponen ini)</button>
+        <div class="out" id="out_jalurD_get">(belum ada response)</div>
+
+        <h3 style="font-size:14px;margin-top:18px">🗑 Reset breakdown per komponen (bukan reset semua nilai)</h3>
+        <p class="hint">Hapus kontribusi breakdown Sub-CPMK <b>1 mahasiswa</b> di <b>komponen ini saja</b> (CPMK dihitung ulang dari komponen lain yang tersisa). Tidak menyentuh nilai akhir/huruf mutu MK sama sekali. Beda dari halaman 10 (Reset Nilai) yang menghapus SEMUA nilai mahasiswa itu di semua jalur.</p>
+        <select id="cbt_reset_krsId" class="dd-krs" data-placeholder="-- pilih Mahasiswa (dari tabel GET di atas / GET Peserta Kelas) --"></select>
+        <button class="send" style="margin-top:8px;background:#fee2e2;border-color:#fca5a5;color:#b91c1c" onclick="resetKomponenCbt()">🗑 Reset Breakdown Komponen Ini utk Mahasiswa Terpilih</button>
+
+        <hr style="margin-top:24px">
+        <h3 style="font-size:14px">2. Sinkron Nilai Akhir MK dari CBT</h3>
+        <p class="hint">Ini LEVEL MATA KULIAH (bukan per komponen) — cukup kirim <b>angka nilai akhir (0-100)</b> apa adanya dari CBT, <b>tidak dihitung ulang</b>. Huruf mutu &amp; angka mutu (A/AB/B/dst) <b>tidak perlu dikirim CBT</b> — NL-SIAK otomatis turunkan sendiri dari tabel skala penilaian yang berlaku. <b>rencanaEvaluasiId / komponen evaluasi TIDAK dipakai sama sekali di Bagian 2 ini</b> (beda dari Bagian 1 di atas) — payload-nya cuma butuh krsId + nilaiAkhir, endpoint-nya juga beda (<code>POST /cbt/nilai-akhir</code>, bukan <code>POST /cbt/komponen/:id/nilai</code>).</p>
+        <div id="tabelNilaiAkhirCbtContainer">(pilih Kelas Kuliah &amp; GET Peserta Kelas di atas dulu, lalu klik "+ Tambah Mahasiswa" di bawah)</div>
+        <button class="btnRowAdd" onclick="tambahNilaiAkhirRow()">+ Tambah Mahasiswa</button>
+        <button class="send" style="margin-top:14px" onclick="kirimNilaiAkhirCbt()">Buat Payload POST Nilai Akhir dari CBT (utk Postman)</button>
+        <div class="out" id="out_jalurD_nilaiakhir">(belum ada payload)</div>
+
+        <hr style="margin-top:24px">
+        <h3 style="font-size:14px">3. Input Kehadiran (Manual — tetap di halaman ini, gak usah pindah ke 6A)</h3>
+        <p class="hint">Kehadiran gak lewat CBT sama sekali (gak punya soal, lihat catatan atas) — tapi biar gak perlu gonta-ganti halaman pas demo, di sini disediakan jalan pintas ke endpoint yang sama dengan halaman 6A (<code>POST /dosen/kelas/:kelasId/nilai/:krsId</code>), <b>otomatis cuma nampilin komponen yang kedeteksi Kehadiran/Partisipasi</b> (dari nama komponennya) — bukan UTS/UAS/Tugas.</p>
+        <div id="kehadiranKomponenInfo" class="hint" style="margin:4px 0">(klik "GET Rencana Evaluasi" di halaman 5 dulu, biar komponen Kehadiran kedeteksi otomatis)</div>
+
+        <label>krsId (Mahasiswa)</label><select id="kehadiran_krsId" class="dd-krs" data-placeholder="-- pilih Mahasiswa (dari GET Peserta Kelas di atas) --" onchange="renderTabelKehadiran()"></select>
+        <div id="tabelKehadiranContainer" style="margin-top:8px">(pilih krsId dulu di atas)</div>
+        <button class="send" style="margin-top:14px" onclick="kirimKehadiranManual()">Buat Payload POST Input Kehadiran (utk Postman)</button>
+        <div class="out" id="out_jalurD_kehadiran">(belum ada payload)</div>
+
+        <hr style="margin-top:24px">
+        <h3 style="font-size:14px">4. Cek Visibilitas Nilai — KHS &amp; Transkrip Mahasiswa</h3>
+        <p class="hint">Nilai CPMK/Nilai Akhir yang sudah masuk lewat Bagian 1-3 di atas TIDAK OTOMATIS langsung kelihatan di KHS/Transkrip mahasiswa -- baru tampil begitu status mahasiswa itu <code>Dikunci</code>/<code>Lulus</code>/<code>Tidak Lulus</code> (otomatis kalau SEMUA peserta 1 kelas sudah lengkap nilai akhirnya, atau dikunci manual). Dua tombol di bawah buat ngecek cepat tanpa pindah halaman.</p>
+
+        <label>Cari Mahasiswa dulu (opsional, buat isi dropdown mahasiswaId di bawah)</label>
+        <div class="row">
+          <div><input id="cek_prodiId_search" placeholder="prodiId (kosongkan = pakai dari halaman 0A)"></div>
+          <div><input id="cek_angkatan_search" placeholder="angkatan (opsional)"></div>
+          <div><button class="send alt" onclick="cariMahasiswaUntukCekNilai()">GET Daftar Mahasiswa</button></div>
+        </div>
+        <div class="out" id="out_cek_mhslookup">(belum ada response)</div>
+
+        <div class="row" style="margin-top:10px">
+          <div><label>mahasiswaId</label><select id="cek_mhsId" class="dd-mahasiswa" data-placeholder="-- pilih Mahasiswa --"></select></div>
+          <div><label>periodeAkademikId (khusus KHS)</label><select id="cek_periodeId" class="dd-periodeAkademik" data-placeholder="-- pilih Periode --"></select></div>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <div><label>tahunKurikulumId (khusus Transkrip)</label><select id="cek_tkId" class="dd-tahunKurikulum" data-placeholder="-- pilih Tahun Kurikulum --"></select></div>
+          <div><label>prodiId (khusus Transkrip)</label><select id="cek_prodiId" class="dd-prodi" data-placeholder="-- pilih Program Studi --"></select></div>
+        </div>
+        <p class="hint" style="margin:4px 0">Dropdown kosong? Isi dulu lewat halaman "0A. Cari Data Dasar" (Periode Akademik, Tahun Kurikulum, Program Studi) -- sekali isi di sana, otomatis ke-share ke sini juga.</p>
+
+        <div class="row" style="margin-top:10px">
+          <div><button class="send" onclick="cekKhsMahasiswa()">🔍 Cek KHS (JSON, lihat MK apa aja yg sudah tampil)</button></div>
+          <div><button class="send pdf" onclick="cekTranskripDariSini()">📄 Buka Transkrip OBE (PDF)</button></div>
+        </div>
+        <div class="out" id="out_cek_khs">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-rumusjalurD">
+      <h2 class="pageTitle">6D-2. Rumus &amp; Cara Hitung Lengkap (Jalur D)</h2>
+      <p class="pageSub">Dari breakdown CBT sampai muncul di Monitoring — step by step</p>
+      <div class="card">
+
+        <h3 style="font-size:14px">1. Kenapa Jalur D dibutuhkan</h3>
+        <p class="hint">Sistem lama (Jalur A) cuma terima 1 angka per komponen (UTS/UAS/Tugas/Kehadiran), terus nilai CPMK disebar rata secara proporsional ke semua Sub-CPMK. Masalahnya: itu nganggep performa mahasiswa rata di semua soal — padahal kenyataannya mahasiswa bisa kuat di 1 Sub-CPMK tapi lemah di Sub-CPMK lain, dan itu ketutup kalau cuma dikasih 1 angka gabungan. Jalur D menghitung dari skor per soal asli, jadi kelemahan spesifik itu kelihatan.</p>
+
+        <h3 style="font-size:14px;margin-top:18px">2. Pembagian tanggung jawab</h3>
+        <table class="tabelEdit">
+          <thead><tr><th>Sistem</th><th>Tugasnya</th></tr></thead>
+          <tbody>
+            <tr><td><b>CBT</b></td><td>Bikin soal, mahasiswa ujian, <b>cek benar/salah tiap jawaban</b> (koreksi), simpen skor per soal, hitung nilai akhir semester mahasiswa</td></tr>
+            <tr><td><b>NL-SIAK</b></td><td><b>Menghitung nilai capaian</b> CPMK &amp; Sub-CPMK dari skor per soal yang dikirim CBT. Nilai akhir/huruf mutu cuma disimpan apa adanya, tidak dihitung ulang.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="rumusBox" style="background:#fffbeb;border-color:#fbbf24">
+          <p class="hint" style="margin:0 0 8px"><b>⚠️ Kehadiran itu KHUSUS — tidak lewat CBT sama sekali</b></p>
+          <p class="hint" style="margin:0 0 6px">Beda dari UTS/UAS/Tugas (yang datanya dari CBT), <b>Kehadiran tetap diinput manual langsung di NL-SIAK</b> oleh dosen/kaprodi — CBT tidak punya data presensi, jadi tidak mungkin ikut mengirim ini (arahan Pak Fitrah, dosen pembimbing 1).</p>
+          <p class="hint" style="margin:0">Contohnya: dosen ketik nilai akhir Kehadiran mahasiswa = <b>80</b> (bukan skor per soal, cuma 1 angka jadi) lewat form nilai biasa (bukan lewat halaman 6D ini). Angka itu tetap ikut dihitung ke capaian Sub-CPMK — digabung otomatis dengan breakdown dari CBT lewat rumus ⑥ di bagian 6, urutan mana yang masuk duluan (Kehadiran atau CBT) tidak masalah.</p>
+        </div>
+
+        <h3 style="font-size:14px;margin-top:18px">3. Data yang mengalir</h3>
+        <p class="hint"><b>NL-SIAK → CBT</b> (referensi, sekali kirim/update): daftar Mata Kuliah + CPMK + Sub-CPMK + bobotnya (dari halaman 5 Rencana Evaluasi) — dipakai CBT buat nge-tag soal pas bikin ujian.</p>
+        <p class="hint"><b>CBT → NL-SIAK</b> (tiap kali ada hasil baru), 2 jalur terpisah total (lihat halaman 6D):</p>
+        <p class="hint" style="margin-left:14px">→ <code>POST /cbt/komponen/:id/nilai</code> — breakdown per unit/soal (skor diperoleh, skor maksimal, Sub-CPMK yang diukur + bobot poinnya). <b>Ephemeral</b>, tidak pernah disimpan jadi tabel Soal di NL-SIAK — cuma dipakai sekali hitung lalu dibuang.</p>
+        <p class="hint" style="margin-left:14px">→ <code>POST /cbt/nilai-akhir</code> — nilai akhir MK (0-100) apa adanya. Huruf mutu &amp; angka mutu otomatis diturunkan NL-SIAK dari skala penilaian sendiri, CBT tidak perlu kirim itu.</p>
+
+        <h3 style="font-size:14px;margin-top:18px">4. Rumus lengkap (notasi matematika)</h3>
+        <p class="hint">Variabel: unit penilaian ke-<i>i</i> (1 soal, atau 1 sub-pertanyaan dari soal beranak), Sub-CPMK ke-<i>j</i>, CPMK induk ke-<i>c</i>. <span class="rumusVar">S</span> = skor diperoleh, <span class="rumusVar">M</span> = skor maksimal, <span class="rumusVar">B</span> = bobot poin unit itu yang dialokasikan ke Sub-CPMK tsb (1 unit boleh dialokasikan ke lebih dari 1 Sub-CPMK sekaligus — lihat contoh no. 5).</p>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>① Skor terbobot 1 unit, untuk 1 Sub-CPMK j:</b></p>
+          <div class="persamaan">
+            <span class="rumusVar">w<sub class="rvar">i,j</sub></span> = <span class="rumusVar">S<sub class="rvar">i</sub></span> ×
+            <span class="rumusFrac"><span class="num rumusVar">B<sub class="rvar">i,j</sub></span><span class="den rumusVar">M<sub class="rvar">i</sub></span></span>
+          </div>
+          <div class="ket">skorTerbobotIni = skorDiperoleh × (bobotPoin ÷ skorMaksimal) — dihitung 1x per pasangan (unit, Sub-CPMK)</div>
+          <div class="ket"><b>Contoh:</b> Soal 2a (dari Ali, no. 5) → S=9, M=10, B=10 → w = 9 × (10/10) = <b>9</b></div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>② Akumulasi ke Sub-CPMK j, dari SEMUA unit &amp; SEMUA komponen (UTS+UAS+Tugas+Kehadiran) yang menyentuhnya:</b></p>
+          <div class="persamaan">
+            <span class="rumusVar">W<sub class="rvar">j</sub></span> = <span class="rumusSum">Σ<sub>i→j</sub></span> <span class="rumusVar">w<sub class="rvar">i,j</sub></span>
+            &nbsp;&nbsp;&nbsp; <span class="rumusVar">T<sub class="rvar">j</sub></span> = <span class="rumusSum">Σ<sub>i→j</sub></span> <span class="rumusVar">B<sub class="rvar">i,j</sub></span>
+          </div>
+          <div class="ket">i→j = semua unit i (dari komponen manapun) yang punya alokasi bobot ke Sub-CPMK j. Ini yang bikin nilai bisa gabungan UTS+Tugas dst.</div>
+          <div class="ket"><b>Contoh:</b> Sub-CPMK031 (Ali) disentuh 4 unit lintas 2 komponen (UTS: Soal1,Soal2a,Soal3 + Tugas: Tugas1) → W₀₃₁ = 8+9+8+12 = <b>37</b>, T₀₃₁ = 10+10+10+15 = <b>45</b></div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>③ Nilai capaian Sub-CPMK j:</b></p>
+          <div class="persamaan">
+            <span class="rumusVar">N<sub class="rvar">j</sub></span> =
+            <span class="rumusFrac"><span class="num rumusVar">W<sub class="rvar">j</sub></span><span class="den rumusVar">T<sub class="rvar">j</sub></span></span>
+            × 100
+          </div>
+          <div class="ket"><b>Contoh:</b> N₀₃₁ = (37/45) × 100 = <b>82.22</b> &nbsp;|&nbsp; N₀₃₂ = (19/30) × 100 = <b>63.33</b> (di bawah target 65)</div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>④ Rollup ke CPMK induk c (otomatis dari Sub-CPMK anak-anaknya, <i>j</i> ∈ anak(c)):</b></p>
+          <div class="persamaan">
+            <span class="rumusVar">N<sub class="rvar">c</sub></span> =
+            <span class="rumusFrac">
+              <span class="num"><span class="rumusSum">Σ<sub>j∈c</sub></span> <span class="rumusVar">W<sub class="rvar">j</sub></span></span>
+              <span class="den"><span class="rumusSum">Σ<sub>j∈c</sub></span> <span class="rumusVar">T<sub class="rvar">j</sub></span></span>
+            </span>
+            × 100
+          </div>
+          <div class="ket">Bukan rata-rata nilai Sub-CPMK, tapi rata-rata TERBOBOT dari skor mentahnya — supaya Sub-CPMK dengan bobot besar tetap proporsional pengaruhnya.</div>
+          <div class="ket"><b>Contoh:</b> CPMK03 beranak 031+032 → N₀₃ = (37+19)/(45+30) × 100 = 56/75 × 100 = <b>74.67</b> (lolos target 70, meski N₀₃₂ sendiri gagal)</div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑤ Nilai Akhir MK &amp; Huruf Mutu — JALUR TERPISAH TOTAL, tidak memakai ①-④ sama sekali:</b></p>
+          <div class="persamaan"><span class="rumusVar">NA</span> = nilai_akhir dari CBT (POST /cbt/nilai-akhir), dipakai apa adanya</div>
+          <div class="persamaan"><span class="rumusVar">HM</span> = <span class="rumusVar">f<sub class="rvar">skala</sub></span>(<span class="rumusVar">NA</span>) → dicocokkan ke <code>siak_skala_penilaian</code> milik prodi+kurikulum mahasiswa itu</div>
+          <div class="ket"><b>Contoh:</b> CBT kirim NA=88 → skala prodi Ali: nilai_min 85 → HM = <b>A</b> (sama sekali tidak dihitung dari N₀₃₁/N₀₃₂/N₀₃ = 82.22/63.33/74.67 di atas)</div>
+        </div>
+
+        <h3 style="font-size:14px;margin-top:18px">5. Contoh perhitungan lengkap (kasus ekstrem — semua variasi digabung)</h3>
+        <p class="hint">Mahasiswa <b>Ali</b>, CPMK03 (target 70) beranak 2 Sub-CPMK: <b>Sub-CPMK031</b> (target 65) &amp; <b>Sub-CPMK032</b> (target 65). Soal-soalnya sengaja dibuat variatif biar semua kasus kepakai:</p>
+        <table class="tabelEdit">
+          <thead><tr><th>Komponen</th><th>Unit</th><th>Keterangan</th><th>S (skor)</th><th>M (maks)</th><th>Sub-CPMK</th><th>B (bobot)</th><th>w = S×(B/M)</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="6">UTS</td><td>Soal 1</td><td>PG biasa, 1 unit → 1 Sub-CPMK</td><td>8</td><td>10</td><td>031</td><td>10</td><td>8 × (10/10) = <b>8</b></td></tr>
+            <tr><td>Soal 2a</td><td rowspan="3">Soal 2 = studi kasus <b>"beranak"</b>: 1 soal induk (30 poin), CBT mengirimnya sbg 3 unit terpisah (2a/2b/2c) krn tiap sub-pertanyaan ukur Sub-CPMK beda</td><td>9</td><td>10</td><td>031</td><td>10</td><td>9 × (10/10) = <b>9</b></td></tr>
+            <tr><td>Soal 2b</td><td>4</td><td>10</td><td>032</td><td>10</td><td>4 × (10/10) = <b>4</b> ← lemah</td></tr>
+            <tr><td>Soal 2c</td><td>7</td><td>10</td><td>032</td><td>10</td><td>7 × (10/10) = <b>7</b></td></tr>
+            <tr><td>Soal 3</td><td rowspan="2">Studi kasus tunggal (TIDAK beranak), tapi 1 unit yang sama dipecah bobotnya ke <b>2 Sub-CPMK sekaligus</b></td><td>16</td><td>20</td><td>031</td><td>10</td><td>16 × (10/20) = <b>8</b></td></tr>
+            <tr><td>↳ (baris sama)</td><td>16</td><td>20</td><td>032</td><td>10</td><td>16 × (10/20) = <b>8</b></td></tr>
+            <tr><td>Tugas</td><td>Tugas 1</td><td>Komponen BEDA (Tugas, bukan UTS) tapi nyumbang ke Sub-CPMK <b>yang sama</b> dgn UTS → digabung di rumus ②</td><td>12</td><td>15</td><td>031</td><td>15</td><td>12 × (15/15) = <b>12</b></td></tr>
+          </tbody>
+        </table>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>Substitusi ke rumus ② dan ③ — Sub-CPMK031</b> (unit: Soal1, Soal2a, Soal3, Tugas1):</p>
+          <div class="persamaan"><span class="rumusVar">W<sub class="rvar">031</sub></span> = 8 + 9 + 8 + 12 = <b>37</b> &nbsp;&nbsp; <span class="rumusVar">T<sub class="rvar">031</sub></span> = 10 + 10 + 10 + 15 = <b>45</b></div>
+          <div class="persamaan"><span class="rumusVar">N<sub class="rvar">031</sub></span> = <span class="rumusFrac"><span class="num">37</span><span class="den">45</span></span> × 100 = <b>82.22</b></div>
+
+          <p class="hint" style="margin:14px 0 8px"><b>Sub-CPMK032</b> (unit: Soal2b, Soal2c, Soal3):</p>
+          <div class="persamaan"><span class="rumusVar">W<sub class="rvar">032</sub></span> = 4 + 7 + 8 = <b>19</b> &nbsp;&nbsp; <span class="rumusVar">T<sub class="rvar">032</sub></span> = 10 + 10 + 10 = <b>30</b></div>
+          <div class="persamaan"><span class="rumusVar">N<sub class="rvar">032</sub></span> = <span class="rumusFrac"><span class="num">19</span><span class="den">30</span></span> × 100 = <b>63.33</b> ← di bawah target 65</div>
+
+          <p class="hint" style="margin:14px 0 8px"><b>Rollup ke CPMK03 (rumus ④):</b></p>
+          <div class="persamaan"><span class="rumusVar">N<sub class="rvar">03</sub></span> = <span class="rumusFrac"><span class="num">37 + 19</span><span class="den">45 + 30</span></span> × 100 = <span class="rumusFrac"><span class="num">56</span><span class="den">75</span></span> × 100 = <b>74.67</b> ← di atas target 70</div>
+        </div>
+
+        <p class="hint"><b>Ini poin pentingnya:</b> CPMK03 = 74.67 sudah lolos target (70), tapi salah satu anaknya, Sub-CPMK032 = 63.33, <b>masih di bawah target</b> (65). Rollup CPMK yang "aman" bisa nutupin kelemahan spesifik di 1 Sub-CPMK — makanya laporan Monitoring harus tetap tampilkan status per Sub-CPMK, bukan cuma per CPMK induk, supaya kelemahan Ali di materi yang diukur Sub-CPMK032 tetap kelihatan.</p>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>Nilai Akhir MK &amp; Huruf Mutu (rumus ⑤, independen dari semua di atas):</b></p>
+          <div class="persamaan">CBT kirim <span class="rumusVar">NA</span> = <b>88</b> lewat <code>POST /cbt/nilai-akhir</code></div>
+          <div class="persamaan">NL-SIAK cocokkan ke skala prodi: nilai_min 85 → <span class="rumusVar">HM</span> = <b>A</b></div>
+          <div class="ket">NA=88 &amp; HM=A ini SAMA SEKALI tidak berhubungan secara hitungan dengan N₀₃₁/N₀₃₂/N₀₃ di atas — 2 hasil ini sengaja terpisah karena jawab 2 pertanyaan beda: "berapa nilai semester Ali" vs "sejauh mana Ali mencapai tiap CPMK".</div>
+        </div>
+
+        <h3 style="font-size:14px;margin-top:18px">6. Rumus lengkap sisi Monitoring (biar bisa jawab kalau ditanya)</h3>
+        <p class="hint">Monitoring (dan Export PDF) <b>tidak menghitung ulang</b> dari komponen mentah — semuanya baca dari tabel materialize <code>siak_nilai_cpmk_mahasiswa</code>. Fungsi <code>getLaporanCpmkPerMahasiswa</code> deteksi otomatis via query <code>EXISTS</code> (union ke <code>siak_nilai_soal_mahasiswa</code> = Jalur C, <code>siak_nilai_subcpmk_evaluasi_mahasiswa</code> = Jalur D) — kalau ADA baris di salah satunya, baca langsung dari tabel materialize; kalau BELUM ada sama sekali, jalankan hitung proporsional lama on-the-fly.</p>
+        <p class="hint"><b>Update 2026-07-16:</b> sejak <code>hitungNilaiAkhir</code> SELALU menulis ke ledger <code>siak_nilai_subcpmk_evaluasi_mahasiswa</code> (baik ada CBT atau tidak — lihat rumus ⑥), praktis <b>hampir semua MK yang sudah pernah dinilai</b> otomatis kedeteksi "Jalur C/D" dan dibaca langsung dari tabel materialize — jalur proporsional on-the-fly di bawah cuma jalan utk MK yang BENAR-BENAR belum pernah dinilai lewat <code>hitungNilaiAkhir</code> sama sekali. Sudah diverifikasi: hasil yang dibaca tetap akurat baik lewat jalur manapun (dibuktikan test — mahasiswa yg baru dinilai Kehadiran manual solo, 80.00, langsung muncul benar di laporan Monitoring).</p>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑥ Sumber nilai CPMK/Sub-CPMK yang dibaca Monitoring, per mahasiswa m &amp; per CPMK/Sub-CPMK c:</b></p>
+          <div class="persamaan"><span class="rumusVar">N<sub class="rvar">c</sub></span>(m) = nilai di <code>siak_nilai_cpmk_mahasiswa</code> apa adanya (sudah hasil rollup, tidak dihitung ulang Monitoring)</div>
+          <div class="ket"><b>Update 2026-07-16:</b> tabel itu SEKARANG selalu diisi dari 1 mekanisme yang sama (<code>hitungDanOverrideNilaiCpmkDariKomponen</code>), yang menjumlahkan SEMUA baris di ledger <code>siak_nilai_subcpmk_evaluasi_mahasiswa</code> milik krsId itu — baris <code>sumber='CBT'</code> (breakdown dari CBT, rumus ①-②) DAN baris <code>sumber='MANUAL'</code> (komponen yang tetap diinput manual, mis. Kehadiran — CBT tidak bisa ambil data ini, arahan Pak Fitrah). Dulu (sebelum fix) komponen manual ditulis ke tempat TERPISAH dan bisa hilang kalau CBT masuk belakangan — sekarang keduanya selalu di ledger yang sama, jadi <b>urutan CBT vs manual masuk duluan tidak masalah lagi</b>.</div>
+          <div class="ket">Baris MANUAL diskalakan biar konsisten sama baris CBT (yang skalanya "poin"): <code>skorTerbobot = skor × (bobotCpmk/100)</code>, <code>totalBobot = bobotCpmk</code> — skor komponen manual sudah 0-100, bobotCpmk dari <code>siak_pemetaan_evaluasi_cpmk</code> (setup lama, bukan Jalur D).</div>
+          <div class="ket"><b>Contoh:</b> Sub-CPMK031(Ali) dari CBT saja W=37,T=45 (→82.22). Kehadiran(Ali)=80 dipetakan ke Sub-CPMK031 yang sama dgn bc=1.67 → w=80×(1.67/100)=1.336 → gabung: N = (37+1.336)/(45+1.67)×100 = <b>82.14</b>. Kalau Kehadiran diinput SEBELUM breakdown CBT ada, hasilnya TETAP 82.14 begitu breakdown masuk — bukan 82.22 (Kehadiran ketinggalan) seperti sebelumnya.</div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑦ Status per CPMK/Sub-CPMK, per mahasiswa m (semua kolom di-AND-kan):</b></p>
+          <div class="persamaan">"Belum Memenuhi" jika ADA minimal 1 kolom c dengan <span class="rumusVar">N<sub class="rvar">c</sub></span>(m) &lt; target<sub class="rvar">c</sub></div>
+          <div class="ket">target_c = kolom target milik CPMK INDUK (bukan Sub-CPMK-nya sendiri). Tidak ada default 60 di level ini — kalau target belum diisi kaprodi (=0), otomatis lolos.</div>
+          <div class="ket"><b>Contoh:</b> Ali punya N₀₃₁=82.22 (≥65, lolos) DAN N₀₃₂=63.33 (&lt;65, gagal) → karena ADA 1 kolom gagal, status Ali = <b>"Belum Memenuhi"</b> (walau kolom lain lolos, walau CPMK03 rollup-nya 74.67 juga lolos)</div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑧ Rollup CPMK/Sub-CPMK → CPL, per 1 kontribusi/enrollment (dipakai 4 laporan: CPL per-prodi, per-mahasiswa, per-MK, transkrip):</b></p>
+          <div class="persamaan">
+            <span class="rumusVar">N<sub class="rvar">l</sub></span><sup>raw</sup> =
+            <span class="rumusFrac"><span class="num"><span class="rumusSum">Σ<sub>c</sub></span> <span class="rumusVar">N<sub class="rvar">c</sub></span>(m) × bl<sub class="rvar">c,l</sub></span><span class="den"><span class="rumusSum">Σ<sub>c</sub></span> bl<sub class="rvar">c,l</sub></span></span>
+          </div>
+          <div class="ket">bl_{c,l} = siak_pemetaan_cpl_cpmk.bobot_cpl (bobot kontribusi CPMK/Sub-CPMK c ke CPL l). Kalau Σ bl_{c,l} ≤ 0, baris ini dilewati (tidak ikut dihitung, bukan dianggap 0).</div>
+          <div class="ket"><b>Contoh:</b> CPMK03(Ali)=74.67 &amp; CPMK01(Ali)=90.00, keduanya dipetakan ke <b>CPL02</b> dengan bl₍CPMK01,CPL02₎=40, bl₍CPMK03,CPL02₎=60 → N_CPL02<sup>raw</sup>(Ali) = (90×40 + 74.67×60)/(40+60) = (3600+4480.2)/100 = <b>80.80</b></div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑨ Gabung lintas KRS duplikat / lintas kontribusi per mahasiswa per CPL (2 metode, pilihan Kaprodi):</b></p>
+          <div class="persamaan">Metode "Rerata" (default): <span class="rumusVar">N<sub class="rvar">l</sub></span>(m) = rata-rata semua <span class="rumusVar">N<sub class="rvar">l</sub></span><sup>raw</sup> milik m</div>
+          <div class="persamaan">Metode "Progresif": <span class="rumusVar">N<sub class="rvar">l</sub></span>(m) = MAX semua <span class="rumusVar">N<sub class="rvar">l</sub></span><sup>raw</sup> milik m</div>
+          <div class="ket">Sengaja 2 tingkat (rata dulu per mahasiswa, baru nanti dirata-ratakan lagi antar mahasiswa di rumus ⑪) — supaya mahasiswa dengan KRS dobel/pindah kelas tidak tertimbang 2×.</div>
+          <div class="ket"><b>Contoh 1 (Ali, tidak ada KRS dobel):</b> cuma 1 kontribusi = 80.80 → N_CPL02(Ali) = <b>80.80</b> (rerata maupun progresif hasilnya sama)</div>
+          <div class="ket"><b>Contoh 2 (Citra, KRS dobel/pindah kelas):</b> 2 kontribusi raw = 70 dan 90 → Rerata: N_CPL02(Citra) = (70+90)/2 = <b>80</b> &nbsp;|&nbsp; Progresif: N_CPL02(Citra) = MAX(70,90) = <b>90</b></div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑩ Status CPL per mahasiswa:</b></p>
+          <div class="persamaan">"Belum Memenuhi" jika <span class="rumusVar">N<sub class="rvar">l</sub></span>(m) &lt; target_cpl<sub class="rvar">l</sub></div>
+          <div class="ket">Beda dari CPMK: kalau target_cpl belum diisi (≤0), DIPAKSA default 60 (bukan otomatis lolos).</div>
+          <div class="ket"><b>Contoh:</b> target_cpl₍CPL02₎ = 75 → Ali (N=80.80) ≥ 75 → <b>Sudah Memenuhi</b>. Budi (N=65.00) &lt; 75 → <b>Belum Memenuhi</b>.</div>
+        </div>
+
+        <div class="rumusBox">
+          <p class="hint" style="margin:0 0 8px"><b>⑪ Rata-rata prodi/kelas per CPL (rekap Kaprodi):</b></p>
+          <div class="persamaan">
+            capaianAkhir<sub class="rvar">l</sub> =
+            <span class="rumusFrac"><span class="num"><span class="rumusSum">Σ<sub>m</sub></span> <span class="rumusVar">N<sub class="rvar">l</sub></span>(m)</span><span class="den">jumlah mahasiswa yang punya nilai CPL l</span></span>
+          </div>
+          <div class="ket">Rata-rata sederhana antar mahasiswa (bobot sama rata per mahasiswa, bukan pooled sum/count) — mahasiswa yang belum ada nilai CPL itu tidak ikut membagi.</div>
+          <div class="ket"><b>Contoh:</b> kelas berisi Ali=80.80, Budi=65.00, Citra=belum dinilai (dilewati, tidak ikut membagi) → capaianAkhir₍CPL02₎ = (80.80+65.00)/2 = <b>72.90</b></div>
+        </div>
+
+        <p class="hint"><b>Catatan jujur:</b> rollup CPL → PL (Profil Lulusan) <b>tidak ditemukan implementasinya</b> di <code>monitoring.service.js</code> — file ini berhenti di level CPL, tidak lanjut ke PL.</p>
+
+        <table class="tabelEdit" style="margin-top:12px">
+          <thead><tr><th>Edge case</th><th>Cara ditangani</th></tr></thead>
+          <tbody>
+            <tr><td>Total bobot (Σ bc atau Σ bl) = 0</td><td>Dilewati / dianggap 0, tidak pernah dibagi nol langsung</td></tr>
+            <tr><td>Target CPMK/Sub-CPMK belum diisi (=0)</td><td>Tidak ada default — otomatis dianggap lolos</td></tr>
+            <tr><td>Target CPL belum diisi (≤0)</td><td>Dipaksa default 60</td></tr>
+            <tr><td>1 CPL punya beberapa baris kode sama (duplikat setup)</td><td>Digabung jadi 1 bucket agregasi via kode, bukan UUID</td></tr>
+            <tr><td>Mahasiswa dgn KRS duplikat / pindah kelas</td><td>Rata-rata 2 tingkat (rumus ⑨) — supaya tidak tertimbang 2× di rumus ⑪</td></tr>
+            <tr><td>Baris berstatus <code>deleted_at</code> (KRS/kelas/nilai terhapus)</td><td>Difilter <code>IS NULL</code> di semua JOIN — dijuluki "data KRS hantu" di komentar kode</td></tr>
+            <tr><td>Pembulatan</td><td>2 desimal (Math.round(x×100)/100 atau .toFixed(2)), lalu tampil dgn koma ("74,67") di frontend</td></tr>
+          </tbody>
+        </table>
+
+        <details style="margin-top:18px">
+          <summary style="cursor:pointer;font-size:12px;color:#888">detail internal (klik kalau perlu)</summary>
+          <table class="tabelEdit" style="margin-top:8px">
+            <thead><tr><th>Kalimat arahan</th><th>Rumus mana</th></tr></thead>
+            <tbody>
+              <tr><td>"Baiknya ditarik per jawaban"</td><td>Data masuk per unit/soal (dasar rumus ①)</td></tr>
+              <tr><td>"Di bagian kamu di rekap per subcpmk dikelompokkan"</td><td>Pengelompokan pakai <code>pemetaanCpmk</code> (rumus ①, akumulasi di ②)</td></tr>
+              <tr><td>"Nilai per soal x bobotnya / total bobot subcpmk"</td><td><b>Persis rumus ① + ③</b></td></tr>
+              <tr><td>"Dari cbt juga diambil nilai akhir dari akumulasinya, gk perlu hitung lagi"</td><td><b>Persis rumus ⑤</b></td></tr>
+              <tr><td>"Uas nya 80 predikat A, tapi cpmk bisa gk tercapai"</td><td>Contoh nyata kenapa rumus ④ &amp; ⑤ memang harus terpisah (lihat contoh Ali no. 5)</td></tr>
+              <tr><td>"Koreksi harusnya dilakukan di sistem OBE lu, bukan di CBT"</td><td>CBT cek benar/salah jawaban (tetap di CBT); <b>penentuan nilai capaian CPMK</b> (rumus ①-④) itu yang di NL-SIAK</td></tr>
+            </tbody>
+          </table>
+        </details>
+
+      </div>
+    </section>
+
+    <section class="page" id="page-monitoring">
+      <h2 class="pageTitle">8. Monitoring &amp; Export PDF</h2>
+      <p class="pageSub">GET /obe/monitoring/cpl-prodi · /obe/monitoring/... · /obe/export/pdf/...</p>
+      <div class="card">
+        <p class="hint">Isi filter di bawah, lalu klik tombol JSON (lihat data di halaman) atau tombol PDF (unduh/buka file langsung — token ikut otomatis).</p>
+        <div class="row">
+          <div><label>tahunKurikulumId (dari halaman 0A)</label><select id="mon_tkId" class="dd-tahunKurikulum" data-placeholder="-- pilih Tahun Kurikulum --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → 0A</button></div>
+          <div><label>prodiId (dari halaman 0A, setelah GET Program Studi)</label><select id="mon_prodiId" class="dd-prodi" data-placeholder="-- pilih Program Studi --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → 0A</button></div>
+          <div><label>angkatan</label><input id="mon_angkatan" placeholder="2025"></div>
+        </div>
+        <div class="row">
+          <div><label>metode (rerata/progresif)</label><input id="mon_metode" value="rerata"></div>
+          <div><label>cpl (kode, khusus mk-mahasiswa)</label><input id="mon_cplKode" placeholder="CPL01"></div>
+          <div><label>mataKuliahId (khusus cpmk-mahasiswa, dari halaman 0A)</label><select id="mon_mkId" class="dd-mataKuliah" data-placeholder="-- pilih Mata Kuliah --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → 0A</button></div>
+          <div><label>mahasiswaId (khusus transkrip-obe)</label><select id="mon_mhsId" class="dd-mahasiswa" data-placeholder="-- pilih Mahasiswa (cari dulu di bawah) --"></select></div>
+        </div>
+        <label style="margin-top:10px">Cari Mahasiswa dulu (opsional, isi prodiId di atas dulu kalau mau filter)</label>
+        <div class="row">
+          <div><input id="mhslookup_prodiId" placeholder="(otomatis ikut prodiId di atas, atau isi manual)"></div>
+          <div><input id="mhslookup_angkatan" placeholder="angkatan (opsional)"></div>
+        </div>
+        <button class="send alt" onclick="document.getElementById('mhslookup_prodiId').value = document.getElementById('mhslookup_prodiId').value || val('mon_prodiId'); getMahasiswaLookup()">GET Daftar Mahasiswa</button>
+        <div class="out" id="out_mhslookup">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">a. CPL per Program Studi</h3>
+        <button class="send alt" onclick="monJson('cpl-prodi')">GET JSON</button>
+        <button class="send pdf" onclick="monPdf('monitoring-cpl-prodi')">📄 Buka PDF</button>
+        <div class="out" id="out_mon_cplprodi">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">b. CPL per Mahasiswa</h3>
+        <button class="send alt" onclick="monJson('cpl-mahasiswa')">GET JSON</button>
+        <button class="send pdf" onclick="monPdf('monitoring-cpl-mahasiswa')">📄 Buka PDF</button>
+        <div class="out" id="out_mon_cplmhs">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">c. CPL per Mata Kuliah</h3>
+        <button class="send alt" onclick="monJson('cpl-mata-kuliah')">GET JSON</button>
+        <button class="send pdf" onclick="monPdf('monitoring-cpl-mata-kuliah')">📄 Buka PDF</button>
+        <div class="out" id="out_mon_cplmk">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">d. Nilai MK per Mahasiswa (perlu "cpl" kode di atas)</h3>
+        <button class="send alt" onclick="monJson('mk-mahasiswa')">GET JSON</button>
+        <button class="send pdf" onclick="monPdf('monitoring-mk-mahasiswa')">📄 Buka PDF</button>
+        <div class="out" id="out_mon_mkmhs">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">e. Transkrip OBE (perlu "mahasiswaId" di atas)</h3>
+        <button class="send alt" onclick="monJson('transkrip-obe')">GET JSON</button>
+        <button class="send pdf" onclick="monPdf('transkrip-obe')">📄 Buka PDF</button>
+        <div class="out" id="out_mon_transkrip">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">f. CPMK per Mahasiswa (perlu "mataKuliahId" di atas — otomatis akurat kalau MK ini pakai Jalur C ATAU Jalur D/CBT, lihat catatan poin 6)</h3>
+        <button class="send alt" onclick="monJson('cpmk-mahasiswa')">GET JSON</button>
+        <button class="send pdf" onclick="monPdf('monitoring-cpmk-mahasiswa')">📄 Buka PDF</button>
+        <div class="out" id="out_mon_cpmkmhs">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-ceksoal">
+      <h2 class="pageTitle">9. Cek Soal (Jalur C) yang Sudah Ada di Server</h2>
+      <p class="pageSub">GET /koordinator-mk/mata-kuliah/:id/rencana-evaluasi lalu GET /soal/komponen/:id per komponen</p>
+      <div class="card">
+        <p class="hint">Menarik semua komponen evaluasi MK ini, lalu cek soal (Jalur C) yang sudah tersimpan di tiap komponen — buat mastiin tidak ada soal nyangkut dari testing sebelumnya. MK yang pakai Jalur D seharusnya <b>kosong</b> di sini (Jalur D tidak pernah menyimpan soal).</p>
+        <label>mataKuliahId</label><select id="ceksoal_mkId" class="dd-mataKuliah" data-placeholder="-- pilih Mata Kuliah --"></select><button class="btnRowAdd" onclick="gotoPage('datadasar')">kosong? → ke halaman 0A dulu</button>
+        <label>siakPeriodeAkademikId</label><select id="ceksoal_periodeId" class="dd-periodeAkademik" data-placeholder="-- pilih Periode Akademik --"></select>
+        <button class="send alt" style="margin-top:8px" onclick="cekSemuaSoal()">GET Semua Soal (lintas semua komponen)</button>
+        <div class="out" id="out_ceksoal">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-resetnilai">
+      <h2 class="pageTitle">10. Reset Nilai <span class="badge D" style="background:#fee2e2;color:#b91c1c">DEV/TESTING</span></h2>
+      <p class="pageSub">DELETE /kaprodi/kelas/:kelasId/nilai/:rincianKrsId/reset · POST .../reset-beberapa · DELETE .../reset-semua</p>
+      <div class="card">
+        <p class="hint" style="background:#fef2f2;border-color:#fca5a5">⚠️ Ini beneran MENGHAPUS nilai (bukan cuma bikin payload) — dipakai buat bersihin data tes. Menghapus <code>NilaiEvaluasiMahasiswa</code>, <code>NilaiSubcpmkEvaluasiMahasiswa</code> (Jalur D), dan <code>NilaiCpmkMahasiswa</code>, lalu reset status mahasiswa ke "Disetujui".</p>
+
+        <label>Cari Kelas Kuliah dulu</label>
+        <input id="resetnilai_kelaslookup_search" placeholder="cari nama mata kuliah, mis. 'Kalkulus' (kosongkan utk ambil semua)">
+        <button class="send alt" onclick="getKelasKuliahLookup()">GET Daftar Kelas Kuliah</button>
+        <label style="margin-top:10px">kelasId (Kelas Kuliah)</label><select id="resetnilai_kelasId" class="dd-kelas" data-placeholder="-- pilih Kelas Kuliah --"></select>
+        <button class="send alt" onclick="getPesertaKelasResetNilai()">GET Peserta Kelas (tampilkan daftar centang di bawah)</button>
+        <div id="tabelResetNilaiContainer" style="margin-top:10px">(GET Peserta Kelas dulu)</div>
+
+        <div class="row" style="margin-top:14px">
+          <div><button class="send" style="background:#fee2e2;border-color:#fca5a5;color:#b91c1c" onclick="resetNilaiTerpilih()">🗑 Reset Mahasiswa yang Dicentang</button></div>
+          <div><button class="send" style="background:#7f1d1d;border-color:#7f1d1d;color:#fff" onclick="resetNilaiSemuaKelas()">🗑 Reset SEMUA Mahasiswa di Kelas Ini</button></div>
+        </div>
+        <div class="out" id="out_resetnilai">(belum ada response)</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-mhsSendiri">
+      <h2 class="pageTitle">11. Mahasiswa — Lihat KHS &amp; Transkrip Sendiri</h2>
+      <p class="pageSub">GET /mahasiswa/hasil-studi · GET /mahasiswa/hasil-studi/transkrip</p>
+      <div class="card">
+        <p class="hint" style="background:#eff6ff;border-color:#93c5fd">
+          ⚠️ Beda dari halaman 4 (itu ADMIN/dosen ngecek data mahasiswa <b>lain</b>, mahasiswaId dipilih dari dropdown).
+          Endpoint di sini SELF-SERVICE — mahasiswaId-nya otomatis diambil dari <code>req.user.mahasiswa.id</code> (token yang login),
+          BUKAN dari dropdown. <b>Wajib login ulang di halaman "0. Login" pakai akun MAHASISWA</b> (bukan admin/dosen) sebelum pakai halaman ini,
+          baru balik ke sini.
+        </p>
+        <p class="hint">
+          Perhatikan field baru <code>capaianCpmk</code> di tiap mata kuliah pada hasil JSON di bawah — itu detail Sub-CPMK/CPMK
+          (nilai, target, status <code>Memenuhi</code>/<code>Belum Memenuhi</code>/<code>Tanpa Target</code>), baru ditambahkan
+          supaya mahasiswa bisa lihat sendiri kompetensi mana yang masih kurang, tanpa perlu lewat dosen/kaprodi.
+        </p>
+
+        <h3 style="font-size:13px;margin-top:16px">a. KHS (perlu pilih Periode)</h3>
+        <label>periodeAkademikId</label><select id="mhs_periodeId" class="dd-periodeAkademik" data-placeholder="-- pilih Periode --"></select>
+        <button class="send" style="margin-top:8px" onclick="cekKhsMhsSendiri()">🔍 GET KHS Saya</button>
+        <div class="out" id="out_mhs_khs">(belum ada response)</div>
+
+        <h3 style="font-size:13px;margin-top:18px">b. Transkrip (tanpa param, langsung dari token)</h3>
+        <button class="send alt" onclick="cekTranskripMhsSendiri()">🔍 GET Transkrip Saya</button>
+        <div class="out" id="out_mhs_transkrip">(belum ada response)</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div id="idPanel">
+  <h3>📌 ID dari Response Terakhir</h3>
+  <div class="hint">Klik salah satu untuk copy ke clipboard. Tiap ID dilabeli nama/kode aslinya kalau sudah pernah ketemu lewat GET manapun.</div>
+  <div id="idList" style="margin-top:10px"></div>
+</div>
+
+<script>
+// ===== Navigasi sidebar =====
+function gotoPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.navItem').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector(`.navItem[data-page="${id}"]`).classList.add('active');
+}
+
+// ===== Config dasar =====
+const baseUrlEl = document.getElementById('baseUrl');
+baseUrlEl.value = localStorage.getItem('tesbe_baseurl') || baseUrlEl.value;
+baseUrlEl.addEventListener('change', () => localStorage.setItem('tesbe_baseurl', baseUrlEl.value));
+
+function base() { return baseUrlEl.value.replace(/\/$/, ''); }
+function authBase() { return base().replace(/\/akademik$/, ''); }
+
+const authTokenEl = document.getElementById('authToken');
+authTokenEl.value = localStorage.getItem('tesbe_token') || '';
+authTokenEl.addEventListener('change', () => localStorage.setItem('tesbe_token', authTokenEl.value));
+
+async function login() {
+  const outEl = document.getElementById('out_login');
+  outEl.textContent = 'Login...';
+  try {
+    const res = await fetch(authBase() + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: val('login_username'), password: val('login_password') })
+    });
+    const json = await res.json();
+    if (res.ok && json.data && json.data.token) {
+      authTokenEl.value = json.data.token;
+      localStorage.setItem('tesbe_token', json.data.token);
+      outEl.innerHTML = '<span class="status-ok">Login berhasil, token tersimpan</span>\n' + escapeHtml(JSON.stringify(json.data, null, 2));
+    } else {
+      outEl.innerHTML = '<span class="status-bad">Login gagal</span>\n' + escapeHtml(JSON.stringify(json, null, 2));
+    }
+  } catch (e) {
+    tampilkanError(outEl, e);
+  }
+}
+
+function tampilkanError(outEl, err) {
+  outEl.innerHTML = '<span class="status-bad">GAGAL (network/parse error)</span><div class="mentah">' + escapeHtml(err.message) + '</div>';
+}
+
+// GET = fetch sungguhan ke server (read-only, aman) — dipakai utk ambil ID asli
+async function panggil(method, path, body, outId) {
+  const outEl = document.getElementById(outId);
+  outEl.textContent = 'Mengirim...';
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (authTokenEl.value.trim()) headers['Authorization'] = 'Bearer ' + authTokenEl.value.trim();
+    const opt = { method, headers };
+    if (body !== undefined) opt.body = JSON.stringify(body);
+    const urlPenuh = path.startsWith('http') ? path : base() + path; // path absolut (mis. authBase()+...) dipakai langsung, tanpa double-prefix
+    const res = await fetch(urlPenuh, opt);
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); } catch (e) { json = text; }
+    const statusClass = res.ok ? 'status-ok' : 'status-bad';
+
+    if (res.ok) kumpulkanId(json, path);
+    const tabelHtml = res.ok ? buatTabelDariResponse(json) : '';
+    outEl.innerHTML =
+      `<span class="${statusClass}">HTTP ${res.status}</span>` +
+      tabelHtml +
+      `<details class="rawJson" ${tabelHtml ? '' : 'open'}><summary>Lihat JSON mentah</summary><div class="mentah">${escapeHtml(JSON.stringify(json, null, 2))}</div></details>`;
+    return json;
+  } catch (e) {
+    tampilkanError(outEl, e);
+  }
+}
+
+// Buka PDF di tab baru -- fetch manual supaya header Authorization ikut terkirim
+// (kalau cuma <a href>, browser tidak akan kirim token sama sekali -> 401)
+async function panggilPdf(path, outId) {
+  const outEl = document.getElementById(outId);
+  outEl.textContent = 'Mengambil PDF...';
+  try {
+    const headers = {};
+    if (authTokenEl.value.trim()) headers['Authorization'] = 'Bearer ' + authTokenEl.value.trim();
+    const res = await fetch(base() + path, { headers });
+    if (!res.ok) {
+      const text = await res.text();
+      outEl.innerHTML = `<span class="status-bad">HTTP ${res.status}</span><div class="mentah">${escapeHtml(text)}</div>`;
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    outEl.innerHTML = `<span class="status-ok">PDF berhasil diambil (${(blob.size/1024).toFixed(1)} KB) — dibuka di tab baru</span>`;
+  } catch (e) {
+    tampilkanError(outEl, e);
+  }
+}
+
+function cariArrayUtkTabel(json) {
+  // Beberapa endpoint API bungkus array-nya beda-beda (data.rows / data.items / data.listProdi / dst),
+  // jadi dicoba semua kemungkinan biar dropdown tidak kosong walau request sebenarnya sukses.
+  const kandidat = [
+    json, json?.data, json?.data?.data, json?.data?.rows, json?.data?.items, json?.data?.listProdi
+  ];
+  for (const k of kandidat) {
+    if (Array.isArray(k) && k.length > 0 && typeof k[0] === 'object' && k[0] !== null) return k;
+  }
+  return null;
+}
+function buatTabelDariResponse(json) {
+  const arr = cariArrayUtkTabel(json);
+  if (!arr) return '';
+  const kolom = [...new Set(arr.flatMap(row => Object.keys(row)))];
+  const baris = arr.map(row => {
+    const sel = kolom.map(k => {
+      const v = row[k];
+      if (v === null || v === undefined) return '<td>-</td>';
+      if (typeof v === 'object') return `<td>${escapeHtml(JSON.stringify(v))}</td>`;
+      const isUuid = typeof v === 'string' && v.length >= 8 && /[0-9a-f]{8}/i.test(v);
+      if (isUuid) return `<td class="selUuid" title="klik utk copy" onclick="copyChip('${v}')">${escapeHtml(String(v))}</td>`;
+      return `<td>${escapeHtml(String(v))}</td>`;
+    }).join('');
+    return `<tr>${sel}</tr>`;
+  }).join('');
+  return `<table class="tabelHasil"><thead><tr>${kolom.map(k => `<th>${escapeHtml(k)}</th>`).join('')}</tr></thead><tbody>${baris}</tbody></table>`;
+}
+
+// POST/PUT/DELETE = TIDAK dikirim, cuma ditampilkan URL + Method + Body siap-copy ke Postman
+function tampilkanPayload(method, path, body, outId) {
+  const outEl = document.getElementById(outId);
+  const fullUrl = base() + path;
+  const token = authTokenEl.value.trim();
+  let teks = `URL   : ${fullUrl}\nMETHOD: ${method}\n`;
+  teks += `\nHeader (Postman > Headers):\nAuthorization: Bearer ${token || '(belum login -- isi token dulu di halaman 0)'}\n`;
+  if (body !== undefined) {
+    teks += `\nBody (Postman > Body > raw > JSON):\n` + JSON.stringify(body, null, 2);
+  } else {
+    teks += `\n(tidak ada body)`;
+  }
+  outEl.innerHTML = '<span class="status-ok">PAYLOAD SIAP DIPAKAI (belum dikirim ke server)</span><div class="mentah">' + escapeHtml(teks) + '</div>';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+function parseJsonField(id) {
+  try { return JSON.parse(document.getElementById(id).value); }
+  catch (e) { alert('JSON di field "' + id + '" tidak valid: ' + e.message); throw e; }
+}
+function val(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  return (el.value || '').trim();
+}
+function numOrNull(id) { const v = val(id); return v === '' ? null : Number(v); }
+// Ambil dari dropdown kalau sudah dipilih, kalau kosong fallback ke field manual di sebelahnya
+function valDD(selectId, manualId) { return val(selectId) || val(manualId); }
+
+// ===== Registry Dropdown (supaya tidak perlu copy-paste UUID manual) =====
+// Tiap kali GET sukses, hasilnya dicatat ke sini per "jenis" data, lalu semua
+// <select class="dd-xxx"> yang terdaftar utk jenis itu otomatis diisi ulang.
+const DAFTAR = { jenjang: [], tahunKurikulum: [], prodi: [], mataKuliah: [], periodeAkademik: [], obe: [], kelas: [], mahasiswa: [], cpl: [], pl: [], soal: [], rencanaEvaluasi: [], krs: [], dosen: [] };
+const DAFTAR_FULL = {}; // simpan versi lengkap (sebelum difilter cari) per jenis, supaya cari client-side tidak perlu fetch ulang
+
+function isiRegistry(jenis, items, labelFn) {
+  DAFTAR[jenis] = items.map(it => ({ id: labelFn.id(it), label: labelFn.label(it) })).filter(o => o.id);
+  DAFTAR_FULL[jenis] = DAFTAR[jenis];
+  refreshDropdown(jenis);
+}
+// Cari client-side di registry yang sudah ke-fetch (utk list pendek: jenjang, tahun kurikulum, periode akademik)
+function cariDiRegistry(jenis, teks) {
+  const sumber = DAFTAR_FULL[jenis] || [];
+  DAFTAR[jenis] = teks ? sumber.filter(o => o.label.toLowerCase().includes(teks.toLowerCase())) : sumber;
+  refreshDropdown(jenis);
+}
+function refreshDropdown(jenis) {
+  document.querySelectorAll(`select.dd-${jenis}`).forEach(sel => {
+    const nilaiSebelumnya = sel.value;
+    const placeholder = sel.dataset.placeholder || '-- pilih --';
+    sel.innerHTML = `<option value="">${escapeHtml(placeholder)}</option>` +
+      DAFTAR[jenis].map(o => `<option value="${o.id}">${escapeHtml(o.label)}</option>`).join('');
+    if (DAFTAR[jenis].some(o => o.id === nilaiSebelumnya)) sel.value = nilaiSebelumnya;
+  });
+}
+function refreshSemuaDropdown() { Object.keys(DAFTAR).forEach(refreshDropdown); }
+
+// ===== 0A. Cari Data Dasar =====
+function getJenjang() {
+  panggil('GET', `/jenjang`, undefined, 'out_jenjang').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('jenjang', arr, { id: x => x.id, label: x => `${x.jenjang || ''} - ${x.nama || ''}` });
+  });
+}
+function getTahunKurikulum() {
+  panggil('GET', `/tahun-kurikulum`, undefined, 'out_tahunkurikulum').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('tahunKurikulum', arr, { id: x => x.id, label: x => `Tahun ${x.tahun || ''}` });
+  });
+}
+function getProgramStudi() {
+  if (!val('prodi_jenjangId') || !val('prodi_tkId')) {
+    alert('jenjangId DAN tahunKurikulumId wajib dipilih dulu (API ini tidak menerima kosong). Klik dulu "GET Daftar Jenjang" & "GET Daftar Tahun Kurikulum" di atas, lalu pilih keduanya di dropdown.');
+    return;
+  }
+  const q = new URLSearchParams({ jenjangId: val('prodi_jenjangId'), tahunKurikulumId: val('prodi_tkId') });
+  if (val('prodi_search')) q.set('search', val('prodi_search'));
+  panggil('GET', `/kurikulum-prodi/list?${q.toString()}`, undefined, 'out_prodi').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('prodi', arr, { id: x => x.programStudiId, label: x => `${x.kodeProdi || ''} - ${x.namaProgramStudi || ''}` });
+  });
+}
+function getPeriodeAkademik() {
+  panggil('GET', `/periode-akademik`, undefined, 'out_periode').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('periodeAkademik', arr, { id: x => x.id, label: x => `${x.kode || ''} - ${x.nama || ''}` });
+  });
+}
+function getMataKuliah() {
+  const q = new URLSearchParams({ size: '300' }); // total mata kuliah di sistem < 300, naikkan kalau suatu saat lebih
+  if (val('mk_search')) q.set('search', val('mk_search'));
+  if (val('mk_tkId')) q.set('tahunKurikulumId', val('mk_tkId'));
+  panggil('GET', `/mata-kuliah?${q.toString()}`, undefined, 'out_matakuliah').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('mataKuliah', arr, { id: x => x.id, label: x => `${x.kode || ''} - ${x.nama || ''}` });
+  });
+}
+function getDosen() {
+  const q = new URLSearchParams();
+  if (val('dosen_search')) q.set('search', val('dosen_search'));
+  panggil('GET', authBase() + '/public/dosen' + (q.toString() ? `?${q.toString()}` : ''), undefined, 'out_dosen').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('dosen', arr, { id: x => x.id, label: x => `${x.nama || ''} (${x.nidn || '-'})` });
+  });
+}
+
+// ===== 0B. Cari obeId =====
+function getManajemenCapaian() {
+  const q = new URLSearchParams();
+  if (val('cariobe_prodiId')) q.set('prodiId', val('cariobe_prodiId'));
+  if (val('cariobe_tkId')) q.set('tahunKurikulumId', val('cariobe_tkId'));
+  if (val('cariobe_jenjangId')) q.set('jenjangId', val('cariobe_jenjangId'));
+  q.set('limit', '50');
+  panggil('GET', `/obe/manajemen-capaian?${q.toString()}`, undefined, 'out_cariobe').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('obe', arr, { id: x => x.idObe, label: x => `${x.kodeProdi || ''} - ${x.programStudi || ''} (${x.kurikulum || ''})` });
+  });
+}
+
+// ===== Lookup tambahan: Kelas Kuliah & Mahasiswa (utk dropdown Jalur A & Monitoring) =====
+function getKelasKuliahLookup() {
+  const q = new URLSearchParams({ size: '200' }); // total kelas di sistem < 200, naikkan kalau suatu saat lebih
+  const teksCari = val('kelaslookup_search') || val('cbt_kelaslookup_search'); // dipakai bareng halaman 6A & 6D
+  if (teksCari) q.set('search', teksCari);
+  panggil('GET', `/kelas-kuliah?${q.toString()}`, undefined, 'out_kelaslookup').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (!arr) return;
+    isiRegistry('kelas', arr, { id: x => x.id, label: x => `${x.mataKuliah?.kode || ''} ${x.mataKuliah?.nama || ''} - ${x.nama || x.kode || ''} (${x.periodeAkademik?.nama || '-'})` });
+
+    // Ganti tabel mentah (kolom JSON nested susah dibaca) dengan tabel ringkas: kode/nama MK, nama kelas, periode, kapasitas, status
+    const html = `<table class="tabelHasil"><thead><tr>
+        <th>Kode MK</th><th>Nama MK</th><th>Kelas</th><th>Periode</th><th>Kapasitas</th><th>Status</th><th>kelasId</th>
+      </tr></thead><tbody>${arr.map(x => `<tr>
+        <td>${escapeHtml(x.mataKuliah?.kode || '-')}</td>
+        <td>${escapeHtml(x.mataKuliah?.nama || '-')}</td>
+        <td>${escapeHtml(x.nama || x.kode || '-')}</td>
+        <td>${escapeHtml(x.periodeAkademik?.nama || '-')}</td>
+        <td>${x.kapasitas ?? '-'}</td>
+        <td>${escapeHtml(x.status_kelas || '-')}</td>
+        <td class="selUuid" title="klik utk copy" onclick="copyChip('${x.id}')">${x.id}</td>
+      </tr>`).join('')}</tbody></table>`;
+    document.getElementById('out_kelaslookup').insertAdjacentHTML('beforeend', html);
+  });
+}
+function getMahasiswaLookup() {
+  const q = new URLSearchParams({ size: '50' });
+  if (val('mhslookup_prodiId')) q.set('siakProgramStudiId', val('mhslookup_prodiId'));
+  if (val('mhslookup_angkatan')) q.set('angkatan', val('mhslookup_angkatan'));
+  panggil('GET', `/mahasiswa?${q.toString()}`, undefined, 'out_mhslookup').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('mahasiswa', arr, { id: x => x.id, label: x => `${x.npm || ''} - ${x.nama || ''}` });
+  });
+}
+
+// ===== 1. PL =====
+function getPL() {
+  panggil('GET', `/obe/profil-lulusan/${val('pl_obeId')}`, undefined, 'out_pl').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('pl', arr, { id: x => x.id, label: x => `${x.kode || ''} - ${x.profil || ''}` });
+  });
+}
+function kirimPL() {
+  tampilkanPayload('POST', '/obe/profil-lulusan', {
+    siakObeId: val('pl_obeId'), kode: val('pl_kode'), profil: val('pl_profil'),
+    deskripsi: val('pl_deskripsi'), deskripsiEn: val('pl_deskripsiEn') || null, profesi: val('pl_profesi') || null
+  }, 'out_pl');
+}
+
+// ===== 2. CPL =====
+function getCPL() {
+  panggil('GET', `/obe/capaian-pembelajaran/${val('cpl_obeId')}`, undefined, 'out_cpl').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('cpl', arr, { id: x => x.id, label: x => `${x.kode || ''} - ${(x.deskripsi || '').slice(0, 40)}` });
+  });
+}
+function kirimCPL() {
+  const obeId = val('cpl_obeId');
+  tampilkanPayload('POST', `/obe/capaian-pembelajaran/${obeId}`, {
+    kode: val('cpl_kode'), deskripsi: val('cpl_deskripsi'), deskripsiEn: val('cpl_deskripsiEn'),
+    targetCpl: numOrNull('cpl_target'), kategori: val('cpl_kategori')
+  }, 'out_cpl');
+}
+function kirimUpdateTargetCpl() {
+  const cplId = val('cpl_updateId');
+  if (!cplId) { alert('Pilih dulu cplId yang mau diupdate (GET dulu di atas kalau dropdown kosong).'); return; }
+  tampilkanPayload('PATCH', `/obe/capaian-pembelajaran/${cplId}/target`, {
+    targetCpl: numOrNull('cpl_target')
+  }, 'out_cpl');
+}
+function kirimUpdateCpl() {
+  const obeId = val('cpl_obeId');
+  const cplId = val('cpl_updateId');
+  if (!cplId) { alert('Pilih dulu cplId yang mau diupdate (GET dulu di atas kalau dropdown kosong).'); return; }
+  tampilkanPayload('PUT', `/obe/${obeId}/capaian-pembelajaran/${cplId}`, {
+    kode: val('cpl_kode'), deskripsi: val('cpl_deskripsi'), deskripsiEn: val('cpl_deskripsiEn'),
+    targetCpl: numOrNull('cpl_target'), kategori: val('cpl_kategori')
+  }, 'out_cpl');
+}
+
+// ===== 3. Pemetaan PL -> CPL (matriks: baris = PL, kolom = CPL, isi = bobot) =====
+let matriksPlCpl = { columns: [], rows: [] }; // rows: [{id, kode, profil, bobotCpl:[{cplId,kodeCpl,bobot}]}]
+
+function getPemetaanPlCpl() {
+  panggil('GET', `/obe/pemetaan/pl-ke-cpl/${val('plcpl_obeId')}`, undefined, 'out_plcpl').then(json => {
+    const data = json?.data;
+    if (!data || !Array.isArray(data.columns) || !Array.isArray(data.rows)) return;
+    matriksPlCpl = data;
+    renderMatriksPlCpl();
+  });
+}
+
+function setBobotPlCpl(rowIdx, colIdx, v) {
+  matriksPlCpl.rows[rowIdx].bobotCpl[colIdx].bobot = parseFloat(v) || 0;
+  renderMatriksPlCpl();
+}
+
+function renderMatriksPlCpl() {
+  const el = document.getElementById('tabelPlCplContainer');
+  if (matriksPlCpl.columns.length === 0 || matriksPlCpl.rows.length === 0) {
+    el.textContent = '(belum ada data — pastikan OBE ini sudah punya PL & CPL, lalu klik "GET Matriks" di atas)';
+    return;
+  }
+  let html = `<table class="tabelEdit"><thead><tr><th>PL</th>${matriksPlCpl.columns.map(c => `<th>${escapeHtml(c.kode)}</th>`).join('')}<th>Total</th></tr></thead><tbody>`;
+  matriksPlCpl.rows.forEach((pl, i) => {
+    const total = pl.bobotCpl.reduce((sum, b) => sum + (parseFloat(b.bobot) || 0), 0);
+    const warnaTotal = Math.abs(total - 100) < 0.01 ? '#15803d' : '#b91c1c';
+    html += `<tr><td title="${escapeHtml(pl.profil || '')}"><b>${escapeHtml(pl.kode)}</b></td>`;
+    pl.bobotCpl.forEach((b, j) => {
+      html += `<td><input type="number" value="${b.bobot}" min="0" max="100" style="width:60px" onchange="setBobotPlCpl(${i},${j},this.value)"></td>`;
+    });
+    html += `<td style="color:${warnaTotal};font-weight:bold">${total}%</td></tr>`;
+  });
+  html += `</tbody></table><p class="hint">Tiap baris PL idealnya total bobotnya 100% (boleh disebar ke beberapa CPL). Sel kosong/0 tidak akan dikirim.</p>`;
+  el.innerHTML = html;
+}
+
+function kirimPemetaanPlCpl() {
+  const obeId = val('plcpl_obeId');
+  const pemetaan = [];
+  matriksPlCpl.rows.forEach(pl => {
+    pl.bobotCpl.forEach(b => {
+      if (parseFloat(b.bobot) > 0) pemetaan.push({ plId: pl.id, cplId: b.cplId, bobot: parseFloat(b.bobot) });
+    });
+  });
+  if (pemetaan.length === 0) { alert('Isi minimal 1 sel bobot di tabel dulu (GET matriks dulu kalau belum).'); return; }
+  tampilkanPayload('POST', `/obe/pemetaan/pl-ke-cpl/${obeId}`, { pemetaan }, 'out_plcpl');
+}
+
+// ===== 3B. Pemetaan CPL per Mata Kuliah =====
+let daftarCplMkAktif = [];
+function getPemetaanCplMk() {
+  panggil('GET', `/koordinator-mk/mata-kuliah/${val('mkcpl_mkId')}/pemetaan-cpl`, undefined, 'out_mkcpl').then(json => {
+    const daftar = json?.data?.daftarCpl;
+    if (Array.isArray(daftar)) { daftarCplMkAktif = daftar; renderCheckboxCplMk(); }
+  });
+}
+function renderCheckboxCplMk() {
+  const el = document.getElementById('checkboxCplMk');
+  if (daftarCplMkAktif.length === 0) { el.textContent = '(kosong / OBE belum punya CPL)'; return; }
+  el.innerHTML = daftarCplMkAktif.map(c => `
+    <label><input type="checkbox" data-cplid="${c.id}" ${c.isMapped ? 'checked' : ''}>
+      <b>${escapeHtml(c.kode)}</b> — ${escapeHtml(c.deskripsi || '')}
+    </label>`).join('');
+}
+function kirimPemetaanCplMk() {
+  const checked = [...document.querySelectorAll('#checkboxCplMk input[type=checkbox]:checked')].map(c => c.dataset.cplid);
+  tampilkanPayload('POST', `/koordinator-mk/mata-kuliah/${val('mkcpl_mkId')}/pemetaan-cpl`, { cplIds: checked }, 'out_mkcpl');
+}
+
+// ===== 4. Pemetaan CPMK (tabel interaktif) =====
+let cplHeadersAktif = [];
+let cpmkRows = [];
+
+function getPemetaanCpmk() {
+  const mkId = val('cpmk_mkId');
+  panggil('GET', `/obe/mata-kuliah/${mkId}/pemetaan-cpmk`, undefined, 'out_cpmk').then(json => {
+    const data = json?.data;
+    if (!data) return;
+    cplHeadersAktif = data.cplHeaders || [];
+    cpmkRows = (data.cpmkData || []).map(c => ({
+      id: c.id, kode: c.kode, deskripsi: c.deskripsi, target: c.target,
+      cplBobot: Object.fromEntries((c.cplPemetaan || []).map(p => [p.idCpl, p.bobotCpl])),
+      subRows: (c.subCpmk || []).map(s => ({
+        id: s.id, kode: s.kode, deskripsi: s.deskripsi,
+        cplBobot: Object.fromEntries((s.cplPemetaan || []).map(p => [p.idCpl, p.bobotCpl]))
+      }))
+    }));
+    if (data.mataKuliah?.levelPemetaan) document.getElementById('cpmk_level').value = data.mataKuliah.levelPemetaan;
+    if (data.mataKuliah?.metodePembobotan) document.getElementById('cpmk_metode').value = data.mataKuliah.metodePembobotan;
+    renderTabelCpmk();
+  });
+}
+function tambahCpmkRow() { cpmkRows.push({ id: null, kode: '', deskripsi: '', target: 0, cplBobot: {}, subRows: [] }); renderTabelCpmk(); }
+function hapusCpmkRow(i) { cpmkRows.splice(i, 1); renderTabelCpmk(); }
+function tambahSubCpmk(i) { cpmkRows[i].subRows.push({ id: null, kode: '', deskripsi: '', cplBobot: {} }); renderTabelCpmk(); }
+function hapusSubCpmk(i, j) { cpmkRows[i].subRows.splice(j, 1); renderTabelCpmk(); }
+function setCpmkField(i, field, v) { cpmkRows[i][field] = v; }
+function setSubField(i, j, field, v) { cpmkRows[i].subRows[j][field] = v; }
+function setCplBobot(i, j, cplId, v) {
+  const num = v === '' ? undefined : (parseFloat(v) || 0);
+  const target = j === null ? cpmkRows[i] : cpmkRows[i].subRows[j];
+  if (num === undefined) delete target.cplBobot[cplId]; else target.cplBobot[cplId] = num;
+  renderTabelCpmk();
+}
+function sumCplBobot(obj) { return cplHeadersAktif.reduce((s, c) => s + (parseFloat(obj.cplBobot[c.id]) || 0), 0); }
+function sumSubCplBobot(row, cplId) { return (row.subRows || []).reduce((s, sub) => s + (parseFloat(sub.cplBobot[cplId]) || 0), 0); }
+function sumAllSub(row) { return cplHeadersAktif.reduce((s, c) => s + sumSubCplBobot(row, c.id), 0); }
+
+function renderTabelCpmk() {
+  const isSub = val('cpmk_level') === 'Sub-CPMK';
+  const kolom = cplHeadersAktif;
+  let html = `<table class="tabelEdit"><thead><tr><th>Kode CPMK</th><th>Deskripsi</th><th>Target</th>`;
+  kolom.forEach(c => html += `<th>${escapeHtml(c.kode)}</th>`);
+  html += `<th>Bobot CPMK</th><th>Aksi</th></tr></thead><tbody>`;
+
+  let grandTotal = 0;
+  cpmkRows.forEach((row, i) => {
+    const totalRow = isSub ? sumAllSub(row) : sumCplBobot(row);
+    grandTotal += totalRow;
+    html += `<tr>
+      <td><input value="${escapeHtml(row.kode || '')}" onchange="setCpmkField(${i},'kode',this.value)" style="width:80px"></td>
+      <td><input value="${escapeHtml(row.deskripsi || '')}" onchange="setCpmkField(${i},'deskripsi',this.value)" style="width:240px"></td>
+      <td><input type="number" value="${row.target || 0}" onchange="setCpmkField(${i},'target',parseFloat(this.value)||0)" style="width:55px"></td>`;
+    kolom.forEach(c => {
+      if (isSub) { html += `<td style="text-align:center">-</td>`; }
+      else { html += `<td><input type="number" value="${row.cplBobot[c.id] ?? ''}" onchange="setCplBobot(${i},null,'${c.id}',this.value)" style="width:55px"></td>`; }
+    });
+    html += `<td><b>${totalRow.toFixed(2)}</b></td>
+      <td><button class="btnRowAdd" onclick="hapusCpmkRow(${i})">Hapus</button>${isSub ? ` <button class="btnRowAdd" onclick="tambahSubCpmk(${i})">+Sub</button>` : ''}</td>
+    </tr>`;
+
+    if (isSub) {
+      (row.subRows || []).forEach((sub, j) => {
+        const totalSub = sumCplBobot(sub);
+        html += `<tr class="subRow">
+          <td>↳ <input value="${escapeHtml(sub.kode || '')}" onchange="setSubField(${i},${j},'kode',this.value)" style="width:70px"></td>
+          <td><input value="${escapeHtml(sub.deskripsi || '')}" onchange="setSubField(${i},${j},'deskripsi',this.value)" style="width:220px"></td>
+          <td>-</td>`;
+        kolom.forEach(c => {
+          html += `<td><input type="number" value="${sub.cplBobot[c.id] ?? ''}" onchange="setCplBobot(${i},${j},'${c.id}',this.value)" style="width:55px"></td>`;
+        });
+        html += `<td>${totalSub.toFixed(2)}</td><td><button class="btnRowAdd" onclick="hapusSubCpmk(${i},${j})">Hapus</button></td></tr>`;
+      });
+    }
+  });
+
+  const warna = Math.round(grandTotal) === 100 ? '#15803d' : '#b91c1c';
+  html += `</tbody><tfoot><tr><td colspan="${3 + kolom.length}" style="text-align:right">Total Bobot CPMK</td><td style="color:${warna}">${grandTotal.toFixed(2)}%</td><td></td></tr></tfoot></table>`;
+  document.getElementById('tabelCpmkContainer').innerHTML = html;
+  renderTabelEvaluasi();
+}
+
+function kirimPemetaanCpmk() {
+  const mkId = val('cpmk_mkId');
+  const isSub = val('cpmk_level') === 'Sub-CPMK';
+  const kolom = cplHeadersAktif;
+  const cpmkList = cpmkRows.map(row => {
+    const item = { kode: row.kode, deskripsi: row.deskripsi, target: row.target };
+    if (isSub) {
+      item.bobot = sumAllSub(row);
+      item.subCpmk = (row.subRows || []).map(sub => ({
+        kode: sub.kode, deskripsi: sub.deskripsi,
+        cplPemetaan: kolom.filter(c => sub.cplBobot[c.id] !== undefined).map(c => ({ cplId: c.id, bobotCpl: sub.cplBobot[c.id] }))
+      }));
+    } else {
+      item.bobot = sumCplBobot(row);
+      item.cplPemetaan = kolom.filter(c => row.cplBobot[c.id] !== undefined).map(c => ({ cplId: c.id, bobotCpl: row.cplBobot[c.id] }));
+    }
+    return item;
+  });
+  tampilkanPayload('POST', `/obe/mata-kuliah/${mkId}/pemetaan-cpmk`, {
+    levelPemetaan: val('cpmk_level'), metodePembobotan: val('cpmk_metode'), cpmkList
+  }, 'out_cpmk');
+}
+
+// ===== 5. Rencana Evaluasi (tabel interaktif) =====
+let evaluasiRows = [];
+
+function kolomCpmkUntukEvaluasi() {
+  const isSub = val('cpmk_level') === 'Sub-CPMK';
+  if (!isSub) return cpmkRows.filter(r => r.kode).map(r => ({ id: r.id, kode: r.kode }));
+  return cpmkRows.flatMap(r => (r.subRows || []).filter(s => s.kode).map(s => ({ id: s.id, kode: s.kode })));
+}
+
+// ===== Dropdown Sub-CPMK/CPMK utk breakdown Jalur D (6D) =====
+// Leaf-level OTOMATIS (Sub-CPMK kalau ada, CPMK induk kalau tidak) dari cpmkRows --
+// SENGAJA tidak pakai toggle cpmk_level (levelPemetaan) seperti kolomCpmkUntukEvaluasi()
+// di atas, karena itu cuma relevan buat payload resmi halaman 5 (PemetaanEvaluasiCpmk,
+// divalidasi backend harus match levelPemetaan MK). Breakdown CBT (Jalur D) itu
+// ephemeral & bebas nunjuk CPMK/Sub-CPMK mana aja per soal, gak terikat level itu.
+function kolomCpmkLeafUntukBreakdown() {
+  return cpmkRows.flatMap(r => {
+    const subs = (r.subRows || []).filter(s => s.kode);
+    if (subs.length > 0) return subs.map(s => ({ id: s.id, kode: s.kode }));
+    return r.kode ? [{ id: r.id, kode: r.kode }] : [];
+  });
+}
+
+// Saring daftar di atas supaya cuma nampilin Sub-CPMK/CPMK yang RESMI dipetakan
+// (halaman 5, PemetaanEvaluasiCpmk -- evaluasiExistingData hasil GET Rencana Evaluasi)
+// ke komponen (rencanaEvaluasiId) yang lagi dipilih di Bagian 1. Kalau komponen itu
+// belum ada mapping bobot CPMK sama sekali (halaman 5 belum di-GET/belum dikonfigurasi),
+// fallback nampilin SEMUA -- jangan sampai malah nyembunyiin pilihan yang valid gara-gara
+// data setup belum lengkap.
+function kolomCpmkUntukKomponen(rencanaEvaluasiId) {
+  const semua = kolomCpmkLeafUntukBreakdown();
+  const row = evaluasiExistingData.find(r => r.id === rencanaEvaluasiId);
+  const mapping = row?.mappingBobotCpmk;
+  if (!mapping || Object.keys(mapping).length === 0) return semua;
+  const tersaring = semua.filter(k => mapping[k.id] !== undefined && mapping[k.id] !== null);
+  return tersaring.length > 0 ? tersaring : semua;
+}
+function tambahEvaluasiRow() {
+  evaluasiRows.push({ metode: '', jenis: '', cpmkBobot: {}, syaratLulus: 'TIDAK_MENJADI_SYARAT_LULUS' });
+  renderTabelEvaluasi();
+}
+function hapusEvaluasiRow(i) { evaluasiRows.splice(i, 1); renderTabelEvaluasi(); }
+function setEvalField(i, field, v) { evaluasiRows[i][field] = v; }
+function setEvalBobot(i, kode, v) {
+  const num = v === '' ? undefined : (parseFloat(v) || 0);
+  if (num === undefined) delete evaluasiRows[i].cpmkBobot[kode]; else evaluasiRows[i].cpmkBobot[kode] = num;
+  renderTabelEvaluasi();
+}
+const OPSI_SYARAT_LULUS = [
+  ['TIDAK_MENJADI_SYARAT_LULUS', 'Tidak menjadi syarat lulus'],
+  ['MENJADI_SYARAT_LULUS', 'Menjadi syarat lulus (berlaku: skor <60 = paksa E)'],
+  ['LULUS_DENGAN_NILAI_MINIMUM', 'Lulus dgn nilai minimum (BELUM ada logic backend)']
+];
+
+function renderTabelEvaluasi() {
+  const kolom = kolomCpmkUntukEvaluasi();
+  let html = `<table class="tabelEdit"><thead><tr><th>Metode Evaluasi</th><th>Jenis Evaluasi</th>`;
+  kolom.forEach(c => html += `<th>${escapeHtml(c.kode)}</th>`);
+  html += `<th>Bobot Evaluasi</th><th>Syarat Lulus</th><th>Aksi</th></tr></thead><tbody>`;
+
+  let grand = 0;
+  evaluasiRows.forEach((row, i) => {
+    const total = kolom.reduce((s, c) => s + (parseFloat(row.cpmkBobot[c.kode]) || 0), 0);
+    grand += total;
+    html += `<tr>
+      <td><input value="${escapeHtml(row.metode || '')}" onchange="setEvalField(${i},'metode',this.value)" style="width:130px" placeholder="TUGAS/UTS/UAS/KEHADIRAN"></td>
+      <td><input value="${escapeHtml(row.jenis || '')}" onchange="setEvalField(${i},'jenis',this.value)" style="width:160px" placeholder="Kognitif/Pengetahuan - ..."></td>`;
+    kolom.forEach(c => {
+      html += `<td><input type="number" value="${row.cpmkBobot[c.kode] ?? ''}" onchange="setEvalBobot(${i},'${c.kode}',this.value)" style="width:55px"></td>`;
+    });
+    html += `<td><b>${total.toFixed(2)}</b></td>
+      <td><select onchange="setEvalField(${i},'syaratLulus',this.value)">${OPSI_SYARAT_LULUS.map(([v, label]) => `<option value="${v}" ${row.syaratLulus === v ? 'selected' : ''}>${label}</option>`).join('')}</select></td>
+      <td><button class="btnRowAdd" onclick="hapusEvaluasiRow(${i})">Hapus</button></td>
+    </tr>`;
+  });
+
+  const warna = Math.round(grand) === 100 ? '#15803d' : '#b91c1c';
+  html += `</tbody><tfoot><tr><td colspan="2" style="text-align:right">Total Bobot Evaluasi</td>`;
+  kolom.forEach(() => html += `<td></td>`);
+  html += `<td style="color:${warna}">${grand.toFixed(2)}%</td><td colspan="2"></td></tr></tfoot></table>`;
+  document.getElementById('tabelEvaluasiContainer').innerHTML = html;
+}
+
+function kirimRencanaEvaluasi() {
+  const mkId = val('re_mkId');
+  const kolom = kolomCpmkUntukEvaluasi();
+  const evaluasiList = evaluasiRows.map(row => ({
+    metodeEvaluasi: row.metode,
+    jenisEvaluasi: row.jenis,
+    bobotEvaluasi: kolom.reduce((s, c) => s + (parseFloat(row.cpmkBobot[c.kode]) || 0), 0),
+    cpmkData: kolom.filter(c => row.cpmkBobot[c.kode] !== undefined && c.id).map(c => ({ cpmkId: c.id, bobotCpmk: row.cpmkBobot[c.kode] })),
+    syaratLulus: row.syaratLulus
+  }));
+  const adaTanpaId = kolom.some(c => !c.id);
+  tampilkanPayload('POST', `/koordinator-mk/mata-kuliah/${mkId}/rencana-evaluasi`, {
+    siakPeriodeAkademikId: val('re_periodeId'), evaluasiList
+  }, 'out_re');
+  if (adaTanpaId) {
+    document.getElementById('out_re').innerHTML += '<div class="mentah" style="color:#fbbf24">⚠ Ada kolom CPMK yang belum punya id asli (belum pernah di-POST & GET ulang dari server) -- cpmkId-nya bakal kosong di payload. POST dulu Pemetaan CPMK di halaman 4 lewat Postman, lalu GET lagi sebelum lanjut ke sini.</div>';
+  }
+}
+let evaluasiExistingData = []; // hasil GET apa adanya, dipakai tabel read-only + tombol "salin ke tabel edit"
+let masterCpmkDariRE = []; // masterCpmk dari respons GET /rencana-evaluasi -- independen dari halaman 4,
+                            // supaya tabel read-only tetap tampil walau belum pernah GET halaman 4 sama sekali
+
+// Ratakan masterCpmk (hierarki induk+subCpmk) jadi daftar kolom leaf-level, sama
+// prinsipnya dengan kolomCpmkUntukEvaluasi() tapi sumbernya respons GET ini sendiri,
+// bukan variabel global cpmkRows yang cuma keisi kalau halaman 4 sudah pernah di-GET.
+function kolomCpmkDariMaster(masterCpmk) {
+  if (!Array.isArray(masterCpmk)) return [];
+  return masterCpmk.flatMap(parent => {
+    const subs = (parent.subCpmk || parent.sub_cpmk || []).filter(s => s.kode);
+    if (subs.length > 0) return subs.map(s => ({ id: s.id, kode: s.kode }));
+    return parent.kode ? [{ id: parent.id, kode: parent.kode }] : [];
+  });
+}
+
+function getRencanaEvaluasi() {
+  const mkId = val('re_mkId');
+  const periodeId = val('re_periodeId');
+  panggil('GET', `/koordinator-mk/mata-kuliah/${mkId}/rencana-evaluasi?periodeId=${periodeId}`, undefined, 'out_re').then(json => {
+    const daftar = json?.data?.rencanaEvaluasi;
+    if (Array.isArray(daftar)) {
+      isiRegistry('rencanaEvaluasi', daftar, { id: x => x.id, label: x => `${x.metodeEvaluasi} (${x.bobotEvaluasi}%)` });
+      evaluasiExistingData = daftar;
+      masterCpmkDariRE = json?.data?.masterCpmk || [];
+      renderTabelEvaluasiExisting();
+      if (typeof renderTabelKehadiran === 'function') renderTabelKehadiran();
+    }
+  });
+}
+
+// Tabel read-only: cuma nampilin apa adanya hasil GET, format matriks sama seperti
+// tabel edit di bawahnya (supaya gampang dibandingkan), tapi tanpa input sama sekali.
+function renderTabelEvaluasiExisting() {
+  const kolom = kolomCpmkDariMaster(masterCpmkDariRE);
+  const el = document.getElementById('tabelEvaluasiExistingContainer');
+  if (evaluasiExistingData.length === 0) { el.textContent = '(belum ada data di server utk MK/periode ini)'; return; }
+
+  let html = `<table class="tabelEdit"><thead><tr><th>Metode Evaluasi</th><th>Jenis Evaluasi</th>`;
+  kolom.forEach(c => html += `<th>${escapeHtml(c.kode)}</th>`);
+  html += `<th>Bobot Evaluasi</th><th>Syarat Lulus</th></tr></thead><tbody>`;
+
+  let grand = 0;
+  evaluasiExistingData.forEach(row => {
+    grand += parseFloat(row.bobotEvaluasi || 0);
+    html += `<tr><td>${escapeHtml(row.metodeEvaluasi || '-')}</td><td>${escapeHtml(row.jenisEvaluasi || '-')}</td>`;
+    kolom.forEach(c => {
+      const v = row.mappingBobotCpmk ? row.mappingBobotCpmk[c.id] : undefined;
+      html += `<td>${v !== undefined && v !== null ? v : '-'}</td>`;
+    });
+    html += `<td><b>${parseFloat(row.bobotEvaluasi || 0).toFixed(2)}</b></td><td>${escapeHtml(row.syaratLulus || '-')}</td></tr>`;
+  });
+
+  const warna = Math.round(grand) === 100 ? '#15803d' : '#b91c1c';
+  html += `</tbody><tfoot><tr><td colspan="2" style="text-align:right">Total Bobot Evaluasi</td>`;
+  kolom.forEach(() => html += `<td></td>`);
+  html += `<td style="color:${warna}">${grand.toFixed(2)}%</td><td></td></tr></tfoot></table>`;
+  el.innerHTML = html;
+}
+
+// Salin hasil GET ke tabel edit (evaluasiRows) supaya tinggal ubah angka, bukan
+// ngetik ulang dari kosong. cpmkBobot di-mapping balik dari mappingBobotCpmk (keyed
+// by cpmkId) ke keyed-by-kode, karena tabel edit pakai kode sebagai key kolom.
+function salinDariDataExisting() {
+  if (evaluasiExistingData.length === 0) { alert('Belum ada data existing -- klik "GET Rencana Evaluasi" dulu.'); return; }
+  const kolom = kolomCpmkDariMaster(masterCpmkDariRE);
+  evaluasiRows = evaluasiExistingData.map(row => {
+    const cpmkBobot = {};
+    kolom.forEach(c => {
+      const v = row.mappingBobotCpmk ? row.mappingBobotCpmk[c.id] : undefined;
+      if (v !== undefined && v !== null) cpmkBobot[c.kode] = v;
+    });
+    return { metode: row.metodeEvaluasi || '', jenis: row.jenisEvaluasi || '', cpmkBobot, syaratLulus: row.syaratLulus || 'TIDAK_MENJADI_SYARAT_LULUS' };
+  });
+  renderTabelEvaluasi();
+}
+
+// ===== 6A. JALUR A — Nilai per Komponen =====
+let headerKolomJalurA = []; // [{id,label,bobot,labelKolom}]
+let nilaiJalurASaatIni = {}; // {komposisiId: skor}
+
+function getPesertaKelasJalurA() {
+  const kelasId = val('jalurA_kelasId');
+  panggil('GET', `/dosen/kelas/${kelasId}/nilai`, undefined, 'out_jalurA_peserta').then(json => {
+    const data = json?.data;
+    if (!data) return;
+    headerKolomJalurA = data.headerKolom || [];
+    renderTabelJalurA();
+    if (Array.isArray(data.tabel)) {
+      isiRegistry('krs', data.tabel, { id: x => x.rincianKrsId, label: x => `${x.nim} - ${x.nama}` });
+    }
+  });
+}
+function setNilaiJalurA(komposisiId, v) {
+  const num = v === '' ? undefined : (parseFloat(v) || 0);
+  if (num === undefined) delete nilaiJalurASaatIni[komposisiId]; else nilaiJalurASaatIni[komposisiId] = num;
+}
+function renderTabelJalurA() {
+  const el = document.getElementById('tabelJalurAContainer');
+  if (headerKolomJalurA.length === 0) { el.textContent = '(GET dulu di atas)'; return; }
+  let html = `<table class="tabelEdit"><thead><tr><th>Komponen</th><th>Bobot</th><th>Skor (isi di sini)</th></tr></thead><tbody>`;
+  headerKolomJalurA.forEach(h => {
+    html += `<tr><td>${escapeHtml(h.label)}</td><td>${h.bobot}%</td>
+      <td><input type="number" placeholder="0-100" onchange="setNilaiJalurA('${h.id}', this.value)" style="width:90px"></td></tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
+function kirimNilaiJalurA() {
+  const krsId = val('jalurA_krsId');
+  const nilai = Object.entries(nilaiJalurASaatIni).map(([komposisiId, skor]) => ({ komposisiId, skor }));
+  tampilkanPayload('POST', `/dosen/kelas/${val('jalurA_kelasId')}/nilai/${krsId}`, { nilai }, 'out_jalurA_kirim');
+}
+
+// ===== 6C/7C/6D. Soal, Nilai per Soal (Jalur C) & Breakdown CBT (Jalur D) =====
+// Dropdown CPMK di tabel batch soal/breakdown pakai variabel global cpmkRows (diisi halaman 4).
+// Supaya tidak perlu pindah halaman, sini cukup pinjam mataKuliahId dari halaman 5
+// (re_mkId) lalu panggil ulang fetch CPMK yang sama dengan yang dipakai halaman 4.
+// Tombol ini dipakai bersama oleh halaman 6C (Jalur C) DAN 6D (Jalur D) -- kedua
+// tabelnya harus ikut di-refresh setelah cpmkRows terisi, kalau cuma salah satu yang
+// di-refresh, dropdown Sub-CPMK di halaman satunya tetap kosong walau data sudah
+// berhasil ditarik dari server (bug: dulu cuma renderTabelSoalBatch yang dipanggil).
+function ambilCpmkUntukSoal() {
+  const mkId = val('re_mkId');
+  if (!mkId) { alert('Pilih dulu Mata Kuliah di halaman 5 (Rencana Evaluasi).'); return; }
+  document.getElementById('cpmk_mkId').value = mkId;
+  getPemetaanCpmk();
+  setTimeout(() => { renderTabelSoalBatch(); renderTabelCbtBatch(); }, 300); // re-render KEDUA tabel biar dropdown CPMK ikut keisi
+}
+
+function getSoal() {
+  if (!val('soal_reId')) return;
+  panggil('GET', `/soal/komponen/${val('soal_reId')}`, undefined, 'out_soalList').then(json => {
+    const daftar = json?.data?.daftarSoal;
+    if (Array.isArray(daftar)) {
+      isiRegistry('soal', daftar, { id: x => x.id, label: x => `${x.nomor} (${x.jenisUnit}) ${x.label ? '- ' + x.label : ''}` });
+    }
+  });
+}
+
+// ===== Batch banyak soal sekaligus (campur PG & Esai), per komponen =====
+let soalBatchRows = []; // [{nomor,label,jenisUnit,skorMaksimal,parentSoalId,pertanyaan,opsiJawaban:[{label,teks}],kunciJawaban,cpmkRows:[{cpmkId,bobotPoin}]}]
+
+function soalBaruKosong(jenisUnit) {
+  return {
+    nomor: '', label: '', jenisUnit: jenisUnit || 'RUBRIK', skorMaksimal: 10, parentSoalId: '', parentSoalNomor: '',
+    pertanyaan: '', opsiJawaban: jenisUnit === 'OBJEKTIF' ? [{ label: 'A', teks: '' }, { label: 'B', teks: '' }] : [],
+    kunciJawaban: '', cpmkRows: []
+  };
+}
+function tambahSoalBaru() { soalBatchRows.push(soalBaruKosong('RUBRIK')); renderTabelSoalBatch(); }
+function hapusSoalBaru(i) { soalBatchRows.splice(i, 1); renderTabelSoalBatch(); }
+function setSoalBatchField(i, field, v) {
+  soalBatchRows[i][field] = v;
+  if (field === 'jenisUnit') {
+    if (v === 'OBJEKTIF' && soalBatchRows[i].opsiJawaban.length === 0) {
+      soalBatchRows[i].opsiJawaban = [{ label: 'A', teks: '' }, { label: 'B', teks: '' }];
+    }
+    renderTabelSoalBatch();
+  }
+}
+function tambahOpsiSoal(i) {
+  const huruf = 'ABCDEFGH'[soalBatchRows[i].opsiJawaban.length] || 'X';
+  soalBatchRows[i].opsiJawaban.push({ label: huruf, teks: '' });
+  renderTabelSoalBatch();
+}
+function hapusOpsiSoal(i, j) { soalBatchRows[i].opsiJawaban.splice(j, 1); renderTabelSoalBatch(); }
+function setOpsiSoal(i, j, field, v) { soalBatchRows[i].opsiJawaban[j][field] = v; if (field === 'label') renderTabelSoalBatch(); }
+function tambahCpmkSoal(i) { soalBatchRows[i].cpmkRows.push({ cpmkId: '', bobotPoin: 0 }); renderTabelSoalBatch(); }
+function hapusCpmkSoal(i, j) { soalBatchRows[i].cpmkRows.splice(j, 1); renderTabelSoalBatch(); }
+function setCpmkSoal(i, j, field, v) { soalBatchRows[i].cpmkRows[j][field] = field === 'bobotPoin' ? (parseFloat(v) || 0) : v; }
+
+function renderTabelSoalBatch() {
+  const kolomCpmk = (typeof kolomCpmkUntukEvaluasi === 'function') ? kolomCpmkUntukEvaluasi() : [];
+  const el = document.getElementById('tabelSoalBatchContainer');
+  if (soalBatchRows.length === 0) { el.textContent = '(belum ada soal, klik "+ Tambah Soal")'; return; }
+
+  let html = '';
+  soalBatchRows.forEach((s, i) => {
+    const totalBobotCpmk = s.cpmkRows.reduce((sum, c) => sum + (parseFloat(c.bobotPoin) || 0), 0);
+    const warnaBobot = totalBobotCpmk > parseFloat(s.skorMaksimal || 0) + 0.01 ? '#b91c1c' : '#15803d';
+    html += `<div class="card" style="margin-top:10px;background:#fafafa">
+      <div class="row">
+        <div><label>Nomor</label><input value="${escapeHtml(s.nomor)}" onchange="setSoalBatchField(${i},'nomor',this.value)" style="width:70px"></div>
+        <div><label>Jenis</label><select onchange="setSoalBatchField(${i},'jenisUnit',this.value)">
+          <option value="RUBRIK" ${s.jenisUnit === 'RUBRIK' ? 'selected' : ''}>RUBRIK (Esai/Presentasi/Proyek)</option>
+          <option value="OBJEKTIF" ${s.jenisUnit === 'OBJEKTIF' ? 'selected' : ''}>OBJEKTIF (Pilihan Ganda)</option>
+        </select></div>
+        <div><label>Skor Maksimal</label><input type="number" value="${s.skorMaksimal}" onchange="setSoalBatchField(${i},'skorMaksimal',parseFloat(this.value)||0)" style="width:80px"></div>
+        <div><label>Label (opsional)</label><input value="${escapeHtml(s.label)}" onchange="setSoalBatchField(${i},'label',this.value)"></div>
+        <div><label>Induk soal (kalau ini soal beranak)</label>
+          <select onchange="setSoalBatchField(${i},'parentSoalNomor',this.value)">
+            <option value="">-- bukan anak soal --</option>
+            ${soalBatchRows.filter((r, k) => k !== i && r.nomor).map(r => `<option value="${escapeHtml(r.nomor)}" ${s.parentSoalNomor === r.nomor ? 'selected' : ''}>Nomor ${escapeHtml(r.nomor)} (soal di tabel ini)</option>`).join('')}
+          </select>
+          <p class="hint" style="margin:4px 0">↑ Pilih kalau induknya ADA di tabel ini juga (1x kirim, langsung nyambung otomatis). Kalau induknya soal LAMA yang sudah ada di server sebelumnya, isi UUID asli di bawah:</p>
+          <select class="dd-soal" onchange="setSoalBatchField(${i},'parentSoalId',this.value)"><option value="">-- atau pilih dari soal server --</option></select>
+          <input value="${escapeHtml(s.parentSoalId)}" placeholder="atau tempel UUID manual" onchange="setSoalBatchField(${i},'parentSoalId',this.value)" style="margin-top:4px"></div>
+      </div>
+      <label>Pertanyaan</label>
+      <textarea onchange="setSoalBatchField(${i},'pertanyaan',this.value)" style="min-height:60px">${escapeHtml(s.pertanyaan)}</textarea>`;
+
+    if (s.jenisUnit === 'OBJEKTIF') {
+      html += `<label>Opsi Jawaban</label>`;
+      s.opsiJawaban.forEach((o, j) => {
+        html += `<div class="row" style="margin-top:4px">
+          <div style="flex:0 0 50px"><input value="${escapeHtml(o.label)}" onchange="setOpsiSoal(${i},${j},'label',this.value)"></div>
+          <div style="flex:3"><input value="${escapeHtml(o.teks)}" onchange="setOpsiSoal(${i},${j},'teks',this.value)" placeholder="teks opsi jawaban"></div>
+          <div style="flex:0 0 70px"><button class="btnRowAdd" onclick="hapusOpsiSoal(${i},${j})">Hapus</button></div>
+        </div>`;
+      });
+      html += `<button class="btnRowAdd" onclick="tambahOpsiSoal(${i})">+ Opsi</button>
+      <label style="margin-top:8px">Kunci Jawaban (label opsi yang benar)</label>
+      <select onchange="setSoalBatchField(${i},'kunciJawaban',this.value)">
+        <option value="">-- pilih kunci --</option>
+        ${s.opsiJawaban.map(o => `<option value="${escapeHtml(o.label)}" ${s.kunciJawaban === o.label ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}
+      </select>`;
+    } else {
+      html += `<label>Jawaban Acuan / Rubrik (opsional, catatan dosen — bukan utk dinilai otomatis)</label>
+      <textarea onchange="setSoalBatchField(${i},'kunciJawaban',this.value)" style="min-height:50px">${escapeHtml(s.kunciJawaban)}</textarea>`;
+    }
+
+    html += `<label style="margin-top:8px">Pemetaan ke CPMK (bobot poin per CPMK, total tidak boleh lebih dari Skor Maksimal)</label>`;
+    s.cpmkRows.forEach((c, j) => {
+      html += `<div class="row" style="margin-top:4px">
+        <div style="flex:3"><select onchange="setCpmkSoal(${i},${j},'cpmkId',this.value)">
+          <option value="">-- pilih CPMK --</option>
+          ${kolomCpmk.map(k => `<option value="${k.id || ''}" ${c.cpmkId === k.id ? 'selected' : ''}>${escapeHtml(k.kode)}</option>`).join('')}
+        </select>
+        <input value="${escapeHtml(c.cpmkId)}" placeholder="atau isi manual (ID asli/ID palsu, mis. CPMK01)" onchange="setCpmkSoal(${i},${j},'cpmkId',this.value)" style="margin-top:4px"></div>
+        <div style="flex:0 0 90px"><input type="number" value="${c.bobotPoin}" onchange="setCpmkSoal(${i},${j},'bobotPoin',this.value)" placeholder="bobot poin"></div>
+        <div style="flex:0 0 70px"><button class="btnRowAdd" onclick="hapusCpmkSoal(${i},${j})">Hapus</button></div>
+      </div>`;
+    });
+    html += `<button class="btnRowAdd" onclick="tambahCpmkSoal(${i})">+ CPMK</button>
+      <div class="hint">Total bobot CPMK soal ini: <b style="color:${warnaBobot}">${totalBobotCpmk}</b> / Skor Maksimal ${s.skorMaksimal}</div>
+      <button class="btnRowAdd" style="background:#fee2e2;border-color:#fca5a5" onclick="hapusSoalBaru(${i})">🗑 Hapus Soal ${s.nomor || '#' + (i + 1)} Ini</button>
+    </div>`;
+  });
+  el.innerHTML = html;
+  refreshDropdown('soal'); // isi ulang dropdown parentSoalId di tiap baris yang baru dirender
+}
+
+function kirimSoalBatch() {
+  const rencanaEvaluasiId = val('soal_reId');
+  // Backend proses array berurutan -- induk WAJIB ditulis sebelum anaknya di array.
+  for (let i = 0; i < soalBatchRows.length; i++) {
+    const s = soalBatchRows[i];
+    if (!s.parentSoalNomor) continue;
+    const idxInduk = soalBatchRows.findIndex(r => r.nomor === s.parentSoalNomor);
+    if (idxInduk === -1 || idxInduk >= i) {
+      alert(`Soal nomor "${s.nomor}" pilih induk "${s.parentSoalNomor}", tapi induknya tidak ditemukan SEBELUM baris ini di tabel. Pindahkan/urutkan ulang baris induk ke atas baris anaknya dulu.`);
+      return;
+    }
+  }
+  const daftarSoal = soalBatchRows.map((s, idx) => {
+    const item = {
+      nomor: s.nomor || String(idx + 1),
+      label: s.label || null,
+      jenisUnit: s.jenisUnit,
+      skorMaksimal: s.skorMaksimal,
+      pertanyaan: s.pertanyaan || null,
+      kunciJawaban: s.kunciJawaban || null,
+      pemetaanCpmk: s.cpmkRows.filter(c => c.cpmkId).map(c => ({ cpmkId: c.cpmkId, bobotPoin: c.bobotPoin }))
+    };
+    if (s.jenisUnit === 'OBJEKTIF') item.opsiJawaban = s.opsiJawaban.filter(o => o.label);
+    if (s.parentSoalNomor) item.parentSoalNomor = s.parentSoalNomor; // induk ada di batch yang sama
+    else if (s.parentSoalId) item.parentSoalId = s.parentSoalId; // induk soal lama, sudah ada di server
+    return item;
+  });
+  tampilkanPayload('POST', `/soal/komponen/${rencanaEvaluasiId}/batch`, { daftarSoal }, 'out_soal');
+}
+
+function updateSoalDariBatch() {
+  const s = soalBatchRows[0];
+  if (!s) { alert('Isi minimal 1 baris soal di tabel atas dulu sebagai sumber data update.'); return; }
+  const body = {
+    nomor: s.nomor, label: s.label || null, jenisUnit: s.jenisUnit, skorMaksimal: s.skorMaksimal,
+    pertanyaan: s.pertanyaan || null, kunciJawaban: s.kunciJawaban || null,
+    pemetaanCpmk: s.cpmkRows.filter(c => c.cpmkId).map(c => ({ cpmkId: c.cpmkId, bobotPoin: c.bobotPoin }))
+  };
+  if (s.jenisUnit === 'OBJEKTIF') body.opsiJawaban = s.opsiJawaban.filter(o => o.label);
+  tampilkanPayload('PUT', `/soal/${val('soal_id')}`, body, 'out_soal');
+}
+function deleteSoal() { tampilkanPayload('DELETE', `/soal/${val('soal_id')}`, undefined, 'out_soal'); }
+// ===== Akumulasi soal dari banyak komponen sekaligus, lalu isi skor 1 tabel =====
+let soalNilaiAkumulasi = []; // [{soalId, nomor, label, jenisUnit, skorMaksimal, opsiJawaban, kunciJawaban, komponenLabel, skorDiperoleh, jawabanMahasiswa}]
+
+function tarikSoalKeNilai() {
+  const reId = val('nilaisoal_reId');
+  if (!reId) { alert('Pilih komponen evaluasi dulu.'); return; }
+  panggil('GET', `/soal/komponen/${reId}`, undefined, 'out_nilai').then(json => {
+    const data = json?.data;
+    if (!data || !Array.isArray(data.daftarSoal)) return;
+    const labelKomponen = data.komponen?.metodeEvaluasi || reId;
+    data.daftarSoal.forEach(s => {
+      if (soalNilaiAkumulasi.some(x => x.soalId === s.id)) return; // sudah ada, jangan dobel
+      soalNilaiAkumulasi.push({
+        soalId: s.id, nomor: s.nomor, label: s.label, jenisUnit: s.jenisUnit,
+        skorMaksimal: s.skorMaksimal, opsiJawaban: s.opsiJawaban || [], kunciJawaban: s.kunciJawaban || '',
+        komponenLabel: labelKomponen, skorDiperoleh: '', jawabanMahasiswa: ''
+      });
+    });
+    renderTabelNilaiSoal();
+  });
+}
+function kosongkanSoalNilai() { soalNilaiAkumulasi = []; renderTabelNilaiSoal(); document.getElementById('out_nilai').innerHTML = '(belum ada payload)'; }
+function setSkorNilaiSoal(i, v) { soalNilaiAkumulasi[i].skorDiperoleh = v; }
+function setJawabanNilaiSoal(i, v) { soalNilaiAkumulasi[i].jawabanMahasiswa = v; renderTabelNilaiSoal(); }
+
+function renderTabelNilaiSoal() {
+  const el = document.getElementById('tabelNilaiSoalContainer');
+  if (soalNilaiAkumulasi.length === 0) { el.textContent = '(belum ada soal ditarik)'; return; }
+  // Kelompokkan tampilan per komponen biar enak dibaca, walau dikirim tetap 1 array gabungan
+  const perKomponen = {};
+  soalNilaiAkumulasi.forEach((s, i) => {
+    if (!perKomponen[s.komponenLabel]) perKomponen[s.komponenLabel] = [];
+    perKomponen[s.komponenLabel].push(i);
+  });
+  let html = `<table class="tabelEdit"><thead><tr><th>Komponen</th><th>Nomor</th><th>Jenis</th><th>Label</th><th>Skor Maks</th><th>Jawaban Mahasiswa / Skor</th></tr></thead><tbody>`;
+  Object.entries(perKomponen).forEach(([komponen, idxList]) => {
+    idxList.forEach((i, urut) => {
+      const s = soalNilaiAkumulasi[i];
+      let kolomInput;
+      if (s.jenisUnit === 'OBJEKTIF' && s.opsiJawaban.length > 0) {
+        const benar = s.jawabanMahasiswa && s.jawabanMahasiswa === s.kunciJawaban;
+        const salah = s.jawabanMahasiswa && s.jawabanMahasiswa !== s.kunciJawaban;
+        const warna = benar ? '#15803d' : (salah ? '#b91c1c' : '#666');
+        const skorPreview = s.jawabanMahasiswa ? (benar ? s.skorMaksimal : 0) : '-';
+        kolomInput = `<select onchange="setJawabanNilaiSoal(${i},this.value)">
+          <option value="">-- pilih jawaban mahasiswa --</option>
+          ${s.opsiJawaban.map(o => `<option value="${escapeHtml(o.label)}" ${s.jawabanMahasiswa === o.label ? 'selected' : ''}>${escapeHtml(o.label)} - ${escapeHtml(o.teks || '')}</option>`).join('')}
+        </select> <span style="color:${warna};font-weight:bold">(skor: ${skorPreview})</span>`;
+      } else {
+        kolomInput = `<input type="number" value="${s.skorDiperoleh}" onchange="setSkorNilaiSoal(${i},this.value)" style="width:80px">`;
+      }
+      html += `<tr>
+        ${urut === 0 ? `<td rowspan="${idxList.length}"><b>${escapeHtml(komponen)}</b></td>` : ''}
+        <td>${escapeHtml(s.nomor)}</td><td>${escapeHtml(s.jenisUnit)}</td><td>${escapeHtml(s.label || '-')}</td>
+        <td>${s.skorMaksimal}</td>
+        <td>${kolomInput}</td>
+      </tr>`;
+    });
+  });
+  html += `</tbody></table><p class="hint">Soal PG: pilih jawaban mahasiswa, skor dihitung OTOMATIS oleh server (cocok kunci = skor maksimal, salah = 0). Soal Esai: skor diisi manual oleh dosen.</p>`;
+  el.innerHTML = html;
+}
+
+function kirimNilaiSoal() {
+  const nilaiSoal = soalNilaiAkumulasi
+    .filter(s => s.skorDiperoleh !== '' || s.jawabanMahasiswa !== '')
+    .map(s => {
+      if (s.jenisUnit === 'OBJEKTIF' && s.jawabanMahasiswa) {
+        return { soalId: s.soalId, jawabanMahasiswa: s.jawabanMahasiswa };
+      }
+      return { soalId: s.soalId, skor: parseFloat(s.skorDiperoleh) || 0 };
+    });
+  if (nilaiSoal.length === 0) { alert('Tarik soal dulu & isi minimal 1 skor/jawaban.'); return; }
+  tampilkanPayload('POST', `/soal/nilai/${valDD('nilai_krsId', 'nilai_krsId_manual')}`, { nilaiSoal }, 'out_nilai');
+}
+
+// ===== 6D. JALUR D — Nilai dari CBT (soal & koreksi di CBT, NL-SIAK terima hasil agregat) =====
+function getPesertaKelasJalurD() {
+  const kelasId = val('cbt_kelasId');
+  if (!kelasId) { alert('Pilih Kelas Kuliah dulu.'); return; }
+  panggil('GET', `/dosen/kelas/${kelasId}/nilai`, undefined, 'out_jalurD_peserta').then(json => {
+    const data = json?.data;
+    if (!data || !Array.isArray(data.tabel)) return;
+    isiRegistry('krs', data.tabel, { id: x => x.rincianKrsId, label: x => `${x.nim} - ${x.nama}` });
+  });
+}
+
+// cbtBatchRows: [{ krsId, units: [{ skorDiperoleh, skorMaksimal, cpmkRows:[{cpmkId,bobotPoin}] }] }]
+// 1 "unit" = 1 soal PG/esai, ATAU 1 kriteria presentasi, ATAU 1 tahap proyek -- generik,
+// sama seperti unit di 6C, cuma di sini ephemeral (tidak disimpan jadi tabel Soal).
+// TIDAK ADA field nilaiAkhir di sini -- itu Bagian 2 (nilaiAkhirRows), sengaja dipisah.
+let cbtBatchRows = [];
+
+function cbtRowBaruKosong() { return { krsId: '', units: [] }; }
+function tambahCbtRow() { cbtBatchRows.push(cbtRowBaruKosong()); renderTabelCbtBatch(); }
+function hapusCbtRow(i) { cbtBatchRows.splice(i, 1); renderTabelCbtBatch(); }
+function setCbtField(i, field, v) { cbtBatchRows[i][field] = v; }
+function tambahCbtUnit(i) { cbtBatchRows[i].units.push({ skorDiperoleh: 0, skorMaksimal: 10, cpmkRows: [] }); renderTabelCbtBatch(); }
+function hapusCbtUnit(i, j) { cbtBatchRows[i].units.splice(j, 1); renderTabelCbtBatch(); }
+function setCbtUnitField(i, j, field, v) { cbtBatchRows[i].units[j][field] = parseFloat(v) || 0; }
+function tambahCbtUnitCpmk(i, j) { cbtBatchRows[i].units[j].cpmkRows.push({ cpmkId: '', bobotPoin: 0 }); renderTabelCbtBatch(); }
+function hapusCbtUnitCpmk(i, j, k) { cbtBatchRows[i].units[j].cpmkRows.splice(k, 1); renderTabelCbtBatch(); }
+function setCbtUnitCpmk(i, j, k, field, v) { cbtBatchRows[i].units[j].cpmkRows[k][field] = field === 'bobotPoin' ? (parseFloat(v) || 0) : v; }
+
+function renderTabelCbtBatch() {
+  const rencanaEvaluasiIdAktif = val('cbt_reId');
+  const kolomCpmkSemua = kolomCpmkLeafUntukBreakdown();
+  const kolomCpmk = kolomCpmkUntukKomponen(rencanaEvaluasiIdAktif);
+  const tersaring = rencanaEvaluasiIdAktif && kolomCpmk.length < kolomCpmkSemua.length;
+  const el = document.getElementById('tabelCbtBatchContainer');
+  if (cbtBatchRows.length === 0) { el.textContent = '(belum ada mahasiswa, klik "+ Tambah Mahasiswa")'; return; }
+
+  let html = tersaring
+    ? `<p class="hint" style="margin:0 0 8px;color:#15803d">✓ Dropdown Sub-CPMK/CPMK di bawah sudah disaring otomatis (${kolomCpmk.length} dari ${kolomCpmkSemua.length}) sesuai pemetaan resmi komponen ini di halaman 5. Butuh yang di luar daftar ini? isi manual UUID-nya.</p>`
+    : (rencanaEvaluasiIdAktif ? `<p class="hint" style="margin:0 0 8px;color:#92700c">⚠ Komponen ini belum ada pemetaan bobot CPMK di halaman 5 (atau belum di-GET) — dropdown nampilin SEMUA Sub-CPMK/CPMK milik MK ini dulu.</p>` : '');
+  cbtBatchRows.forEach((r, i) => {
+    html += `<div class="card" style="margin-top:10px;background:#fafafa">
+      <div class="row">
+        <div style="flex:2"><label>krsId (Mahasiswa)</label>
+          <select class="dd-krs" onchange="setCbtField(${i},'krsId',this.value)"><option value="">-- pilih Mahasiswa --</option></select>
+          <input value="${escapeHtml(r.krsId)}" placeholder="atau tempel UUID manual" onchange="setCbtField(${i},'krsId',this.value)" style="margin-top:4px"></div>
+        <div style="flex:0 0 90px;align-self:flex-end"><button class="btnRowAdd" onclick="hapusCbtRow(${i})">🗑 Hapus Mhs</button></div>
+      </div>
+      <label style="margin-top:8px">Unit penilaian (soal PG/esai, kriteria presentasi, tahap proyek, dst — dari CBT, ephemeral)</label>`;
+    r.units.forEach((u, j) => {
+      const totalBobot = u.cpmkRows.reduce((s, c) => s + (parseFloat(c.bobotPoin) || 0), 0);
+      const warna = totalBobot > parseFloat(u.skorMaksimal || 0) + 0.01 ? '#b91c1c' : '#15803d';
+      html += `<div class="row" style="margin-top:6px;padding:6px;border:1px dashed #d8dbe0;border-radius:6px">
+        <div style="flex:0 0 110px"><label style="font-size:11px">Skor Diperoleh</label><input type="number" value="${u.skorDiperoleh}" onchange="setCbtUnitField(${i},${j},'skorDiperoleh',this.value)"></div>
+        <div style="flex:0 0 110px"><label style="font-size:11px">Skor Maksimal</label><input type="number" value="${u.skorMaksimal}" onchange="setCbtUnitField(${i},${j},'skorMaksimal',this.value)"></div>
+        <div style="flex:2">
+          <label style="font-size:11px">Pemetaan ke Sub-CPMK/CPMK (bobotPoin per CPMK, total tidak boleh lebih dari Skor Maksimal)</label>`;
+      u.cpmkRows.forEach((c, k) => {
+        html += `<div class="row" style="margin-top:3px">
+          <div style="flex:3"><select onchange="setCbtUnitCpmk(${i},${j},${k},'cpmkId',this.value)">
+            <option value="">-- pilih Sub-CPMK/CPMK --</option>
+            ${kolomCpmk.map(kk => `<option value="${kk.id || ''}" ${c.cpmkId === kk.id ? 'selected' : ''}>${escapeHtml(kk.kode)}</option>`).join('')}
+          </select>
+          <input value="${escapeHtml(c.cpmkId)}" placeholder="atau isi manual (UUID)" onchange="setCbtUnitCpmk(${i},${j},${k},'cpmkId',this.value)" style="margin-top:3px"></div>
+          <div style="flex:0 0 90px"><input type="number" value="${c.bobotPoin}" onchange="setCbtUnitCpmk(${i},${j},${k},'bobotPoin',this.value)" placeholder="bobot poin"></div>
+          <div style="flex:0 0 60px"><button class="btnRowAdd" onclick="hapusCbtUnitCpmk(${i},${j},${k})">Hapus</button></div>
+        </div>`;
+      });
+      html += `<button class="btnRowAdd" onclick="tambahCbtUnitCpmk(${i},${j})">+ CPMK</button>
+          <div class="hint" style="margin:2px 0">Total bobot: <b style="color:${warna}">${totalBobot}</b> / Skor Maksimal ${u.skorMaksimal}</div>
+        </div>
+        <div style="flex:0 0 70px;align-self:flex-start"><button class="btnRowAdd" onclick="hapusCbtUnit(${i},${j})">🗑 Hapus Unit</button></div>
+      </div>`;
+    });
+    html += `<button class="btnRowAdd" style="margin-top:6px" onclick="tambahCbtUnit(${i})">+ Unit Penilaian (soal/kriteria)</button>
+    </div>`;
+  });
+  el.innerHTML = html;
+  refreshDropdown('krs'); // isi ulang dropdown krsId di tiap baris yang baru dirender
+}
+
+function kirimNilaiCbt() {
+  const rencanaEvaluasiId = val('cbt_reId');
+  if (!rencanaEvaluasiId) { alert('Pilih komponen evaluasi (rencanaEvaluasiId) dulu.'); return; }
+  const daftarNilai = cbtBatchRows
+    .filter(r => r.krsId)
+    .map(r => ({
+      krsId: r.krsId,
+      breakdown: r.units.map(u => ({
+        skorDiperoleh: u.skorDiperoleh,
+        skorMaksimal: u.skorMaksimal,
+        pemetaanCpmk: u.cpmkRows.filter(c => c.cpmkId).map(c => ({ cpmkId: c.cpmkId, bobotPoin: c.bobotPoin }))
+      })).filter(u => u.pemetaanCpmk.length > 0)
+    }));
+  if (daftarNilai.length === 0) { alert('Tambah minimal 1 mahasiswa (isi krsId) dulu.'); return; }
+  tampilkanPayload('POST', `/cbt/komponen/${rencanaEvaluasiId}/nilai`, { daftarNilai }, 'out_jalurD');
+}
+
+function getNilaiDariCbt() {
+  const rencanaEvaluasiId = val('cbt_reId');
+  if (!rencanaEvaluasiId) { alert('Pilih komponen evaluasi (rencanaEvaluasiId) dulu.'); return; }
+  panggil('GET', `/cbt/komponen/${rencanaEvaluasiId}/nilai`, undefined, 'out_jalurD_get').then(json => {
+    const data = json?.data;
+    if (!data) return;
+    const outEl = document.getElementById('out_jalurD_get');
+
+    let html = '';
+    if (data.peringatanDuplikat) {
+      html += `<div class="mentah" style="color:#fbbf24;margin-bottom:8px">⚠️ ${escapeHtml(data.peringatanDuplikat)}</div>`;
+    }
+    if (!data.mahasiswa || data.mahasiswa.length === 0) {
+      html += '(belum ada breakdown masuk utk komponen ini)';
+      outEl.innerHTML = html;
+      return;
+    }
+    isiRegistry('krs', data.mahasiswa, { id: x => x.krsId, label: x => `${x.nim} - ${x.nama}` });
+
+    html += `<table class="tabelEdit"><thead><tr><th>NIM</th><th>Nama</th><th>Nilai Akhir MK (sync CBT)</th><th>Breakdown Sub-CPMK/CPMK (komponen ini)</th></tr></thead><tbody>`;
+    data.mahasiswa.forEach(m => {
+      const breakdownHtml = m.breakdown.length
+        ? m.breakdown.map(b => `${escapeHtml(b.cpmkKode)}: <b>${b.nilaiKomponenIni}</b>`).join('<br>')
+        : '(tidak ada breakdown)';
+      const nilaiAkhirHtml = m.nilaiAkhirMk != null ? `${m.nilaiAkhirMk} (${escapeHtml(m.hurufMutuMk || '-')})` : '-';
+      html += `<tr><td>${escapeHtml(m.nim)}</td><td>${escapeHtml(m.nama)}</td><td>${nilaiAkhirHtml}</td><td>${breakdownHtml}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    outEl.innerHTML = html;
+  });
+}
+
+function resetKomponenCbt() {
+  const rencanaEvaluasiId = val('cbt_reId');
+  const krsId = val('cbt_reset_krsId');
+  if (!rencanaEvaluasiId) { alert('Pilih komponen evaluasi (rencanaEvaluasiId) dulu.'); return; }
+  if (!krsId) { alert('Pilih mahasiswa dulu (klik "GET Breakdown dari CBT" di atas biar dropdown-nya keisi).'); return; }
+  if (!confirm('Yakin reset breakdown Sub-CPMK mahasiswa ini utk komponen ini saja? CPMK dihitung ulang dari komponen lain yang tersisa. Nilai akhir/huruf mutu MK TIDAK ikut berubah.')) return;
+  panggil('DELETE', `/cbt/komponen/${rencanaEvaluasiId}/nilai/${krsId}`, undefined, 'out_jalurD_get')
+    .then(() => getNilaiDariCbt());
+}
+
+// ===== Bagian 2: Sinkron Nilai Akhir MK dari CBT =====
+// Level MK (bukan per komponen), sengaja terpisah total dari breakdown Sub-CPMK
+// di atas -- tidak dihitung ulang, cuma disimpan apa adanya. Huruf mutu & angka
+// mutu TIDAK diinput manual di sini -- otomatis diturunkan server dari skala
+// penilaian (lihat cbt.service.js resolveHurufMutu), makanya tidak ada
+// kolomnya di tabel bawah ini.
+let nilaiAkhirRows = [];
+
+function nilaiAkhirRowBaruKosong() { return { krsId: '', nilaiAkhir: '' }; }
+function tambahNilaiAkhirRow() { nilaiAkhirRows.push(nilaiAkhirRowBaruKosong()); renderTabelNilaiAkhirCbt(); }
+function hapusNilaiAkhirRow(i) { nilaiAkhirRows.splice(i, 1); renderTabelNilaiAkhirCbt(); }
+function setNilaiAkhirField(i, field, v) { nilaiAkhirRows[i][field] = v; }
+
+function renderTabelNilaiAkhirCbt() {
+  const el = document.getElementById('tabelNilaiAkhirCbtContainer');
+  if (nilaiAkhirRows.length === 0) { el.textContent = '(belum ada mahasiswa, klik "+ Tambah Mahasiswa")'; return; }
+
+  let html = `<table class="tabelEdit"><thead><tr><th>krsId (Mahasiswa)</th><th>Nilai Akhir (0-100)</th><th>Aksi</th></tr></thead><tbody>`;
+  nilaiAkhirRows.forEach((r, i) => {
+    html += `<tr>
+      <td><select class="dd-krs" onchange="setNilaiAkhirField(${i},'krsId',this.value)" style="width:100%"><option value="">-- pilih Mahasiswa --</option></select>
+        <input value="${escapeHtml(r.krsId)}" placeholder="atau UUID manual" onchange="setNilaiAkhirField(${i},'krsId',this.value)" style="margin-top:3px;width:100%"></td>
+      <td><input type="number" value="${r.nilaiAkhir}" onchange="setNilaiAkhirField(${i},'nilaiAkhir',this.value)" style="width:80px" placeholder="mis. 82.5"></td>
+      <td><button class="btnRowAdd" onclick="hapusNilaiAkhirRow(${i})">Hapus</button></td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+  refreshDropdown('krs');
+}
+
+function kirimNilaiAkhirCbt() {
+  const daftarNilai = nilaiAkhirRows
+    .filter(r => r.krsId)
+    .map(r => ({
+      krsId: r.krsId,
+      nilaiAkhir: parseFloat(r.nilaiAkhir) || 0
+    }));
+  if (daftarNilai.length === 0) { alert('Tambah minimal 1 mahasiswa (isi krsId) dulu.'); return; }
+  tampilkanPayload('POST', `/cbt/nilai-akhir`, { daftarNilai }, 'out_jalurD_nilaiakhir');
+}
+
+// ===== 6D Bagian 3 -- Input Kehadiran (manual, jalan pintas dari halaman 6A biar
+// gak usah pindah halaman pas demo). Endpoint SAMA PERSIS dengan Jalur A
+// (POST /dosen/kelas/:kelasId/nilai/:krsId), cuma di sini komponennya otomatis
+// disaring HANYA yang kedeteksi Kehadiran/Partisipasi/dst -- kata kunci SAMA PERSIS
+// dengan yang dicek backend (lihat isKomponenNonSoal di cbt.service.js) supaya
+// konsisten: kalau backend nolak breakdown CBT ke komponen ini, di sini dia
+// justru yang ditawarkan buat diisi manual.
+const KATA_KUNCI_KOMPONEN_NON_SOAL = ['kehadiran', 'partisipasi', 'presensi', 'keaktifan', 'absen'];
+function komponenKehadiranUntukKelas() {
+  return (evaluasiExistingData || []).filter(r => {
+    const teks = `${r.metodeEvaluasi || ''} ${r.jenisEvaluasi || ''}`.toLowerCase();
+    return KATA_KUNCI_KOMPONEN_NON_SOAL.some(kw => teks.includes(kw));
+  });
+}
+
+let kehadiranSkorState = {}; // { rencanaEvaluasiId: skor }
+
+function renderTabelKehadiran() {
+  const infoEl = document.getElementById('kehadiranKomponenInfo');
+  const komponen = komponenKehadiranUntukKelas();
+  const el = document.getElementById('tabelKehadiranContainer');
+
+  if ((evaluasiExistingData || []).length === 0) {
+    infoEl.innerHTML = '⚠️ Belum ada data Rencana Evaluasi -- ke halaman "5. Rencana Evaluasi", pilih MK+Periode yang sama, klik "GET Rencana Evaluasi" dulu, baru balik ke sini.';
+    el.textContent = '(menunggu data komponen)';
+    return;
+  }
+  if (komponen.length === 0) {
+    infoEl.innerHTML = '⚠️ Gak ada komponen yang kedeteksi Kehadiran/Partisipasi/dst di MK ini (dicek dari nama metode/jenis evaluasinya) -- kalau memang ada tapi gak kedeteksi, isi manual lewat halaman 6A.';
+    el.textContent = '(gak ada komponen Kehadiran terdeteksi)';
+    return;
+  }
+  infoEl.innerHTML = `✓ Kedeteksi ${komponen.length} komponen non-soal: ${komponen.map(k => `<b>${escapeHtml(k.metodeEvaluasi)}</b>`).join(', ')}`;
+
+  if (!val('kehadiran_krsId')) { el.textContent = '(pilih krsId dulu di atas)'; return; }
+
+  let html = `<table class="tabelEdit"><thead><tr><th>Komponen</th><th>Bobot Evaluasi</th><th>Skor (0-100)</th></tr></thead><tbody>`;
+  komponen.forEach(k => {
+    const v = kehadiranSkorState[k.id] ?? '';
+    html += `<tr><td>${escapeHtml(k.metodeEvaluasi)} <span style="color:#888">(${escapeHtml(k.jenisEvaluasi || '')})</span></td>
+      <td>${parseFloat(k.bobotEvaluasi || 0).toFixed(2)}%</td>
+      <td><input type="number" min="0" max="100" value="${v}" placeholder="mis. 80" onchange="setKehadiranSkor('${k.id}', this.value)" style="width:90px"></td></tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
+function setKehadiranSkor(rencanaEvaluasiId, v) {
+  const num = v === '' ? undefined : (parseFloat(v) || 0);
+  if (num === undefined) delete kehadiranSkorState[rencanaEvaluasiId]; else kehadiranSkorState[rencanaEvaluasiId] = num;
+}
+
+// ===== 6D Bagian 1A -- Input Cepat UTS+UAS+Tugas dalam 1 form, khusus struktur
+// soal Kalkulus I (TIK101) yang SUDAH DIKETAHUI & sudah dites cocok ke server
+// (lihat "Kalkulator Kalkulus I - 15 Mahasiswa.xlsx" & Bagian 9 docx). Sub-CPMK
+// & bobotPoin FIXED (gak berubah per mahasiswa), jadi di sini di-hardcode biar
+// gak perlu isi manual satu-satu -- cuma skor yang diperoleh yang beda tiap
+// mahasiswa. TETAP menghasilkan 3 payload terpisah (bukan gabung jadi 1 request)
+// karena endpoint /cbt/komponen/:id/nilai memang per-komponen di URL-nya --
+// ini murni mempercepat CARA ISI, bukan mengubah kontrak API yang sebenarnya.
+const RE_KALKULUS = {
+  UTS: '019e82bd-99d2-74cd-bd9c-f3ed23b80afc',
+  UAS: '019e82bd-99fb-76f3-87e4-dff7a91a5e07',
+  TUGAS: '019e82bd-999a-7222-8ee4-f58b767f148a',
+};
+const SUBCPMK_ID_KALKULUS = {
+  '0331': '019f5c3b-0083-76df-bdf9-8f488629185c', '0332': '019f5c3b-0145-7353-b933-28acd1221745',
+  '0333': '019f5c3b-01f2-759c-8484-45dd8258573f', '0334': '019f5c3b-0232-75a0-9103-6bbe13b9884a',
+  '0341': '019f5c3b-02aa-71ee-94de-4881eb97ebf4', '0342': '019f5c3b-02fa-72ea-a5bb-59aaba694887',
+  '0343': '019f5c3b-035d-759c-8252-e2ed594e1a64', '0344': '019f5c3b-03a8-75c5-987e-de9cc0b75c59',
+  '0345': '019f5c3b-03fd-720f-ae8e-06c26edd8b8b',
+};
+// (label, komponen, M, subKode, B) -- persis sama dengan Sheet 1 Excel & Bagian 9 docx
+const UNIT_KALKULUS_I = [
+  ['UTS1', 'UTS', 10, '0331', 6.25], ['UTS2', 'UTS', 10, '0332', 6.25],
+  ['UTS3', 'UTS', 10, '0333', 6.25], ['UTS4', 'UTS', 10, '0334', 6.25],
+  ['UAS1', 'UAS', 10, '0341', 8.00], ['UAS2', 'UAS', 10, '0342', 8.00],
+  ['UAS3', 'UAS', 10, '0343', 8.00], ['UAS4', 'UAS', 10, '0344', 8.00], ['UAS5', 'UAS', 10, '0345', 8.00],
+  ['Tugas1', 'TUGAS', 25, '0331', 2.50], ['Tugas2', 'TUGAS', 25, '0332', 2.50],
+  ['Tugas3', 'TUGAS', 25, '0333', 2.50], ['Tugas4', 'TUGAS', 25, '0334', 2.50],
+  ['Tugas5', 'TUGAS', 25, '0341', 2.00], ['Tugas6', 'TUGAS', 25, '0342', 2.00],
+  ['Tugas7', 'TUGAS', 25, '0343', 2.00], ['Tugas8', 'TUGAS', 25, '0344', 2.00], ['Tugas9', 'TUGAS', 25, '0345', 2.00],
+];
+let skorInputCepat = {}; // { label: skorDiperoleh }
+
+function renderTabelInputCepat() {
+  const el = document.getElementById('tabelInputCepatContainer');
+  if (!val('cepat_krsId')) { el.textContent = '(pilih krsId dulu)'; return; }
+  let html = `<table class="tabelEdit"><thead><tr><th>Unit</th><th>Komponen</th><th>Skor Maksimal (M)</th><th>Sub-CPMK</th><th>Bobot Poin (B)</th><th>Skor Diperoleh</th></tr></thead><tbody>`;
+  UNIT_KALKULUS_I.forEach(([label, komp, m, sub, b]) => {
+    const v = skorInputCepat[label] ?? '';
+    html += `<tr><td>${label}</td><td>${komp}</td><td style="text-align:center">${m}</td><td>Sub-CPMK${sub}</td><td style="text-align:center">${b}</td>
+      <td><input type="number" min="0" max="${m}" value="${v}" placeholder="0-${m}" onchange="skorInputCepat['${label}']=parseFloat(this.value)||0" style="width:70px"></td></tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
+
+function buatPayloadInputCepat() {
+  const krsId = val('cepat_krsId');
+  if (!krsId) { alert('Pilih krsId (mahasiswa) dulu.'); return; }
+  const belumDiisi = UNIT_KALKULUS_I.filter(([label]) => skorInputCepat[label] === undefined);
+  if (belumDiisi.length > 0) { alert(`Masih ada ${belumDiisi.length} soal yang belum diisi skornya: ${belumDiisi.map(u => u[0]).join(', ')}`); return; }
+
+  const perKomponen = { UTS: [], UAS: [], TUGAS: [] };
+  UNIT_KALKULUS_I.forEach(([label, komp, m, sub, b]) => {
+    perKomponen[komp].push({
+      skorDiperoleh: skorInputCepat[label], skorMaksimal: m,
+      pemetaanCpmk: [{ cpmkId: SUBCPMK_ID_KALKULUS[sub], bobotPoin: b }]
+    });
+  });
+
+  const token = authTokenEl.value.trim();
+  const blok = (nama, reId, breakdown) => {
+    const bodyObj = { daftarNilai: [{ krsId, breakdown }] };
+    return `=== ${nama} ===\nURL   : ${base()}/cbt/komponen/${reId}/nilai\nMETHOD: POST\n\nHeader (Postman > Headers):\nAuthorization: Bearer ${token || '(belum login -- isi token dulu di halaman 0)'}\n\nBody (Postman > Body > raw > JSON):\n${JSON.stringify(bodyObj, null, 2)}\n`;
+  };
+  const teks = [
+    blok('1. UTS (kirim dulu / urutan bebas)', RE_KALKULUS.UTS, perKomponen.UTS),
+    blok('2. UAS', RE_KALKULUS.UAS, perKomponen.UAS),
+    blok('3. TUGAS', RE_KALKULUS.TUGAS, perKomponen.TUGAS),
+  ].join('\n----------------------------------------\n\n');
+
+  document.getElementById('out_inputcepat').innerHTML =
+    '<span class="status-ok">3 PAYLOAD SIAP DIPAKAI (belum dikirim ke server) -- tempel satu-satu ke Postman, urutan bebas</span><div class="mentah">' + escapeHtml(teks) + '</div>';
+}
+
+function kirimKehadiranManual() {
+  const krsId = val('kehadiran_krsId');
+  const kelasId = val('cbt_kelasId');
+  if (!krsId) { alert('Pilih krsId (mahasiswa) dulu.'); return; }
+  if (!kelasId) { alert('Pilih Kelas Kuliah dulu di bagian atas halaman (buat kelasId di URL).'); return; }
+  const nilai = Object.entries(kehadiranSkorState).map(([komposisiId, skor]) => ({ komposisiId, skor }));
+  if (nilai.length === 0) { alert('Isi minimal 1 skor komponen Kehadiran dulu.'); return; }
+  tampilkanPayload('POST', `/dosen/kelas/${kelasId}/nilai/${krsId}`, { nilai }, 'out_jalurD_kehadiran');
+}
+
+// ===== 6D Bagian 4 -- Cek visibilitas KHS & Transkrip (biar gak usah pindah
+// ke halaman 8 pas demo) =====
+function cariMahasiswaUntukCekNilai() {
+  const q = new URLSearchParams({ size: '50' });
+  const prodiId = val('cek_prodiId_search') || val('cek_prodiId') || val('mon_prodiId');
+  const angkatan = val('cek_angkatan_search');
+  if (prodiId) q.set('siakProgramStudiId', prodiId);
+  if (angkatan) q.set('angkatan', angkatan);
+  panggil('GET', `/mahasiswa?${q.toString()}`, undefined, 'out_cek_mhslookup').then(json => {
+    const arr = cariArrayUtkTabel(json);
+    if (arr) isiRegistry('mahasiswa', arr, { id: x => x.id, label: x => `${x.npm || ''} - ${x.nama || ''}` });
+  });
+}
+
+// GET /akademik/mahasiswa/hasil-studi -- endpoint admin (butuh siakMahasiswaId +
+// siakPeriodeAkademikId sbg query, BEDA dari endpoint mahasiswa-login-sendiri yg
+// baca dari token). Kalau rincianKrs isinya kosong = MK itu BELUM tampil di KHS
+// mahasiswa (status belum Dikunci/Lulus/Tidak Lulus).
+function cekKhsMahasiswa() {
+  const mhsId = val('cek_mhsId');
+  const periodeId = val('cek_periodeId');
+  if (!mhsId || !periodeId) { alert('Pilih mahasiswaId dan periodeAkademikId dulu.'); return; }
+  panggil('GET', `/mahasiswa/hasil-studi?siakMahasiswaId=${mhsId}&siakPeriodeAkademikId=${periodeId}`, undefined, 'out_cek_khs').then(json => {
+    const list = json?.data?.rincianKrs || [];
+    const el = document.getElementById('out_cek_khs');
+    const ket = document.createElement('div');
+    ket.style.cssText = 'margin-top:8px;font-weight:700;' + (list.length === 0 ? 'color:#b91c1c' : 'color:#15803d');
+    ket.textContent = list.length === 0
+      ? '⚠️ KOSONG -- belum ada 1 MK pun yang tampil di KHS periode ini (status rincian KRS-nya belum Dikunci/Lulus/Tidak Lulus).'
+      : `✓ ${list.length} mata kuliah sudah tampil di KHS (nilai_akhir: ${list.map(r => r.nilaiAkhir ?? '-').join(', ')}).`;
+    el.appendChild(ket);
+  });
+}
+
+// Reuse monPdf('transkrip-obe') yang sudah ada di halaman 8 (Monitoring) --
+// field-nya (mon_tkId/mon_prodiId/mon_mhsId) disalin dulu dari field lokal di
+// sini, jadi gak perlu pindah halaman buka Transkrip OBE pas demo.
+function cekTranskripDariSini() {
+  const tkId = val('cek_tkId'), prodiId = val('cek_prodiId'), mhsId = val('cek_mhsId');
+  if (!tkId || !prodiId || !mhsId) { alert('Isi tahunKurikulumId, prodiId, dan mahasiswaId dulu.'); return; }
+  document.getElementById('mon_tkId').value = tkId;
+  document.getElementById('mon_prodiId').value = prodiId;
+  document.getElementById('mon_mhsId').value = mhsId;
+  monPdf('transkrip-obe');
+}
+
+// ===== 11. Mahasiswa -- KHS & Transkrip SELF-SERVICE (login sbg Mahasiswa) =====
+// Beda dari cekKhsMahasiswa/cekTranskripDariSini di atas (itu ADMIN ngecek
+// mahasiswa LAIN pakai siakMahasiswaId di query). Endpoint di sini gak terima
+// siakMahasiswaId sama sekali -- controller-nya baca req.user.mahasiswa.id,
+// jadi mahasiswaId-nya ikut token yang lagi login (harus akun mahasiswa).
+function cekKhsMhsSendiri() {
+  const periodeId = val('mhs_periodeId');
+  if (!periodeId) { alert('Pilih periodeAkademikId dulu.'); return; }
+  panggil('GET', `/mahasiswa/hasil-studi?periodeId=${periodeId}`, undefined, 'out_mhs_khs');
+}
+function cekTranskripMhsSendiri() {
+  panggil('GET', `/mahasiswa/hasil-studi/transkrip`, undefined, 'out_mhs_transkrip');
+}
+
+// ===== 8. Monitoring & PDF =====
+function monQuery(extra) {
+  const q = new URLSearchParams({
+    tahunKurikulumId: val('mon_tkId'), prodiId: val('mon_prodiId'), angkatan: val('mon_angkatan'),
+    metode: val('mon_metode') || 'rerata', kop: 'true'
+  });
+  if (extra) Object.entries(extra).forEach(([k, v]) => { if (v) q.set(k, v); });
+  return q;
+}
+function monJson(jenis) {
+  const map = {
+    'cpl-prodi':      { path: `/obe/monitoring/cpl-prodi`,            q: monQuery(),                                    out: 'out_mon_cplprodi' },
+    'cpl-mahasiswa':  { path: `/obe/monitoring/cpl-mahasiswa`,        q: monQuery(),                                    out: 'out_mon_cplmhs' },
+    'cpl-mata-kuliah':{ path: `/obe/monitoring/cpl-mata-kuliah`,      q: monQuery(),                                    out: 'out_mon_cplmk' },
+    'mk-mahasiswa':   { path: `/obe/monitoring/mk-mahasiswa`,        q: monQuery({ cpl: val('mon_cplKode') }),         out: 'out_mon_mkmhs' },
+    'transkrip-obe':  { path: `/obe/monitoring/transkrip-obe`,       q: new URLSearchParams({ tahunKurikulumId: val('mon_tkId'), prodiId: val('mon_prodiId'), mahasiswaId: val('mon_mhsId') }), out: 'out_mon_transkrip' },
+    'cpmk-mahasiswa': { path: `/obe/monitoring/cpmk-mahasiswa`,      q: monQuery({ mataKuliahId: val('mon_mkId') }),   out: 'out_mon_cpmkmhs' }
+  };
+  const m = map[jenis];
+  panggil('GET', `${m.path}?${m.q.toString()}`, undefined, m.out);
+}
+function monPdf(jenis) {
+  const outMap = {
+    'monitoring-cpl-prodi': { q: monQuery(), out: 'out_mon_cplprodi' },
+    'monitoring-cpl-mahasiswa': { q: monQuery(), out: 'out_mon_cplmhs' },
+    'monitoring-cpl-mata-kuliah': { q: monQuery(), out: 'out_mon_cplmk' },
+    'monitoring-mk-mahasiswa': { q: monQuery({ cpl: val('mon_cplKode') }), out: 'out_mon_mkmhs' },
+    'transkrip-obe': { q: new URLSearchParams({ tahunKurikulumId: val('mon_tkId'), prodiId: val('mon_prodiId'), mahasiswaId: val('mon_mhsId') }), out: 'out_mon_transkrip' },
+    'monitoring-cpmk-mahasiswa': { q: monQuery({ mataKuliahId: val('mon_mkId') }), out: 'out_mon_cpmkmhs' }
+  };
+  const m = outMap[jenis];
+  panggilPdf(`/obe/export/pdf/${jenis}?${m.q.toString()}`, m.out);
+}
+
+// ===== Panel ID otomatis + kamus nama =====
+const daftarId = [];
+const idNameMap = {};
+const FIELD_NAMA = ['kode', 'nama', 'metodeEvaluasi', 'profil', 'label', 'nomor', 'programStudi', 'kurikulum', 'mataKuliah', 'kodeProdi', 'deskripsi', 'namaProgramStudi', 'jenjang', 'tahun'];
+
+function kumpulkanId(obj, sumber, depth = 0) {
+  if (depth > 5 || obj === null || typeof obj !== 'object') return;
+  if (Array.isArray(obj)) { obj.forEach(o => kumpulkanId(o, sumber, depth + 1)); return; }
+  const fieldNamaKetemu = FIELD_NAMA.find(f => obj[f] != null && obj[f] !== '');
+  Object.entries(obj).forEach(([k, v]) => {
+    const isFieldId = k === 'id' || /Id$/.test(k) || /^id[A-Z_]/.test(k) || /_id$/i.test(k);
+    if (isFieldId && typeof v === 'string' && v.length >= 8) {
+      tambahChip(k, v, sumber);
+      if (fieldNamaKetemu) idNameMap[v] = String(obj[fieldNamaKetemu]).slice(0, 60);
+    }
+    if (typeof v === 'object') kumpulkanId(v, sumber, depth + 1);
+  });
+  renderChips();
+}
+function tambahChip(label, value, sumber) {
+  if (daftarId.some(c => c.value === value && c.label === label)) return;
+  daftarId.unshift({ label, value, sumber });
+  if (daftarId.length > 60) daftarId.pop();
+}
+function renderChips() {
+  const el = document.getElementById('idList');
+  el.innerHTML = daftarId.map(c => {
+    const nama = idNameMap[c.value];
+    const labelNama = nama ? ` → "${escapeHtml(nama)}"` : ' (nama belum diketahui)';
+    return `<div class="chip" onclick="copyChip('${c.value}')"><b>${c.label} — ${c.sumber}${labelNama}</b>${c.value}</div>`;
+  }).join('');
+}
+function copyChip(v) { navigator.clipboard.writeText(v); }
+
+// ===== 9. Cek Soal (Jalur C) yang Sudah Ada di Server =====
+async function cekSemuaSoal() {
+  const mkId = val('ceksoal_mkId');
+  const periodeId = val('ceksoal_periodeId');
+  if (!mkId || !periodeId) { alert('Pilih Mata Kuliah dan Periode Akademik dulu.'); return; }
+
+  const outEl = document.getElementById('out_ceksoal');
+  outEl.textContent = 'Mengambil daftar komponen evaluasi...';
+
+  const jsonRe = await panggil('GET', `/koordinator-mk/mata-kuliah/${mkId}/rencana-evaluasi?periodeId=${periodeId}`, undefined, 'out_ceksoal');
+  const daftarRe = jsonRe?.data?.rencanaEvaluasi;
+  if (!Array.isArray(daftarRe) || daftarRe.length === 0) {
+    outEl.innerHTML = '(tidak ada komponen evaluasi utk Mata Kuliah/Periode ini — GET dulu halaman 5 kalau belum yakin ada datanya)';
+    return;
+  }
+
+  outEl.textContent = `Ditemukan ${daftarRe.length} komponen, mengecek soal di tiap komponen...`;
+  const headers = {};
+  if (authTokenEl.value.trim()) headers['Authorization'] = 'Bearer ' + authTokenEl.value.trim();
+
+  let semuaSoal = [];
+  for (const re of daftarRe) {
+    try {
+      const res = await fetch(base() + `/soal/komponen/${re.id}`, { headers });
+      const json = await res.json();
+      const daftar = json?.data?.daftarSoal || [];
+      daftar.forEach(s => semuaSoal.push({ komponen: `${re.metodeEvaluasi} (${re.jenisEvaluasi})`, ...s }));
+    } catch (e) { /* komponen ini gagal ditarik, lanjut ke komponen berikutnya */ }
+  }
+
+  if (semuaSoal.length === 0) {
+    outEl.innerHTML = '<span class="status-ok">✓ Tidak ada soal (Jalur C) tersimpan sama sekali untuk Mata Kuliah ini — bersih.</span>';
+    return;
+  }
+
+  let html = `<span class="status-bad">Ditemukan ${semuaSoal.length} soal tersimpan (Jalur C)</span>` +
+    `<table class="tabelEdit" style="margin-top:8px"><thead><tr><th>Komponen</th><th>Nomor</th><th>Label</th><th>Jenis</th><th>Skor Maks</th><th>soalId</th></tr></thead><tbody>`;
+  semuaSoal.forEach(s => {
+    html += `<tr><td>${escapeHtml(s.komponen)}</td><td>${escapeHtml(s.nomor)}</td><td>${escapeHtml(s.label || '-')}</td><td>${escapeHtml(s.jenisUnit)}</td><td>${s.skorMaksimal}</td>` +
+      `<td class="selUuid" title="klik utk copy" onclick="copyChip('${s.id}')">${s.id}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  outEl.innerHTML = html;
+}
+
+// ===== 10. Reset Nilai (Dev/Testing) =====
+let pesertaResetNilai = []; // [{rincianKrsId, nim, nama}]
+
+function getPesertaKelasResetNilai() {
+  const kelasId = val('resetnilai_kelasId');
+  if (!kelasId) { alert('Pilih Kelas Kuliah dulu.'); return; }
+  panggil('GET', `/dosen/kelas/${kelasId}/nilai`, undefined, 'out_resetnilai').then(json => {
+    const data = json?.data;
+    if (!data || !Array.isArray(data.tabel)) return;
+    pesertaResetNilai = data.tabel.map(x => ({ rincianKrsId: x.rincianKrsId, nim: x.nim, nama: x.nama }));
+    renderTabelResetNilai();
+  });
+}
+
+function renderTabelResetNilai() {
+  const el = document.getElementById('tabelResetNilaiContainer');
+  if (pesertaResetNilai.length === 0) { el.textContent = '(tidak ada peserta, atau belum GET)'; return; }
+  let html = `<table class="tabelEdit"><thead><tr><th style="width:36px"></th><th>NIM</th><th>Nama</th></tr></thead><tbody>`;
+  pesertaResetNilai.forEach(p => {
+    html += `<tr><td><input type="checkbox" class="chk-reset-nilai" value="${p.rincianKrsId}"></td><td>${escapeHtml(p.nim)}</td><td>${escapeHtml(p.nama)}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
+
+function resetNilaiTerpilih() {
+  const kelasId = val('resetnilai_kelasId');
+  const dicentang = [...document.querySelectorAll('.chk-reset-nilai:checked')].map(c => c.value);
+  if (dicentang.length === 0) { alert('Centang minimal 1 mahasiswa dulu.'); return; }
+  if (!confirm(`Yakin reset nilai ${dicentang.length} mahasiswa terpilih? Ini beneran menghapus data, tidak bisa dibatalkan.`)) return;
+  panggil('POST', `/kaprodi/kelas/${kelasId}/nilai/reset-beberapa`, { rincianKrsIds: dicentang }, 'out_resetnilai')
+    .then(() => getPesertaKelasResetNilai());
+}
+
+function resetNilaiSemuaKelas() {
+  const kelasId = val('resetnilai_kelasId');
+  if (!kelasId) { alert('Pilih Kelas Kuliah dulu.'); return; }
+  if (!confirm('Yakin reset SEMUA nilai mahasiswa di kelas ini? Ini beneran menghapus data, tidak bisa dibatalkan.')) return;
+  panggil('DELETE', `/kaprodi/kelas/${kelasId}/nilai/reset-semua`, undefined, 'out_resetnilai')
+    .then(() => getPesertaKelasResetNilai());
+}
+</script>
+
+</body>
+</html>

@@ -6,7 +6,8 @@ export interface GraduateProfileData {
   kode: string;
   profil: string;
   deskripsi: string;
-  profesi: string;
+  deskripsiEn?: string;
+  profesi?: string;
 }
 
 export interface GraduateProfilePayload {
@@ -14,7 +15,8 @@ export interface GraduateProfilePayload {
   kode: string;
   profil: string;
   deskripsi: string;
-  profesi: string;
+  deskripsiEn?: string;
+  profesi?: string;
 }
 
 export function getGraduateProfileData(obeId: string) {

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Edit, Sparkles, AlertCircle, Search } from "lucide-react";
+import { ArrowLeft, Save, Edit, AlertCircle, Search } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
-import { getCplCpmkCourse } from "../../../hooks/academic/useCplCpmkCourse";
+import { getPemetaanCplMk, useSavePemetaanCplMk } from "../../../hooks/academic/useObePemetaanCplMk";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -15,8 +15,20 @@ export default function ObePemetaanCpl() {
   // Fetch Course Data
   const { data: courseDetail, isLoading: isCourseLoading, error: courseError } = getCourseDataById(mataKuliahId || "");
 
-  // Fetch CPL mapped to this course
-  const { data: cplCpmkData, isLoading: isCplLoading, error: cplError } = getCplCpmkCourse(mataKuliahId || "");
+  // Fetch CPL list + mapped status for this course
+  const { data: cplMkData, isLoading: isCplLoading } = getPemetaanCplMk(mataKuliahId || "");
+  const saveMutation = useSavePemetaanCplMk();
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const daftarCpl = cplMkData?.daftarCpl || [];
+
+  useEffect(() => {
+    setCheckedIds(new Set(daftarCpl.filter((c) => c.isMapped).map((c) => c.id)));
+  }, [cplMkData]);
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.obeManagement.obeManagement);
@@ -44,7 +56,31 @@ export default function ObePemetaanCpl() {
     );
   }
 
-  const cplList = cplCpmkData?.capaianPembelajaranLulusan || [];
+  const toggleCpl = (cplId: string, checked: boolean) => {
+    setCheckedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(cplId);
+      else next.delete(cplId);
+      return next;
+    });
+  };
+
+  const handleSave = () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    saveMutation.mutate(
+      { mataKuliahId: mataKuliahId!, cplIds: Array.from(checkedIds) },
+      {
+        onSuccess: () => {
+          setSuccessMessage("Pemetaan CPL berhasil disimpan.");
+          setIsEditMode(false);
+        },
+        onError: (error: any) => {
+          setErrorMessage(error?.response?.data?.message || "Gagal menyimpan pemetaan CPL.");
+        },
+      }
+    );
+  };
 
   return (
     <MainLayout isGreeting={false} titlePage="Pemetaan CPL">
@@ -84,12 +120,22 @@ export default function ObePemetaanCpl() {
               >
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
-              <button className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
-                <Edit size={16} /> Ubah Data
-              </button>
-              <button className="bg-indigo-600 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
-                <Sparkles size={16} /> Generate AI
-              </button>
+              {!isEditMode ? (
+                <button
+                  onClick={() => setIsEditMode(true)}
+                  className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
+                >
+                  <Edit size={16} /> Ubah Data
+                </button>
+              ) : (
+                <button
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending}
+                  className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50"
+                >
+                  <Save size={16} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -128,11 +174,15 @@ export default function ObePemetaanCpl() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#00c0ef]">Tahun Kurikulum</span>
-                    <span className="text-gray-800">Tahun {courseDetail.tahunKurikulum || "2025"}</span>
+                    <span className="text-gray-800">
+                      Tahun {typeof courseDetail.tahunKurikulum === "object" ? courseDetail.tahunKurikulum?.tahun : (courseDetail.tahunKurikulum || "2025")}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#00c0ef]">Unit Pengampu</span>
-                    <span className="text-gray-800">{courseDetail.programStudi || "-"}</span>
+                    <span className="text-gray-800">
+                      {typeof courseDetail.programStudi === "object" ? courseDetail.programStudi?.nama : (courseDetail.programStudi || "-")}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -140,10 +190,20 @@ export default function ObePemetaanCpl() {
               {/* Alert Info */}
               <div className="bg-[#fff7e6] border border-[#ffe0b2] text-[#e65100] px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                <p>Anda masih dapat menyesuaikan CPL sesuai kebutuhan Anda.</p>
+                <p>
+                  {isEditMode
+                    ? "Centang CPL yang berlaku untuk mata kuliah ini, lalu klik Simpan. Menyimpan akan menggantikan seluruh daftar CPL yang terpetakan sebelumnya."
+                    : "Klik \"Ubah Data\" untuk menyesuaikan CPL yang dipetakan ke mata kuliah ini."}
+                </p>
               </div>
+              {errorMessage && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>
+              )}
+              {successMessage && (
+                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">{successMessage}</div>
+              )}
 
-              {/* CPL Table */}
+              {/* CPL List */}
               <div className="overflow-x-auto border border-gray-200 rounded-sm">
                 <table className="min-w-full bg-white border-collapse">
                   <thead>
@@ -151,27 +211,44 @@ export default function ObePemetaanCpl() {
                       <th className="p-3 border-b border-gray-300 w-16 text-center">No.</th>
                       <th className="p-3 border-b border-gray-300 w-32">Kode CPL</th>
                       <th className="p-3 border-b border-gray-300">Deskripsi Capaian Pembelajaran Lulusan (CPL)</th>
+                      {isEditMode && <th className="p-3 border-b border-gray-300 w-24 text-center">Dipetakan</th>}
                     </tr>
                   </thead>
                   <tbody className="text-sm text-gray-700">
-                    {cplList.length > 0 ? (
-                      cplList.map((cpl, index) => (
+                    {(isEditMode ? daftarCpl : daftarCpl.filter((c) => checkedIds.has(c.id))).length > 0 ? (
+                      (isEditMode ? daftarCpl : daftarCpl.filter((c) => checkedIds.has(c.id))).map((cpl, index) => (
                         <tr key={cpl.id || index} className="border-b border-gray-200 hover:bg-gray-50">
                           <td className="p-3 text-center">{index + 1}</td>
-                          <td className="p-3 font-semibold">{cpl.kodeCpl || "-"}</td>
-                          <td className="p-3 text-justify">{cpl.deskripsiCpl || "-"}</td>
+                          <td className="p-3 font-semibold">{cpl.kode || "-"}</td>
+                          <td className="p-3 text-justify">{cpl.deskripsi || "-"}</td>
+                          {isEditMode ? (
+                            <td className="p-3 text-center">
+                              <input
+                                type="checkbox"
+                                checked={checkedIds.has(cpl.id)}
+                                onChange={(e) => toggleCpl(cpl.id, e.target.checked)}
+                                className="w-4 h-4"
+                              />
+                            </td>
+                          ) : null}
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={3} className="p-6 text-center text-gray-500 italic">
-                          Belum ada data Pemetaan CPL.
+                        <td colSpan={isEditMode ? 4 : 3} className="p-6 text-center text-gray-500 italic">
+                          Belum ada data CPL. Tambahkan CPL pada level OBE terlebih dahulu.
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
               </div>
+
+              {!isEditMode && (
+                <p className="mt-2 text-xs text-gray-500">
+                  {checkedIds.size} dari {daftarCpl.length} CPL terpetakan ke mata kuliah ini.
+                </p>
+              )}
 
             </div>
           </div>

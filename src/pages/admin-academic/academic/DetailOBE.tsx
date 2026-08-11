@@ -91,6 +91,7 @@ const DetailOBE: React.FC = () => {
       profil: "",
       profesi: "",
       deskripsi: "",
+      deskripsiEn: "",
     });
     setErrorMessage("");
   };
@@ -99,14 +100,13 @@ const DetailOBE: React.FC = () => {
     return !!(
       currentData?.kode?.trim() &&
       currentData?.profil?.trim() &&
-      currentData?.profesi?.trim() &&
       currentData?.deskripsi?.trim()
     );
   };
 
   const handleSave = async () => {
     if (!currentData || !isFormValid()) {
-      setErrorMessage("Semua kolom harus diisi.");
+      setErrorMessage("Kode, Profil Lulusan, dan Deskripsi harus diisi.");
       return;
     }
 
@@ -116,8 +116,9 @@ const DetailOBE: React.FC = () => {
       siakObeId: id!,
       kode: currentData.kode.trim(),
       profil: currentData.profil.trim(),
-      profesi: currentData.profesi.trim(),
       deskripsi: currentData.deskripsi.trim(),
+      ...(currentData.profesi?.trim() ? { profesi: currentData.profesi.trim() } : {}),
+      ...(currentData.deskripsiEn?.trim() ? { deskripsiEn: currentData.deskripsiEn.trim() } : {}),
     };
 
     const onSuccessCallback = () => {
@@ -137,16 +138,12 @@ const DetailOBE: React.FC = () => {
     };
 
     if (isEditing && currentData.id) {
+      const { siakObeId, ...updateData } = dataToSave;
       updateMutation.mutate(
         {
           id: currentData.id,
           obeId: id!,
-          data: {
-            kode: dataToSave.kode,
-            profil: dataToSave.profil,
-            profesi: dataToSave.profesi,
-            deskripsi: dataToSave.deskripsi,
-          },
+          data: updateData,
         },
         {
           onSuccess: onSuccessCallback,
@@ -307,6 +304,7 @@ const DetailOBE: React.FC = () => {
                   "Profil Lulusan",
                   "Profesi",
                   "Deskripsi",
+                  "Deskripsi (EN)",
                   "Aksi",
                 ]}
                 error="Data tidak ditemukan."

@@ -57,6 +57,14 @@ import RpsCourse from "./pages/admin-academic/academic/RpsCourse";
 import {OBEManagement} from "./pages/admin-academic/academic/OBEManagement";
 import GraduateProfile from "./pages/admin-academic/academic/GraduateProfile";
 import ObeCpl from "./pages/admin-academic/academic/ObeCpl";
+import ObePlCplMapping from "./pages/admin-academic/academic/ObePlCplMapping";
+import ObeInputNilaiKelas from "./pages/admin-academic/academic/ObeInputNilaiKelas";
+import ObeSoalKomponen from "./pages/admin-academic/academic/ObeSoalKomponen";
+import ObeInputNilaiSoal from "./pages/admin-academic/academic/ObeInputNilaiSoal";
+import ObeIntegrasiCbt from "./pages/admin-academic/academic/ObeIntegrasiCbt";
+import ObeMonitoring from "./pages/admin-academic/academic/ObeMonitoring";
+import ObeCekSoal from "./pages/admin-academic/academic/ObeCekSoal";
+import ObeResetNilai from "./pages/admin-academic/academic/ObeResetNilai";
 import ObeCpmk from "./pages/admin-academic/academic/ObeCpmk";
 import ObeCpmkMatkul from "./pages/admin-academic/academic/ObeCpmkMatkul";
 import ObePemetaanCpl from "./pages/admin-academic/academic/ObePemetaanCpl";
@@ -326,6 +334,11 @@ export default function App() {
       />
 
       <Route
+        path={`${AdminAcademicRoute.obeManagement.plToCpl}/:id`}
+        element={<ObePlCplMapping />}
+      />
+
+      <Route
         path={`${AdminAcademicRoute.obeManagement.cpmk}/:id`}
         element={<ObeCpmk />}
       />
@@ -355,6 +368,11 @@ export default function App() {
         element={<ObeRencanaPembelajaran />}
       />
 
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.rencanaEvaluasi}/:obeId/:mataKuliahId`}
+        element={<RencanaEvaluasi />}
+      />
+
       {/* Route untuk admin akademik - OBE Management (Sub-Dropdown) */}
       <Route
         path={String(AdminAcademicRoute.obeManagement.manajemenCapaian)}
@@ -375,6 +393,36 @@ export default function App() {
       <Route
         path={String(AdminAcademicRoute.obeManagement.tahunKurikulum)}
         element={<ObeTahunKurikulum />}
+      />
+
+      {/* Route untuk admin akademik - Penilaian & Monitoring OBE */}
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.nilaiKelas)}
+        element={<ObeInputNilaiKelas />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.soalKomponen)}
+        element={<ObeSoalKomponen />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.nilaiSoal)}
+        element={<ObeInputNilaiSoal />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.integrasiCbt)}
+        element={<ObeIntegrasiCbt />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.monitoring)}
+        element={<ObeMonitoring />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.cekSoal)}
+        element={<ObeCekSoal />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.resetNilai)}
+        element={<ObeResetNilai />}
       />
 
       {/* Route untuk admin akademik - Kurikulum Prodi */}
