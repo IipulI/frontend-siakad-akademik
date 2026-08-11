@@ -14,8 +14,18 @@ const navItems = [
     hasDropdown: false,
   },
   { id: "2", name: "Portal", dropdownKey: "portal", hasDropdown: true },
-  { id: "3", name: "Perkuliahan", dropdownKey: "perkuliahan", hasDropdown: true },
-  { id: "4", name: "Data Pelengkap", dropdownKey: "dataPelengkap", hasDropdown: true },
+  {
+    id: "3",
+    name: "Perkuliahan",
+    dropdownKey: "perkuliahan",
+    hasDropdown: true,
+  },
+  {
+    id: "4",
+    name: "Data Pelengkap",
+    dropdownKey: "dataPelengkap",
+    hasDropdown: true,
+  },
   { id: "5", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
   // Menu berisi item lama yang belum masuk ke struktur menu baru
   { id: "6", name: "Lainnya", dropdownKey: "lainnya", hasDropdown: true },
@@ -322,7 +332,7 @@ const ProfileDropdown = ({ userName, profileData, onClose }) => {
       alert("Terjadi kesalahan saat logout. Silakan coba lagi.");
     } finally {
       // Pastikan redirect selalu terjadi, terlepas dari sukses/gagalnya proses logout
-      navigate("/"); // Ganti ini menjadi '/login' jika halaman login Anda ada di sana
+      window.location.replace("http://103.158.196.79/eportal"); // Ganti ini menjadi '/login' jika halaman login Anda ada di sana
       // Atau '/' jika itu root halaman login
       onClose(); // Tutup dropdown
     }
