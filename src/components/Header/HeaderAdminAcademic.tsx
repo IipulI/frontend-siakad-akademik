@@ -64,9 +64,76 @@ const dropdownMenus = {
             to: String(AdminAcademicRoute.prodiCurriculum),
           },
           {
+            // Item dengan sub-menu level 3 (gabungan Manajemen OBE + Penilaian & Monitoring OBE)
             title: "Manajemen OBE",
-            description: "Managemen OBE",
-            to: String(AdminAcademicRoute.obeManagement.obeManagement),
+            description: "Manajemen OBE",
+            children: [
+              {
+                title: "Mata Kuliah",
+                description: "Manajemen Mata Kuliah",
+                to: String(AdminAcademicRoute.obeManagement.obeManagement),
+              },
+              {
+                title: "Kurikulum Prodi (OBE)",
+                description: "Kurikulum Program Studi",
+                to: String(AdminAcademicRoute.obeManagement.kurikulumProdi),
+              },
+              {
+                title: "Template Evaluasi",
+                description: "Template Evaluasi",
+                to: String(AdminAcademicRoute.obeManagement.templateEvaluasi),
+              },
+              {
+                title: "Manajemen Capaian",
+                description: "Manajemen OBE",
+                to: String(AdminAcademicRoute.obeManagement.manajemenCapaian),
+              },
+              {
+                title: "Set Grup MK Wajib Pilihan",
+                description: "Set Grup MK Wajib Pilihan",
+                to: String(AdminAcademicRoute.obeManagement.setGrupMk),
+              },
+              {
+                title: "Tahun Kurikulum (OBE)",
+                description: "Tahun Kurikulum",
+                to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
+              },
+              {
+                title: "Input Nilai per Komponen (Jalur A)",
+                description: "Input Nilai per Komponen",
+                to: String(AdminAcademicRoute.obeManagement.nilaiKelas),
+              },
+              {
+                title: "Soal per Komponen (Jalur C)",
+                description: "Soal per Komponen Evaluasi",
+                to: String(AdminAcademicRoute.obeManagement.soalKomponen),
+              },
+              {
+                title: "Input Nilai per Soal (Jalur C)",
+                description: "Input Nilai per Soal",
+                to: String(AdminAcademicRoute.obeManagement.nilaiSoal),
+              },
+              {
+                title: "Integrasi CBT (Jalur D)",
+                description: "Integrasi CBT",
+                to: String(AdminAcademicRoute.obeManagement.integrasiCbt),
+              },
+              {
+                title: "Monitoring & Export PDF",
+                description: "Monitoring & Export PDF",
+                to: String(AdminAcademicRoute.obeManagement.monitoring),
+              },
+              {
+                title: "Cek Soal (QA)",
+                description: "Cek Soal yang Sudah Ada",
+                to: String(AdminAcademicRoute.obeManagement.cekSoal),
+              },
+              {
+                title: "Reset Nilai",
+                description: "Reset Nilai (Dev/Admin Tool)",
+                to: String(AdminAcademicRoute.obeManagement.resetNilai),
+              },
+            ],
           },
           {
             title: "Tahun Kurikulum",
@@ -152,50 +219,6 @@ const dropdownMenus = {
         ],
       },
       {
-        icon: "icon_annon.png",
-        title: "Manajemen OBE",
-        description: "Manajemen OBE",
-        to: String(AdminAcademicRoute.obeManagement.obeManagement),
-        subItems: [
-          {
-            icon: "icon_annon.png",
-            title: "Mata Kuliah",
-            description: "Manajemen Mata Kuliah",
-            to: String(AdminAcademicRoute.obeManagement.obeManagement), // Original OBEManagement (mata kuliah list)
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Kurikulum Prodi",
-            description: "Kurikulum Program Studi",
-            to: String(AdminAcademicRoute.obeManagement.kurikulumProdi),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Template Evaluasi",
-            description: "Template Evaluasi",
-            to: String(AdminAcademicRoute.obeManagement.templateEvaluasi),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Manajemen Capaian",
-            description: "Manajemen OBE",
-            to: String(AdminAcademicRoute.obeManagement.manajemenCapaian),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Set Grup MK Wajib Pilihan",
-            description: "Set Grup MK Wajib Pilihan",
-            to: String(AdminAcademicRoute.obeManagement.setGrupMk),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Tahun Kurikulum",
-            description: "Tahun Kurikulum",
-            to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
-          },
-        ],
-      },
-      {
         // Item dengan sub-menu level 2
         title: "Perkuliahan",
         description: "Data Pelengkap Perkuliahan",
@@ -273,56 +296,6 @@ const dropdownMenus = {
             title: "Kebutuhan Khusus",
             description: "Manajemen Kebutuhan Khusus",
             to: String(AdminAcademicRoute.studentSetting.specialNeeds),
-          },
-        ],
-      },
-      {
-        icon: "icon_annon.png",
-        title: "Penilaian & Monitoring OBE",
-        description: "Penilaian OBE",
-        to: String(AdminAcademicRoute.obeManagement.nilaiKelas),
-        subItems: [
-          {
-            icon: "icon_annon.png",
-            title: "Input Nilai per Komponen (Jalur A)",
-            description: "Input Nilai per Komponen",
-            to: String(AdminAcademicRoute.obeManagement.nilaiKelas),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Soal per Komponen (Jalur C)",
-            description: "Soal per Komponen Evaluasi",
-            to: String(AdminAcademicRoute.obeManagement.soalKomponen),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Input Nilai per Soal (Jalur C)",
-            description: "Input Nilai per Soal",
-            to: String(AdminAcademicRoute.obeManagement.nilaiSoal),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Integrasi CBT (Jalur D)",
-            description: "Integrasi CBT",
-            to: String(AdminAcademicRoute.obeManagement.integrasiCbt),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Monitoring & Export PDF",
-            description: "Monitoring & Export PDF",
-            to: String(AdminAcademicRoute.obeManagement.monitoring),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Cek Soal (QA)",
-            description: "Cek Soal yang Sudah Ada",
-            to: String(AdminAcademicRoute.obeManagement.cekSoal),
-          },
-          {
-            icon: "icon_annon.png",
-            title: "Reset Nilai",
-            description: "Reset Nilai (Dev/Admin Tool)",
-            to: String(AdminAcademicRoute.obeManagement.resetNilai),
           },
         ],
       },

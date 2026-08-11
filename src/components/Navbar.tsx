@@ -13,7 +13,8 @@ interface SubItem {
 interface DropdownSubItemProps {
   title: string;
   description: string;
-  to: string;
+  to?: string;
+  children?: DropdownSubItemProps[];
 }
 
 interface DropdownMenuItemData {
@@ -65,21 +66,55 @@ const SubDropdownPanel = ({
   </div>
 );
 
-// ─── Sub-menu item for children (level 2, no icon) ─────────────────────────────
+// ─── Sub-menu item for children (level 2+, no icon, recursive) ─────────────────
 
-const DropdownSubMenuItem = ({ title, description, to }: DropdownSubItemProps) => (
-  <Link
-    to={to}
-    className="px-3 py-2.5 text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between group"
-  >
-    <div>
-      <p className="font-semibold text-sm">{title}</p>
-      <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
-        {description}
-      </p>
-    </div>
-  </Link>
-);
+const DropdownSubMenuItem = ({ title, description, to, children }: DropdownSubItemProps) => {
+  const hasChildren = children && children.length > 0;
+
+  if (hasChildren) {
+    // Nested sub-dropdown: opens further to the right on hover
+    return (
+      <div className="relative group/nested">
+        <div className="px-3 py-2.5 text-sm flex items-center justify-between cursor-default group-hover/nested:bg-[#6FCF97] group-hover/nested:rounded-sm">
+          <div>
+            <p className="font-semibold text-sm">{title}</p>
+            <p className="text-xs font-extralight text-gray-300 group-hover/nested:text-white">
+              {description}
+            </p>
+          </div>
+          <svg
+            className="w-4 h-4 ml-1 shrink-0 transition-transform duration-200 -rotate-90"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+
+        <div className="absolute left-full top-0 ml-1 w-72 max-h-[70vh] overflow-y-auto bg-primary-green rounded-md shadow-lg px-2 pt-3 pb-3 z-[70] hidden group-hover/nested:block">
+          {children!.map((child, index) => (
+            <DropdownSubMenuItem key={index} {...child} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      to={to || "#"}
+      className="px-3 py-2.5 text-sm hover:bg-[#6FCF97] hover:rounded-sm flex items-center justify-between group"
+    >
+      <div>
+        <p className="font-semibold text-sm">{title}</p>
+        <p className="text-xs font-extralight text-gray-300 group-hover:text-white">
+          {description}
+        </p>
+      </div>
+    </Link>
+  );
+};
 
 // ─── Single dropdown menu item ─────────────────────────────────────────────────
 
@@ -156,15 +191,10 @@ const DropdownMenuItem = ({
           </svg>
         </div>
 
-        {/* Sub-menu (level 2) */}
+        {/* Sub-menu (level 2+) — overflow must stay visible so nested flyouts (level 3+) aren't clipped */}
         <div className="absolute left-full top-0 ml-1 w-72 bg-primary-green rounded-md shadow-lg px-2 pt-3 pb-3 z-[60] hidden group-hover/subitem:block">
           {children!.map((subItem, index) => (
-            <DropdownSubMenuItem
-              key={index}
-              title={subItem.title}
-              description={subItem.description}
-              to={subItem.to}
-            />
+            <DropdownSubMenuItem key={index} {...subItem} />
           ))}
         </div>
       </div>
