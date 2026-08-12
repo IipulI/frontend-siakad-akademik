@@ -9,7 +9,7 @@ import SidebarObeCourse from "../../../components/admin-academic/academic/obe/Si
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 interface RencanaPembelajaranResponse {
-  header: {
+  mataKuliah: {
     id: string;
     kode: string;
     nama: string;
@@ -82,7 +82,7 @@ export default function ObeRencanaPembelajaran() {
     );
   }
 
-  if (error || !data) {
+  if (error || !data?.mataKuliah) {
     return (
       <MainLayout isGreeting={false} titlePage="Rencana Pembelajaran">
         <div className="p-8 text-center text-red-500">
@@ -92,7 +92,7 @@ export default function ObeRencanaPembelajaran() {
     );
   }
 
-  const { header, daftarPeriode, rencanaPembelajaran } = data;
+  const { mataKuliah: header, daftarPeriode = [], rencanaPembelajaran = [] } = data;
 
   return (
     <MainLayout isGreeting={false} titlePage="Rencana Pembelajaran">

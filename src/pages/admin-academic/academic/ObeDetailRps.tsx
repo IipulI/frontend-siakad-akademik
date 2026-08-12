@@ -82,7 +82,7 @@ export default function ObeDetailRps() {
     );
   }
 
-  if (error || !data) {
+  if (error || !data?.mataKuliah) {
     return (
       <MainLayout isGreeting={false} titlePage="Detail RPS">
         <div className="p-8 text-center text-red-500">
@@ -92,7 +92,7 @@ export default function ObeDetailRps() {
     );
   }
 
-  const { mataKuliah, daftarPeriode, rpsData } = data;
+  const { mataKuliah, daftarPeriode = [], rpsData } = data;
 
   return (
     <MainLayout isGreeting={false} titlePage="Detail RPS">

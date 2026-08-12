@@ -109,7 +109,7 @@ export default function ObeInputNilaiKelas() {
                 <option value="">-- Pilih Kelas Kuliah --</option>
                 {filteredKelas.map((k: any) => (
                   <option key={k.id} value={k.id}>
-                    {k.mataKuliah?.namaMataKuliah || k.nama} - {k.nama} ({k.periodeAkademik})
+                    {k.mataKuliah?.namaMataKuliah || k.nama} - {k.nama} ({k.periodeAkademik?.nama || k.periodeAkademik})
                   </option>
                 ))}
               </select>
