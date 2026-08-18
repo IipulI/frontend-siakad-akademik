@@ -66,54 +66,32 @@ const dropdownMenus = {
           {
             title: "Mata Kuliah",
             description: "Manajemen Mata Kuliah",
-            to: String(AdminAcademicRoute.courseManagement.courseManagement),
+            to: String(AdminAcademicRoute.obeManagement.obeManagement),
           },
           {
-            title: "Kurikulum Prodi",
+            title: "Kurikulum Prodi (OBE)",
             description: "Kurikulum Program Studi",
-            to: String(AdminAcademicRoute.prodiCurriculum),
+            to: String(AdminAcademicRoute.obeManagement.kurikulumProdi),
           },
           {
-            // Item dengan sub-menu level 3 (gabungan Manajemen OBE + Penilaian & Monitoring OBE)
-            title: "Manajemen OBE",
+            title: "Template Evaluasi",
+            description: "Template Evaluasi",
+            to: String(AdminAcademicRoute.obeManagement.templateEvaluasi),
+          },
+          {
+            title: "Manajemen Capaian",
             description: "Manajemen OBE",
-            children: [
-              {
-                title: "Mata Kuliah",
-                description: "Manajemen Mata Kuliah",
-                to: String(AdminAcademicRoute.obeManagement.obeManagement),
-              },
-              {
-                title: "Kurikulum Prodi (OBE)",
-                description: "Kurikulum Program Studi",
-                to: String(AdminAcademicRoute.obeManagement.kurikulumProdi),
-              },
-              {
-                title: "Template Evaluasi",
-                description: "Template Evaluasi",
-                to: String(AdminAcademicRoute.obeManagement.templateEvaluasi),
-              },
-              {
-                title: "Manajemen Capaian",
-                description: "Manajemen OBE",
-                to: String(AdminAcademicRoute.obeManagement.manajemenCapaian),
-              },
-              {
-                title: "Set Grup MK Wajib Pilihan",
-                description: "Set Grup MK Wajib Pilihan",
-                to: String(AdminAcademicRoute.obeManagement.setGrupMk),
-              },
-              {
-                title: "Tahun Kurikulum (OBE)",
-                description: "Tahun Kurikulum",
-                to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
-              },
-            ],
+            to: String(AdminAcademicRoute.obeManagement.manajemenCapaian),
           },
           {
-            title: "Tahun Kurikulum",
+            title: "Set Grup MK Wajib Pilihan",
+            description: "Set Grup MK Wajib Pilihan",
+            to: String(AdminAcademicRoute.obeManagement.setGrupMk),
+          },
+          {
+            title: "Tahun Kurikulum (OBE)",
             description: "Tahun Kurikulum",
-            to: String(AdminAcademicRoute.curriculumYear),
+            to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
           },
         ],
       },

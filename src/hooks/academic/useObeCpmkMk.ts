@@ -36,6 +36,9 @@ export interface ObePemetaanCpmkData {
   cpmkData: ObeCpmkItem[];
   levelPemetaan: "CPMK" | "Sub-CPMK";
   metodePembobotan: "Manual" | "Otomatis";
+  // Prodi mata kuliah ini belum tentu di-set OBE utk tahun kurikulumnya --
+  // kalau false, bagian pemetaan ditampilkan tapi dinonaktifkan (lihat ObeCpmkMatkul.tsx)
+  isObe: boolean;
 }
 
 export function getPemetaanCpmk(mataKuliahId: string) {
@@ -49,6 +52,7 @@ export function getPemetaanCpmk(mataKuliahId: string) {
         cpmkData: (data.cpmkData || []) as ObeCpmkItem[],
         levelPemetaan: (data.mataKuliah?.levelPemetaan || "CPMK") as "CPMK" | "Sub-CPMK",
         metodePembobotan: (data.mataKuliah?.metodePembobotan || "Manual") as "Manual" | "Otomatis",
+        isObe: data.isObe !== false,
       } as ObePemetaanCpmkData;
     },
     enabled: !!mataKuliahId,

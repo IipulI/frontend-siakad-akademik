@@ -16,6 +16,7 @@ export function getPemetaanCplMk(mataKuliahId: string) {
       const data = response.data.data;
       return {
         daftarCpl: (data?.daftarCpl || []) as ObeCplMkItem[],
+        isObe: data?.isObe !== false,
       };
     },
     enabled: !!mataKuliahId,

@@ -54,6 +54,7 @@ import { useSimpanNilaiKomponenCbt } from "../../../hooks/useCbtManual";
 import { useResetNilaiBeberapa, useResetNilaiSemua } from "../../../hooks/academic/useObeResetNilai";
 import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import SearchableSelect from "../../../components/admin-academic/SearchableSelect";
 import DateFormatter from "../../../helpers/DateFormatter";
 
 interface ClassAttendant {
@@ -1589,6 +1590,14 @@ const InputNilaiCbtModal = ({
                     </span>
                   </div>
 
+                  {opsiCpmk.length === 0 && (
+                    <div className="p-3 bg-amber-50 border border-amber-300 text-amber-800 rounded text-xs">
+                      Komponen evaluasi ini belum punya bobot CPMK/Sub-CPMK di Rencana Evaluasi (kolom CPMK di
+                      Komposisi Nilai Kelas masih kosong "-"), jadi belum bisa ditambahkan soal/unit. Isi dulu bobot
+                      CPMK-nya lewat menu Rencana Evaluasi mata kuliah ini.
+                    </div>
+                  )}
+
                   {units.map((u, idx) => (
                     <div key={u.localId} className="border border-gray-200 rounded-md p-2 space-y-1.5">
                       <div className="flex items-center justify-between">
@@ -2133,19 +2142,16 @@ const AddStudentModal = ({
           <label htmlFor="mahasiswa" className="block text-sm font-medium mb-1">
             Mahasiswa
           </label>
-          <select
-            id="mahasiswa"
+          <SearchableSelect
             value={selectedStudentId}
-            onChange={(e) => setSelectedStudentId(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-primary-green"
-          >
-            <option value="">-- Cari Mahasiswa --</option>
-            {students.map((student) => (
-              <option key={student.id} value={student.id}>
-                {student.nama}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedStudentId}
+            placeholder="-- Cari Mahasiswa --"
+            searchPlaceholder="Cari NIM/nama mahasiswa..."
+            options={students.map((student) => ({
+              value: student.id,
+              label: student.npm ? `${student.npm} - ${student.nama}` : student.nama,
+            }))}
+          />
         </div>
 
         <div className="flex justify-between">

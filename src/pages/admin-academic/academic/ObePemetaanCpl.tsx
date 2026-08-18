@@ -27,6 +27,9 @@ export default function ObePemetaanCpl() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const daftarCpl = cplMkData?.daftarCpl || [];
+  // Prodi mata kuliah ini belum tentu di-set OBE utk tahun kurikulumnya --
+  // kalau belum, tombol edit/simpan dinonaktifkan (gak ada CPL yang bisa dipetakan).
+  const isObe = cplMkData?.isObe !== false;
 
   useEffect(() => {
     setCheckedIds(new Set(daftarCpl.filter((c) => c.isMapped).map((c) => c.id)));
@@ -125,7 +128,9 @@ export default function ObePemetaanCpl() {
               {!isEditMode ? (
                 <button
                   onClick={() => setIsEditMode(true)}
-                  className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
+                  disabled={!isObe}
+                  title={!isObe ? "Prodi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya" : undefined}
+                  className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Edit size={16} /> Ubah Data
                 </button>
@@ -191,14 +196,21 @@ export default function ObePemetaanCpl() {
               </div>
 
               {/* Alert Info */}
-              <div className="bg-[#fff7e6] border border-[#ffe0b2] text-[#e65100] px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
-                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                <p>
-                  {isEditMode
-                    ? "Centang CPL yang berlaku untuk mata kuliah ini, lalu klik Simpan. Menyimpan akan menggantikan seluruh daftar CPL yang terpetakan sebelumnya."
-                    : "Klik \"Ubah Data\" untuk menyesuaikan CPL yang dipetakan ke mata kuliah ini."}
-                </p>
-              </div>
+              {!isObe ? (
+                <div className="bg-gray-100 border border-gray-300 text-gray-600 px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
+                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <p>Program studi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya, jadi Pemetaan CPL dinonaktifkan. Atur dulu lewat menu Tahun Kurikulum &gt; Daftar Program Studi.</p>
+                </div>
+              ) : (
+                <div className="bg-[#fff7e6] border border-[#ffe0b2] text-[#e65100] px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
+                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <p>
+                    {isEditMode
+                      ? "Centang CPL yang berlaku untuk mata kuliah ini, lalu klik Simpan. Menyimpan akan menggantikan seluruh daftar CPL yang terpetakan sebelumnya."
+                      : "Klik \"Ubah Data\" untuk menyesuaikan CPL yang dipetakan ke mata kuliah ini."}
+                  </p>
+                </div>
+              )}
               {errorMessage && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>
               )}

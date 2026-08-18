@@ -47,6 +47,9 @@ export default function ObeCpmkMatkul() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const cplHeaders = mappingData?.cplHeaders || [];
+  // Prodi mata kuliah ini belum tentu di-set OBE utk tahun kurikulumnya --
+  // kalau belum, bagian pemetaan ditampilkan tapi dipudarkan & non-klik.
+  const isObe = mappingData?.isObe !== false;
 
   useEffect(() => {
     if (!mappingData) return;
@@ -345,8 +348,9 @@ export default function ObeCpmkMatkul() {
               </button>
               <button
                 onClick={handleSave}
-                disabled={saveMutation.isPending}
-                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50"
+                disabled={saveMutation.isPending || !isObe}
+                title={!isObe ? "Prodi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya" : undefined}
+                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save size={16} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
               </button>
@@ -393,6 +397,14 @@ export default function ObeCpmkMatkul() {
                 </div>
               </div>
 
+              {!isObe && (
+                <div className="mb-4 p-3 bg-gray-100 border border-gray-300 text-gray-600 rounded text-sm">
+                  Program studi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya, jadi Pemetaan CPMK di bawah dinonaktifkan.
+                  Atur dulu lewat menu Tahun Kurikulum &gt; Daftar Program Studi.
+                </div>
+              )}
+
+              <div className={!isObe ? "opacity-50 pointer-events-none select-none" : ""}>
               <div className="flex flex-col md:flex-row gap-4 mb-4">
                 <div className="flex-1">
                   <label className="text-xs font-semibold text-gray-600 block mb-1">Level Pemetaan</label>
@@ -637,6 +649,7 @@ export default function ObeCpmkMatkul() {
               <button onClick={tambahCpmkRow} className="mt-3 bg-gray-200 border border-dashed border-gray-400 px-3 py-1.5 rounded text-sm flex items-center gap-1 hover:bg-gray-300">
                 <Plus size={14} /> Tambah CPMK
               </button>
+              </div>
             </div>
           </div>
         </div>

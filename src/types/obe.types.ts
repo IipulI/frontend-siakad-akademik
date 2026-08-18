@@ -32,6 +32,7 @@ export interface ObeFilters {
   tahunKurikulumId?: string;
   jenis?: string;
   search?: string;
+  searchBy?: "kode" | "nama";
 }
 
 export interface PaginatedResponse<T> {

@@ -5,6 +5,7 @@ import { getObe, getObeMataKuliah, getKelompokMataKuliah } from '../../../hooks/
 import { getProdi } from "../../../hooks/academic/useProdi";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { Pagination } from "../../../components/admin-academic/Pagination";
+import SearchableSelect from "../../../components/admin-academic/SearchableSelect";
 import { RefreshCw, Search, Plus, Trash2, Link2, Eye } from 'lucide-react';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +24,7 @@ export const OBEManagement: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [tempSearch, setTempSearch] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchField, setSearchField] = useState<"all" | "kode" | "nama">("all");
 
   // Queries
   const { data: prodiData = [], isLoading: isProdiLoading } = getProdi();
@@ -38,7 +40,8 @@ export const OBEManagement: React.FC = () => {
     tahunKurikulumId: selectedCurriculum === "all" ? undefined : selectedCurriculum,
     kelompokMataKuliahId: selectedKelompok === "all" ? undefined : selectedKelompok,
     search: searchTerm || undefined,
-  }), [currentPage, itemsPerPage, selectedProdi, selectedCurriculum, selectedKelompok, searchTerm]);
+    searchBy: searchTerm && searchField !== "all" ? searchField : undefined,
+  }), [currentPage, itemsPerPage, selectedProdi, selectedCurriculum, selectedKelompok, searchTerm, searchField]);
 
   const {
     data: coursesResponse,
@@ -48,12 +51,9 @@ export const OBEManagement: React.FC = () => {
   } = getObeMataKuliah(courseFilters);
 
   // Helpers
-  const handleCurriculumChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectedCurriculum(e.target.value); setCurrentPage(1); };
-  const handleProdiChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectedProdi(e.target.value); setCurrentPage(1); };
-  const handleJenisChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectedJenis(e.target.value); setCurrentPage(1); };
   const handleSearchSubmit = (e: React.FormEvent) => { e.preventDefault(); setSearchTerm(tempSearch); setCurrentPage(1); };
   const handleRefresh = () => {
-    setTempSearch(""); setSearchTerm(""); setSelectedCurriculum("all");
+    setTempSearch(""); setSearchTerm(""); setSearchField("all"); setSelectedCurriculum("all");
     setSelectedProdi("all"); setSelectedJenis("all"); setSelectedKelompok("all");
     setCurrentPage(1); refetchCourses();
   };
@@ -105,7 +105,8 @@ export const OBEManagement: React.FC = () => {
   const allCourses: any[] = Array.isArray(rawData) ? rawData : [];
 
   const totalRowsBackend =
-    coursesResponse?.data?.count
+    coursesResponse?.pagination?.totalItems
+    || coursesResponse?.data?.count
     || coursesResponse?.data?.data?.count
     || allCourses.length || 0;
 
@@ -130,56 +131,57 @@ export const OBEManagement: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
             <div className="flex items-center gap-4">
               <label className="text-sm font-semibold text-gray-700 w-36">Tahun Kurikulum</label>
-              <select
-                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                value={selectedCurriculum}
-                onChange={handleCurriculumChange}
-              >
-                <option value="all">-- Semua Tahun Kurikulum --</option>
-                {curriculumData.map((item) => (
-                  <option key={item.id} value={item.id}>{item.tahun}</option>
-                ))}
-              </select>
+              <div className="flex-1">
+                <SearchableSelect
+                  value={selectedCurriculum}
+                  onChange={(v) => { setSelectedCurriculum(v); setCurrentPage(1); }}
+                  placeholder="-- Semua Tahun Kurikulum --"
+                  searchPlaceholder="Cari tahun kurikulum..."
+                  options={[{ value: "all", label: "-- Semua Tahun Kurikulum --" }, ...curriculumData.map((item) => ({ value: item.id, label: item.tahun }))]}
+                />
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <label className="text-sm font-semibold text-gray-700 w-36">Jenis Mata Kuliah</label>
-              <select
-                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                value={selectedJenis}
-                onChange={handleJenisChange}
-              >
-                <option value="all">-- Semua Jenis Mata Kuliah --</option>
-                <option value="Kuliah">Kuliah</option>
-                <option value="Praktikum">Praktikum</option>
-                <option value="Praktik Lapangan">Praktik Lapangan</option>
-                <option value="Simulasi">Simulasi</option>
-              </select>
+              <div className="flex-1">
+                <SearchableSelect
+                  value={selectedJenis}
+                  onChange={(v) => { setSelectedJenis(v); setCurrentPage(1); }}
+                  placeholder="-- Semua Jenis Mata Kuliah --"
+                  searchPlaceholder="Cari jenis mata kuliah..."
+                  options={[
+                    { value: "all", label: "-- Semua Jenis Mata Kuliah --" },
+                    { value: "Kuliah", label: "Kuliah" },
+                    { value: "Praktikum", label: "Praktikum" },
+                    { value: "Praktik Lapangan", label: "Praktik Lapangan" },
+                    { value: "Simulasi", label: "Simulasi" },
+                  ]}
+                />
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <label className="text-sm font-semibold text-gray-700 w-36">Prodi Pengampu</label>
-              <select
-                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                value={selectedProdi}
-                onChange={handleProdiChange}
-              >
-                <option value="all">-- Semua Program Studi --</option>
-                {prodiData.map((item: any) => (
-                  <option key={item.id} value={item.id}>{item.nama || item.namaProgramStudi}</option>
-                ))}
-              </select>
+              <div className="flex-1">
+                <SearchableSelect
+                  value={selectedProdi}
+                  onChange={(v) => { setSelectedProdi(v); setCurrentPage(1); }}
+                  placeholder="-- Semua Program Studi --"
+                  searchPlaceholder="Cari program studi..."
+                  options={[{ value: "all", label: "-- Semua Program Studi --" }, ...prodiData.map((item: any) => ({ value: item.id, label: item.nama || item.namaProgramStudi }))]}
+                />
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <label className="text-sm font-semibold text-gray-700 w-36">Kelompok Mata Kuliah</label>
-              <select
-                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                value={selectedKelompok}
-                onChange={(e) => setSelectedKelompok(e.target.value)}
-              >
-                <option value="all">-- Semua Kelompok Mata Kuliah --</option>
-                {kelompokMataKuliahData.map((k: any) => (
-                  <option key={k.id} value={k.id}>{k.nama}</option>
-                ))}
-              </select>
+              <div className="flex-1">
+                <SearchableSelect
+                  value={selectedKelompok}
+                  onChange={(v) => { setSelectedKelompok(v); setCurrentPage(1); }}
+                  placeholder="-- Semua Kelompok Mata Kuliah --"
+                  searchPlaceholder="Cari kelompok mata kuliah..."
+                  options={[{ value: "all", label: "-- Semua Kelompok Mata Kuliah --" }, ...kelompokMataKuliahData.map((k: any) => ({ value: k.id, label: k.nama }))]}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -189,8 +191,14 @@ export const OBEManagement: React.FC = () => {
           {/* Action Row */}
           <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b border-gray-100 pb-4">
             <div className="flex items-center w-full md:w-auto gap-2">
-              <select className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600">
+              <select
+                value={searchField}
+                onChange={(e) => setSearchField(e.target.value as "all" | "kode" | "nama")}
+                className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
+              >
                 <option value="all">-- Semua --</option>
+                <option value="kode">Kode Mata Kuliah</option>
+                <option value="nama">Nama Mata Kuliah</option>
               </select>
               <div className="flex items-center">
                 <input

@@ -67,6 +67,18 @@ export function getMonitoring(jenis: MonitoringJenis, filters: MonitoringFilters
 
 const pdfPathFor = (jenis: MonitoringJenis) => (jenis === "transkrip-obe" ? "transkrip-obe" : `monitoring-${jenis}`);
 
+// Backend export PDF ngirim JSON (bukan PDF) kalau gagal (mis. "Data OBE tidak
+// ditemukan"), jadi kita coba baca pesannya dulu sebelum jatuh ke pesan generik.
+async function extractErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = await response.clone().json();
+    if (body?.message) return body.message as string;
+  } catch {
+    // bukan JSON, biarkan jatuh ke pesan generik di bawah
+  }
+  return `Gagal memuat PDF (status ${response.status})`;
+}
+
 export async function fetchMonitoringPdfBlobUrl(jenis: MonitoringJenis, filters: MonitoringFilters) {
   const token = localStorage.getItem("token");
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -80,7 +92,7 @@ export async function fetchMonitoringPdfBlobUrl(jenis: MonitoringJenis, filters:
   });
 
   if (!response.ok) {
-    throw new Error(`Gagal mengambil PDF (status ${response.status})`);
+    throw new Error(await extractErrorMessage(response));
   }
 
   const blob = await response.blob();
@@ -100,7 +112,7 @@ export async function exportMonitoringPdf(jenis: MonitoringJenis, filters: Monit
   });
 
   if (!response.ok) {
-    throw new Error(`Gagal mengunduh PDF (status ${response.status})`);
+    throw new Error(await extractErrorMessage(response));
   }
 
   const blob = await response.blob();

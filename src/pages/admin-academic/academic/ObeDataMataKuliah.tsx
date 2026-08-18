@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Search, Edit, Plus, Check, X } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { getObeMataKuliahDetail } from "../../../hooks/academic/useObeManagement";
+import { getObeMataKuliahDetail, getObeMataKuliah } from "../../../hooks/academic/useObeManagement";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
@@ -14,6 +14,45 @@ export default function ObeDataMataKuliah() {
 
   const { data: courseDetail, isLoading, error } = getObeMataKuliahDetail(mataKuliahId || "");
   useSetBreadcrumbLabel(mataKuliahId, courseDetail?.namaMataKuliahInd);
+
+  // Cari & pindah ke mata kuliah lain tanpa harus balik ke daftar dulu
+  const [searchText, setSearchText] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const searchBoxRef = useRef<HTMLDivElement>(null);
+
+  const { data: searchResponse, isFetching: isSearching } = getObeMataKuliah({
+    page: 1,
+    limit: 10,
+    search: searchTerm || undefined,
+  });
+  const searchResults: any[] = searchTerm
+    ? (searchResponse?.data?.rows
+        || searchResponse?.data?.data?.rows
+        || (Array.isArray(searchResponse?.data) ? searchResponse.data : [])
+        || [])
+    : [];
+
+  useEffect(() => {
+    const t = setTimeout(() => setSearchTerm(searchText.trim()), 350);
+    return () => clearTimeout(t);
+  }, [searchText]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const gotoMataKuliah = (id: string) => {
+    setShowResults(false);
+    setSearchText("");
+    navigate(`${AdminAcademicRoute.obeManagement.detailObeCourse}/${obeId || "default"}/${id}`);
+  };
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.obeManagement.obeManagement);
@@ -58,15 +97,46 @@ export default function ObeDataMataKuliah() {
               >
                 <ArrowLeft size={16} />
               </button>
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  placeholder="Cari Data Mata Kuliah"
-                  className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700"
-                />
-                <button className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer">
-                  <Search size={16} />
-                </button>
+              <div className="relative" ref={searchBoxRef}>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Cari Data Mata Kuliah"
+                    value={searchText}
+                    onChange={(e) => { setSearchText(e.target.value); setShowResults(true); }}
+                    onFocus={() => setShowResults(true)}
+                    className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowResults(true)}
+                    className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer"
+                  >
+                    <Search size={16} />
+                  </button>
+                </div>
+
+                {showResults && searchTerm && (
+                  <div className="absolute z-20 top-full left-0 w-64 bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-64 overflow-y-auto">
+                    {isSearching ? (
+                      <div className="p-3 text-sm text-gray-400 italic">Mencari...</div>
+                    ) : searchResults.length > 0 ? (
+                      searchResults.map((mk: any) => (
+                        <button
+                          key={mk.id}
+                          type="button"
+                          onClick={() => gotoMataKuliah(mk.id)}
+                          className="w-full text-left px-3 py-2 hover:bg-gray-100 border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="text-sm font-semibold text-gray-800">{mk.kodeMk || mk.kodeMataKuliah || mk.kode}</div>
+                          <div className="text-xs text-gray-500 truncate">{mk.namaMataKuliah || mk.namaMataKuliahInd || mk.nama}</div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-3 text-sm text-gray-400 italic">Mata kuliah tidak ditemukan</div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
