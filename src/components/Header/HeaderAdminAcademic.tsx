@@ -108,41 +108,6 @@ const dropdownMenus = {
                 description: "Tahun Kurikulum",
                 to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
               },
-              {
-                title: "Input Nilai per Komponen (Jalur A)",
-                description: "Input Nilai per Komponen",
-                to: String(AdminAcademicRoute.obeManagement.nilaiKelas),
-              },
-              {
-                title: "Soal per Komponen (Jalur C)",
-                description: "Soal per Komponen Evaluasi",
-                to: String(AdminAcademicRoute.obeManagement.soalKomponen),
-              },
-              {
-                title: "Input Nilai per Soal (Jalur C)",
-                description: "Input Nilai per Soal",
-                to: String(AdminAcademicRoute.obeManagement.nilaiSoal),
-              },
-              {
-                title: "Integrasi CBT (Jalur D)",
-                description: "Integrasi CBT",
-                to: String(AdminAcademicRoute.obeManagement.integrasiCbt),
-              },
-              {
-                title: "Monitoring & Export PDF",
-                description: "Monitoring & Export PDF",
-                to: String(AdminAcademicRoute.obeManagement.monitoring),
-              },
-              {
-                title: "Cek Soal (QA)",
-                description: "Cek Soal yang Sudah Ada",
-                to: String(AdminAcademicRoute.obeManagement.cekSoal),
-              },
-              {
-                title: "Reset Nilai",
-                description: "Reset Nilai (Dev/Admin Tool)",
-                to: String(AdminAcademicRoute.obeManagement.resetNilai),
-              },
             ],
           },
           {

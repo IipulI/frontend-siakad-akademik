@@ -1,196 +1,256 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { FileDown } from "lucide-react";
-import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useSearchParams } from "react-router-dom";
+import { Eye, ExternalLink } from "lucide-react";
+import SearchableSelect from "../../../components/admin-academic/SearchableSelect";
 import { getProdi } from "../../../hooks/academic/useProdi";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { getObeMataKuliah } from "../../../hooks/academic/useObeManagement";
 import { useStudentData } from "../../../hooks/admin-akademik/useMahasiswa";
-import { getMonitoring, exportMonitoringPdf, MonitoringJenis, MonitoringFilters } from "../../../hooks/academic/useObeMonitoring";
+import { exportMonitoringPdf, MonitoringJenis, MonitoringFilters, REQUIRED_FILTERS } from "../../../hooks/academic/useObeMonitoring";
+import { AdminAcademicRoute } from "../../../types/VarRoutes";
 
 const JENIS_OPTIONS: { value: MonitoringJenis; label: string }[] = [
   { value: "cpl-prodi", label: "CPL per Program Studi" },
   { value: "cpl-mahasiswa", label: "CPL per Mahasiswa" },
   { value: "cpl-mata-kuliah", label: "CPL per Mata Kuliah" },
   { value: "mk-mahasiswa", label: "Mata Kuliah per Mahasiswa" },
-  { value: "transkrip-obe", label: "Transkrip OBE" },
+  { value: "transkrip-obe", label: "Transkrip OBE Mahasiswa" },
   { value: "cpmk-mahasiswa", label: "CPMK per Mahasiswa" },
 ];
 
 export default function ObeMonitoring() {
-  const [jenis, setJenis] = useState<MonitoringJenis>("cpl-prodi");
-  const [filters, setFilters] = useState<MonitoringFilters>({});
+  const [searchParams] = useSearchParams();
+  const jenisFromUrl = searchParams.get("jenis") as MonitoringJenis | null;
+
+  const [jenis, setJenis] = useState<MonitoringJenis>(jenisFromUrl && JENIS_OPTIONS.some((o) => o.value === jenisFromUrl) ? jenisFromUrl : "cpl-prodi");
+  const [filters, setFilters] = useState<MonitoringFilters>({ kop: true });
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState("");
+  const [mhsKeyword, setMhsKeyword] = useState("");
 
   const { data: prodiData = [] } = getProdi();
   const { data: curriculumData = [] } = getCurriculumYear();
-  const { data: mkResponse } = getObeMataKuliah({ page: 1, limit: 50, prodiId: filters.prodiId, tahunKurikulumId: filters.tahunKurikulumId });
-  const { data: mhsResponse } = useStudentData(1, 50, "", filters.prodiId || "", "", "", filters.angkatan || "");
-
-  const { data: results, isLoading, isFetching } = getMonitoring(jenis, filters);
+  const { data: mkResponse } = getObeMataKuliah({ page: 1, limit: 100, prodiId: filters.prodiId, tahunKurikulumId: filters.tahunKurikulumId });
+  const { data: mhsResponse } = useStudentData(1, 50, mhsKeyword, filters.prodiId || "", "", "", filters.angkatan || "");
 
   const mkList: any[] = Array.isArray(mkResponse?.data) ? mkResponse.data : mkResponse?.data?.rows || mkResponse?.data?.data?.rows || [];
-  const mhsList = mhsResponse?.data || [];
+  const mhsList: any[] = mhsResponse?.data || [];
 
-  const showMetode = jenis !== "transkrip-obe";
   const showAngkatan = jenis !== "transkrip-obe";
+  const showMetode = jenis === "cpl-prodi" || jenis === "cpl-mahasiswa" || jenis === "cpl-mata-kuliah";
   const showCpl = jenis === "mk-mahasiswa";
   const showMataKuliah = jenis === "cpmk-mahasiswa";
   const showMahasiswa = jenis === "transkrip-obe";
+  const showProdi = true;
 
-  const updateFilter = (patch: Partial<MonitoringFilters>) => setFilters((prev) => ({ ...prev, ...patch }));
-
-  const handleJenisChange = (value: MonitoringJenis) => {
-    setJenis(value);
-    setFilters({});
+  const updateFilter = (patch: Partial<MonitoringFilters>) => {
+    setFilters((prev) => ({ ...prev, ...patch }));
   };
 
-  const handleExport = async () => {
+  const handleJenisChange = (value: string) => {
+    setJenis(value as MonitoringJenis);
+    setFilters({ kop: filters.kop });
+  };
+
+  const isFilterLengkap = REQUIRED_FILTERS[jenis].every((key) => !!filters[key]);
+
+  const handleTampilkan = () => {
     setExportError("");
+    if (!isFilterLengkap) {
+      setExportError("Lengkapi dulu filter yang wajib diisi (bertanda *).");
+      return;
+    }
+    const params = new URLSearchParams({ jenis });
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") params.set(key, String(value));
+    });
+    window.open(`${AdminAcademicRoute.obeManagement.monitoringCetak}?${params.toString()}`, "_blank");
+  };
+
+  const handleLihatDiTabBaru = async () => {
+    setExportError("");
+    if (!isFilterLengkap) {
+      setExportError("Lengkapi dulu filter yang wajib diisi (bertanda *).");
+      return;
+    }
     setIsExporting(true);
     try {
       await exportMonitoringPdf(jenis, filters);
     } catch (error: any) {
-      setExportError(error?.message || "Gagal mengunduh PDF.");
+      setExportError(error?.message || "Gagal membuka pratinjau PDF.");
     } finally {
       setIsExporting(false);
     }
   };
 
-  const rows: any[] = results || [];
-  const columns = rows.length > 0 ? Object.keys(rows[0]).filter((k) => typeof rows[0][k] !== "object") : [];
-
   return (
-    <MainLayout isGreeting={false} titlePage="Monitoring & Export PDF OBE">
+    <MainLayout isGreeting={false} titlePage="Monitoring OBE">
       <div className="p-0 min-h-screen">
         <div className="mb-6 mt-[-10px]">
-          <p className="text-gray-500 text-sm">Admin - Akademik &gt; Penilaian &amp; Monitoring OBE &gt; Monitoring &amp; Export</p>
+          <p className="text-gray-500 text-sm">Beranda &gt; Monitoring OBE</p>
         </div>
 
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
-          <div className="flex gap-2 mb-5 border-b border-gray-200 flex-wrap">
-            {JENIS_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                onClick={() => handleJenisChange(o.value)}
-                className={`px-3 py-2 text-xs md:text-sm font-semibold border-b-2 ${
-                  jenis === o.value ? "border-primary-green text-primary-green" : "border-transparent text-gray-500"
-                }`}
-              >
-                {o.label}
-              </button>
-            ))}
-          </div>
+          <div className="divide-y divide-gray-100">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+              <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">Jenis Laporan</label>
+              <div className="flex-1">
+                <SearchableSelect
+                  value={jenis}
+                  onChange={handleJenisChange}
+                  options={JENIS_OPTIONS}
+                  searchPlaceholder="Cari jenis laporan..."
+                />
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Tahun Kurikulum</label>
-              <select value={filters.tahunKurikulumId || ""} onChange={(e) => updateFilter({ tahunKurikulumId: e.target.value })} className="w-full border border-gray-300 rounded p-2 text-sm">
-                <option value="">-- Pilih --</option>
-                {curriculumData.map((c: any) => (
-                  <option key={c.id} value={c.id}>{c.tahun}</option>
-                ))}
-              </select>
+            <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+              <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">Tahun Kurikulum</label>
+              <div className="flex-1">
+                <SearchableSelect
+                  value={filters.tahunKurikulumId || ""}
+                  onChange={(v) => updateFilter({ tahunKurikulumId: v })}
+                  placeholder="-- Pilih Tahun Kurikulum --"
+                  searchPlaceholder="Cari tahun kurikulum..."
+                  options={curriculumData.map((c: any) => ({ value: c.id, label: c.tahun }))}
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Program Studi</label>
-              <select value={filters.prodiId || ""} onChange={(e) => updateFilter({ prodiId: e.target.value })} className="w-full border border-gray-300 rounded p-2 text-sm">
-                <option value="">-- Pilih --</option>
-                {prodiData.map((p: any) => (
-                  <option key={p.id} value={p.id}>{p.namaProgramStudi}</option>
-                ))}
-              </select>
-            </div>
-            {showAngkatan && (
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Angkatan</label>
-                <input type="text" value={filters.angkatan || ""} onChange={(e) => updateFilter({ angkatan: e.target.value })} placeholder="mis. 2023" className="w-full border border-gray-300 rounded p-2 text-sm" />
+
+            {showProdi && (
+              <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+                <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">
+                  Program Studi<span className="text-red-500">*</span>
+                </label>
+                <div className="flex-1">
+                  <SearchableSelect
+                    value={filters.prodiId || ""}
+                    onChange={(v) => updateFilter({ prodiId: v })}
+                    placeholder="-- Pilih Program Studi --"
+                    searchPlaceholder="Cari program studi..."
+                    options={prodiData.map((p: any) => ({ value: p.id, label: p.nama }))}
+                  />
+                </div>
               </div>
             )}
-            {showMetode && (
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Metode</label>
-                <select value={filters.metode || ""} onChange={(e) => updateFilter({ metode: e.target.value as "rerata" | "progresif" })} className="w-full border border-gray-300 rounded p-2 text-sm">
-                  <option value="">-- Pilih --</option>
-                  <option value="rerata">Rerata</option>
-                  <option value="progresif">Progresif</option>
-                </select>
-              </div>
-            )}
-            {showCpl && (
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Kode CPL</label>
-                <input type="text" value={filters.cpl || ""} onChange={(e) => updateFilter({ cpl: e.target.value })} placeholder="mis. CPL01" className="w-full border border-gray-300 rounded p-2 text-sm" />
-              </div>
-            )}
+
             {showMataKuliah && (
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Mata Kuliah</label>
-                <select value={filters.mataKuliahId || ""} onChange={(e) => updateFilter({ mataKuliahId: e.target.value })} className="w-full border border-gray-300 rounded p-2 text-sm">
-                  <option value="">-- Pilih --</option>
-                  {mkList.map((mk: any) => (
-                    <option key={mk.id} value={mk.id}>{mk.kode} - {mk.nama}</option>
-                  ))}
-                </select>
+              <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+                <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">
+                  Mata Kuliah<span className="text-red-500">*</span>
+                </label>
+                <div className="flex-1">
+                  <SearchableSelect
+                    value={filters.mataKuliahId || ""}
+                    onChange={(v) => updateFilter({ mataKuliahId: v })}
+                    placeholder="-- Cari Mata Kuliah --"
+                    searchPlaceholder="Cari mata kuliah..."
+                    options={mkList.map((mk: any) => ({ value: mk.id, label: `${mk.kode} - ${mk.nama}` }))}
+                  />
+                </div>
               </div>
             )}
+
+            {showCpl && (
+              <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+                <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">
+                  CPL<span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={filters.cpl || ""}
+                  onChange={(e) => updateFilter({ cpl: e.target.value })}
+                  placeholder="mis. CPL01"
+                  className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
+                />
+              </div>
+            )}
+
             {showMahasiswa && (
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Mahasiswa</label>
-                <select value={filters.mahasiswaId || ""} onChange={(e) => updateFilter({ mahasiswaId: e.target.value })} className="w-full border border-gray-300 rounded p-2 text-sm">
-                  <option value="">-- Pilih --</option>
-                  {mhsList.map((m: any) => (
-                    <option key={m.id} value={m.id}>{m.npm} - {m.nama}</option>
-                  ))}
-                </select>
+              <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+                <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">
+                  Nama Mahasiswa<span className="text-red-500">*</span>
+                </label>
+                <div className="flex-1">
+                  <SearchableSelect
+                    value={filters.mahasiswaId || ""}
+                    onChange={(v) => updateFilter({ mahasiswaId: v })}
+                    placeholder="-- Cari Nama Mahasiswa --"
+                    searchPlaceholder="Ketik nama/NPM mahasiswa..."
+                    options={mhsList.map((m: any) => ({ value: m.id, label: `${m.npm} - ${m.nama}` }))}
+                  />
+                </div>
               </div>
             )}
+
+            {showAngkatan && (
+              <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
+                <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">Angkatan</label>
+                <input
+                  type="number"
+                  value={filters.angkatan || ""}
+                  onChange={(e) => updateFilter({ angkatan: e.target.value })}
+                  placeholder="mis. 2025"
+                  className="w-full md:w-40 border border-gray-300 rounded-md p-2 text-sm"
+                />
+              </div>
+            )}
+
+            {showMetode && (
+              <div className="flex flex-col md:flex-row gap-2 py-3">
+                <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48 pt-1">Metode Perhitungan</label>
+                <div>
+                  <div className="flex items-center gap-5">
+                    <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                      <input
+                        type="radio"
+                        checked={(filters.metode || "rerata") === "rerata"}
+                        onChange={() => updateFilter({ metode: "rerata" })}
+                      />
+                      Rerata
+                    </label>
+                    <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                      <input type="radio" checked={filters.metode === "progresif"} onChange={() => updateFilter({ metode: "progresif" })} />
+                      Progresif
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {filters.metode === "progresif"
+                      ? "Nilai diambil dari capaian tertinggi (progresif) tiap mahasiswa."
+                      : "Nilai dihitung dari rerata capaian pembelajaran."}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 py-3">
+              <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">KOP</label>
+              <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                <input type="checkbox" checked={filters.kop !== false} onChange={(e) => updateFilter({ kop: e.target.checked })} />
+                Gunakan KOP
+              </label>
+            </div>
           </div>
 
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end gap-2 mt-4">
             <button
-              onClick={handleExport}
-              disabled={isExporting || rows.length === 0}
-              className="bg-purple-600 text-white px-4 py-2 rounded flex items-center gap-1 disabled:opacity-50 hover:bg-purple-700"
+              onClick={handleTampilkan}
+              className="bg-primary-blueDark text-white px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90"
             >
-              <FileDown size={16} /> {isExporting ? "Mengunduh..." : "Export PDF"}
+              <Eye size={16} /> Tampilkan
+            </button>
+            <button
+              onClick={handleLihatDiTabBaru}
+              disabled={isExporting}
+              className="bg-primary-green text-white px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90 disabled:opacity-50"
+            >
+              <ExternalLink size={16} /> {isExporting ? "Memuat..." : "Lihat di Tab Baru"}
             </button>
           </div>
-
-          {exportError && <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{exportError}</div>}
-
-          {isLoading || isFetching ? (
-            <div className="flex justify-center p-12">
-              <LoadingSpinner />
-            </div>
-          ) : rows.length === 0 ? (
-            <div className="flex items-center justify-center h-32 border border-gray-200 rounded-md bg-gray-50">
-              <p className="text-gray-500">Lengkapi filter di atas untuk menampilkan data monitoring.</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto border border-gray-200 rounded-sm">
-              <table className="min-w-full text-sm border-collapse">
-                <thead>
-                  <tr className="bg-[#0b5c77] text-white text-xs">
-                    {columns.map((col) => (
-                      <th key={col} className="p-2 border capitalize">{col}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, idx) => (
-                    <tr key={row.id || idx} className="text-center">
-                      {columns.map((col) => (
-                        <td key={col} className="p-2 border">{String(row[col] ?? "-")}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
+
+        {exportError && <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{exportError}</div>}
       </div>
     </MainLayout>
   );

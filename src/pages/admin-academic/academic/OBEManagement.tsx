@@ -1,7 +1,7 @@
 // src/pages/admin-academic/academic/OBEManagement.tsx
 import React, { useState, useMemo, useEffect } from 'react';
 import MainLayout from "../../../components/layouts/MainLayout";
-import { getObe, getObeMataKuliah } from '../../../hooks/academic/useObeManagement';
+import { getObe, getObeMataKuliah, getKelompokMataKuliah } from '../../../hooks/academic/useObeManagement';
 import { getProdi } from "../../../hooks/academic/useProdi";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { Pagination } from "../../../components/admin-academic/Pagination";
@@ -28,14 +28,17 @@ export const OBEManagement: React.FC = () => {
   const { data: prodiData = [], isLoading: isProdiLoading } = getProdi();
   const { data: curriculumData = [], isLoading: isCurriculumLoading } = getCurriculumYear();
   const { data: obeResponse, isLoading: isObeLoading } = getObe({ page: 1, limit: 1000 });
+  const { data: kelompokMataKuliahResult } = getKelompokMataKuliah();
+  const kelompokMataKuliahData = kelompokMataKuliahResult?.items || [];
 
   const courseFilters = useMemo(() => ({
     page: currentPage,
     limit: itemsPerPage,
     prodiId: selectedProdi === "all" ? undefined : selectedProdi,
     tahunKurikulumId: selectedCurriculum === "all" ? undefined : selectedCurriculum,
+    kelompokMataKuliahId: selectedKelompok === "all" ? undefined : selectedKelompok,
     search: searchTerm || undefined,
-  }), [currentPage, itemsPerPage, selectedProdi, selectedCurriculum, searchTerm]);
+  }), [currentPage, itemsPerPage, selectedProdi, selectedCurriculum, selectedKelompok, searchTerm]);
 
   const {
     data: coursesResponse,
@@ -160,8 +163,8 @@ export const OBEManagement: React.FC = () => {
                 onChange={handleProdiChange}
               >
                 <option value="all">-- Semua Program Studi --</option>
-                {prodiData.map((item) => (
-                  <option key={item.id} value={item.id}>{item.namaProgramStudi}</option>
+                {prodiData.map((item: any) => (
+                  <option key={item.id} value={item.id}>{item.nama || item.namaProgramStudi}</option>
                 ))}
               </select>
             </div>
@@ -173,6 +176,9 @@ export const OBEManagement: React.FC = () => {
                 onChange={(e) => setSelectedKelompok(e.target.value)}
               >
                 <option value="all">-- Semua Kelompok Mata Kuliah --</option>
+                {kelompokMataKuliahData.map((k: any) => (
+                  <option key={k.id} value={k.id}>{k.nama}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -208,7 +214,11 @@ export const OBEManagement: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-              <button type="button" className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:opacity-90 cursor-pointer">
+              <button
+                type="button"
+                onClick={() => navigate(AdminAcademicRoute.obeManagement.addObeCourse)}
+                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:opacity-90 cursor-pointer"
+              >
                 <Plus size={16} /> Tambah
               </button>
               <button type="button" className="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:opacity-90 cursor-pointer">

@@ -3,16 +3,17 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Search, Edit, Plus, Check, X } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
+import { getObeMataKuliahDetail } from "../../../hooks/academic/useObeManagement";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
 
 export default function ObeDataMataKuliah() {
   const navigate = useNavigate();
   const { obeId, mataKuliahId } = useParams<{ obeId: string; mataKuliahId: string }>();
 
-  // Use existing course fetcher
-  const { data: courseDetail, isLoading, error } = getCourseDataById(mataKuliahId || "");
+  const { data: courseDetail, isLoading, error } = getObeMataKuliahDetail(mataKuliahId || "");
+  useSetBreadcrumbLabel(mataKuliahId, courseDetail?.namaMataKuliahInd);
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.obeManagement.obeManagement);
@@ -76,10 +77,16 @@ export default function ObeDataMataKuliah() {
               >
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
-              <button className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button
+                onClick={() => navigate(AdminAcademicRoute.obeManagement.addObeCourse)}
+                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
+              >
                 <Plus size={16} /> Tambah Baru
               </button>
-              <button className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button
+                onClick={() => navigate(`${AdminAcademicRoute.obeManagement.editObeCourse}/${obeId || "default"}/${mataKuliahId}`)}
+                className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
+              >
                 <Edit size={16} /> Edit
               </button>
             </div>
@@ -113,9 +120,7 @@ export default function ObeDataMataKuliah() {
                 <div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Tahun Kurikulum</span>
-                    <span className="text-gray-800">
-                      {typeof courseDetail.tahunKurikulum === 'object' ? courseDetail.tahunKurikulum?.tahun : (courseDetail.tahunKurikulum || "2025")}
-                    </span>
+                    <span className="text-gray-800">{courseDetail.tahunKurikulum || "-"}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Kode Mata Kuliah</span>
@@ -123,35 +128,37 @@ export default function ObeDataMataKuliah() {
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Nama Mata Kuliah (IND)</span>
-                    <span className="text-gray-800">{courseDetail.namaMataKuliah || "-"}</span>
+                    <span className="text-gray-800">{courseDetail.namaMataKuliahInd || "-"}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Nama Mata Kuliah (EN)</span>
-                    <span className="text-gray-800">{courseDetail.namaMataKuliah || "-"}</span>
+                    <span className="text-gray-800">
+                      {courseDetail.namaMataKuliahEn && courseDetail.namaMataKuliahEn !== "-" ? courseDetail.namaMataKuliahEn : "-"}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Jenis Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.jenis || "Kuliah"}</span>
+                    <span className="text-gray-800">{courseDetail.jenisMataKuliah || "-"}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">SKS Tatap Muka</span>
-                    <span className="text-gray-800">{courseDetail.sksTatapMuka ?? "3"}</span>
+                    <span className="text-gray-800">{courseDetail.sksTatapMuka ?? 0}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">SKS Praktikum</span>
-                    <span className="text-gray-800">{courseDetail.sksPraktikum ?? "0"}</span>
+                    <span className="text-gray-800">{courseDetail.sksPraktikum ?? 0}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">SKS Praktik Lapangan</span>
-                    <span className="text-gray-800">0</span>
+                    <span className="text-gray-800">{courseDetail.sksPraktikLapangan ?? 0}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">SKS Simulasi</span>
-                    <span className="text-gray-800">0</span>
+                    <span className="text-gray-800">{courseDetail.sksSimulasi ?? 0}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Total SKS</span>
-                    <span className="text-gray-800">{courseDetail.totalSKS ?? (courseDetail.sksTatapMuka || 3)}</span>
+                    <span className="text-gray-800">{courseDetail.totalSks ?? 0}</span>
                   </div>
                 </div>
 
@@ -159,9 +166,7 @@ export default function ObeDataMataKuliah() {
                 <div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Unit Pengampu</span>
-                    <span className="text-gray-800">
-                      {typeof courseDetail.programStudi === 'object' ? courseDetail.programStudi?.nama : (courseDetail.programStudi || "-")}
-                    </span>
+                    <span className="text-gray-800">{courseDetail.unitPengampu || "-"}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Rumpun Mata Kuliah</span>
@@ -169,27 +174,39 @@ export default function ObeDataMataKuliah() {
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Kelompok Mata Kuliah</span>
-                    <span className="text-gray-800">Mata Kuliah Keilmuan dan Ketrampilan (MKK)</span>
+                    <span className="text-gray-800">
+                      {courseDetail.kelompokMataKuliah && courseDetail.kelompokMataKuliah !== "-" ? courseDetail.kelompokMataKuliah : "-"}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Merupakan MKU</span>
-                    <span className="text-red-500 font-bold"><X size={16} /></span>
+                    <span className={courseDetail.atribut?.merupakanMku ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                      {courseDetail.atribut?.merupakanMku ? <Check size={16} /> : <X size={16} />}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada SAP</span>
-                    <span className="text-green-500 font-bold"><Check size={16} /></span>
+                    <span className={courseDetail.atribut?.adaSap ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                      {courseDetail.atribut?.adaSap ? <Check size={16} /> : <X size={16} />}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada Silabus</span>
-                    <span className="text-green-500 font-bold"><Check size={16} /></span>
+                    <span className={courseDetail.atribut?.adaSilabus ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                      {courseDetail.atribut?.adaSilabus ? <Check size={16} /> : <X size={16} />}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada Bahan Ajar</span>
-                    <span className="text-green-500 font-bold"><Check size={16} /></span>
+                    <span className={courseDetail.atribut?.adaBahanAjar ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                      {courseDetail.atribut?.adaBahanAjar ? <Check size={16} /> : <X size={16} />}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada Diktat</span>
-                    <span className="text-green-500 font-bold"><Check size={16} /></span>
+                    <span className={courseDetail.atribut?.adaDiktat ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                      {courseDetail.atribut?.adaDiktat ? <Check size={16} /> : <X size={16} />}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -203,13 +220,13 @@ export default function ObeDataMataKuliah() {
                   <div className="flex flex-col md:flex-row border-b border-gray-100 py-3 gap-2 md:gap-0">
                     <div className="w-full md:w-1/3 font-semibold text-[#666666]">Koordinator Mata Kuliah</div>
                     <div className="w-full md:w-2/3 text-gray-800">
-                      0411058902 - FITRAH SATRYA FAJAR KUSUMAH
+                      {courseDetail.koordinatorMataKuliah?.label || "-"}
                     </div>
                   </div>
                   <div className="flex flex-col md:flex-row border-b border-gray-100 py-3 gap-2 md:gap-0">
                     <div className="w-full md:w-1/3 font-semibold text-[#666666]">Pengembang RPS</div>
                     <div className="w-full md:w-2/3 text-gray-800">
-                      0405128705 - Dr. DESMY RIANI, S.E., M.Ak
+                      {(courseDetail.pengembangRps || []).map((p: any) => p.label).join(", ") || "-"}
                     </div>
                   </div>
                   <div className="flex flex-col md:flex-row border-b border-gray-100 py-3 gap-2 md:gap-0">

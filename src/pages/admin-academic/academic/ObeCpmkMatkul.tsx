@@ -107,16 +107,87 @@ export default function ObeCpmkMatkul() {
     return next;
   };
 
+  // "Dicentang" = CPL ini relevan buat baris ini (ada entrinya di cplPemetaan),
+  // terlepas dari bobotnya udah keisi atau belum. Toggle nambah/buang entrinya.
+  const isCplChecked = (list: LocalBobot[], cplId: string) => list.some((b) => b.cplId === cplId);
+  const toggleCpl = (list: LocalBobot[], cplId: string): LocalBobot[] =>
+    isCplChecked(list, cplId) ? list.filter((b) => b.cplId !== cplId) : [...list, { cplId, bobotCpl: 0 }];
+
+  // Bagi rata `total` ke `count` slot, sisa pembulatan ditumpuk di slot TERAKHIR
+  // -- rumus sama persis dengan pembagian rata di rowBobot/backend.
+  const autoDistribute = (total: number, count: number): number[] => {
+    if (count <= 0) return [];
+    const each = parseFloat((total / count).toFixed(2));
+    const dist = Array(count).fill(each);
+    dist[count - 1] = parseFloat((total - each * (count - 1)).toFixed(2));
+    return dist;
+  };
+
   const subCpmkTotal = (sub: LocalSubCpmk) => sub.cplPemetaan.reduce((sum, b) => sum + (Number(b.bobotCpl) || 0), 0);
 
-  const rowBobot = (row: LocalCpmkRow) => {
+  const rowBobot = (row: LocalCpmkRow, index: number) => {
+    if (metodePembobotan === "Otomatis") {
+      // Samain persis sama pembagian rata di backend (services/cpmk.service.js):
+      // tiap baris dapat 100/n dibulatkan 2 desimal, baris TERAKHIR nampung sisa
+      // pembulatan biar totalnya pas 100.
+      const n = rows.length;
+      if (n === 0) return 0;
+      const rata = parseFloat((100 / n).toFixed(2));
+      const isLastRow = index === n - 1;
+      return isLastRow ? parseFloat((100 - rata * (n - 1)).toFixed(2)) : rata;
+    }
     if (levelPemetaan === "CPMK") {
       return row.cplPemetaan.reduce((sum, b) => sum + (Number(b.bobotCpl) || 0), 0);
     }
     return row.subCpmk.reduce((sum, s) => sum + subCpmkTotal(s), 0);
   };
 
-  const grandTotal = rows.reduce((sum, r) => sum + rowBobot(r), 0);
+  // Urutan CPL yang "dicentang" (ada entrinya) di satu daftar cplPemetaan, mengikuti urutan kolom cplHeaders
+  const checkedCplIdsInOrder = (list: LocalBobot[]) => cplHeaders.filter((h) => isCplChecked(list, h.id)).map((h) => h.id);
+
+  // Bobot CPL yang ditampilkan di mode CPMK saat Otomatis: bobot baris dibagi rata
+  // ke CPL yang dicentang saja, bukan ke semua kolom CPL yang ada.
+  const displayCpmkBobot = (row: LocalCpmkRow, rowIndex: number, cplId: string) => {
+    if (metodePembobotan !== "Otomatis") return getBobot(row.cplPemetaan, cplId);
+    const checkedIds = checkedCplIdsInOrder(row.cplPemetaan);
+    const idx = checkedIds.indexOf(cplId);
+    if (idx === -1) return 0;
+    return autoDistribute(rowBobot(row, rowIndex), checkedIds.length)[idx];
+  };
+
+  // Semua pasangan (Sub-CPMK, CPL) yang dicentang milik satu baris CPMK, urut berdasar urutan
+  // Sub-CPMK lalu urutan kolom CPL -- supaya bobot induk kebagi rata ke seluruh sel yang
+  // dicentang LINTAS Sub-CPMK, bukan cuma dalam satu Sub-CPMK saja.
+  const checkedSubCplPairs = (row: LocalCpmkRow) => {
+    const pairs: { subLocalId: string; cplId: string }[] = [];
+    row.subCpmk.forEach((s) => {
+      cplHeaders.forEach((h) => {
+        if (isCplChecked(s.cplPemetaan, h.id)) pairs.push({ subLocalId: s.localId, cplId: h.id });
+      });
+    });
+    return pairs;
+  };
+
+  const displaySubBobot = (row: LocalCpmkRow, rowIndex: number, subLocalId: string, cplId: string) => {
+    if (metodePembobotan !== "Otomatis") {
+      const sub = row.subCpmk.find((s) => s.localId === subLocalId);
+      return sub ? getBobot(sub.cplPemetaan, cplId) : 0;
+    }
+    const pairs = checkedSubCplPairs(row);
+    const idx = pairs.findIndex((p) => p.subLocalId === subLocalId && p.cplId === cplId);
+    if (idx === -1) return 0;
+    return autoDistribute(rowBobot(row, rowIndex), pairs.length)[idx];
+  };
+
+  const subCpmkTotalDisplay = (row: LocalCpmkRow, rowIndex: number, sub: LocalSubCpmk) => {
+    if (metodePembobotan !== "Otomatis") return subCpmkTotal(sub);
+    const pairs = checkedSubCplPairs(row);
+    const dist = autoDistribute(rowBobot(row, rowIndex), pairs.length);
+    const total = pairs.reduce((sum, p, i) => (p.subLocalId === sub.localId ? sum + dist[i] : sum), 0);
+    return parseFloat(total.toFixed(2));
+  };
+
+  const grandTotal = rows.reduce((sum, r, idx) => sum + rowBobot(r, idx), 0);
 
   const tambahCpmkRow = () => {
     setRows((prev) => [
@@ -187,6 +258,20 @@ export default function ObeCpmkMatkul() {
     );
   };
 
+  const updateCplCheck = (localId: string, cplId: string) => {
+    setRows((prev) => prev.map((r) => (r.localId === localId ? { ...r, cplPemetaan: toggleCpl(r.cplPemetaan, cplId) } : r)));
+  };
+
+  const updateSubCplCheck = (rowLocalId: string, subLocalId: string, cplId: string) => {
+    setRows((prev) =>
+      prev.map((r) =>
+        r.localId === rowLocalId
+          ? { ...r, subCpmk: r.subCpmk.map((s) => (s.localId === subLocalId ? { ...s, cplPemetaan: toggleCpl(s.cplPemetaan, cplId) } : s)) }
+          : r
+      )
+    );
+  };
+
   const handleSave = () => {
     setErrorMessage("");
     setSuccessMessage("");
@@ -196,24 +281,26 @@ export default function ObeCpmkMatkul() {
       return;
     }
 
-    const cpmkList = rows.map((row) => ({
+    const cpmkList = rows.map((row, idx) => ({
       kode: row.kode.trim(),
       deskripsi: row.deskripsi.trim(),
       target: Number(row.target) || 0,
-      bobot: rowBobot(row),
+      bobot: rowBobot(row, idx),
       ...(levelPemetaan === "CPMK"
         ? {
             cplPemetaan: row.cplPemetaan
+              .map((c) => ({ cplId: c.cplId, bobotCpl: displayCpmkBobot(row, idx, c.cplId) }))
               .filter((c) => Number(c.bobotCpl) > 0)
-              .map((c) => ({ cplId: c.cplId, bobotCpl: Number(c.bobotCpl) })),
+              .map((c) => ({ idCpl: c.cplId, bobotCpl: Number(c.bobotCpl) })),
           }
         : {
             subCpmk: row.subCpmk.map((s) => ({
               kode: s.kode.trim(),
               deskripsi: s.deskripsi.trim(),
               cplPemetaan: s.cplPemetaan
+                .map((c) => ({ cplId: c.cplId, bobotCpl: displaySubBobot(row, idx, s.localId, c.cplId) }))
                 .filter((c) => Number(c.bobotCpl) > 0)
-                .map((c) => ({ cplId: c.cplId, bobotCpl: Number(c.bobotCpl) })),
+                .map((c) => ({ idCpl: c.cplId, bobotCpl: Number(c.bobotCpl) })),
             })),
           }),
     }));
@@ -272,33 +359,34 @@ export default function ObeCpmkMatkul() {
             <SidebarObeCourse obeId={obeId || "default"} mataKuliahId={mataKuliahId || ""} activeTab="cpmk" />
 
             <div className="w-full md:w-[80%]">
-              <div className="bg-[#f4f9fb] p-6 rounded-md border border-[#e5f1f6] mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-sm font-semibold text-gray-600">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Kode Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.kodeMataKuliah || "-"}</span>
+              <div className="flex mb-6 w-full rounded-sm overflow-hidden border border-gray-100 shadow-sm">
+                <div className="bg-primary-green w-2 flex-shrink-0"></div>
+                <div className="flex-1 bg-[#F5FFF9] p-5 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 text-sm text-gray-700">
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Kode Mata Kuliah</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.kode || "-"}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">SKS</span>
-                    <span className="text-gray-800">{courseDetail.totalSKS ?? (courseDetail.sksTatapMuka || 3)}</span>
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">SKS</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.totalSks ?? (courseDetail.sksTatapMuka || 0)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.namaMataKuliah || "-"}</span>
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Mata Kuliah</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.nama || "-"}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Jenis Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.jenis || "Kuliah"}</span>
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Jenis Mata Kuliah</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.jenis || "Kuliah"}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Tahun Kurikulum</span>
-                    <span className="text-gray-800">
-                      {typeof courseDetail.tahunKurikulum === "object" ? courseDetail.tahunKurikulum?.tahun : (courseDetail.tahunKurikulum || "2025")}
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Tahun Kurikulum</span>
+                    <span className="flex-1 text-gray-800">
+                      {typeof courseDetail.tahunKurikulum === "object" ? courseDetail.tahunKurikulum?.tahun : (courseDetail.tahunKurikulum || "-")}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Unit Pengampu</span>
-                    <span className="text-gray-800">
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Unit Pengampu</span>
+                    <span className="flex-1 text-gray-800">
                       {typeof courseDetail.programStudi === "object" ? courseDetail.programStudi?.nama : (courseDetail.programStudi || "-")}
                     </span>
                   </div>
@@ -374,7 +462,7 @@ export default function ObeCpmkMatkul() {
                   </thead>
                   <tbody className="text-sm text-gray-700">
                     {rows.length > 0 ? (
-                      rows.map((row) => (
+                      rows.map((row, rowIndex) => (
                         <React.Fragment key={row.localId}>
                           <tr className="border-b border-gray-200 hover:bg-gray-50 text-center align-top">
                             <td className="p-2 border-r border-gray-200">
@@ -408,18 +496,30 @@ export default function ObeCpmkMatkul() {
 
                             {levelPemetaan === "CPMK" ? (
                               cplHeaders.length > 0 ? (
-                                cplHeaders.map((cpl) => (
-                                  <td key={cpl.id} className="p-1 border-r border-gray-200">
-                                    <input
-                                      type="number"
-                                      min={0}
-                                      max={100}
-                                      value={getBobot(row.cplPemetaan, cpl.id)}
-                                      onChange={(e) => updateRowBobot(row.localId, cpl.id, e.target.value)}
-                                      className="w-14 border rounded p-1 text-sm text-center"
-                                    />
-                                  </td>
-                                ))
+                                cplHeaders.map((cpl) => {
+                                  const checked = isCplChecked(row.cplPemetaan, cpl.id);
+                                  return (
+                                    <td key={cpl.id} className="p-1 border-r border-gray-200">
+                                      <div className="flex flex-col items-center gap-0.5">
+                                        <input
+                                          type="checkbox"
+                                          checked={checked}
+                                          onChange={() => updateCplCheck(row.localId, cpl.id)}
+                                          title={`Relevan ke ${cpl.kode || cpl.kodeCpl || "CPL ini"}`}
+                                        />
+                                        <input
+                                          type="number"
+                                          min={0}
+                                          max={100}
+                                          value={metodePembobotan === "Otomatis" ? displayCpmkBobot(row, rowIndex, cpl.id) : getBobot(row.cplPemetaan, cpl.id)}
+                                          onChange={(e) => updateRowBobot(row.localId, cpl.id, e.target.value)}
+                                          disabled={metodePembobotan === "Otomatis" || !checked}
+                                          className="w-14 border rounded p-1 text-sm text-center disabled:bg-gray-100 disabled:text-gray-400"
+                                        />
+                                      </div>
+                                    </td>
+                                  );
+                                })
                               ) : (
                                 <td className="p-2 border-r border-gray-200">-</td>
                               )
@@ -429,7 +529,7 @@ export default function ObeCpmkMatkul() {
                               </td>
                             )}
 
-                            <td className="p-2 font-semibold text-center border-r border-gray-200">{rowBobot(row)}</td>
+                            <td className="p-2 font-semibold text-center border-r border-gray-200">{rowBobot(row, rowIndex)}</td>
                             <td className="p-2 text-center">
                               <button onClick={() => hapusCpmkRow(row.localId)} className="text-red-600 hover:text-red-800">
                                 <Trash2 size={16} />
@@ -460,22 +560,34 @@ export default function ObeCpmkMatkul() {
                                 </td>
                                 <td className="p-2 border-r border-gray-200 text-xs text-gray-400">-</td>
                                 {cplHeaders.length > 0 ? (
-                                  cplHeaders.map((cpl) => (
-                                    <td key={cpl.id} className="p-1 border-r border-gray-200">
-                                      <input
-                                        type="number"
-                                        min={0}
-                                        max={100}
-                                        value={getBobot(sub.cplPemetaan, cpl.id)}
-                                        onChange={(e) => updateSubBobot(row.localId, sub.localId, cpl.id, e.target.value)}
-                                        className="w-14 border rounded p-1 text-xs text-center"
-                                      />
-                                    </td>
-                                  ))
+                                  cplHeaders.map((cpl) => {
+                                    const checked = isCplChecked(sub.cplPemetaan, cpl.id);
+                                    return (
+                                      <td key={cpl.id} className="p-1 border-r border-gray-200">
+                                        <div className="flex flex-col items-center gap-0.5">
+                                          <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={() => updateSubCplCheck(row.localId, sub.localId, cpl.id)}
+                                            title={`Relevan ke ${cpl.kode || cpl.kodeCpl || "CPL ini"}`}
+                                          />
+                                          <input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            value={metodePembobotan === "Otomatis" ? displaySubBobot(row, rowIndex, sub.localId, cpl.id) : getBobot(sub.cplPemetaan, cpl.id)}
+                                            onChange={(e) => updateSubBobot(row.localId, sub.localId, cpl.id, e.target.value)}
+                                            disabled={metodePembobotan === "Otomatis" || !checked}
+                                            className="w-14 border rounded p-1 text-xs text-center disabled:bg-gray-100 disabled:text-gray-400"
+                                          />
+                                        </div>
+                                      </td>
+                                    );
+                                  })
                                 ) : (
                                   <td className="p-2 border-r border-gray-200">-</td>
                                 )}
-                                <td className="p-2 font-semibold text-center border-r border-gray-200 text-xs">{subCpmkTotal(sub)}</td>
+                                <td className="p-2 font-semibold text-center border-r border-gray-200 text-xs">{subCpmkTotalDisplay(row, rowIndex, sub)}</td>
                                 <td className="p-2 text-center">
                                   <button onClick={() => hapusSubCpmk(row.localId, sub.localId)} className="text-red-500 hover:text-red-700">
                                     <Trash2 size={14} />

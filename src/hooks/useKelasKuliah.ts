@@ -61,11 +61,22 @@ export interface LecturerSchedulePayload {
   }[];
 }
 
+export interface CollegeClassListResult {
+  items: CollegeClass[];
+  total: number;
+  perPage: number;
+  currentPage: number;
+  totalPage: number;
+}
+
 export function getCollegeClass(filter: {
-  periodeAkademik?: string;
-  programStudi?: string;
-  tahunKuriKulum?: string;
+  siakPeriodeAkademikId?: string;
+  siakProgramStudiId?: string;
+  siakTahunKurikulumId?: string;
   sistemKuliah?: string;
+  search?: string;
+  page?: number;
+  size?: number;
 }) {
   // Debounce selama 500ms
   const [debouncedFilter] = useDebounce(filter, 500);
@@ -82,7 +93,17 @@ export function getCollegeClass(filter: {
       const response = await Api.get("/akademik/kelas-kuliah", {
         params: debouncedFilter,
       });
-      return response.data.data;
+      // ResponseBuilder membongkar payload paginated {total, items} jadi `data` (array polos)
+      // + `pagination` (objek terpisah) -- sama seperti pola di hook lain.
+      const items = response.data.data || [];
+      const pagination = response.data.pagination || {};
+      return {
+        items,
+        total: pagination.totalItems ?? items.length,
+        perPage: Number(pagination.perPage) || filter.size || 10,
+        currentPage: pagination.currentPage ?? filter.page ?? 1,
+        totalPage: pagination.totalPage ?? 1,
+      } as CollegeClassListResult;
     },
   });
 }
@@ -133,23 +154,27 @@ export function getDetailCollegeClass(id: string) {
 
 export function getClassAttendants(id: string) {
   return useQuery({
-    queryKey: ["classAttendants"],
+    queryKey: ["classAttendants", id],
     queryFn: async () => {
       const response = await Api.get(
-        `/akademik/kelas-kuliah/${id}/peserta-kelas`
+        `/akademik/dosen/kelas/${id}/peserta-kelas`
       );
       return response.data.data;
     },
+    enabled: !!id,
   });
 }
 
-export function getClassRPS(id: string) {
+export function getClassRPS(id: string, periodeId?: string) {
   return useQuery({
-    queryKey: ["classRPS"],
+    queryKey: ["classRPS", id, periodeId],
     queryFn: async () => {
-      const response = await Api.get(`/akademik/kelas-kuliah/${id}/kelas-rps`);
+      const response = await Api.get(`/akademik/dosen/kelas/${id}/rps`, {
+        params: periodeId ? { periodeId } : {},
+      });
       return response.data.data;
     },
+    enabled: !!id,
   });
 }
 
@@ -226,13 +251,14 @@ export function getStudents() {
 
 export function getAllDetailStudentAttendant(id) {
   return useQuery({
-    queryKey: ["allDetailStudent"],
+    queryKey: ["allDetailStudent", id],
     queryFn: async () => {
       const response = await Api.get(
-        `/akademik/kelas-kuliah/${id}/peserta-kelas`
+        `/akademik/dosen/kelas/${id}/peserta-kelas`
       );
       return response.data.data;
     },
+    enabled: !!id,
   });
 }
 

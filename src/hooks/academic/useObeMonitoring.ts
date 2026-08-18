@@ -17,31 +17,49 @@ export interface MonitoringFilters {
   cpl?: string;
   mataKuliahId?: string;
   mahasiswaId?: string;
+  kop?: boolean;
 }
 
-const REQUIRED_FILTERS: Record<MonitoringJenis, (keyof MonitoringFilters)[]> = {
-  "cpl-prodi": ["tahunKurikulumId", "prodiId"],
-  "cpl-mahasiswa": ["tahunKurikulumId", "prodiId"],
-  "cpl-mata-kuliah": ["tahunKurikulumId", "prodiId"],
-  "mk-mahasiswa": ["tahunKurikulumId", "prodiId", "cpl"],
+export const REQUIRED_FILTERS: Record<MonitoringJenis, (keyof MonitoringFilters)[]> = {
+  "cpl-prodi": ["tahunKurikulumId", "prodiId", "angkatan"],
+  "cpl-mahasiswa": ["tahunKurikulumId", "prodiId", "angkatan"],
+  "cpl-mata-kuliah": ["tahunKurikulumId", "prodiId", "angkatan"],
+  "mk-mahasiswa": ["tahunKurikulumId", "prodiId", "angkatan", "cpl"],
   "transkrip-obe": ["tahunKurikulumId", "prodiId", "mahasiswaId"],
-  "cpmk-mahasiswa": ["tahunKurikulumId", "prodiId", "mataKuliahId"],
+  "cpmk-mahasiswa": ["tahunKurikulumId", "prodiId", "mataKuliahId", "angkatan"],
 };
 
-export function getMonitoring(jenis: MonitoringJenis, filters: MonitoringFilters) {
+// Tiap jenis laporan naruh baris datanya di field yang beda-beda di response
+// (bukan `.rows`/`.data` yang seragam) -- lihat services/monitoring.service.js.
+export const ROWS_FIELD_FOR: Record<MonitoringJenis, string> = {
+  "cpl-prodi": "tabel",
+  "cpl-mahasiswa": "dataMahasiswa",
+  "cpl-mata-kuliah": "dataMataKuliah",
+  "mk-mahasiswa": "dataMahasiswa",
+  "transkrip-obe": "tabel",
+  "cpmk-mahasiswa": "dataMahasiswa",
+};
+
+// Bentuk mentah balikan tiap endpoint monitoring (info + kombinasi chart/summary/
+// tabel/daftarCpl/daftarCpmk/mkList/semesters tergantung jenis laporan).
+export interface MonitoringRawResult {
+  info: Record<string, any>;
+  [key: string]: any;
+}
+
+export function getMonitoring(jenis: MonitoringJenis, filters: MonitoringFilters, enabled: boolean) {
   const required = REQUIRED_FILTERS[jenis];
-  const ready = required.every((key) => !!filters[key]);
+  const ready = enabled && required.every((key) => !!filters[key]);
 
   return useQuery({
     queryKey: ["obeMonitoring", jenis, filters],
     queryFn: async () => {
-      const params: Record<string, string> = { kop: "true" };
+      const params: Record<string, string> = { kop: filters.kop === false ? "false" : "true" };
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) params[key] = value;
+        if (value !== undefined && value !== "" && key !== "kop") params[key] = String(value);
       });
       const response = await Api.get(`/akademik/obe/monitoring/${jenis}`, { params });
-      const data = response.data.data;
-      return Array.isArray(data) ? data : data?.rows || data?.data || [];
+      return (response.data.data || { info: {} }) as MonitoringRawResult;
     },
     enabled: ready,
   });
@@ -49,12 +67,32 @@ export function getMonitoring(jenis: MonitoringJenis, filters: MonitoringFilters
 
 const pdfPathFor = (jenis: MonitoringJenis) => (jenis === "transkrip-obe" ? "transkrip-obe" : `monitoring-${jenis}`);
 
+export async function fetchMonitoringPdfBlobUrl(jenis: MonitoringJenis, filters: MonitoringFilters) {
+  const token = localStorage.getItem("token");
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const params = new URLSearchParams({ kop: filters.kop === false ? "false" : "true" });
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== "" && key !== "kop") params.set(key, String(value));
+  });
+
+  const response = await fetch(`${baseUrl}/akademik/obe/export/pdf/${pdfPathFor(jenis)}?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Gagal mengambil PDF (status ${response.status})`);
+  }
+
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+}
+
 export async function exportMonitoringPdf(jenis: MonitoringJenis, filters: MonitoringFilters) {
   const token = localStorage.getItem("token");
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const params = new URLSearchParams({ kop: "true" });
+  const params = new URLSearchParams({ kop: filters.kop === false ? "false" : "true" });
   Object.entries(filters).forEach(([key, value]) => {
-    if (value) params.set(key, value);
+    if (value !== undefined && value !== "" && key !== "kop") params.set(key, String(value));
   });
 
   const response = await fetch(`${baseUrl}/akademik/obe/export/pdf/${pdfPathFor(jenis)}?${params.toString()}`, {

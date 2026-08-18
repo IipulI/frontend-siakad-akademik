@@ -10,7 +10,7 @@ export function useResetNilaiBeberapa(kelasId: string) {
       return response.data.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["obeKelasNilai", kelasId] });
+      queryClient.invalidateQueries({ queryKey: ["nilaiKelas", kelasId] });
     },
   });
 }
@@ -23,7 +23,7 @@ export function useResetNilaiSemua(kelasId: string) {
       await Api.delete(`/akademik/kaprodi/kelas/${kelasId}/nilai/reset-semua`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["obeKelasNilai", kelasId] });
+      queryClient.invalidateQueries({ queryKey: ["nilaiKelas", kelasId] });
     },
   });
 }

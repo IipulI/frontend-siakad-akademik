@@ -3,7 +3,7 @@ import { AdminAcademicRoute } from "../../../../types/VarRoutes";
 
 interface SidebarOBEProps {
   id: string;
-  activeTab: "pl" | "cpl" | "plCpl" | "cpmk";
+  activeTab: "pl" | "cpl" | "plCpl" | "cplMk";
 }
 
 export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
@@ -16,12 +16,12 @@ export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
   const menuItems = [
     {
       key: "pl",
-      label: "Profil Lulusan",
+      label: "Manajemen PL",
       path: `${AdminAcademicRoute.obeManagement.detailOBE}/${id}`,
     },
     {
       key: "cpl",
-      label: "CPL",
+      label: "Manajemen CPL",
       path: `${AdminAcademicRoute.obeManagement.cpl}/${id}`,
     },
     {
@@ -30,9 +30,9 @@ export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
       path: `${AdminAcademicRoute.obeManagement.plToCpl}/${id}`,
     },
     {
-      key: "cpmk",
-      label: "CPMK",
-      path: `${AdminAcademicRoute.obeManagement.cpmk}/${id}`,
+      key: "cplMk",
+      label: "Pemetaan CPL → MK",
+      path: `${AdminAcademicRoute.obeManagement.cplKeMk}/${id}`,
     },
   ];
 

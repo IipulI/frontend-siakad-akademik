@@ -21,6 +21,13 @@ export interface ObeMasterCpmk {
   deskripsi?: string;
 }
 
+export interface ObeRencanaEvaluasiMataKuliah {
+  id: string;
+  kode: string;
+  nama: string;
+  totalSks: number;
+}
+
 export function getRencanaEvaluasi(mataKuliahId: string, periodeId: string) {
   return useQuery({
     queryKey: ["rencanaEvaluasi", mataKuliahId, periodeId],
@@ -31,6 +38,7 @@ export function getRencanaEvaluasi(mataKuliahId: string, periodeId: string) {
       );
       const data = response.data.data || {};
       return {
+        mataKuliah: data.mataKuliah as ObeRencanaEvaluasiMataKuliah | undefined,
         rencanaEvaluasi: (data.rencanaEvaluasi || []) as ObeRencanaEvaluasiItem[],
         masterCpmk: (data.masterCpmk || []) as ObeMasterCpmk[],
       };

@@ -60,8 +60,8 @@ export interface SaveCpmkListItem {
   deskripsi: string;
   target: number;
   bobot: number;
-  cplPemetaan?: { cplId: string; bobotCpl: number }[];
-  subCpmk?: { kode: string; deskripsi: string; cplPemetaan: { cplId: string; bobotCpl: number }[] }[];
+  cplPemetaan?: { idCpl: string; bobotCpl: number }[];
+  subCpmk?: { kode: string; deskripsi: string; cplPemetaan: { idCpl: string; bobotCpl: number }[] }[];
 }
 
 export function useSavePemetaanCpmk() {

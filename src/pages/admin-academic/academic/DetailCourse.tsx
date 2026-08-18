@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Search, ArrowLeft } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
+import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
 
 // const fetchCourseDetail = async (id: string): Promise<CourseData> => {
 //   const token = localStorage.getItem("token");
@@ -21,6 +22,7 @@ const DetailCourse: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const { data: courseDetail, isLoading, error } = getCourseDataById(id!);
+  useSetBreadcrumbLabel(id, courseDetail?.nama);
 
   // --- event handlers ---
   const handleBack = () => {

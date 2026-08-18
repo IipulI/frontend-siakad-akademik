@@ -5,7 +5,7 @@ export function getDosen() {
   return useQuery({
     queryKey: ["dosen"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/dosen");
+      const response = await Api.get("/public/dosen");
       console.log("🔍 Raw dosen API data:", response.data.data);
       return response.data.data;
     },

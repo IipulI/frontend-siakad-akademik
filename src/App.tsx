@@ -38,8 +38,12 @@ import RencanaEvaluasi from "./pages/admin-academic/academic/ObeRencanaEvaluasi"
 import ObeManajemenCapaian from "./pages/admin-academic/academic/ObeManajemenCapaian";
 import ObeTemplateEvaluasi from "./pages/admin-academic/academic/ObeTemplateEvaluasi";
 import ObeKurikulumProdi from "./pages/admin-academic/academic/ObeKurikulumProdi";
+import ObeKurikulumProdiDetail from "./pages/admin-academic/academic/ObeKurikulumProdiDetail";
 import ObeSetGrupMk from "./pages/admin-academic/academic/ObeSetGrupMk";
 import ObeTahunKurikulum from "./pages/admin-academic/academic/ObeTahunKurikulum";
+import ObeTahunKurikulumDetail from "./pages/admin-academic/academic/ObeTahunKurikulumDetail";
+import ObeCplUmum from "./pages/admin-academic/academic/ObeCplUmum";
+import ObeKetentuanAkademik from "./pages/admin-academic/academic/ObeKetentuanAkademik";
 import YearAdminAcademic from "./pages/admin-academic/setting/YearAdminAcademic";
 import PeriodAdminAcademic from "./pages/admin-academic/setting/PeriodAdminAcademy";
 import ScaleAdminAcademic from "./pages/admin-academic/setting/ScaleAdminAcademic";
@@ -63,13 +67,17 @@ import ObeSoalKomponen from "./pages/admin-academic/academic/ObeSoalKomponen";
 import ObeInputNilaiSoal from "./pages/admin-academic/academic/ObeInputNilaiSoal";
 import ObeIntegrasiCbt from "./pages/admin-academic/academic/ObeIntegrasiCbt";
 import ObeMonitoring from "./pages/admin-academic/academic/ObeMonitoring";
-import ObeCekSoal from "./pages/admin-academic/academic/ObeCekSoal";
-import ObeResetNilai from "./pages/admin-academic/academic/ObeResetNilai";
+import ObeMonitoringCetak from "./pages/admin-academic/academic/ObeMonitoringCetak";
 import ObeCpmk from "./pages/admin-academic/academic/ObeCpmk";
+import ObePemetaanCplMk from "./pages/admin-academic/academic/ObePemetaanCplMk";
+import ObeLaporanCplMk from "./pages/admin-academic/academic/ObeLaporanCplMk";
 import ObeCpmkMatkul from "./pages/admin-academic/academic/ObeCpmkMatkul";
 import ObePemetaanCpl from "./pages/admin-academic/academic/ObePemetaanCpl";
 import ObeDataMataKuliah from "./pages/admin-academic/academic/ObeDataMataKuliah";
+import ObeEditMataKuliah from "./pages/admin-academic/academic/ObeEditMataKuliah";
+import ObeAddMataKuliah from "./pages/admin-academic/academic/ObeAddMataKuliah";
 import ObeDetailRps from "./pages/admin-academic/academic/ObeDetailRps";
+import ObeEditRps from "./pages/admin-academic/academic/ObeEditRps";
 import ObeRencanaPembelajaran from "./pages/admin-academic/academic/ObeRencanaPembelajaran";
 import CurriculumProdi from "./pages/admin-academic/academic/CurriculumProdi";
 import RpsManagement from "./pages/admin-academic/academic/RpsManagement";
@@ -78,6 +86,9 @@ import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
+import LaporanNilaiPerkuliahan from "./pages/admin-academic/class/LaporanNilaiPerkuliahan";
+import LaporanDaftarNilai from "./pages/admin-academic/class/LaporanDaftarNilai";
+import KomposisiNilaiKelas from "./pages/admin-academic/class/KomposisiNilaiKelas";
 import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
 import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
 import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
@@ -215,6 +226,18 @@ export default function App() {
         element={<DetailCollegeClass />}
       />
       <Route
+        path={String(`${AdminAcademicRoute.collegeClass.laporanNilaiPerkuliahan}/:id`)}
+        element={<LaporanNilaiPerkuliahan />}
+      />
+      <Route
+        path={String(`${AdminAcademicRoute.collegeClass.laporanDaftarNilai}/:id`)}
+        element={<LaporanDaftarNilai />}
+      />
+      <Route
+        path={String(`${AdminAcademicRoute.collegeClass.komposisiNilai}/:id`)}
+        element={<KomposisiNilaiKelas />}
+      />
+      <Route
         path={String(AdminAcademicRoute.student.studentData)}
         element={<StudentData />}
       />
@@ -345,6 +368,16 @@ export default function App() {
       />
 
       <Route
+        path={`${AdminAcademicRoute.obeManagement.cplKeMk}/:id`}
+        element={<ObePemetaanCplMk />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.cplKeMkLaporan}/:id`}
+        element={<ObeLaporanCplMk />}
+      />
+
+      <Route
         path={`${AdminAcademicRoute.obeManagement.cpmkMataKuliah}/:obeId/:mataKuliahId`}
         element={<ObeCpmkMatkul />}
       />
@@ -360,8 +393,23 @@ export default function App() {
       />
 
       <Route
+        path={`${AdminAcademicRoute.obeManagement.editObeCourse}/:obeId/:mataKuliahId`}
+        element={<ObeEditMataKuliah />}
+      />
+
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.addObeCourse)}
+        element={<ObeAddMataKuliah />}
+      />
+
+      <Route
         path={`${AdminAcademicRoute.obeManagement.detailRps}/:obeId/:mataKuliahId`}
         element={<ObeDetailRps />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.editRps}/:obeId/:mataKuliahId`}
+        element={<ObeEditRps />}
       />
 
       <Route
@@ -388,12 +436,28 @@ export default function App() {
         element={<ObeKurikulumProdi />}
       />
       <Route
+        path={String(AdminAcademicRoute.obeManagement.kurikulumProdiDetail)}
+        element={<ObeKurikulumProdiDetail />}
+      />
+      <Route
         path={String(AdminAcademicRoute.obeManagement.setGrupMk)}
         element={<ObeSetGrupMk />}
       />
       <Route
         path={String(AdminAcademicRoute.obeManagement.tahunKurikulum)}
         element={<ObeTahunKurikulum />}
+      />
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.tahunKurikulumDetail}/:id`}
+        element={<ObeTahunKurikulumDetail />}
+      />
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.cplUmum}/:id`}
+        element={<ObeCplUmum />}
+      />
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.ketentuanAkademik}/:id/:jenjangId`}
+        element={<ObeKetentuanAkademik />}
       />
 
       {/* Route untuk admin akademik - Penilaian & Monitoring OBE */}
@@ -418,14 +482,9 @@ export default function App() {
         element={<ObeMonitoring />}
       />
       <Route
-        path={String(AdminAcademicRoute.obeManagement.cekSoal)}
-        element={<ObeCekSoal />}
+        path={String(AdminAcademicRoute.obeManagement.monitoringCetak)}
+        element={<ObeMonitoringCetak />}
       />
-      <Route
-        path={String(AdminAcademicRoute.obeManagement.resetNilai)}
-        element={<ObeResetNilai />}
-      />
-
       {/* Route untuk admin akademik - Kurikulum Prodi */}
       <Route
         path={String(AdminAcademicRoute.prodiCurriculum)}

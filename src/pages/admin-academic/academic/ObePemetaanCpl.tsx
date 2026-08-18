@@ -7,6 +7,7 @@ import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
 import { getPemetaanCplMk, useSavePemetaanCplMk } from "../../../hooks/academic/useObePemetaanCplMk";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
 
 export default function ObePemetaanCpl() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function ObePemetaanCpl() {
 
   // Fetch Course Data
   const { data: courseDetail, isLoading: isCourseLoading, error: courseError } = getCourseDataById(mataKuliahId || "");
+  useSetBreadcrumbLabel(mataKuliahId, courseDetail?.nama);
 
   // Fetch CPL list + mapped status for this course
   const { data: cplMkData, isLoading: isCplLoading } = getPemetaanCplMk(mataKuliahId || "");
@@ -153,34 +155,35 @@ export default function ObePemetaanCpl() {
             {/* Main Content */}
             <div className="w-full md:w-[80%]">
               
-              {/* Course Summary Box */}
-              <div className="bg-[#f4f9fb] p-6 rounded-md border border-[#e5f1f6] mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-sm font-semibold text-gray-600">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Kode Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.kodeMataKuliah || "-"}</span>
+              {/* Course Summary Box (Green Accent) */}
+              <div className="flex mb-6 w-full rounded-sm overflow-hidden border border-gray-100 shadow-sm">
+                <div className="bg-primary-green w-2 flex-shrink-0"></div>
+                <div className="flex-1 bg-[#F5FFF9] p-5 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 text-sm text-gray-700">
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Kode Mata Kuliah</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.kode || "-"}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">SKS</span>
-                    <span className="text-gray-800">{courseDetail.totalSKS ?? (courseDetail.sksTatapMuka || 3)}</span>
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">SKS</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.totalSks ?? (courseDetail.sksTatapMuka || 0)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.namaMataKuliah || "-"}</span>
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Mata Kuliah</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.nama || "-"}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Jenis Mata Kuliah</span>
-                    <span className="text-gray-800">{courseDetail.jenis || "Kuliah"}</span>
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Jenis Mata Kuliah</span>
+                    <span className="flex-1 text-gray-800">{courseDetail.jenis || "Kuliah"}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Tahun Kurikulum</span>
-                    <span className="text-gray-800">
-                      Tahun {typeof courseDetail.tahunKurikulum === "object" ? courseDetail.tahunKurikulum?.tahun : (courseDetail.tahunKurikulum || "2025")}
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Tahun Kurikulum</span>
+                    <span className="flex-1 text-gray-800">
+                      {typeof courseDetail.tahunKurikulum === "object" ? courseDetail.tahunKurikulum?.tahun : (courseDetail.tahunKurikulum || "-")}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00c0ef]">Unit Pengampu</span>
-                    <span className="text-gray-800">
+                  <div className="flex justify-between border-b border-green-50 pb-2">
+                    <span className="font-semibold text-gray-500 w-44">Unit Pengampu</span>
+                    <span className="flex-1 text-gray-800">
                       {typeof courseDetail.programStudi === "object" ? courseDetail.programStudi?.nama : (courseDetail.programStudi || "-")}
                     </span>
                   </div>
@@ -207,7 +210,7 @@ export default function ObePemetaanCpl() {
               <div className="overflow-x-auto border border-gray-200 rounded-sm">
                 <table className="min-w-full bg-white border-collapse">
                   <thead>
-                    <tr className="bg-[#0b5c77] text-white text-sm font-semibold text-left">
+                    <tr className="bg-primary-green text-white text-sm font-semibold text-left">
                       <th className="p-3 border-b border-gray-300 w-16 text-center">No.</th>
                       <th className="p-3 border-b border-gray-300 w-32">Kode CPL</th>
                       <th className="p-3 border-b border-gray-300">Deskripsi Capaian Pembelajaran Lulusan (CPL)</th>

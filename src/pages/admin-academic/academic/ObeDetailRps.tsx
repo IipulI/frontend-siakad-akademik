@@ -3,10 +3,11 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
-import { ArrowLeft, Search, Printer, Copy, Edit, Sparkles } from "lucide-react";
+import { ArrowLeft, Search, Printer, Copy, Edit, Sparkles, X, Trash2 } from "lucide-react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
+import { fetchPratinjauSalinDetailRps, useSalinDetailRps, useDeleteDetailRps } from "../../../hooks/academic/useObeDetailRps";
 
 interface RpsDetailResponse {
   mataKuliah: {
@@ -41,10 +42,20 @@ interface RpsDetailResponse {
   } | null;
 }
 
+function daftarPeriodeAktifId(data: RpsDetailResponse | undefined): string {
+  return data?.daftarPeriode?.find((p) => p.status === "Aktif")?.id || "";
+}
+
 export default function ObeDetailRps() {
   const { obeId, mataKuliahId } = useParams<{ obeId: string; mataKuliahId: string }>();
   const navigate = useNavigate();
   const [selectedPeriode, setSelectedPeriode] = useState<string>("all");
+
+  const [showSalinModal, setShowSalinModal] = useState(false);
+  const [periodeAsal, setPeriodeAsal] = useState<string>("");
+  const [previewSalin, setPreviewSalin] = useState<any | null>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [salinError, setSalinError] = useState("");
 
   const { data, isLoading, error, refetch } = useQuery<RpsDetailResponse>({
     queryKey: ["obeDetailRps", mataKuliahId, selectedPeriode],
@@ -60,6 +71,9 @@ export default function ObeDetailRps() {
     enabled: !!mataKuliahId,
   });
 
+  const salinMutation = useSalinDetailRps(mataKuliahId || "");
+  const deleteMutation = useDeleteDetailRps(mataKuliahId || "");
+
   const handleBack = () => {
     navigate(AdminAcademicRoute.obeManagement.obeManagement);
   };
@@ -70,6 +84,65 @@ export default function ObeDetailRps() {
     } else {
       alert("Dokumen RPS belum diunggah.");
     }
+  };
+
+  const handleUbahRps = () => {
+    const periodeTujuan = selectedPeriode !== "all" ? selectedPeriode : (daftarPeriodeAktifId(data) || "");
+    navigate(`${AdminAcademicRoute.obeManagement.editRps}/${obeId}/${mataKuliahId}${periodeTujuan ? `?periodeId=${periodeTujuan}` : ""}`);
+  };
+
+  const handleHapusRps = () => {
+    if (!data?.rpsData?.id) return;
+    if (!window.confirm("Yakin mau hapus Detail RPS untuk periode ini? Tindakan ini tidak bisa dibatalkan.")) return;
+    deleteMutation.mutate(data.rpsData.id, {
+      onSuccess: () => refetch(),
+      onError: (err: any) => alert(err?.response?.data?.message || "Gagal menghapus Detail RPS."),
+    });
+  };
+
+  const openSalinModal = () => {
+    setPeriodeAsal("");
+    setPreviewSalin(null);
+    setSalinError("");
+    setShowSalinModal(true);
+  };
+
+  const handlePilihPeriodeAsal = async (id: string) => {
+    setPeriodeAsal(id);
+    setPreviewSalin(null);
+    setSalinError("");
+    if (!id || !mataKuliahId) return;
+    setIsLoadingPreview(true);
+    try {
+      const preview = await fetchPratinjauSalinDetailRps(mataKuliahId, id);
+      setPreviewSalin(preview);
+    } catch (err: any) {
+      setSalinError(err?.response?.data?.message || "Gagal memuat pratinjau RPS periode asal.");
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
+
+  const handleKonfirmasiSalin = () => {
+    const periodeTujuan = selectedPeriode !== "all" ? selectedPeriode : daftarPeriodeAktifId(data);
+    if (!periodeTujuan) {
+      setSalinError("Pilih periode tujuan (dropdown \"Berlaku Sejak Periode\") dulu sebelum menyalin.");
+      return;
+    }
+    if (!periodeAsal) {
+      setSalinError("Pilih periode asal dulu.");
+      return;
+    }
+    salinMutation.mutate(
+      { periodeAsalId: periodeAsal, periodeTujuanId: periodeTujuan },
+      {
+        onSuccess: () => {
+          setShowSalinModal(false);
+          refetch();
+        },
+        onError: (err: any) => setSalinError(err?.response?.data?.message || "Gagal menyalin Detail RPS."),
+      }
+    );
   };
 
   if (isLoading) {
@@ -131,13 +204,25 @@ export default function ObeDetailRps() {
               <button onClick={handleBack} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
-              <button className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button onClick={handleUbahRps} className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <Edit size={16} /> Ubah RPS
               </button>
-              <button className="bg-orange-500 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button onClick={openSalinModal} className="bg-orange-500 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <Copy size={16} /> Salin Data
               </button>
-              <button className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              {data?.rpsData?.id && (
+                <button
+                  onClick={handleHapusRps}
+                  disabled={deleteMutation.isPending}
+                  className="bg-red-600 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
+                >
+                  <Trash2 size={16} /> {deleteMutation.isPending ? "Menghapus..." : "Hapus RPS"}
+                </button>
+              )}
+              <button
+                onClick={() => window.print()}
+                className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
+              >
                 <Printer size={16} /> Cetak
               </button>
               <button className="bg-indigo-600 text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
@@ -301,6 +386,91 @@ export default function ObeDetailRps() {
           </div>
         </div>
       </div>
+
+      {/* Modal Salin Data */}
+      {showSalinModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-md shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="font-bold text-gray-800">Salin Data RPS dari Periode Lain</h3>
+              <button onClick={() => setShowSalinModal(false)} className="text-gray-400 hover:text-gray-600 cursor-pointer">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              <p className="text-sm text-gray-600">
+                Menyalin ke periode:{" "}
+                <span className="font-semibold text-gray-800">
+                  {(daftarPeriode.find((p) => p.id === (selectedPeriode !== "all" ? selectedPeriode : daftarPeriodeAktifId(data)))?.nama) || "(pilih dulu di dropdown \"Berlaku Sejak Periode\" di halaman utama)"}
+                </span>
+              </p>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Salin dari periode</label>
+                <select
+                  value={periodeAsal}
+                  onChange={(e) => handlePilihPeriodeAsal(e.target.value)}
+                  className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-700 w-full"
+                >
+                  <option value="">Pilih periode asal</option>
+                  {daftarPeriode
+                    .filter((p) => p.adaDataRps && p.id !== (selectedPeriode !== "all" ? selectedPeriode : daftarPeriodeAktifId(data)))
+                    .map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.nama}
+                      </option>
+                    ))}
+                </select>
+                {daftarPeriode.filter((p) => p.adaDataRps).length === 0 && (
+                  <p className="text-xs text-gray-400 italic mt-1">Belum ada periode lain yang punya data RPS untuk mata kuliah ini.</p>
+                )}
+              </div>
+
+              {isLoadingPreview && (
+                <div className="flex justify-center p-6">
+                  <LoadingSpinner />
+                </div>
+              )}
+
+              {previewSalin && !isLoadingPreview && (
+                <div className="border border-gray-200 rounded-sm p-4 bg-gray-50 text-sm space-y-2">
+                  <p className="font-semibold text-gray-700 mb-2">Pratinjau data yang akan disalin:</p>
+                  <p><span className="font-semibold text-gray-600">Deskripsi (IND):</span> {previewSalin.deskripsiMataKuliah || "-"}</p>
+                  <p><span className="font-semibold text-gray-600">Tujuan:</span> {previewSalin.tujuanMataKuliah || "-"}</p>
+                  <p><span className="font-semibold text-gray-600">Materi:</span> {previewSalin.materiPembelajaran || "-"}</p>
+                </div>
+              )}
+
+              {salinError && (
+                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">{salinError}</div>
+              )}
+
+              {data?.rpsData && (
+                <p className="text-xs text-orange-600 bg-orange-50 border border-orange-200 rounded p-2">
+                  ⚠ Periode tujuan sudah punya Detail RPS. Menyalin akan MENIMPA data yang sudah ada di periode tujuan.
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 p-4 border-t border-gray-200">
+              <button
+                onClick={() => setShowSalinModal(false)}
+                className="px-4 py-2 rounded-md text-sm font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleKonfirmasiSalin}
+                disabled={!periodeAsal || salinMutation.isPending}
+                className="bg-orange-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
+              >
+                {salinMutation.isPending ? "Menyalin..." : "Salin Data"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }

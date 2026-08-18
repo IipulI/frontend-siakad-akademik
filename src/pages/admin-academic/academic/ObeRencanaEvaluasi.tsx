@@ -1,22 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Save, RefreshCw } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, RefreshCw, Pencil } from "lucide-react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { useAcademicPeriods } from "../../../hooks/usePeriodeAkademik";
+import { useAcademicPeriods, useActivePeriod } from "../../../hooks/usePeriodeAkademik";
 import {
   getRencanaEvaluasi,
   useSaveRencanaEvaluasi,
   SyaratLulus,
 } from "../../../hooks/academic/useObeRencanaEvaluasi";
 import { getPemetaanCpmk } from "../../../hooks/academic/useObeCpmkMk";
+import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
 
 interface CpmkColumn {
   id: string;
   kode: string;
 }
+
+interface CpmkGroup {
+  id: string;
+  kode: string;
+  subs: CpmkColumn[];
+}
+
+// Taksonomi tetap untuk tabel "Pelaporan Metode Evaluasi" — dihitung dari data Rencana Evaluasi
+// yang sudah ada (dicocokkan lewat jenisEvaluasi), bukan dari endpoint terpisah.
+const PELAPORAN_METODE_EVALUASI_GROUPS: {
+  basis: string;
+  items: { komponen: string | null; jenisMatch: string; deskripsi: string }[];
+}[] = [
+  {
+    basis: "Aktivitas Partisipatif",
+    items: [{ komponen: null, jenisMatch: "Aktivitas Partisipatif", deskripsi: "Kehadiran" }],
+  },
+  {
+    basis: "Hasil Proyek",
+    items: [{ komponen: null, jenisMatch: "Hasil Proyek", deskripsi: "Proyek" }],
+  },
+  {
+    basis: "Kognitif / Pengetahuan",
+    items: [
+      { komponen: "Tugas", jenisMatch: "Kognitif/Pengetahuan - Tugas", deskripsi: "Tugas" },
+      { komponen: "Quiz", jenisMatch: "Kognitif/Pengetahuan - Quiz", deskripsi: "Quiz" },
+      { komponen: "Ujian Tengah Semester", jenisMatch: "Kognitif/Pengetahuan - Ujian Tengah Semester", deskripsi: "UTS" },
+      { komponen: "Ujian Akhir Semester", jenisMatch: "Kognitif/Pengetahuan - Ujian Akhir Semester", deskripsi: "UAS" },
+    ],
+  },
+];
 
 interface LocalEvaluasiRow {
   localId: string;
@@ -32,6 +64,44 @@ const SYARAT_LULUS_OPTIONS: { value: SyaratLulus; label: string }[] = [
   { value: "LULUS_DENGAN_NILAI_MINIMUM", label: "Lulus dengan nilai minimum" },
 ];
 
+// Sesuai daftar Metode Evaluasi di SIAKAD lama (data_rencanaevaluasi/edit)
+const METODE_EVALUASI_OPTIONS = [
+  "TUGAS INDIVIDU",
+  "UTS",
+  "UAS",
+  "PRAKTIKUM",
+  "DISKUSI",
+  "KEHADIRAN",
+  "PRILAKU",
+  "TUGAS KELOMPOK",
+  "SEMINAR PROPOSAL",
+  "SEMINAR HASIL",
+  "BIMBINGAN",
+  "LAPORAN PRAKTIKUM",
+  "QUIZ",
+  "Komprehensif",
+  "PROGRAM SANDWICH",
+  "PRE-TEST",
+  "POST-TEST",
+  "Project Based Learning",
+  "Case-Based Learning",
+  "Tugas",
+  "NILAI AKHIR",
+  "PEMBIMBING TA",
+  "PENGUJI TA",
+];
+
+// Sesuai daftar Jenis Evaluasi di SIAKAD lama - nilainya juga dipakai untuk
+// pencocokan "jenisMatch" di tabel Pelaporan Metode Evaluasi, jadi jangan diubah bebas.
+const JENIS_EVALUASI_OPTIONS = [
+  "Aktivitas Partisipatif",
+  "Hasil Proyek",
+  "Kognitif/Pengetahuan - Tugas",
+  "Kognitif/Pengetahuan - Quiz",
+  "Kognitif/Pengetahuan - Ujian Tengah Semester",
+  "Kognitif/Pengetahuan - Ujian Akhir Semester",
+];
+
 let uidCounter = 0;
 const nextUid = () => `local-eval-${Date.now()}-${uidCounter++}`;
 
@@ -40,43 +110,48 @@ export default function ObeRencanaEvaluasi() {
   const navigate = useNavigate();
 
   const { data: periodeList, isLoading: isPeriodeLoading } = useAcademicPeriods();
+  const { data: activePeriod } = useActivePeriod();
   const [periodeId, setPeriodeId] = useState<string>("");
 
+  // Otomatis pilih periode aktif supaya halaman tidak tampak kosong sebelum user memilih manual
+  useEffect(() => {
+    if (activePeriod?.id && !periodeId) {
+      setPeriodeId(activePeriod.id);
+    }
+  }, [activePeriod, periodeId]);
+
   const { data: reData, isLoading: isReLoading } = getRencanaEvaluasi(mataKuliahId || "", periodeId);
+  useSetBreadcrumbLabel(mataKuliahId, reData?.mataKuliah?.nama);
   const { data: cpmkMappingData, refetch: refetchCpmk, isFetching: isCpmkFetching } = getPemetaanCpmk(mataKuliahId || "");
   const saveMutation = useSaveRencanaEvaluasi();
 
-  const [cpmkColumns, setCpmkColumns] = useState<CpmkColumn[]>([]);
   const [rows, setRows] = useState<LocalEvaluasiRow[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isEditingKomponen, setIsEditingKomponen] = useState(false);
 
   const existing = reData?.rencanaEvaluasi || [];
-  const masterCpmk = reData?.masterCpmk || [];
 
-  useEffect(() => {
-    if (!cpmkMappingData) return;
-    if (cpmkMappingData.levelPemetaan === "Sub-CPMK") {
-      const cols: CpmkColumn[] = [];
-      cpmkMappingData.cpmkData.forEach((c) => {
-        (c.subCpmk || []).forEach((s) => {
-          if (s.id) cols.push({ id: s.id, kode: `${c.kode}.${s.kode}` });
-        });
-      });
-      setCpmkColumns(cols);
-    } else {
-      setCpmkColumns(
-        cpmkMappingData.cpmkData.filter((c) => c.id).map((c) => ({ id: c.id as string, kode: c.kode }))
-      );
-    }
+  // Kolom CPMK terkelompok (dengan Sub-CPMK bila ada) untuk tabel "Komponen Evaluasi"
+  const cpmkGroups = useMemo<CpmkGroup[]>(() => {
+    if (!cpmkMappingData) return [];
+    return cpmkMappingData.cpmkData
+      .filter((c) => c.id)
+      .map((c) => ({
+        id: c.id as string,
+        kode: c.kode,
+        subs:
+          cpmkMappingData.levelPemetaan === "Sub-CPMK"
+            ? (c.subCpmk || []).filter((s) => s.id).map((s) => ({ id: s.id as string, kode: s.kode }))
+            : [],
+      }));
   }, [cpmkMappingData]);
 
-  const handleBack = () => navigate(AdminAcademicRoute.obeManagement.obeManagement);
+  const cpmkLeafColumns = cpmkGroups.reduce((sum, g) => sum + (g.subs.length > 0 ? g.subs.length : 1), 0);
+  const hasSubCpmkGroup = cpmkGroups.some((g) => g.subs.length > 0);
+  const existingTotalBobot = existing.reduce((sum, item) => sum + (Number(item.bobotEvaluasi) || 0), 0);
 
-  const kodeCpmkFor = (cpmkId: string) => {
-    const found = masterCpmk.find((m) => m.id === cpmkId) || cpmkColumns.find((c) => c.id === cpmkId);
-    return found?.kode || cpmkId.slice(0, 8);
-  };
+  const handleBack = () => navigate(AdminAcademicRoute.obeManagement.obeManagement);
 
   const rowBobot = (row: LocalEvaluasiRow) =>
     Object.values(row.cpmkBobot).reduce((sum, v) => sum + (Number(v) || 0), 0);
@@ -108,7 +183,7 @@ export default function ObeRencanaEvaluasi() {
     );
   };
 
-  const salinDariExisting = () => {
+  const handleStartEdit = () => {
     setRows(
       existing.map((item) => ({
         localId: nextUid(),
@@ -118,6 +193,15 @@ export default function ObeRencanaEvaluasi() {
         syaratLulus: item.syaratLulus,
       }))
     );
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsEditingKomponen(true);
+  };
+
+  const handleCancelEdit = () => {
+    setRows([]);
+    setErrorMessage("");
+    setIsEditingKomponen(false);
   };
 
   const handleSave = () => {
@@ -146,7 +230,11 @@ export default function ObeRencanaEvaluasi() {
     saveMutation.mutate(
       { mataKuliahId: mataKuliahId!, siakPeriodeAkademikId: periodeId, evaluasiList },
       {
-        onSuccess: () => setSuccessMessage("Rencana evaluasi berhasil disimpan."),
+        onSuccess: () => {
+          setSuccessMessage("Rencana evaluasi berhasil disimpan.");
+          setIsEditingKomponen(false);
+          setRows([]);
+        },
         onError: (error: any) => {
           setErrorMessage(error?.response?.data?.message || "Gagal menyimpan rencana evaluasi.");
         },
@@ -159,6 +247,11 @@ export default function ObeRencanaEvaluasi() {
       <div className="p-0 min-h-screen">
         <div className="mb-6 mt-[-10px]">
           <p className="text-gray-500 text-sm">Admin - Akademik &gt; Obe &gt; Manajemen Obe &gt; Rencana Evaluasi</p>
+          {reData?.mataKuliah && (
+            <h2 className="text-lg font-bold text-gray-800 mt-1">
+              {reData.mataKuliah.kode} - {reData.mataKuliah.nama}
+            </h2>
+          )}
         </div>
 
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
@@ -189,13 +282,6 @@ export default function ObeRencanaEvaluasi() {
               <button onClick={handleBack} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
-              <button
-                onClick={handleSave}
-                disabled={saveMutation.isPending || !periodeId}
-                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50"
-              >
-                <Save size={16} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
-              </button>
             </div>
           </div>
         </div>
@@ -218,167 +304,286 @@ export default function ObeRencanaEvaluasi() {
                     <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">{successMessage}</div>
                   )}
 
-                  <h3 className="text-sm font-bold mb-2">📋 Data yang sudah ada di server</h3>
+                  <div className="flex items-center justify-between border-b-2 border-primary-green pb-1 mb-3">
+                    <h3 className="text-base font-bold text-gray-800">Komponen Evaluasi</h3>
+                    {!isEditingKomponen && (
+                      <button
+                        onClick={handleStartEdit}
+                        className="bg-primary-yellow text-white px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 hover:opacity-90 cursor-pointer"
+                      >
+                        <Pencil size={14} /> Ubah Data
+                      </button>
+                    )}
+                  </div>
                   {isReLoading ? (
                     <LoadingSpinner />
-                  ) : existing.length === 0 ? (
-                    <div className="p-4 mb-6 text-center text-gray-500 italic border border-gray-200 rounded text-sm">
-                      Belum ada Rencana Evaluasi untuk periode ini.
-                    </div>
                   ) : (
-                    <div className="overflow-x-auto border border-gray-200 rounded-sm mb-6">
-                      <table className="min-w-full text-sm border-collapse">
+                    <div className="overflow-x-auto border border-gray-200 rounded-sm mb-4">
+                      <table className="min-w-full bg-white border-collapse">
                         <thead>
-                          <tr className="bg-gray-700 text-white text-xs">
-                            <th className="p-2 border">Metode</th>
-                            <th className="p-2 border">Jenis</th>
-                            <th className="p-2 border">Bobot Evaluasi</th>
-                            <th className="p-2 border">Pemetaan CPMK</th>
-                            <th className="p-2 border">Syarat Lulus</th>
+                          <tr className="bg-primary-green text-white text-xs uppercase font-bold text-center border-b border-gray-300">
+                            <th className="p-3 border border-gray-300" rowSpan={2}>No.</th>
+                            <th className="p-3 border border-gray-300" rowSpan={2}>Metode Evaluasi</th>
+                            <th className="p-3 border border-gray-300" rowSpan={2}>Jenis Evaluasi</th>
+                            {cpmkGroups.map((g) =>
+                              g.subs.length > 0 ? (
+                                <th key={g.id} className="p-3 border border-gray-300" colSpan={g.subs.length}>
+                                  {g.kode}
+                                </th>
+                              ) : (
+                                <th key={g.id} className="p-3 border border-gray-300" rowSpan={2}>
+                                  {g.kode}
+                                </th>
+                              )
+                            )}
+                            <th className="p-3 border border-gray-300" rowSpan={2}>Bobot Evaluasi</th>
+                            <th className="p-3 border border-gray-300" rowSpan={2}>Syarat Lulus</th>
+                            {isEditingKomponen && <th className="p-3 border border-gray-300" rowSpan={2}>Aksi</th>}
                           </tr>
+                          {hasSubCpmkGroup && (
+                            <tr className="bg-primary-green text-white text-xs uppercase font-bold text-center border-b border-gray-300">
+                              {cpmkGroups.flatMap((g) =>
+                                g.subs.length > 0
+                                  ? g.subs.map((s) => (
+                                      <th key={s.id} className="p-2 border border-gray-300 min-w-[70px]">
+                                        {s.kode}
+                                      </th>
+                                    ))
+                                  : []
+                              )}
+                            </tr>
+                          )}
                         </thead>
-                        <tbody>
-                          {existing.map((item) => (
-                            <tr key={item.id} className="text-center">
-                              <td className="p-2 border">{item.metodeEvaluasi}</td>
-                              <td className="p-2 border">{item.jenisEvaluasi}</td>
-                              <td className="p-2 border font-semibold">{item.bobotEvaluasi}%</td>
-                              <td className="p-2 border text-left text-xs">
-                                {Object.entries(item.mappingBobotCpmk || {})
-                                  .map(([cpmkId, bobot]) => `${kodeCpmkFor(cpmkId)}: ${bobot}`)
-                                  .join(", ") || "-"}
-                              </td>
-                              <td className="p-2 border text-xs">
-                                {SYARAT_LULUS_OPTIONS.find((o) => o.value === item.syaratLulus)?.label || item.syaratLulus}
+                        <tbody className="text-sm text-gray-700 text-center font-semibold">
+                          {isEditingKomponen ? (
+                            rows.length > 0 ? (
+                              rows.map((row, idx) => (
+                                <tr key={row.localId} className="hover:bg-gray-50 border-b border-gray-200">
+                                  <td className="p-2 border border-gray-200">{idx + 1}</td>
+                                  <td className="p-2 border border-gray-200">
+                                    <select
+                                      value={row.metodeEvaluasi}
+                                      onChange={(e) => updateRowField(row.localId, "metodeEvaluasi", e.target.value)}
+                                      className="w-32 border border-gray-300 rounded p-1 text-xs"
+                                    >
+                                      <option value="">-- Pilih --</option>
+                                      {METODE_EVALUASI_OPTIONS.map((opt) => (
+                                        <option key={opt} value={opt}>
+                                          {opt}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                  <td className="p-2 border border-gray-200">
+                                    <select
+                                      value={row.jenisEvaluasi}
+                                      onChange={(e) => updateRowField(row.localId, "jenisEvaluasi", e.target.value)}
+                                      className="w-48 border border-gray-300 rounded p-1 text-xs"
+                                    >
+                                      <option value="">-- Pilih --</option>
+                                      {JENIS_EVALUASI_OPTIONS.map((opt) => (
+                                        <option key={opt} value={opt}>
+                                          {opt}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                  {cpmkGroups.flatMap((g) =>
+                                    (g.subs.length > 0 ? g.subs : [{ id: g.id, kode: g.kode }]).map((leaf) => (
+                                      <td key={leaf.id} className="p-2 border border-gray-200">
+                                        <input
+                                          type="number"
+                                          min={0}
+                                          max={100}
+                                          value={row.cpmkBobot[leaf.id] ?? 0}
+                                          onChange={(e) => updateRowBobot(row.localId, leaf.id, e.target.value)}
+                                          className="w-14 border border-gray-300 rounded p-1 text-xs text-center"
+                                        />
+                                      </td>
+                                    ))
+                                  )}
+                                  <td className="p-2 border border-gray-200" title="Dihitung otomatis dari bobot CPMK/Sub-CPMK di baris ini">
+                                    {rowBobot(row)}%
+                                  </td>
+                                  <td className="p-2 border border-gray-200">
+                                    <select
+                                      value={row.syaratLulus}
+                                      onChange={(e) => updateRowField(row.localId, "syaratLulus", e.target.value)}
+                                      className="border border-gray-300 rounded p-1 text-xs"
+                                    >
+                                      {SYARAT_LULUS_OPTIONS.map((o) => (
+                                        <option key={o.value} value={o.value}>
+                                          {o.label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                  <td className="p-2 border border-gray-200">
+                                    <button onClick={() => hapusEvaluasiRow(row.localId)} className="text-red-600 hover:text-red-800">
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={6 + cpmkLeafColumns} className="p-8 text-center text-gray-400 italic">
+                                  Klik "+ Tambah Baris" untuk mulai.
+                                </td>
+                              </tr>
+                            )
+                          ) : existing.length === 0 ? (
+                            <tr>
+                              <td colSpan={5 + cpmkLeafColumns} className="p-8 text-center text-gray-400 italic">
+                                Belum ada Rencana Evaluasi untuk periode ini.
                               </td>
                             </tr>
-                          ))}
+                          ) : (
+                            existing.map((item, idx) => (
+                              <tr key={item.id} className="hover:bg-gray-50 border-b border-gray-200">
+                                <td className="p-3 border border-gray-200">{idx + 1}</td>
+                                <td className="p-3 border border-gray-200">{item.metodeEvaluasi}</td>
+                                <td className="p-3 border border-gray-200">{item.jenisEvaluasi}</td>
+                                {cpmkGroups.flatMap((g) =>
+                                  (g.subs.length > 0 ? g.subs : [{ id: g.id, kode: g.kode }]).map((leaf) => (
+                                    <td key={leaf.id} className="p-3 border border-gray-200">
+                                      {item.mappingBobotCpmk?.[leaf.id] ?? "-"}
+                                    </td>
+                                  ))
+                                )}
+                                <td className="p-3 border border-gray-200">{item.bobotEvaluasi}%</td>
+                                <td className="p-3 border border-gray-200 text-xs font-normal">
+                                  {SYARAT_LULUS_OPTIONS.find((o) => o.value === item.syaratLulus)?.label || item.syaratLulus}
+                                </td>
+                              </tr>
+                            ))
+                          )}
                         </tbody>
+                        {isEditingKomponen
+                          ? rows.length > 0 && (
+                              <tfoot>
+                                <tr className="bg-gray-100 font-bold text-center">
+                                  <td colSpan={3 + cpmkLeafColumns} className="p-2 text-right border border-gray-200">
+                                    Total Bobot Evaluasi
+                                  </td>
+                                  <td className={`p-2 border border-gray-200 ${grandTotal === 100 ? "text-green-600" : "text-red-500"}`}>
+                                    {grandTotal}%
+                                  </td>
+                                  <td colSpan={2} className="border border-gray-200"></td>
+                                </tr>
+                              </tfoot>
+                            )
+                          : existing.length > 0 && (
+                              <tfoot>
+                                <tr className="bg-gray-100 font-bold text-center">
+                                  <td colSpan={3 + cpmkLeafColumns} className="p-2 text-right border border-gray-200">
+                                    Total Persentase Komponen Evaluasi
+                                  </td>
+                                  <td className={`p-2 border border-gray-200 ${existingTotalBobot === 100 ? "text-green-600" : "text-red-500"}`}>
+                                    {existingTotalBobot}%
+                                  </td>
+                                  <td className="border border-gray-200"></td>
+                                </tr>
+                              </tfoot>
+                            )}
                       </table>
                     </div>
                   )}
 
-                  <h3 className="text-sm font-bold mb-2">✏️ Tambah / Ubah</h3>
-                  <div className="flex gap-2 mb-3 flex-wrap">
-                    <button
-                      onClick={() => refetchCpmk()}
-                      disabled={isCpmkFetching}
-                      className="bg-gray-200 border border-gray-400 px-3 py-1.5 rounded text-xs flex items-center gap-1 hover:bg-gray-300"
-                    >
-                      <RefreshCw size={12} className={isCpmkFetching ? "animate-spin" : ""} /> Refresh kolom CPMK
-                    </button>
-                    <button
-                      onClick={salinDariExisting}
-                      disabled={existing.length === 0}
-                      className="bg-gray-200 border border-gray-400 px-3 py-1.5 rounded text-xs hover:bg-gray-300 disabled:opacity-50"
-                    >
-                      ⬇️ Salin dari data existing
-                    </button>
-                  </div>
-
-                  {cpmkColumns.length === 0 && (
-                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-300 text-yellow-800 rounded text-sm">
-                      Belum ada kolom CPMK. Lengkapi Pemetaan CPMK terlebih dahulu di menu sebelah.
+                  {isEditingKomponen && (
+                    <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
+                      <div className="flex gap-2 flex-wrap">
+                        <button
+                          onClick={tambahEvaluasiRow}
+                          className="bg-gray-200 border border-dashed border-gray-400 px-3 py-1.5 rounded text-xs flex items-center gap-1 hover:bg-gray-300"
+                        >
+                          <Plus size={14} /> Tambah Baris
+                        </button>
+                        <button
+                          onClick={() => refetchCpmk()}
+                          disabled={isCpmkFetching}
+                          className="bg-gray-200 border border-gray-400 px-3 py-1.5 rounded text-xs flex items-center gap-1 hover:bg-gray-300"
+                        >
+                          <RefreshCw size={12} className={isCpmkFetching ? "animate-spin" : ""} /> Refresh Kolom CPMK
+                        </button>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleCancelEdit}
+                          className="bg-gray-300 text-gray-700 px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-gray-400 cursor-pointer"
+                        >
+                          Batal
+                        </button>
+                        <button
+                          onClick={handleSave}
+                          disabled={saveMutation.isPending}
+                          className="bg-primary-green text-white px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 hover:opacity-90 cursor-pointer disabled:opacity-50"
+                        >
+                          <Save size={14} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
+                        </button>
+                      </div>
                     </div>
                   )}
 
-                  <div className="overflow-x-auto border border-gray-200 rounded-sm">
-                    <table className="min-w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="bg-[#0b5c77] text-white text-xs text-center">
-                          <th className="p-2 border">Metode Evaluasi</th>
-                          <th className="p-2 border">Jenis Evaluasi</th>
-                          {cpmkColumns.map((c) => (
-                            <th key={c.id} className="p-2 border min-w-[70px]">{c.kode}</th>
-                          ))}
-                          <th className="p-2 border">Bobot Evaluasi</th>
-                          <th className="p-2 border">Syarat Lulus</th>
-                          <th className="p-2 border">Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.length > 0 ? (
-                          rows.map((row) => (
-                            <tr key={row.localId} className="text-center">
-                              <td className="p-1 border">
-                                <input
-                                  type="text"
-                                  value={row.metodeEvaluasi}
-                                  onChange={(e) => updateRowField(row.localId, "metodeEvaluasi", e.target.value)}
-                                  className="w-28 border rounded p-1 text-xs"
-                                  placeholder="UTS/UAS/TUGAS/KEHADIRAN"
-                                />
-                              </td>
-                              <td className="p-1 border">
-                                <input
-                                  type="text"
-                                  value={row.jenisEvaluasi}
-                                  onChange={(e) => updateRowField(row.localId, "jenisEvaluasi", e.target.value)}
-                                  className="w-32 border rounded p-1 text-xs"
-                                  placeholder="Kognitif/Pengetahuan"
-                                />
-                              </td>
-                              {cpmkColumns.map((c) => (
-                                <td key={c.id} className="p-1 border">
-                                  <input
-                                    type="number"
-                                    min={0}
-                                    max={100}
-                                    value={row.cpmkBobot[c.id] ?? 0}
-                                    onChange={(e) => updateRowBobot(row.localId, c.id, e.target.value)}
-                                    className="w-14 border rounded p-1 text-xs text-center"
-                                  />
-                                </td>
-                              ))}
-                              <td className="p-1 border font-semibold">{rowBobot(row)}</td>
-                              <td className="p-1 border">
-                                <select
-                                  value={row.syaratLulus}
-                                  onChange={(e) => updateRowField(row.localId, "syaratLulus", e.target.value)}
-                                  className="border rounded p-1 text-xs"
-                                >
-                                  {SYARAT_LULUS_OPTIONS.map((o) => (
-                                    <option key={o.value} value={o.value}>
-                                      {o.label}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td className="p-1 border">
-                                <button onClick={() => hapusEvaluasiRow(row.localId)} className="text-red-600 hover:text-red-800">
-                                  <Trash2 size={16} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={5 + cpmkColumns.length} className="p-4 text-center text-gray-500 italic">
-                              Klik "+ Tambah Metode Evaluasi" untuk mulai.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                      {rows.length > 0 && (
-                        <tfoot>
-                          <tr className="bg-gray-100 font-bold text-center">
-                            <td colSpan={2 + cpmkColumns.length} className="p-2 text-right border">Total Bobot Evaluasi</td>
-                            <td className={`p-2 border ${grandTotal === 100 ? "text-green-600" : "text-red-500"}`}>{grandTotal}%</td>
-                            <td colSpan={2} className="border"></td>
-                          </tr>
-                        </tfoot>
-                      )}
-                    </table>
+                  <div className="mb-6 p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded text-xs">
+                    Syarat Lulus Mata Kuliah adalah komponen nilai wajib. Mahasiswa yang tidak memiliki komponen ini akan
+                    dinyatakan tidak lulus Mata Kuliah.
                   </div>
 
-                  <p className="text-xs text-gray-500 mt-2">
-                    Hanya syarat "Menjadi syarat lulus" yang benar-benar berlaku di backend (skor &lt;60 = huruf E). Menyimpan
-                    baris dengan Metode+Jenis yang sama seperti data existing akan MENIMPA baris tersebut, bukan menduplikasi.
-                  </p>
+                  <h3 className="text-base font-bold text-gray-800 border-b-2 border-primary-green pb-1 mb-3">
+                    Pelaporan Metode Evaluasi
+                  </h3>
+                  <div className="overflow-x-auto border border-gray-200 rounded-sm mb-2">
+                    <table className="min-w-full bg-white border-collapse">
+                      <thead>
+                        <tr className="bg-primary-green text-white text-xs uppercase font-bold text-center border-b border-gray-300">
+                          <th className="p-3 border border-gray-300">No.</th>
+                          <th className="p-3 border border-gray-300 text-left">Basis Evaluasi</th>
+                          <th className="p-3 border border-gray-300 text-left">Komponen Evaluasi</th>
+                          <th className="p-3 border border-gray-300">Bobot Evaluasi</th>
+                          <th className="p-3 border border-gray-300 text-left">Deskripsi</th>
+                          <th className="p-3 border border-gray-300 text-left">Deskripsi (Inggris)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-sm text-gray-700 text-center font-semibold">
+                        {PELAPORAN_METODE_EVALUASI_GROUPS.map((group, gIdx) =>
+                          group.items.map((item, iIdx) => {
+                            const match = existing.find((e) => e.jenisEvaluasi === item.jenisMatch);
+                            return (
+                              <tr key={`${gIdx}-${iIdx}`} className="hover:bg-gray-50 border-b border-gray-200">
+                                {iIdx === 0 && (
+                                  <td className="p-3 border border-gray-200" rowSpan={group.items.length}>
+                                    {gIdx + 1}
+                                  </td>
+                                )}
+                                {iIdx === 0 && (
+                                  <td className="p-3 border border-gray-200 text-left font-normal" rowSpan={group.items.length}>
+                                    {group.basis}
+                                  </td>
+                                )}
+                                <td className="p-3 border border-gray-200">{item.komponen || "-"}</td>
+                                <td className="p-3 border border-gray-200">{match ? `${match.bobotEvaluasi}%` : "-"}</td>
+                                <td className="p-3 border border-gray-200 text-left font-normal">
+                                  {match ? item.deskripsi : "-"}
+                                </td>
+                                <td className="p-3 border border-gray-200 text-left font-normal">-</td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mb-6 p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded text-xs">
+                    Bobot metode evaluasi diambil dari total persentase metode evaluasi yang ada pada Rencana Evaluasi.
+                  </div>
 
-                  <button onClick={tambahEvaluasiRow} className="mt-3 bg-gray-200 border border-dashed border-gray-400 px-3 py-1.5 rounded text-sm flex items-center gap-1 hover:bg-gray-300">
-                    <Plus size={14} /> Tambah Metode Evaluasi
-                  </button>
+                  {isEditingKomponen && (
+                    <p className="text-xs text-gray-500 mb-6">
+                      Hanya syarat "Menjadi syarat lulus" yang benar-benar berlaku di backend (skor &lt;60 = huruf E). Menyimpan
+                      baris dengan Metode+Jenis yang sama seperti data existing akan MENIMPA baris tersebut, bukan menduplikasi.
+                    </p>
+                  )}
                 </>
               )}
             </div>

@@ -1,24 +1,11 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Api } from "../../../api/Index";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { RpsCourseData as CourseData } from "../../../components/types.ts";
 import { TableCpl, TableCpmk } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Edit } from "lucide-react";
 import { getCplCpmkCourse } from "../../../hooks/academic/useCplCpmkCourse.ts";
-
-const fetchCourseDetail = async (id: string): Promise<CourseData> => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get(`/akademik/mata-kuliah/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return response.data.data;
-};
+import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
 
 const CplCpmkCourse: React.FC = () => {
   const navigate = useNavigate();
@@ -30,17 +17,7 @@ const CplCpmkCourse: React.FC = () => {
 
   const { data: cplCpmkData, isLoading: isCplCpmkLoading, error: cplCpmkError } = getCplCpmkCourse(id!);
 
-  const {
-    data: courseDetail,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["courseDetail", id],
-    queryFn: () => fetchCourseDetail(id!),
-    enabled: !!id, // Only run query if id exists
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: courseDetail, isLoading, error } = getCourseDataById(id!);
 
   const handleBack = () => {
     navigate(AdminAcademicRoute.courseManagement.courseManagement);
@@ -52,6 +29,38 @@ const CplCpmkCourse: React.FC = () => {
 
   const tableHeadCpl = ["Kode CPL", "Deskripsi Capaian Pembelajaran Lulusan (CPL)", "Kategori"];
   const tableHeadCpmk = ["Kode CPMK", "Deskripsi"];
+
+  // --- show loading state ---
+  if (isLoading) {
+    return (
+      <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
+        <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
+          <div className="flex items-center justify-center h-64">
+            <p>Loading...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // --- show error state ---
+  if (error || !courseDetail) {
+    return (
+      <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
+        <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
+          <div className="flex flex-col items-center justify-center h-64 gap-4">
+            <p className="text-red-500">
+              {error instanceof Error ? error.message : "Mata kuliah tidak ditemukan atau gagal dimuat."}
+            </p>
+            <button onClick={handleBack} className="bg-primary-yellow text-white px-4 py-2 rounded flex items-center cursor-pointer">
+              <ArrowLeft className="mr-2" size={16} />
+              Kembali ke Daftar
+            </button>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout isGreeting={false} titlePage="Data Mata Kuliah" className="">
@@ -136,11 +145,19 @@ const CplCpmkCourse: React.FC = () => {
 
             <div className="mt-4 ml-[-10px]">
               <h2 className="font-semibold">Capaian Pembelajaran Lulusan</h2>
-              <TableCpl data={cplCpmkData?.capaianPembelajaranLulusan} tableHead={tableHeadCpl} error="Data CPL tidak ditemukan." />
+              <TableCpl
+                data={cplCpmkData?.capaianPembelajaranLulusan}
+                tableHead={tableHeadCpl}
+                error={cplCpmkError ? "Gagal memuat data CPL." : isCplCpmkLoading ? "Memuat..." : "Data CPL tidak ditemukan."}
+              />
             </div>
             <div className="mt-4 ml-[-10px]">
               <h2 className="font-semibold">CapaianMata Kuliah</h2>
-              <TableCpmk data={cplCpmkData?.capaianMataKuliah} tableHead={tableHeadCpmk} error="Data CPMK tidak ditemukan." />
+              <TableCpmk
+                data={cplCpmkData?.capaianMataKuliah}
+                tableHead={tableHeadCpmk}
+                error={cplCpmkError ? "Gagal memuat data CPMK." : isCplCpmkLoading ? "Memuat..." : "Data CPMK tidak ditemukan."}
+              />
             </div>
           </div>
         </div>
