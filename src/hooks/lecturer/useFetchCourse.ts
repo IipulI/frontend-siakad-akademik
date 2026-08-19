@@ -7,10 +7,11 @@ export const useCourseList = (
     keyword: string,
     size: number,
     prodiId?: string,
-    tahunKurikulumId?: string
+    tahunKurikulumId?: string,
+    searchBy?: string
 ) =>
     useQuery({
-        queryKey: ['dosen/mata-kuliah', page, keyword, size, prodiId, tahunKurikulumId],
+        queryKey: ['dosen/mata-kuliah', page, keyword, size, prodiId, tahunKurikulumId, searchBy],
         queryFn: async () => {
           // Backend menggunakan konvensi "search" (lihat /akademik/mata-kuliah di useCourseManagement.ts),
           // "keyword" tetap dikirim untuk jaga-jaga jika endpoint ini masih memakai nama lama.
@@ -26,6 +27,7 @@ export const useCourseList = (
           });
           if (prodiId) params.set('prodiId', prodiId);
           if (tahunKurikulumId) params.set('tahunKurikulumId', tahunKurikulumId);
+          if (searchBy) params.set('searchBy', searchBy);
           const res = await Api.get(`/akademik/dosen/mata-kuliah?${params.toString()}`)
           return res.data
         },

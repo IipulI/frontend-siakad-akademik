@@ -1,15 +1,17 @@
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Pagination } from "../../../components/admin-academic/Pagination";
 import SearchableSelect from "../../../components/admin-academic/SearchableSelect";
 import { useDebounce } from "../../../hooks/useDebounce";
-import SearchBar from "../../../components/SearchBar";
 import { useCourseList } from "../../../hooks/lecturer/useFetchCourse";
 import { getProdi } from "../../../hooks/academic/useProdi";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
-import { Eye } from "lucide-react";
+import { getKelompokMataKuliah } from "../../../hooks/academic/useObeManagement";
+import { Eye, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
+
+const JENIS_MK_OPTIONS = ["Kuliah", "Praktikum", "Praktik Lapangan", "Simulasi"];
 
 const StatusBadge = ({ terisi }: { terisi: boolean }) =>
     terisi ? (
@@ -22,16 +24,25 @@ const CourseLecturer = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [tempSearch, setTempSearch] = useState("");
     const [search, setSearch] = useState("");
+    const [searchField, setSearchField] = useState<"all" | "kode" | "nama">("all");
 
     // --- Filter states (nyimpen ID, bukan label -- dikirim ke server) ---
     const [selectedTahunKurikulumId, setSelectedTahunKurikulumId] = useState("all");
     const [selectedProdiId, setSelectedProdiId] = useState("all");
+    // Jenis Mata Kuliah & Kelompok Mata Kuliah belum didukung filter di server
+    // (sama kayak Manajemen OBE) -- Jenis MK disaring di FE dari data 1
+    // halaman yang lagi tampil, Kelompok MK baru sebatas dropdown pilihan.
+    const [selectedJenisMk, setSelectedJenisMk] = useState("all");
+    const [selectedKelompokId, setSelectedKelompokId] = useState("all");
 
     const debouncedSearch = useDebounce(search, 1000);
 
     const { data: prodiData = [] } = getProdi();
     const { data: curriculumData = [] } = getCurriculumYear();
+    const { data: kelompokMataKuliahResult } = getKelompokMataKuliah();
+    const kelompokMataKuliahData = kelompokMataKuliahResult?.items || [];
 
     // FIX 2026-08-19: sebelumnya filter (Tahun Kurikulum/Prodi) cuma nyaring
     // 1 halaman data yang udah ke-fetch (client-side), jadi kelihatan datanya
@@ -43,19 +54,32 @@ const CourseLecturer = () => {
         debouncedSearch,
         rowsPerPage,
         selectedProdiId === "all" ? undefined : selectedProdiId,
-        selectedTahunKurikulumId === "all" ? undefined : selectedTahunKurikulumId
+        selectedTahunKurikulumId === "all" ? undefined : selectedTahunKurikulumId,
+        debouncedSearch && searchField !== "all" ? searchField : undefined
     )
 
-    const tableData: any[] = isPending ? [] : data?.data || [];
+    const rawTableData: any[] = isPending ? [] : data?.data || [];
+    const tableData = useMemo(
+        () => rawTableData.filter((row: any) => selectedJenisMk === "all" || (row.jenisMk || row.jenisMataKuliah) === selectedJenisMk),
+        [rawTableData, selectedJenisMk]
+    );
     const pagination = data?.pagination;
     // Backend mengembalikan "totalPage" (lihat CoursePagination di useCourseManagement.ts),
     // "totalPages" tetap dicek untuk jaga-jaga jika endpoint ini memakai nama lain.
     const totalPages = pagination?.totalPages || pagination?.totalPage || 1;
     const totalRows = pagination?.totalItems || 0;
 
-    const handleFilterChange = (patch: { tahunKurikulumId?: string; prodiId?: string }) => {
+    const handleFilterChange = (patch: { tahunKurikulumId?: string; prodiId?: string; jenisMk?: string; kelompokId?: string }) => {
         if (patch.tahunKurikulumId !== undefined) setSelectedTahunKurikulumId(patch.tahunKurikulumId);
         if (patch.prodiId !== undefined) setSelectedProdiId(patch.prodiId);
+        if (patch.jenisMk !== undefined) setSelectedJenisMk(patch.jenisMk);
+        if (patch.kelompokId !== undefined) setSelectedKelompokId(patch.kelompokId);
+        setCurrentPage(1);
+    };
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setSearch(tempSearch);
         setCurrentPage(1);
     };
 
@@ -87,6 +111,18 @@ const CourseLecturer = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
+                            <label className="text-sm font-semibold text-gray-700 w-36">Jenis Mata Kuliah</label>
+                            <div className="flex-1">
+                                <SearchableSelect
+                                    value={selectedJenisMk}
+                                    onChange={(v) => handleFilterChange({ jenisMk: v })}
+                                    placeholder="-- Semua Jenis Mata Kuliah --"
+                                    searchPlaceholder="Cari jenis mata kuliah..."
+                                    options={[{ value: "all", label: "-- Semua Jenis Mata Kuliah --" }, ...JENIS_MK_OPTIONS.map((j) => ({ value: j, label: j }))]}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
                             <label className="text-sm font-semibold text-gray-700 w-36">Prodi Pengampu</label>
                             <div className="flex-1">
                                 <SearchableSelect
@@ -98,14 +134,46 @@ const CourseLecturer = () => {
                                 />
                             </div>
                         </div>
+                        <div className="flex items-center gap-4">
+                            <label className="text-sm font-semibold text-gray-700 w-36">Kelompok Mata Kuliah</label>
+                            <div className="flex-1">
+                                <SearchableSelect
+                                    value={selectedKelompokId}
+                                    onChange={(v) => handleFilterChange({ kelompokId: v })}
+                                    placeholder="-- Semua Kelompok Mata Kuliah --"
+                                    searchPlaceholder="Cari kelompok mata kuliah..."
+                                    options={[{ value: "all", label: "-- Semua Kelompok Mata Kuliah --" }, ...kelompokMataKuliahData.map((k: any) => ({ value: k.id, label: k.nama }))]}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {/* Table Section */}
                 <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b border-gray-100 pb-4">
-                        <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari mata kuliah" />
-                    </div>
+                    <form onSubmit={handleSearchSubmit} className="flex items-center w-full md:w-auto gap-2 mb-6 border-b border-gray-100 pb-4">
+                        <select
+                            value={searchField}
+                            onChange={(e) => setSearchField(e.target.value as "all" | "kode" | "nama")}
+                            className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
+                        >
+                            <option value="all">-- Semua --</option>
+                            <option value="kode">Kode Mata Kuliah</option>
+                            <option value="nama">Nama Mata Kuliah</option>
+                        </select>
+                        <div className="flex items-center">
+                            <input
+                                type="text"
+                                placeholder="Cari Mata Kuliah"
+                                className="p-2 pl-3 border border-gray-300 rounded-l-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700"
+                                value={tempSearch}
+                                onChange={(e) => setTempSearch(e.target.value)}
+                            />
+                            <button type="submit" className="bg-primary-green text-white p-2.5 rounded-r-md flex items-center justify-center hover:opacity-90 cursor-pointer">
+                                <Search size={16} />
+                            </button>
+                        </div>
+                    </form>
 
                     <div className="overflow-x-auto border border-gray-200 rounded-sm mb-4">
                         <table className="min-w-full bg-white border-collapse">
