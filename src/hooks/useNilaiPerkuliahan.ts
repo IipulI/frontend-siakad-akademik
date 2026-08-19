@@ -47,10 +47,25 @@ export interface RincianSubCpmk {
   nilaiPersen: number;
 }
 
+export interface RincianUnitPemetaanCpmk {
+  cpmkId: string;
+  kode: string;
+  bobotPoin: number;
+}
+
+export interface RincianUnitMentah {
+  nomorUnit: string;
+  skorDiperoleh: number;
+  skorMaksimal: number;
+  waktuInput: string;
+  pemetaanCpmk: RincianUnitPemetaanCpmk[];
+}
+
 export interface RincianKomponenNilai {
   rencanaEvaluasiId: string;
   namaKomponen: string;
   subCpmk: RincianSubCpmk[];
+  unitMentah: RincianUnitMentah[];
 }
 
 export function useRincianNilaiMahasiswa(kelasId: string, rincianKrsId: string | null) {

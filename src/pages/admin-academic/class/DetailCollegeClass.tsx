@@ -1114,7 +1114,7 @@ const Grading = ({ data }) => {
                         <button
                           onClick={() => setInputCbtRow(row)}
                           disabled={row.keterangan !== "Belum Terkunci"}
-                          title={row.keterangan !== "Belum Terkunci" ? "Nilai sudah dikunci, tidak bisa diinput lagi" : "Input Nilai Jalur D (CBT Manual)"}
+                          title={row.keterangan !== "Belum Terkunci" ? "Nilai sudah dikunci, tidak bisa diinput lagi" : "Input Nilai CBT Manual"}
                           className="bg-purple-600 hover:opacity-90 text-white p-1.5 rounded disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           <Cpu size={14} />
@@ -1276,6 +1276,60 @@ const RincianNilaiModal = ({
             <p className="text-xs text-gray-400 mt-3">
               Angka di tiap kolom adalah Nilai % untuk Sub-CPMK tsb di komponen evaluasi terkait, dihitung dari skor per soal yang diinput dosen (skorTerbobot/totalBobot x 100) -- bukan hasil akhir mata kuliah.
             </p>
+          )}
+
+          {komponenList.some((k) => (k.unitMentah || []).length > 0) && (
+            <div className="mt-6">
+              <h3 className="text-sm font-bold text-primary-blueDark mb-2">Skor Mentah per Soal (Input Asli Dosen)</h3>
+              <div className="space-y-4">
+                {komponenList
+                  .filter((k) => (k.unitMentah || []).length > 0)
+                  .map((k) => (
+                    <div key={k.rencanaEvaluasiId} className="border border-gray-200 rounded-sm overflow-hidden">
+                      <div className="bg-primary-green/10 px-3 py-1.5 text-xs font-semibold text-primary-green">
+                        {k.namaKomponen}
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="bg-primary-green text-white text-xs">
+                              <th className="py-1.5 px-2 border border-gray-300 font-medium whitespace-nowrap">Soal</th>
+                              <th className="py-1.5 px-2 border border-gray-300 font-medium whitespace-nowrap">Skor Diperoleh</th>
+                              <th className="py-1.5 px-2 border border-gray-300 font-medium whitespace-nowrap">Skor Maksimal</th>
+                              <th className="py-1.5 px-2 border border-gray-300 font-medium whitespace-nowrap">Sub-CPMK Diuji (Bobot Poin)</th>
+                              <th className="py-1.5 px-2 border border-gray-300 font-medium whitespace-nowrap">Waktu Input</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(k.unitMentah || []).map((u) => (
+                              <tr key={u.nomorUnit} className="text-center hover:bg-gray-50">
+                                <td className="py-1.5 px-2 border border-gray-300">{u.nomorUnit}</td>
+                                <td className="py-1.5 px-2 border border-gray-300 font-semibold">{u.skorDiperoleh}</td>
+                                <td className="py-1.5 px-2 border border-gray-300">{u.skorMaksimal}</td>
+                                <td className="py-1.5 px-2 border border-gray-300 text-left text-xs">
+                                  {(u.pemetaanCpmk || []).map((p) => `${p.kode}=${p.bobotPoin}`).join(", ")}
+                                </td>
+                                <td className="py-1.5 px-2 border border-gray-300 text-xs whitespace-nowrap">
+                                  {new Date(u.waktuInput).toLocaleString("id-ID", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              <p className="text-xs text-gray-400 mt-2">
+                Ini skor mentah PERSIS yang diketik dosen per soal di form CBT Manual -- kalau dosen input ulang, baris lama otomatis diganti (bukan menumpuk), dan kalau nilainya direset, baris ini ikut hilang.
+              </p>
+            </div>
           )}
         </div>
 
@@ -1689,7 +1743,7 @@ const InputNilaiCbtModal = ({
       { rencanaEvaluasiId, krsId: row.rincianKrsId, breakdown },
       {
         onSuccess: onClose,
-        onError: (err: any) => setErrorMessage(err?.response?.data?.message || err?.message || "Gagal mengirim nilai Jalur D."),
+        onError: (err: any) => setErrorMessage(err?.response?.data?.message || err?.message || "Gagal mengirim nilai CBT."),
       }
     );
   };
@@ -1699,7 +1753,7 @@ const InputNilaiCbtModal = ({
       <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 sticky top-0 bg-white">
           <div>
-            <h4 className="text-lg font-bold text-gray-800">Input Nilai Jalur D (CBT Manual)</h4>
+            <h4 className="text-lg font-bold text-gray-800">Input Nilai CBT Manual</h4>
             <p className="text-xs text-gray-500">{row.nim} - {row.nama}</p>
           </div>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -1737,7 +1791,7 @@ const InputNilaiCbtModal = ({
                 {komponenSoal.length === 0 && (
                   <p className="text-xs text-gray-400 italic mt-1">
                     Tidak ada komponen "soal" di rencana evaluasi mata kuliah ini (komponen Kehadiran/Partisipasi tidak
-                    dihitung lewat Jalur D, input manual lewat Jalur A).
+                    dihitung lewat CBT, input manual lewat Jalur A).
                   </p>
                 )}
               </div>
