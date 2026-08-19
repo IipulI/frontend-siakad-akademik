@@ -1,140 +1,175 @@
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Pagination } from "../../../components/admin-academic/Pagination";
+import SearchableSelect from "../../../components/admin-academic/SearchableSelect";
 import { useDebounce } from "../../../hooks/useDebounce";
-import TableCourseLecturer from "../../../components/lecturer/TableCourseLecturer";
 import SearchBar from "../../../components/SearchBar";
 import { useCourseList } from "../../../hooks/lecturer/useFetchCourse";
+import { getProdi } from "../../../hooks/academic/useProdi";
+import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
+import { Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { LecturerRoute } from "../../../types/VarRoutes";
 
-const getKurikulum = (row: any) => row.tahunKurikulum || row.kurikulum || "";
-const getJenisMk = (row: any) => row.jenisMataKuliah || row.jenisMk || "";
-const getProdi = (row: any) => row.programStudi || row.prodiPengampu || "";
+const StatusBadge = ({ terisi }: { terisi: boolean }) =>
+    terisi ? (
+        <span className="bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded text-xs block text-center">Sudah Terisi</span>
+    ) : (
+        <span className="bg-gray-50 text-gray-500 border border-gray-200 px-2.5 py-1 rounded text-xs block text-center">Belum Terisi</span>
+    );
 
 const CourseLecturer = () => {
-    const [id, setId] = useState<string | null>(null)
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [search, setSearch] = useState("");
 
-    // --- Filter states ---
-    const [selectedTahunKurikulum, setSelectedTahunKurikulum] = useState("all");
-    const [selectedJenisMk, setSelectedJenisMk] = useState("all");
-    const [selectedProdi, setSelectedProdi] = useState("all");
-    const [selectedKelompok, setSelectedKelompok] = useState("all");
+    // --- Filter states (nyimpen ID, bukan label -- dikirim ke server) ---
+    const [selectedTahunKurikulumId, setSelectedTahunKurikulumId] = useState("all");
+    const [selectedProdiId, setSelectedProdiId] = useState("all");
 
     const debouncedSearch = useDebounce(search, 1000);
 
-    const { isPending, data, error } = useCourseList(currentPage, debouncedSearch, rowsPerPage)
+    const { data: prodiData = [] } = getProdi();
+    const { data: curriculumData = [] } = getCurriculumYear();
 
-    const tableData = isPending ? [] : data?.data || [];
+    // FIX 2026-08-19: sebelumnya filter (Tahun Kurikulum/Prodi) cuma nyaring
+    // 1 halaman data yang udah ke-fetch (client-side), jadi kelihatan datanya
+    // "ilang" (mis. cuma 1 baris) padahal total datanya tetap 90 -- yang
+    // ke-filter cuma isi 1 halaman itu, bukan keseluruhan data server. Sekarang
+    // prodiId/tahunKurikulumId dikirim ke server, pagination-nya jadi akurat.
+    const { isPending, data, error } = useCourseList(
+        currentPage,
+        debouncedSearch,
+        rowsPerPage,
+        selectedProdiId === "all" ? undefined : selectedProdiId,
+        selectedTahunKurikulumId === "all" ? undefined : selectedTahunKurikulumId
+    )
+
+    const tableData: any[] = isPending ? [] : data?.data || [];
     const pagination = data?.pagination;
     // Backend mengembalikan "totalPage" (lihat CoursePagination di useCourseManagement.ts),
     // "totalPages" tetap dicek untuk jaga-jaga jika endpoint ini memakai nama lain.
     const totalPages = pagination?.totalPages || pagination?.totalPage || 1;
     const totalRows = pagination?.totalItems || 0;
 
-    // Opsi filter diturunkan dari data yang sudah di-fetch di halaman berjalan
-    const tahunKurikulumOptions = useMemo<string[]>(
-        () => Array.from<string>(new Set<string>(tableData.map(getKurikulum).filter(Boolean))),
-        [tableData]
-    );
-    const jenisMkOptions = useMemo<string[]>(
-        () => Array.from<string>(new Set<string>(tableData.map(getJenisMk).filter(Boolean))),
-        [tableData]
-    );
-    const prodiOptions = useMemo<string[]>(
-        () => Array.from<string>(new Set<string>(tableData.map(getProdi).filter(Boolean))),
-        [tableData]
-    );
+    const handleFilterChange = (patch: { tahunKurikulumId?: string; prodiId?: string }) => {
+        if (patch.tahunKurikulumId !== undefined) setSelectedTahunKurikulumId(patch.tahunKurikulumId);
+        if (patch.prodiId !== undefined) setSelectedProdiId(patch.prodiId);
+        setCurrentPage(1);
+    };
 
-    const filteredData = useMemo(
-        () =>
-            tableData.filter((row: any) => {
-                const matchesTahunKurikulum =
-                    selectedTahunKurikulum === "all" || getKurikulum(row) === selectedTahunKurikulum;
-                const matchesJenisMk = selectedJenisMk === "all" || getJenisMk(row) === selectedJenisMk;
-                const matchesProdi = selectedProdi === "all" || getProdi(row) === selectedProdi;
-                return matchesTahunKurikulum && matchesJenisMk && matchesProdi;
-            }),
-        [tableData, selectedTahunKurikulum, selectedJenisMk, selectedProdi]
-    );
+    const handleLihat = (row: any) => {
+        localStorage.setItem("id_mata_kuliah", row.id);
+        navigate(LecturerRoute.courses.detailCourse);
+    };
 
     return (
-    <MainLayout
-        titlePage={"Mata Kuliah"}
-        isGreeting={false}
-    >
-                <div className="w-full bg-white p-5 rounded-sm border-t-2 border-primary-yellow mb-4">
-                    <div className="grid grid-cols-1 gap-x-12 gap-y-4 md:grid-cols-2">
+        <MainLayout isGreeting={false} titlePage="Mata Kuliah">
+            <div className="p-0 min-h-screen">
+                <div className="mb-6 mt-[-10px]">
+                    <p className="text-gray-500 text-sm">Daftar Mata Kuliah yang Diampu</p>
+                </div>
+
+                {/* Filter Section */}
+                <div className="bg-white p-5 rounded-sm border-t-2 border-primary-yellow shadow-sm mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                         <div className="flex items-center gap-4">
                             <label className="text-sm font-semibold text-gray-700 w-36">Tahun Kurikulum</label>
-                            <select
-                                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                                value={selectedTahunKurikulum}
-                                onChange={(e) => setSelectedTahunKurikulum(e.target.value)}
-                            >
-                                <option value="all">-- Semua Tahun Kurikulum --</option>
-                                {tahunKurikulumOptions.map((item) => (
-                                    <option key={item} value={item}>{item}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <label className="text-sm font-semibold text-gray-700 w-36">Jenis Mata Kuliah</label>
-                            <select
-                                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                                value={selectedJenisMk}
-                                onChange={(e) => setSelectedJenisMk(e.target.value)}
-                            >
-                                <option value="all">-- Semua Jenis Mata Kuliah --</option>
-                                {jenisMkOptions.map((item) => (
-                                    <option key={item} value={item}>{item}</option>
-                                ))}
-                            </select>
+                            <div className="flex-1">
+                                <SearchableSelect
+                                    value={selectedTahunKurikulumId}
+                                    onChange={(v) => handleFilterChange({ tahunKurikulumId: v })}
+                                    placeholder="-- Semua Tahun Kurikulum --"
+                                    searchPlaceholder="Cari tahun kurikulum..."
+                                    options={[{ value: "all", label: "-- Semua Tahun Kurikulum --" }, ...curriculumData.map((c: any) => ({ value: c.id, label: c.tahun }))]}
+                                />
+                            </div>
                         </div>
                         <div className="flex items-center gap-4">
                             <label className="text-sm font-semibold text-gray-700 w-36">Prodi Pengampu</label>
-                            <select
-                                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                                value={selectedProdi}
-                                onChange={(e) => setSelectedProdi(e.target.value)}
-                            >
-                                <option value="all">-- Semua Program Studi --</option>
-                                {prodiOptions.map((item) => (
-                                    <option key={item} value={item}>{item}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <label className="text-sm font-semibold text-gray-700 w-36">Kelompok Mata Kuliah</label>
-                            <select
-                                className="flex-1 p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-600"
-                                value={selectedKelompok}
-                                onChange={(e) => setSelectedKelompok(e.target.value)}
-                            >
-                                <option value="all">-- Semua Kelompok Mata Kuliah --</option>
-                            </select>
+                            <div className="flex-1">
+                                <SearchableSelect
+                                    value={selectedProdiId}
+                                    onChange={(v) => handleFilterChange({ prodiId: v })}
+                                    placeholder="-- Semua Program Studi --"
+                                    searchPlaceholder="Cari program studi..."
+                                    options={[{ value: "all", label: "-- Semua Program Studi --" }, ...prodiData.map((p: any) => ({ value: p.id, label: p.nama }))]}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green">
-                    <div className="flex px-4 justify-between">
-                        <div className="flex gap-4">
-                            <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari mata kuliah" />
-                            </div>
+
+                {/* Table Section */}
+                <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b border-gray-100 pb-4">
+                        <SearchBar search={search} setSearch={setSearch} isPending={isPending} placeholder="Cari mata kuliah" />
                     </div>
-                    <div className="overflow-auto">
-                        <TableCourseLecturer
-                            data={filteredData}
-                            error={error ? "Gagal memuat data" : "Data kosong"}
-                        />
+
+                    <div className="overflow-x-auto border border-gray-200 rounded-sm mb-4">
+                        <table className="min-w-full bg-white border-collapse">
+                            <thead>
+                                <tr className="bg-primary-green text-white text-xs uppercase font-bold text-center">
+                                    <th className="p-3 border border-gray-300 w-24" rowSpan={2}>Kurikulum</th>
+                                    <th className="p-3 border border-gray-300 w-28" rowSpan={2}>Kode MK</th>
+                                    <th className="p-3 border border-gray-300 text-left" rowSpan={2}>Nama Mata Kuliah</th>
+                                    <th className="p-3 border border-gray-300 w-16" rowSpan={2}>SKS</th>
+                                    <th className="p-3 border border-gray-300 w-24" rowSpan={2}>Jenis MK</th>
+                                    <th className="p-3 border border-gray-300 text-left" rowSpan={2}>Prodi Pengampu</th>
+                                    <th className="p-2 border border-gray-300 w-72" colSpan={3}>Status Pengisian</th>
+                                    <th className="p-3 border border-gray-300 w-20" rowSpan={2}>Aksi</th>
+                                </tr>
+                                <tr className="bg-primary-green text-white text-xs uppercase font-bold text-center border-b border-gray-300">
+                                    <th className="p-2 border border-gray-300">RPS</th>
+                                    <th className="p-2 border border-gray-300">CPL</th>
+                                    <th className="p-2 border border-gray-300">CPMK</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm font-semibold text-gray-700 text-center">
+                                {isPending ? (
+                                    <tr>
+                                        <td colSpan={9} className="p-8 text-center text-gray-400 italic">Memuat data...</td>
+                                    </tr>
+                                ) : error ? (
+                                    <tr>
+                                        <td colSpan={9} className="p-8 text-center text-red-500">Gagal memuat data mata kuliah.</td>
+                                    </tr>
+                                ) : tableData.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={9} className="p-8 text-center text-gray-400 italic">Data tidak ditemukan.</td>
+                                    </tr>
+                                ) : (
+                                    tableData.map((row: any) => (
+                                        <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-200">
+                                            <td className="p-3 border border-gray-200">{row.kurikulum || row.tahunKurikulum || "-"}</td>
+                                            <td className="p-3 border border-gray-200">{row.kodeMk || row.kodeMataKuliah}</td>
+                                            <td className="p-3 border border-gray-200 text-left font-normal text-gray-800">{row.namaMataKuliah}</td>
+                                            <td className="p-3 border border-gray-200">{row.sks ?? row.sksTatapMuka}</td>
+                                            <td className="p-3 border border-gray-200">{row.jenisMk || row.jenisMataKuliah || "Kuliah"}</td>
+                                            <td className="p-3 border border-gray-200 text-left font-normal">{row.prodiPengampu || row.programStudi}</td>
+                                            <td className="p-2 border border-gray-200"><StatusBadge terisi={!!row.statusPengisian?.isRpsTerisi} /></td>
+                                            <td className="p-2 border border-gray-200"><StatusBadge terisi={!!row.statusPengisian?.isCplTerisi} /></td>
+                                            <td className="p-2 border border-gray-200"><StatusBadge terisi={!!row.statusPengisian?.isCpmkTerisi} /></td>
+                                            <td className="p-3 border border-gray-200">
+                                                <div className="flex justify-center">
+                                                    <button
+                                                        onClick={() => handleLihat(row)}
+                                                        className="bg-primary-blueSoft hover:opacity-90 text-white p-1.5 rounded flex items-center justify-center"
+                                                        title="Lihat Detail Mata Kuliah"
+                                                    >
+                                                        <Eye size={15} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
-                    {isPending ? (
-                        <div className="flex px-4 w-full items-center justify-between">
-                            <div className="h-8 w-1/4 bg-gray-300 rounded animate-pulse" />
-                            <div className="h-8 w-1/4 bg-gray-300 rounded animate-pulse" />
-                        </div>
-                    ) : (
+
+                    {!isPending && !error && (
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -145,7 +180,8 @@ const CourseLecturer = () => {
                         />
                     )}
                 </div>
-    </MainLayout>
+            </div>
+        </MainLayout>
     )
 }
 
