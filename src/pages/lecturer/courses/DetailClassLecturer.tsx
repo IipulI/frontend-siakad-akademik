@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Eye,
@@ -39,10 +39,16 @@ import DateFormatter from "../../../helpers/DateFormatter";
 
 const DetailClassLecturer = () => {
   const navigate = useNavigate();
-  const id = localStorage.getItem("id_kelas_kuliah");
+  const { id: idFromParams } = useParams<{ id: string }>();
+  // FIX: sebelumnya cuma ngandelin localStorage buat tau kelas mana yang mau
+  // dibuka -- kalau halaman ini dibuka langsung/refresh/lewat bookmark (bukan
+  // klik dari daftar Kelas Kuliah dulu), localStorage-nya kosong dan langsung
+  // gagal "data kelas tidak ditemukan" walau kelasnya beneran ada. Sekarang
+  // utamain ID dari URL (/dosen/perkuliahan/kelas-kuliah/detail/:id), fallback
+  // ke localStorage cuma buat jaga kompatibilitas link lama yang belum ke-update.
+  const id = idFromParams || localStorage.getItem("id_kelas_kuliah");
 
-  const { data: detail, isLoading: isLoadingDetail, error: errorDetail } = useClassDetail(id);
-  const d = detail?.data;
+  const { data: d, isLoading: isLoadingDetail, error: errorDetail } = useClassDetail(id);
 
   const [activeTab, setActiveTab] = useState("classDetails");
   const handleTabClick = (tab: string) => setActiveTab(tab);
@@ -124,7 +130,7 @@ const DetailClassLecturer = () => {
             </div>
 
             <div className="w-full lg:col-span-5">
-              {activeTab === "classDetails" && <ClassDetailTab data={data} />}
+              {activeTab === "classDetails" && <ClassDetailTab data={data} kelasId={id} />}
               {activeTab === "classAttendant" && <ClassAttendantTab kelasId={data.id} />}
               {activeTab === "rps" && <RPS data={data} />}
               {activeTab === "grading" && <Grading data={data} />}
@@ -158,10 +164,8 @@ const ClassBio = ({ data }: { data: any }) => (
   </div>
 );
 
-const ClassDetailTab = ({ data }: { data: any }) => {
-  const id = localStorage.getItem("id_kelas_kuliah");
-  const { data: detail } = useClassDetail(id);
-  const d = detail?.data;
+const ClassDetailTab = ({ data, kelasId }: { data: any; kelasId: string | null }) => {
+  const { data: d } = useClassDetail(kelasId);
   const jadwal: any[] = d?.jadwalKuliah || [];
 
   return (

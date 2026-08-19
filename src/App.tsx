@@ -720,6 +720,10 @@ export default function App() {
         element={<DetailClassLecturer />}
       />
       <Route
+        path={`${String(LecturerRoute.courses.detailClass)}/:id`}
+        element={<DetailClassLecturer />}
+      />
+      <Route
         path="/dosen/perkuliahan/kelas kuliah/detail"
         element={<DetailClassLecturer />}
       />
