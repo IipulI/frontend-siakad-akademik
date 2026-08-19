@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Edit, AlertCircle } from "lucide-react";
+import { ArrowLeft, Save, Edit, AlertCircle, Search } from "lucide-react";
 import { LecturerRoute } from "../../../types/VarRoutes";
 import SidebarCourseLecturer from "../../../components/lecturer/SidebarCourseLecturer";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -14,6 +14,7 @@ export default function PemetaanCplLecturer() {
 
   const { data: detail, isLoading: isCourseLoading } = useCourseDetail(mataKuliahId || "");
   const d = detail?.data;
+  const isKoordinator = !!d?.isKoordinator;
 
   const { data: cplData, isLoading: isCplLoading, refetch: refetchCpl } = useCoursePemetaanCpl(mataKuliahId || "");
   const saveMutation = useSavePemetaanCplMk();
@@ -24,10 +25,11 @@ export default function PemetaanCplLecturer() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const daftarCpl = cplData?.data?.daftarCpl || [];
-  const isKoordinator = !!d?.isKoordinator;
+  const isObe = cplData?.data?.isObe !== false;
 
   useEffect(() => {
     setCheckedIds(new Set(daftarCpl.filter((c: any) => c.isMapped).map((c: any) => c.id)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cplData]);
 
   const isLoading = isCourseLoading || isCplLoading;
@@ -61,25 +63,59 @@ export default function PemetaanCplLecturer() {
   return (
     <MainLayout isGreeting={false} titlePage="Pemetaan CPL">
       <div className="p-0 min-h-screen">
-        <div className="mb-6 mt-[-10px] flex items-center justify-between">
+        <div className="mb-6 mt-[-10px]">
           <p className="text-gray-500 text-sm">Dosen &gt; Perkuliahan &gt; Mata Kuliah &gt; Pemetaan CPL</p>
-          <div className="flex gap-2">
-            <button onClick={handleBack} className="bg-primary-blueSoft text-white px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90">
-              <ArrowLeft size={15} /> Kembali
-            </button>
-            {isKoordinator && !isEditMode && (
-              <button onClick={() => setIsEditMode(true)} className="bg-primary-yellow text-white px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90">
-                <Edit size={15} /> Ubah Data
+        </div>
+
+        {/* Action Header */}
+        <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center w-full md:w-auto">
+              <button onClick={handleBack} className="bg-primary-yellow text-white p-2.5 rounded-l-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer">
+                <ArrowLeft size={16} />
               </button>
-            )}
-            {isKoordinator && isEditMode && (
-              <button onClick={handleSave} disabled={saveMutation.isPending} className="bg-primary-green text-white px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90 disabled:opacity-50">
-                <Save size={15} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Cari Mata Kuliah"
+                  className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700"
+                  defaultValue={d?.namaMataKuliahInd || ""}
+                  readOnly
+                />
+                <button className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer" disabled>
+                  <Search size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+              <button onClick={handleBack} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+                <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
-            )}
+              {isKoordinator && !isEditMode && (
+                <button
+                  onClick={() => setIsEditMode(true)}
+                  disabled={!isObe}
+                  title={!isObe ? "Prodi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya" : undefined}
+                  className="bg-primary-yellow text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Edit size={16} /> Ubah Data
+                </button>
+              )}
+              {isKoordinator && isEditMode && (
+                <button
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending}
+                  className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50"
+                >
+                  <Save size={16} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Content Box */}
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
           <div className="flex flex-col md:flex-row gap-6">
             <SidebarCourseLecturer mataKuliahId={mataKuliahId || ""} activeTab="cpl" />
@@ -91,12 +127,63 @@ export default function PemetaanCplLecturer() {
                 </div>
               ) : (
                 <>
+                  {/* Course Summary Box (Green Accent) */}
+                  <div className="flex mb-6 w-full rounded-sm overflow-hidden border border-gray-100 shadow-sm">
+                    <div className="bg-primary-green w-2 flex-shrink-0"></div>
+                    <div className="flex-1 bg-[#F5FFF9] p-5 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 text-sm text-gray-700">
+                      <div className="flex justify-between border-b border-green-50 pb-2">
+                        <span className="font-semibold text-gray-500 w-44">Kode Mata Kuliah</span>
+                        <span className="flex-1 text-gray-800">{d?.kodeMataKuliah || "-"}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-green-50 pb-2">
+                        <span className="font-semibold text-gray-500 w-44">SKS</span>
+                        <span className="flex-1 text-gray-800">{d?.totalSks ?? d?.sksTatapMuka ?? 0}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-green-50 pb-2">
+                        <span className="font-semibold text-gray-500 w-44">Mata Kuliah</span>
+                        <span className="flex-1 text-gray-800">{d?.namaMataKuliahInd || "-"}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-green-50 pb-2">
+                        <span className="font-semibold text-gray-500 w-44">Jenis Mata Kuliah</span>
+                        <span className="flex-1 text-gray-800">{d?.jenisMataKuliah || "Kuliah"}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-green-50 pb-2">
+                        <span className="font-semibold text-gray-500 w-44">Tahun Kurikulum</span>
+                        <span className="flex-1 text-gray-800">{d?.tahunKurikulum || "-"}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-green-50 pb-2">
+                        <span className="font-semibold text-gray-500 w-44">Unit Pengampu</span>
+                        <span className="flex-1 text-gray-800">{d?.unitPengampu || "-"}</span>
+                      </div>
+                    </div>
+                  </div>
+
                   {!isKoordinator && (
                     <div className="bg-gray-100 border border-gray-300 text-gray-600 px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
                       <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                      <p>Anda cuma bisa melihat pemetaan CPL mata kuliah ini -- yang bisa mengubah cuma Koordinator Mata Kuliah ({d?.koordinatorMataKuliah?.label || "belum ditentukan"}).</p>
+                      <p>Anda cuma bisa melihat Pemetaan CPL mata kuliah ini -- yang bisa mengubah cuma Koordinator Mata Kuliah ({d?.koordinatorMataKuliah?.label || "belum ditentukan"}).</p>
                     </div>
                   )}
+
+                  {/* Alert Info */}
+                  {isKoordinator && (
+                    !isObe ? (
+                      <div className="bg-gray-100 border border-gray-300 text-gray-600 px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
+                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <p>Program studi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya, jadi Pemetaan CPL dinonaktifkan.</p>
+                      </div>
+                    ) : (
+                      <div className="bg-[#fff7e6] border border-[#ffe0b2] text-[#e65100] px-4 py-3 rounded-md mb-6 flex items-start gap-3 text-sm font-medium">
+                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <p>
+                          {isEditMode
+                            ? "Centang CPL yang berlaku untuk mata kuliah ini, lalu klik Simpan. Menyimpan akan menggantikan seluruh daftar CPL yang terpetakan sebelumnya."
+                            : 'Klik "Ubah Data" untuk menyesuaikan CPL yang dipetakan ke mata kuliah ini.'}
+                        </p>
+                      </div>
+                    )
+                  )}
+
                   {errorMessage && <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>}
                   {successMessage && <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">{successMessage}</div>}
 
@@ -127,7 +214,7 @@ export default function PemetaanCplLecturer() {
                         ) : (
                           <tr>
                             <td colSpan={isEditMode ? 4 : 3} className="p-6 text-center text-gray-500 italic">
-                              Belum ada CPL yang dipetakan ke mata kuliah ini.
+                              Belum ada data CPL. Tambahkan CPL pada level OBE terlebih dahulu.
                             </td>
                           </tr>
                         )}
