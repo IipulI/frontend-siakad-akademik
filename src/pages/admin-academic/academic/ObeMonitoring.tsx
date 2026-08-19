@@ -146,7 +146,7 @@ export default function ObeMonitoring() {
                     onChange={(v) => updateFilter({ mataKuliahId: v })}
                     placeholder="-- Cari Mata Kuliah --"
                     searchPlaceholder="Cari mata kuliah..."
-                    options={mkList.map((mk: any) => ({ value: mk.id, label: `${mk.kode} - ${mk.nama}` }))}
+                    options={mkList.map((mk: any) => ({ value: mk.id, label: `${mk.kodeMk || mk.kode} - ${mk.namaMataKuliah || mk.nama}` }))}
                   />
                 </div>
               </div>

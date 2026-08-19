@@ -1392,35 +1392,41 @@ const nextUnitUid = () => `unit-${Date.now()}-${unitUidCounter++}`;
 
 interface CbtUnitRow {
   localId: string;
-  cpmkId: string;
+  cpmkIds: string[];
   skorDiperoleh: string;
   skorMaksimal: string;
 }
 
 // Bobot Poin TIDAK diketik manual -- selalu diturunkan dari bobot resmi CPMK
 // itu di rencana evaluasi, dibagi rata ke semua soal yang menunjuk ke CPMK
-// yang sama (sisa pembulatan diserap soal terakhir). Jadi mau 1 soal atau 10
-// soal dari 1 CPMK yang sama, totalnya selalu pas sama rencana evaluasi.
+// yang sama (sisa pembulatan diserap soal terakhir). 1 soal boleh nunjuk ke
+// LEBIH DARI 1 Sub-CPMK sekaligus (mis. soal studi kasus UTS yang nguji 2
+// Sub-CPMK bareng) -- makanya hasilnya per (soal, cpmk), bukan per soal doang.
 const computeBobotPoinMap = (
   units: CbtUnitRow[],
   opsiCpmk: { cpmkId: string; bobotResmi: number }[]
-): Record<string, number> => {
+): Record<string, Record<string, number>> => {
   const resmiMap: Record<string, number> = {};
   opsiCpmk.forEach((c) => { resmiMap[c.cpmkId] = c.bobotResmi; });
 
+  // groups: cpmkId -> daftar localId soal yang nunjuk ke CPMK ini
   const groups: Record<string, string[]> = {};
   units.forEach((u) => {
-    if (!groups[u.cpmkId]) groups[u.cpmkId] = [];
-    groups[u.cpmkId].push(u.localId);
+    (u.cpmkIds || []).forEach((cpmkId) => {
+      if (!groups[cpmkId]) groups[cpmkId] = [];
+      groups[cpmkId].push(u.localId);
+    });
   });
 
-  const result: Record<string, number> = {};
+  const result: Record<string, Record<string, number>> = {};
+  units.forEach((u) => { result[u.localId] = {}; });
+
   Object.entries(groups).forEach(([cpmkId, localIds]) => {
     const total = resmiMap[cpmkId] || 0;
     const count = localIds.length;
     const each = count > 0 ? parseFloat((total / count).toFixed(2)) : 0;
     localIds.forEach((id, idx) => {
-      result[id] = idx === count - 1 ? parseFloat((total - each * (count - 1)).toFixed(2)) : each;
+      result[id][cpmkId] = idx === count - 1 ? parseFloat((total - each * (count - 1)).toFixed(2)) : each;
     });
   });
   return result;
@@ -1470,7 +1476,10 @@ const InputNilaiCbtModal = ({
 
   const bobotEvaluasi = komponenTerpilih?.bobotEvaluasi || 0;
   const bobotPoinMap = computeBobotPoinMap(units, opsiCpmk);
-  const totalBobotPoin = Object.values(bobotPoinMap).reduce((sum, v) => sum + v, 0);
+  const totalBobotPoin = Object.values(bobotPoinMap).reduce(
+    (sum, perCpmk) => sum + Object.values(perCpmk).reduce((s, v) => s + v, 0),
+    0
+  );
 
   const handlePilihKomponen = (id: string) => {
     setRencanaEvaluasiId(id);
@@ -1484,7 +1493,7 @@ const InputNilaiCbtModal = ({
       ...prev,
       {
         localId: nextUnitUid(),
-        cpmkId: opsiCpmk[0].cpmkId,
+        cpmkIds: [opsiCpmk[0].cpmkId],
         skorDiperoleh: "",
         skorMaksimal: "100",
       },
@@ -1499,6 +1508,19 @@ const InputNilaiCbtModal = ({
     setUnits((prev) => prev.map((u) => (u.localId === localId ? { ...u, ...patch } : u)));
   };
 
+  // 1 soal boleh nunjuk ke lebih dari 1 Sub-CPMK/CPMK sekaligus (mis. soal
+  // studi kasus UTS yang nguji 2 Sub-CPMK bareng) -- toggle checkbox per soal.
+  const toggleUnitCpmk = (localId: string, cpmkId: string) => {
+    setUnits((prev) =>
+      prev.map((u) => {
+        if (u.localId !== localId) return u;
+        const sudahAda = u.cpmkIds.includes(cpmkId);
+        const next = sudahAda ? u.cpmkIds.filter((id) => id !== cpmkId) : [...u.cpmkIds, cpmkId];
+        return { ...u, cpmkIds: next };
+      })
+    );
+  };
+
   const handleSimpan = () => {
     if (!rencanaEvaluasiId) {
       setErrorMessage("Pilih komponen evaluasi dulu.");
@@ -1511,14 +1533,22 @@ const InputNilaiCbtModal = ({
     const breakdown = units.map((u) => ({
       skorDiperoleh: Number(u.skorDiperoleh) || 0,
       skorMaksimal: Number(u.skorMaksimal) || 0,
-      pemetaanCpmk: [{ cpmkId: u.cpmkId, bobotPoin: bobotPoinMap[u.localId] || 0 }],
+      pemetaanCpmk: (u.cpmkIds || []).map((cpmkId) => ({
+        cpmkId,
+        bobotPoin: bobotPoinMap[u.localId]?.[cpmkId] || 0,
+      })),
     }));
     const adaSkorInvalid = breakdown.some((b) => b.skorMaksimal <= 0 || b.skorDiperoleh < 0 || b.skorDiperoleh > b.skorMaksimal);
     if (adaSkorInvalid) {
       setErrorMessage("Tiap soal: Skor Maksimal harus > 0, dan Skor Diperoleh harus 0 sampai Skor Maksimal.");
       return;
     }
-    const adaBobotInvalid = breakdown.some((b) => b.pemetaanCpmk[0].bobotPoin <= 0);
+    const adaCpmkKosong = breakdown.some((b) => b.pemetaanCpmk.length === 0);
+    if (adaCpmkKosong) {
+      setErrorMessage("Tiap soal wajib dipetakan ke minimal 1 Sub-CPMK/CPMK.");
+      return;
+    }
+    const adaBobotInvalid = breakdown.some((b) => b.pemetaanCpmk.some((p) => p.bobotPoin <= 0));
     if (adaBobotInvalid) {
       setErrorMessage("Ada CPMK dengan bobot resmi 0 di rencana evaluasi, tidak bisa dikirim. Cek Komposisi Nilai mata kuliah ini.");
       return;
@@ -1606,15 +1636,24 @@ const InputNilaiCbtModal = ({
                           <Trash2 size={14} />
                         </button>
                       </div>
-                      <select
-                        value={u.cpmkId}
-                        onChange={(e) => updateUnit(u.localId, { cpmkId: e.target.value })}
-                        className="w-full border border-gray-300 rounded-md p-1.5 text-sm"
-                      >
-                        {opsiCpmk.map((c) => (
-                          <option key={c.cpmkId} value={c.cpmkId}>{c.kode}</option>
-                        ))}
-                      </select>
+                      <div>
+                        <label className="text-xs text-gray-500 block mb-0.5" title="1 soal boleh dicentang lebih dari 1 Sub-CPMK/CPMK sekaligus (mis. soal studi kasus)">
+                          Sub-CPMK/CPMK yang diuji soal ini
+                        </label>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 border border-gray-300 rounded-md p-1.5 max-h-24 overflow-y-auto">
+                          {opsiCpmk.map((c) => (
+                            <label key={c.cpmkId} className="flex items-center gap-1 text-xs cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={u.cpmkIds.includes(c.cpmkId)}
+                                onChange={() => toggleUnitCpmk(u.localId, c.cpmkId)}
+                                className="w-3.5 h-3.5"
+                              />
+                              {c.kode}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div>
                           <label className="text-xs text-gray-500 block mb-0.5">Skor Diperoleh</label>
@@ -1641,14 +1680,23 @@ const InputNilaiCbtModal = ({
                           />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 block mb-0.5" title="Otomatis dari bobot resmi CPMK ini di rencana evaluasi, dibagi rata ke semua soal yang menunjuk CPMK yang sama">
-                            Bobot Poin
+                          <label className="text-xs text-gray-500 block mb-0.5" title="Otomatis dari bobot resmi tiap CPMK di rencana evaluasi, dibagi rata ke semua soal yang menunjuk CPMK yang sama">
+                            Bobot Poin (total)
                           </label>
                           <div className="w-full border border-gray-200 bg-gray-50 rounded-md p-1.5 text-sm text-gray-700 font-medium">
-                            {bobotPoinMap[u.localId] ?? 0}
+                            {Object.values(bobotPoinMap[u.localId] || {}).reduce((s, v) => s + v, 0).toFixed(2)}
                           </div>
                         </div>
                       </div>
+                      {u.cpmkIds.length > 1 && (
+                        <p className="text-[11px] text-gray-500">
+                          Rincian: {u.cpmkIds.map((cid) => {
+                            const kode = opsiCpmk.find((c) => c.cpmkId === cid)?.kode || cid;
+                            const bobot = bobotPoinMap[u.localId]?.[cid] ?? 0;
+                            return `${kode}=${bobot}`;
+                          }).join(", ")}
+                        </p>
+                      )}
                     </div>
                   ))}
 
