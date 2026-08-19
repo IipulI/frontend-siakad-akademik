@@ -1,93 +1,86 @@
-import React, { useState } from "react";
+import React from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import DataStudent from "../../../components/lecturer/DataStudent";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LecturerRoute } from "../../../types/VarRoutes";
-import { ChevronLeft } from "lucide-react";
-import ButtonGroupOption from "../../../components/lecturer/ButtonGroupOption";
-import { useCourseDetail, useCourseRPS } from "../../../hooks/lecturer/useFetchCourse";
+import { ArrowLeft } from "lucide-react";
+import SidebarCourseLecturer from "../../../components/lecturer/SidebarCourseLecturer";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useCourseDetail } from "../../../hooks/lecturer/useFetchCourse";
 
 export default function DetailCourseLecturer() {
-  const id = localStorage.getItem("id_mata_kuliah")
+  const navigate = useNavigate();
+  const id = localStorage.getItem("id_mata_kuliah");
 
-  const selectOptions = [
-    { value: "detail", text: "Detail Mata Kuliah" },
-    { value: "rps", text: "RPS" }
-  ];
-
-  const [option, setOption] = useState("detail");
-
-  const { isPending, data: detail, error } = useCourseDetail(id)
-
-  const { data: rps } = useCourseRPS(id)
+  const { isPending, data: detail, error } = useCourseDetail(id);
+  const d = detail?.data;
 
   return (
-    <MainLayout
-      titlePage={"Detail Mata Kuliah"}
-      isGreeting={false}
-    >
-      <div className="w-full bg-white py-2 rounded-sm border-t-2 border-primary-green px-4 max-w-screen-xl mx-auto">
-        <div className="flex gap-4 justify-end">
-          <Link
-            to={LecturerRoute.courses.course}
-            onClick={() => localStorage.removeItem("id_kelas_kuliah")}
-            className="bg-primary-blueSoft flex rounded pl-2 pr-4 py-1 items-center text-white w-fit self-start md:self-auto"
+    <MainLayout titlePage={"Detail Mata Kuliah"} isGreeting={false}>
+      <div className="p-0 min-h-screen">
+        <div className="mb-6 mt-[-10px] flex items-center justify-between">
+          <p className="text-gray-500 text-sm">Dosen &gt; Perkuliahan &gt; Mata Kuliah &gt; Detail</p>
+          <button
+            onClick={() => navigate(LecturerRoute.courses.course)}
+            className="bg-primary-blueSoft text-white px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90"
           >
-            <ChevronLeft size={16} className="mr-2" />
-            Kembali ke daftar
-          </Link>
+            <ArrowLeft size={15} /> Kembali ke Daftar
+          </button>
         </div>
 
-        <div className="w-full flex flex-col lg:flex-row gap-4 mt-4">
-          <div className="lg:w-1/6 w-full flex lg:flex-col max-h-fit gap-2 rounded shadow shadow-gray-400 overflow-x-auto">
-            <ButtonGroupOption options={selectOptions} selected={option} onChange={setOption} />
-          </div>
+        <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            <SidebarCourseLecturer mataKuliahId={id || ""} activeTab="data" />
 
-          <div className="w-full overflow-x-auto">
-            {option === "detail" ? (
-              isPending ? (
-                <div>Loading...</div>
-              ) : error ? (
-                <div>Error loading data</div>
-              ) : detail.data ? (
-                <DataStudent
-                  data={[
-                    { label: 'Tahun Kurikulum', value: detail.data.tahunKurikulum },
-                    { label: 'Program Studi', value: detail.data.programStudi || detail.data.unitPengampu },
-                    { label: 'Kode Mata Kuliah', value: detail.data.kodeMataKuliah },
-                    { label: 'Semester', value: detail.data.semester || '-' },
-                    { label: 'Nama Mata Kuliah', value: detail.data.namaMataKuliah || detail.data.namaMataKuliahInd },
-                    { label: 'Prasyarat 1', value: detail.data.prasyaratMataKuliah1?.namaMataKuliah || '-' },
-                    { label: 'SKS Tatap Muka', value: detail.data.sksTatapMuka },
-                    { label: 'Prasyarat 2', value: detail.data.prasyaratMataKuliah2?.namaMataKuliah || '-' },
-                    { label: 'SKS Praktikum', value: detail.data.sksPraktikum },
-                    { label: 'Prasyarat 3', value: detail.data.prasyaratMataKuliah3?.namaMataKuliah || '-' },
-                    { label: 'Total SKS', value: (Number(detail.data.sksTatapMuka) + Number(detail.data.sksPraktikum)), bold: true },
-                    { label: 'Jenis Mata Kuliah', value: detail.data.jenisMataKuliah },
-                  ]}
-                />
+            <div className="w-full md:w-[80%]">
+              {isPending ? (
+                <div className="flex justify-center p-12">
+                  <LoadingSpinner />
+                </div>
+              ) : error || !d ? (
+                <div className="p-8 text-center text-red-500">Gagal memuat data mata kuliah.</div>
               ) : (
-                <div>Data tidak ditemukan</div>
-              )
-            ) : (
-              rps?.data ? (
-                <DataStudent
-                  data={[
-                    { label: 'Periode Akademik', value: rps.data.rpsData?.periode?.nama || rps.data.periodeAkademik?.namaPeriode || '-' },
-                    { label: 'Jenjang / Unit Pengampu', value: rps.data.mataKuliah?.unitPengampu || rps.data.programStudi?.jenjang?.jenjang || '-' },
-                    { label: 'Dosen Penyusun', value: rps.data.rpsData?.pustakaPendukung || rps.data.pustakaPendukung || '-' },
-                    { label: 'Tanggal Penyusun', value: rps.data.rpsData?.tanggalPenyusunan || rps.data.tanggalPenyusun || '-' },
-                    { label: 'Tujuan Mata Kuliah', value: rps.data.rpsData?.tujuanMataKuliah || rps.data.tujuanMataKuliah || '-' },
-                    { label: 'Deskripsi Mata Kuliah', value: rps.data.rpsData?.deskripsiMataKuliah || rps.data.deskripsiMataKuliah || '-' },
-                  ]}
-                />
-              ) : (
-                <div>Data tidak ditemukan</div>
-              )
-            )}
+                <>
+                  <div className="bg-[#eef5f9] border-l-4 border-[#00c0ef] p-4 mb-6 text-sm text-gray-700">
+                    Data inti mata kuliah (kode, nama, SKS, dst) hanya bisa diubah oleh Admin Akademik.
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-0 text-sm">
+                    <div>
+                      <Row label="Tahun Kurikulum" value={d.tahunKurikulum} />
+                      <Row label="Kode Mata Kuliah" value={d.kodeMataKuliah} />
+                      <Row label="Nama Mata Kuliah (IND)" value={d.namaMataKuliahInd} />
+                      <Row label="Nama Mata Kuliah (EN)" value={d.namaMataKuliahEn} />
+                      <Row label="Jenis Mata Kuliah" value={d.jenisMataKuliah} />
+                      <Row label="SKS Tatap Muka" value={d.sksTatapMuka} />
+                      <Row label="SKS Praktikum" value={d.sksPraktikum} />
+                      <Row label="Total SKS" value={d.totalSks} bold />
+                    </div>
+                    <div>
+                      <Row label="Unit Pengampu" value={d.unitPengampu} />
+                      <Row label="Kelompok Mata Kuliah" value={d.kelompokMataKuliah} />
+                      <Row label="Koordinator Mata Kuliah" value={d.koordinatorMataKuliah?.label} />
+                      <Row label="Pengembang RPS" value={(d.pengembangRps || []).map((p: any) => p.label).join(", ") || "-"} />
+                    </div>
+                  </div>
+                  {d.isKoordinator && (
+                    <div className="mt-6 p-3 bg-green-50 border border-green-200 rounded text-sm text-green-700">
+                      Anda adalah Koordinator mata kuliah ini -- bisa mengubah Pemetaan CPL, Pemetaan CPMK, Detail RPS, Rencana Pembelajaran, dan Rencana Evaluasi lewat menu di samping.
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </MainLayout>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: any; bold?: boolean }) {
+  return (
+    <div className="flex items-center justify-between border-b border-gray-100 py-3">
+      <span className="font-semibold text-[#666666]">{label}</span>
+      <span className={`text-gray-800 ${bold ? "font-bold" : ""}`}>{value ?? "-"}</span>
+    </div>
   );
 }

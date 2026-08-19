@@ -110,6 +110,11 @@ import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetai
 import DetailClassLecturer from "./pages/lecturer/courses/DetailClassLecturer";
 import DetailAdvisorLecturer from "./pages/lecturer/guidance/DetailAdvisorLecturer";
 import DetailCourseLecturer from "./pages/lecturer/courses/DetailCourseLecturer";
+import PemetaanCplLecturer from "./pages/lecturer/courses/PemetaanCplLecturer";
+import PemetaanCpmkLecturer from "./pages/lecturer/courses/PemetaanCpmkLecturer";
+import DetailRpsLecturer from "./pages/lecturer/courses/DetailRpsLecturer";
+import RencanaPembelajaranLecturer from "./pages/lecturer/courses/RencanaPembelajaranLecturer";
+import RencanaEvaluasiLecturer from "./pages/lecturer/courses/RencanaEvaluasiLecturer";
 import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
 import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
 import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
@@ -681,6 +686,26 @@ export default function App() {
       <Route
         path={String(LecturerRoute.courses.detailCourse)}
         element={<DetailCourseLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.pemetaanCpl}/:mataKuliahId`}
+        element={<PemetaanCplLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.pemetaanCpmk}/:mataKuliahId`}
+        element={<PemetaanCpmkLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.detailRps}/:mataKuliahId`}
+        element={<DetailRpsLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.rencanaPembelajaran}/:mataKuliahId`}
+        element={<RencanaPembelajaranLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.rencanaEvaluasi}/:mataKuliahId`}
+        element={<RencanaEvaluasiLecturer />}
       />
       {/* <Route
         path={String(LecturerRoute.courses.stopStudy)}

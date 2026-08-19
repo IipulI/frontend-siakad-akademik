@@ -182,5 +182,10 @@ export const LecturerRoute = {
     class: "/dosen/perkuliahan/kelas-kuliah",
     detailClass: "/dosen/perkuliahan/kelas-kuliah/detail",
     detailCourse: "/dosen/perkuliahan/mata-kuliah/detail",
+    pemetaanCpl: "/dosen/perkuliahan/mata-kuliah/pemetaan-cpl",
+    pemetaanCpmk: "/dosen/perkuliahan/mata-kuliah/pemetaan-cpmk",
+    detailRps: "/dosen/perkuliahan/mata-kuliah/detail-rps",
+    rencanaPembelajaran: "/dosen/perkuliahan/mata-kuliah/rencana-pembelajaran",
+    rencanaEvaluasi: "/dosen/perkuliahan/mata-kuliah/rencana-evaluasi",
   },
 };

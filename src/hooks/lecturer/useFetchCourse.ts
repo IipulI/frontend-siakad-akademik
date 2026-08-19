@@ -51,3 +51,43 @@ export const useCourseRPS = (id: string | null) =>
         },
     })
 
+// Dipakai buat tab Pemetaan CPL/Rencana Pembelajaran/Rencana Evaluasi di halaman
+// dosen -- LIHAT SAJA, lewat /akademik/dosen/... (terbuka buat semua dosen
+// pengampu MK ini), BUKAN lewat /akademik/koordinator-mk/... (yang sekarang
+// cuma boleh diakses koordinator MK itu sendiri / admin). Simpan/edit tetap
+// lewat hook koordinator yang sudah ada (useSavePemetaanCplMk dkk), cuma
+// dirender kalau isKoordinator true.
+export const useCoursePemetaanCpl = (id: string | null) =>
+    useQuery({
+        queryKey: ['dosen/mata-kuliah/detail/pemetaan-cpl', id],
+        queryFn: async () => {
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/pemetaan-cpl`)
+          return res.data
+        },
+        enabled: !!id,
+    })
+
+export const useCourseRencanaPembelajaran = (id: string | null, periodeId?: string) =>
+    useQuery({
+        queryKey: ['dosen/mata-kuliah/detail/rencana-pembelajaran', id, periodeId],
+        queryFn: async () => {
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/rencana-pembelajaran`, {
+            params: periodeId ? { periodeId } : {},
+          })
+          return res.data
+        },
+        enabled: !!id,
+    })
+
+export const useCourseRencanaEvaluasi = (id: string | null, periodeId?: string) =>
+    useQuery({
+        queryKey: ['dosen/mata-kuliah/detail/rencana-evaluasi', id, periodeId],
+        queryFn: async () => {
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/rencana-evaluasi`, {
+            params: periodeId ? { periodeId } : {},
+          })
+          return res.data
+        },
+        enabled: !!id,
+    })
+
