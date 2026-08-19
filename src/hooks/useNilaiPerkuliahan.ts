@@ -41,6 +41,29 @@ export function useNilaiKelas(kelasId: string) {
   });
 }
 
+export interface RincianSubCpmk {
+  cpmkId: string;
+  kode: string;
+  nilaiPersen: number;
+}
+
+export interface RincianKomponenNilai {
+  rencanaEvaluasiId: string;
+  namaKomponen: string;
+  subCpmk: RincianSubCpmk[];
+}
+
+export function useRincianNilaiMahasiswa(kelasId: string, rincianKrsId: string | null) {
+  return useQuery({
+    queryKey: ["rincianNilaiMahasiswa", kelasId, rincianKrsId],
+    queryFn: async () => {
+      const response = await Api.get(`/akademik/dosen/kelas/${kelasId}/nilai/${rincianKrsId}/rincian`);
+      return response.data.data as RincianKomponenNilai[];
+    },
+    enabled: !!kelasId && !!rincianKrsId,
+  });
+}
+
 export function useKunciNilaiKelas(kelasId: string) {
   const queryClient = useQueryClient();
   return useMutation({

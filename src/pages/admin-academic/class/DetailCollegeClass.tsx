@@ -48,6 +48,7 @@ import {
   useSimpanNilaiMahasiswa,
   useKomposisiNilai,
   fetchNilaiKelasPdfBlobUrl,
+  useRincianNilaiMahasiswa,
 } from "../../../hooks/useNilaiPerkuliahan";
 import { useCapaianCpmk, useCapaianCpl, fetchCapaianExportBlobUrl } from "../../../hooks/useCapaianPembelajaran";
 import { useSimpanNilaiKomponenCbt } from "../../../hooks/useCbtManual";
@@ -910,6 +911,7 @@ const Grading = ({ data }) => {
   const [finalisasiResult, setFinalisasiResult] = useState<any>(null);
   const [inputNilaiRow, setInputNilaiRow] = useState<any>(null);
   const [inputCbtRow, setInputCbtRow] = useState<any>(null);
+  const [rincianRow, setRincianRow] = useState<any>(null);
   const [showResetNilai, setShowResetNilai] = useState(false);
 
   const tabel = nilai?.tabel || [];
@@ -1117,6 +1119,13 @@ const Grading = ({ data }) => {
                         >
                           <Cpu size={14} />
                         </button>
+                        <button
+                          onClick={() => setRincianRow(row)}
+                          title="Lihat Rincian Nilai per Sub-CPMK (bukti nilai yang diinput)"
+                          className="bg-primary-green hover:opacity-90 text-white p-1.5 rounded"
+                        >
+                          <Eye size={14} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1157,6 +1166,128 @@ const Grading = ({ data }) => {
           onClose={() => setInputCbtRow(null)}
         />
       )}
+
+      {rincianRow && (
+        <RincianNilaiModal
+          kelasId={data.id}
+          row={rincianRow}
+          onClose={() => setRincianRow(null)}
+        />
+      )}
+    </div>
+  );
+};
+
+const RincianNilaiModal = ({
+  kelasId,
+  row,
+  onClose,
+}: {
+  kelasId: string;
+  row: any;
+  onClose: () => void;
+}) => {
+  const { data: komponenList = [], isLoading } = useRincianNilaiMahasiswa(kelasId, row.rincianKrsId);
+
+  const semuaKodeSubCpmk = Array.from(
+    new Set(komponenList.flatMap((k) => k.subCpmk.map((s) => s.kode)))
+  ).sort((a, b) => a.localeCompare(b));
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-md shadow-lg w-full max-w-5xl max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+          <div>
+            <h2 className="text-lg font-bold text-primary-blueDark">Rincian Nilai per Sub-CPMK</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {row.nim} - {row.nama}
+            </p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-5 overflow-auto">
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : komponenList.length === 0 ? (
+            <p className="text-sm text-gray-500 text-center py-6">
+              Belum ada nilai per Sub-CPMK yang tercatat untuk mahasiswa ini.
+            </p>
+          ) : (
+            <div className="overflow-x-auto border border-gray-200 rounded-sm">
+              <table className="min-w-full text-sm border-collapse">
+                <thead>
+                  <tr>
+                    <th
+                      rowSpan={2}
+                      className="py-2 px-3 border border-gray-300 bg-primary-green text-white font-semibold whitespace-nowrap align-middle"
+                    >
+                      NIM
+                    </th>
+                    <th
+                      rowSpan={2}
+                      className="py-2 px-3 border border-gray-300 bg-primary-green text-white font-semibold whitespace-nowrap align-middle"
+                    >
+                      Nama
+                    </th>
+                    {komponenList.map((k) => (
+                      <th
+                        key={k.rencanaEvaluasiId}
+                        colSpan={k.subCpmk.length}
+                        className="py-2 px-3 border border-gray-300 bg-primary-green text-white font-semibold whitespace-nowrap text-center"
+                      >
+                        {k.namaKomponen}
+                      </th>
+                    ))}
+                  </tr>
+                  <tr>
+                    {komponenList.map((k) =>
+                      k.subCpmk.map((s) => (
+                        <th
+                          key={`${k.rencanaEvaluasiId}-${s.cpmkId}`}
+                          className="py-1.5 px-2 border border-gray-300 bg-primary-green/70 text-white font-medium text-xs whitespace-nowrap"
+                          title={s.kode}
+                        >
+                          {s.kode.replace(/^Sub-CPMK|^CPMK/, "")}
+                        </th>
+                      ))
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="text-center hover:bg-gray-50">
+                    <td className="py-2 px-3 border border-gray-300 font-medium">{row.nim}</td>
+                    <td className="py-2 px-3 border border-gray-300 text-left">{row.nama}</td>
+                    {komponenList.map((k) =>
+                      k.subCpmk.map((s) => (
+                        <td key={`${k.rencanaEvaluasiId}-${s.cpmkId}`} className="py-2 px-2 border border-gray-300">
+                          {s.nilaiPersen.toFixed(2)}
+                        </td>
+                      ))
+                    )}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+          {semuaKodeSubCpmk.length > 0 && (
+            <p className="text-xs text-gray-400 mt-3">
+              Angka di tiap kolom adalah Nilai % untuk Sub-CPMK tsb di komponen evaluasi terkait, dihitung dari skor per soal yang diinput dosen (skorTerbobot/totalBobot x 100) -- bukan hasil akhir mata kuliah.
+            </p>
+          )}
+        </div>
+
+        <div className="px-5 py-3 border-t border-gray-200 flex justify-end">
+          <button
+            onClick={onClose}
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-semibold hover:bg-gray-300"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
