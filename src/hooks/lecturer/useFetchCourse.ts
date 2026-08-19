@@ -42,11 +42,13 @@ export const useCourseDetail = (id: string | null) =>
         },
     })
 
-export const useCourseRPS = (id: string | null) =>
+export const useCourseRPS = (id: string | null, periodeId?: string) =>
     useQuery({
-        queryKey: ['dosen/mata-kuliah/detail/rps', id],
+        queryKey: ['dosen/mata-kuliah/detail/rps', id, periodeId],
         queryFn: async () => {
-          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/detail-rps`)
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/detail-rps`, {
+            params: periodeId ? { periodeId } : {},
+          })
           return res.data
         },
     })

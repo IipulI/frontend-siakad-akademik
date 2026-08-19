@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Plus, Pencil, Trash2, X, Save, AlertCircle } from "lucide-react";
@@ -29,11 +29,23 @@ export default function RencanaPembelajaranLecturer() {
   const d = detail?.data;
   const isKoordinator = !!d?.isKoordinator;
 
-  const { data: rp, isLoading: isRpLoading, refetch: refetchRp } = useCourseRencanaPembelajaran(mataKuliahId || "");
+  // FIX: sebelumnya gak ada pemilih periode -- backend defaultnya ambil periode
+  // "Aktif" (semester berjalan), yang seringkali BELUM diisi rencana pembelajarannya
+  // sama sekali (datanya masih di semester sebelumnya). Kelihatan "kosong" padahal
+  // datanya ADA, cuma di periode lain -- sekarang dosen bisa pindah periode sendiri,
+  // sama kayak halaman admin.
+  const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
+  const { data: rp, isLoading: isRpLoading, refetch: refetchRp } = useCourseRencanaPembelajaran(mataKuliahId || "", selectedPeriodeId || undefined);
   const resp = rp?.data || {};
   const sesiList: any[] = resp.rencanaData || [];
   const masterCpmk: any[] = resp.masterCpmk || [];
+  const daftarPeriode: any[] = resp.daftarPeriode || [];
   const periodeId: string | undefined = resp.periodeTerpilihId;
+
+  useEffect(() => {
+    if (resp.periodeTerpilihId && !selectedPeriodeId) setSelectedPeriodeId(resp.periodeTerpilihId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resp.periodeTerpilihId]);
 
   const createMutation = useCreateSesi(mataKuliahId || "");
   const updateMutation = useUpdateSesi(mataKuliahId || "");
@@ -126,6 +138,19 @@ export default function RencanaPembelajaranLecturer() {
               </button>
             )}
           </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
+          <label className="text-sm font-semibold text-gray-700 mr-3">Periode Akademik</label>
+          <select
+            value={selectedPeriodeId}
+            onChange={(e) => setSelectedPeriodeId(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-1 focus:ring-primary-green"
+          >
+            {daftarPeriode.map((p: any) => (
+              <option key={p.id} value={p.id}>{p.nama}{p.status === "Aktif" ? " (Aktif)" : ""}</option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">

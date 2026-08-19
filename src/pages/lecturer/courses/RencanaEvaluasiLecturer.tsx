@@ -16,10 +16,20 @@ export default function RencanaEvaluasiLecturer() {
   const d = detail?.data;
   const isKoordinator = !!d?.isKoordinator;
 
-  const { data: re, isLoading: isReLoading, refetch: refetchRe } = useCourseRencanaEvaluasi(mataKuliahId || "");
+  // FIX: sama kayak Rencana Pembelajaran -- tambah pemilih periode, biar dosen
+  // bisa pindah ke periode yang beneran ada datanya (default "Aktif" bisa aja
+  // belum diisi rencana evaluasinya).
+  const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
+  const { data: re, isLoading: isReLoading, refetch: refetchRe } = useCourseRencanaEvaluasi(mataKuliahId || "", selectedPeriodeId || undefined);
   const resp = re?.data || {};
   const masterCpmk: any[] = resp.masterCpmk || [];
+  const daftarPeriode: any[] = resp.daftarPeriode || [];
   const periodeId: string | undefined = resp.periodeTerpilihId;
+
+  useEffect(() => {
+    if (resp.periodeTerpilihId && !selectedPeriodeId) setSelectedPeriodeId(resp.periodeTerpilihId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resp.periodeTerpilihId]);
 
   const saveMutation = useSaveRencanaEvaluasi();
 
@@ -118,6 +128,19 @@ export default function RencanaEvaluasiLecturer() {
               </>
             )}
           </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
+          <label className="text-sm font-semibold text-gray-700 mr-3">Periode Akademik</label>
+          <select
+            value={selectedPeriodeId}
+            onChange={(e) => setSelectedPeriodeId(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-1 focus:ring-primary-green"
+          >
+            {daftarPeriode.map((p: any) => (
+              <option key={p.id} value={p.id}>{p.nama}{p.status === "Aktif" ? " (Aktif)" : ""}</option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">

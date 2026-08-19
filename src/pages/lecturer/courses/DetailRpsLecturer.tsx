@@ -46,9 +46,19 @@ export default function DetailRpsLecturer() {
   const d = detail?.data;
   const isKoordinator = !!d?.isKoordinator;
 
-  const { data: rps, isLoading: isRpsLoading, refetch: refetchRps } = useCourseRPS(mataKuliahId || "");
+  // FIX: sama kayak Rencana Pembelajaran/Evaluasi -- tambah pemilih periode,
+  // biar dosen bisa pindah ke periode yang beneran ada RPS-nya (default "Aktif"
+  // bisa aja belum diisi RPS-nya untuk semester berjalan).
+  const [selectedPeriodeId, setSelectedPeriodeId] = useState<string>("");
+  const { data: rps, isLoading: isRpsLoading, refetch: refetchRps } = useCourseRPS(mataKuliahId || "", selectedPeriodeId || undefined);
   const r = rps?.data;
+  const daftarPeriode: any[] = r?.daftarPeriode || [];
   const saveMutation = useSaveDetailRps(mataKuliahId || "");
+
+  useEffect(() => {
+    if (r?.rpsData?.siakPeriodeAkademikId && !selectedPeriodeId) setSelectedPeriodeId(r.rpsData.siakPeriodeAkademikId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [r?.rpsData?.siakPeriodeAkademikId]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
@@ -121,6 +131,19 @@ export default function DetailRpsLecturer() {
               </>
             )}
           </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
+          <label className="text-sm font-semibold text-gray-700 mr-3">Periode Akademik</label>
+          <select
+            value={selectedPeriodeId}
+            onChange={(e) => setSelectedPeriodeId(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-1 focus:ring-primary-green"
+          >
+            {daftarPeriode.map((p: any) => (
+              <option key={p.id} value={p.id}>{p.nama}{p.status === "Aktif" ? " (Aktif)" : ""}{!p.adaDataRps ? " -- belum ada RPS" : ""}</option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
