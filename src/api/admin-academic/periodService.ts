@@ -52,9 +52,18 @@ export const periodService = {
         payload: IPeriodPayload
     ): Promise<IApiResponseSuccess> => {
         try {
+            // Backend butuh "nama"/"kode" (bukan namaPeriode/kodePeriode dari
+            // IPeriodPayload) -- di-map di sini biar tipe form-nya gak usah
+            // ngikutin nama field backend.
             const response = await Api.post<IApiResponseSuccess>(
                 '/akademik/periode-akademik',
-                payload
+                {
+                    siakTahunAjaranId: payload.siakTahunAjaranId,
+                    nama: payload.namaPeriode,
+                    kode: payload.kodePeriode,
+                    tanggalMulai: payload.tanggalMulai,
+                    tanggalSelesai: payload.tanggalSelesai,
+                }
             );
             return response.data;
         } catch (error) {
@@ -74,7 +83,14 @@ export const periodService = {
         try {
             const response = await Api.put<IApiResponseSuccess>(
                 `/akademik/periode-akademik/${id}`,
-                payload
+                {
+                    siakTahunAjaranId: payload.siakTahunAjaranId,
+                    nama: payload.namaPeriode,
+                    kode: payload.kodePeriode,
+                    tanggalMulai: payload.tanggalMulai,
+                    tanggalSelesai: payload.tanggalSelesai,
+                    status: payload.status,
+                }
             );
             return response.data;
         } catch (error) {

@@ -52,6 +52,11 @@ export interface IPeriodPayload {
     kodePeriode: string;
     tanggalMulai: string;
     tanggalSelesai: string;
+    // Bukan field yang bisa diedit lewat UI (belum ada kontrolnya) -- cuma
+    // dibawa apa adanya pas edit biar update backend gak nolak request-nya
+    // (endpoint update mewajibkan status ada di body) dan nilainya gak
+    // kebetulan ketiban jadi kosong.
+    status?: string;
 }
 
 // --- Level (Jenjang Pendidikan) ---
