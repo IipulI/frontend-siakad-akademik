@@ -55,6 +55,10 @@ interface LocalEvaluasiRow {
   metodeEvaluasi: string;
   jenisEvaluasi: string;
   cpmkBobot: Record<string, number>;
+  // Dipakai HANYA kalau mata kuliah tidak punya CPMK sama sekali (kurikulum
+  // non-OBE, mis. KKNI Kurikulum 2021) -- di kasus itu tidak ada kolom CPMK
+  // buat isi bobot per-CPMK, jadi bobot diisi langsung lewat field ini.
+  bobotManual: number;
   syaratLulus: SyaratLulus;
 }
 
@@ -153,15 +157,21 @@ export default function ObeRencanaEvaluasi() {
 
   const handleBack = () => navigate(AdminAcademicRoute.obeManagement.obeManagement);
 
+  // Kalau matkul punya CPMK, bobot tetap dihitung dari jumlah bobot per-CPMK
+  // seperti sebelumnya (jalur OBE, tidak berubah). Kalau matkul sama sekali
+  // tidak punya CPMK (kurikulum non-OBE), tidak ada kolom CPMK buat diisi,
+  // jadi bobot diambil dari input manual.
   const rowBobot = (row: LocalEvaluasiRow) =>
-    Object.values(row.cpmkBobot).reduce((sum, v) => sum + (Number(v) || 0), 0);
+    cpmkGroups.length === 0
+      ? Number(row.bobotManual) || 0
+      : Object.values(row.cpmkBobot).reduce((sum, v) => sum + (Number(v) || 0), 0);
 
   const grandTotal = rows.reduce((sum, r) => sum + rowBobot(r), 0);
 
   const tambahEvaluasiRow = () => {
     setRows((prev) => [
       ...prev,
-      { localId: nextUid(), metodeEvaluasi: "", jenisEvaluasi: "", cpmkBobot: {}, syaratLulus: "TIDAK_MENJADI_SYARAT_LULUS" },
+      { localId: nextUid(), metodeEvaluasi: "", jenisEvaluasi: "", cpmkBobot: {}, bobotManual: 0, syaratLulus: "TIDAK_MENJADI_SYARAT_LULUS" },
     ]);
   };
 
@@ -172,6 +182,13 @@ export default function ObeRencanaEvaluasi() {
 
   const updateRowField = (localId: string, field: "metodeEvaluasi" | "jenisEvaluasi" | "syaratLulus", value: string) => {
     setRows((prev) => prev.map((r) => (r.localId === localId ? { ...r, [field]: value } : r)));
+  };
+
+  const updateRowBobotManual = (localId: string, value: string) => {
+    const num = value === "" ? 0 : Number(value);
+    setRows((prev) =>
+      prev.map((r) => (r.localId === localId ? { ...r, bobotManual: isNaN(num) ? 0 : num } : r))
+    );
   };
 
   const updateRowBobot = (localId: string, cpmkId: string, value: string) => {
@@ -190,6 +207,7 @@ export default function ObeRencanaEvaluasi() {
         metodeEvaluasi: item.metodeEvaluasi,
         jenisEvaluasi: item.jenisEvaluasi,
         cpmkBobot: { ...(item.mappingBobotCpmk || {}) },
+        bobotManual: Number(item.bobotEvaluasi) || 0,
         syaratLulus: item.syaratLulus,
       }))
     );
@@ -402,8 +420,20 @@ export default function ObeRencanaEvaluasi() {
                                       </td>
                                     ))
                                   )}
-                                  <td className="p-2 border border-gray-200" title="Dihitung otomatis dari bobot CPMK/Sub-CPMK di baris ini">
-                                    {rowBobot(row)}%
+                                  <td className="p-2 border border-gray-200">
+                                    {cpmkGroups.length === 0 ? (
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        max={100}
+                                        value={row.bobotManual ?? 0}
+                                        onChange={(e) => updateRowBobotManual(row.localId, e.target.value)}
+                                        className="w-16 border border-gray-300 rounded p-1 text-xs text-center"
+                                        title="Mata kuliah ini tidak punya CPMK, isi bobot langsung di sini"
+                                      />
+                                    ) : (
+                                      <span title="Dihitung otomatis dari bobot CPMK/Sub-CPMK di baris ini">{rowBobot(row)}%</span>
+                                    )}
                                   </td>
                                   <td className="p-2 border border-gray-200">
                                     <select
