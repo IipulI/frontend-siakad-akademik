@@ -39,6 +39,20 @@ import PeriodAdminAcademic from "./pages/admin-academic/setting/PeriodAdminAcade
 import ScaleAdminAcademic from "./pages/admin-academic/setting/ScaleAdminAcademic";
 import LimitSKSAdminAcademic from "./pages/admin-academic/setting/LimitSKSAdminAcademic";
 import LevelAdminAcademic from "./pages/admin-academic/setting/LevelAdminAcademic";
+import SistemKuliahAdminAcademic from "./pages/admin-academic/setting/SistemKuliahAdminAcademic";
+import RuanganAdminAcademic from "./pages/admin-academic/setting/RuanganAdminAcademic";
+import JenisMataKuliahAdminAcademic from "./pages/admin-academic/setting/JenisMataKuliahAdminAcademic";
+import SlotWaktuAdminAcademic from "./pages/admin-academic/setting/SlotWaktuAdminAcademic";
+import JenisPertemuanAdminAcademic from "./pages/admin-academic/setting/JenisPertemuanAdminAcademic";
+import AgamaAdminAcademic from "./pages/admin-academic/setting/AgamaAdminAcademic";
+import SukuAdminAcademic from "./pages/admin-academic/setting/SukuAdminAcademic";
+import PenghasilanAdminAcademic from "./pages/admin-academic/setting/PenghasilanAdminAcademic";
+import PekerjaanAdminAcademic from "./pages/admin-academic/setting/PekerjaanAdminAcademic";
+import JasAlmamaterAdminAcademic from "./pages/admin-academic/setting/JasAlmamaterAdminAcademic";
+import StatusMahasiswaAdminAcademic from "./pages/admin-academic/setting/StatusMahasiswaAdminAcademic";
+import JenisTinggalAdminAcademic from "./pages/admin-academic/setting/JenisTinggalAdminAcademic";
+import TransportasiAdminAcademic from "./pages/admin-academic/setting/TransportasiAdminAcademic";
+import KebutuhanKhususAdminAcademic from "./pages/admin-academic/setting/KebutuhanKhususAdminAcademic";
 import CompositionAdminAcademic from "./pages/admin-academic/setting/CompositionAdminAcademic";
 import SetCompositionAdminAcademic from "./pages/admin-academic/setting/SetCompositionAdminAcademic";
 import CurriculumYear from "./pages/admin-academic/academic/CurriculumYear";
@@ -380,59 +394,59 @@ export default function App() {
       />
       <Route
         path={String(AdminAcademicRoute.institution.studySystem)}
-        element={<ComingSoon title="Sistem Kuliah" />}
+        element={<SistemKuliahAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.institution.classroom)}
-        element={<ComingSoon title="Ruang Kuliah" />}
+        element={<RuanganAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.lectureSetting.courseType)}
-        element={<ComingSoon title="Jenis Mata Kuliah" />}
+        element={<JenisMataKuliahAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.lectureSetting.timeSlot)}
-        element={<ComingSoon title="Slot Waktu" />}
+        element={<SlotWaktuAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.lectureSetting.meetingType)}
-        element={<ComingSoon title="Jenis Pertemuan" />}
+        element={<JenisPertemuanAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.biodataSetting.religion)}
-        element={<ComingSoon title="Agama" />}
+        element={<AgamaAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.biodataSetting.ethnicity)}
-        element={<ComingSoon title="Suku" />}
+        element={<SukuAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.biodataSetting.income)}
-        element={<ComingSoon title="Penghasilan" />}
+        element={<PenghasilanAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.biodataSetting.occupation)}
-        element={<ComingSoon title="Pekerjaan" />}
+        element={<PekerjaanAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.biodataSetting.almamaterJacket)}
-        element={<ComingSoon title="Jas Almamater" />}
+        element={<JasAlmamaterAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.studentSetting.studentStatus)}
-        element={<ComingSoon title="Status Mahasiswa" />}
+        element={<StatusMahasiswaAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.studentSetting.residenceType)}
-        element={<ComingSoon title="Jenis Tinggal" />}
+        element={<JenisTinggalAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.studentSetting.transportation)}
-        element={<ComingSoon title="Transportasi" />}
+        element={<TransportasiAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.studentSetting.specialNeeds)}
-        element={<ComingSoon title="Kebutuhan Khusus" />}
+        element={<KebutuhanKhususAdminAcademic />}
       />
 
       {/* Route Untuk Admin Keuangan */}
