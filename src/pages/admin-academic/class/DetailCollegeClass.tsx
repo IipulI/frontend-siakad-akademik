@@ -1106,7 +1106,7 @@ const Grading = ({ data }) => {
                         <button
                           onClick={() => setInputNilaiRow(row)}
                           disabled={row.keterangan !== "Belum Terkunci"}
-                          title={row.keterangan !== "Belum Terkunci" ? "Nilai sudah dikunci, tidak bisa diinput lagi" : "Input Nilai (Jalur A)"}
+                          title={row.keterangan !== "Belum Terkunci" ? "Nilai sudah dikunci, tidak bisa diinput lagi" : "Input Nilai"}
                           className="bg-primary-blueSoft hover:opacity-90 text-white p-1.5 rounded disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           <Pencil size={14} />
@@ -1531,7 +1531,7 @@ const InputNilaiManualModal = ({
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div>
-            <h4 className="text-lg font-bold text-gray-800">Input Nilai (Jalur A)</h4>
+            <h4 className="text-lg font-bold text-gray-800">Input Nilai</h4>
             <p className="text-xs text-gray-500">{row.nim} - {row.nama}</p>
           </div>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
