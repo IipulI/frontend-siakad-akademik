@@ -408,7 +408,7 @@ export default function CreateBill() {
           {pagination && (
             <Pagination
               currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
+              totalPages={pagination.totalPage}
               onPageChange={handlePageChange}
               rowsPerPage={pagination.perPage}
               totalRows={pagination.totalItems}

@@ -1,7 +1,8 @@
 // src/hooks/admin-academic/useBulkAssignment.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { bulkAssignmentService } from '../../api/admin-academic/bulkAssignmentService';
-import { IBulkAssignmentPayload, IApiResponseSuccess } from '../../types/models';
+import { IBulkAssignmentPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 export const useBulkAssignment = () => {
     const queryClient = useQueryClient(); // Digunakan untuk invalidasi cache jika perlu

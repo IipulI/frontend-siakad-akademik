@@ -9,7 +9,7 @@ import {
   StudentData,
   useCreateInvoiceData,
   useGetComponentBill,
-  FormData,
+  CreateBillFormData,
 } from "../../../hooks/admin-keuangan/useCreateBill";
 import { AdminFinanceRoute } from "../../../types/VarRoutes";
 import {
@@ -32,7 +32,7 @@ export default function FormCreateBill() {
   const [pencarianDipilih, setPencarianDipilih] = useState<string>("");
 
   // State untuk form data
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<CreateBillFormData>({
     tanggalTenggat: "",
     tahap: "",
   });
@@ -71,7 +71,7 @@ export default function FormCreateBill() {
     setTotalTagihan(total);
   }, [biayaDipilih]);
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof CreateBillFormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,

@@ -87,9 +87,26 @@ const PeriodAdminAcademic: React.FC = () => {
     });
 
     // Extract data from API responses
-    const periods: IPeriod[] = periodsApiResponse?.data || [];
     const pagination = periodsApiResponse?.pagination;
     const academicYears: IAcademicYear[] = yearsApiResponse?.data || [];
+
+    // FIX: model PeriodeAkademik di backend balikin field mentah snake_case
+    // (nama, kode, siak_tahun_ajaran_id, tanggal_mulai, tanggal_selesai) --
+    // beda dari model lain di sistem ini yang udah di-mapping ke camelCase.
+    // Makanya kolom Tahun/Kode Periode/Nama Periode/Tanggal selalu kosong di
+    // tabel (cuma Status yang namanya kebetulan sama). Di-mapping manual di sini
+    // dulu ke bentuk IPeriod yang dipakai TableSetting, termasuk resolve nama
+    // Tahun Ajaran dari siak_tahun_ajaran_id lewat daftar academicYears yang
+    // udah ke-fetch di halaman ini juga.
+    const periods: IPeriod[] = ((periodsApiResponse?.data || []) as any[]).map((raw) => ({
+        id: raw.id,
+        tahun: academicYears.find((y) => y.id === (raw.siakTahunAjaranId || raw.siak_tahun_ajaran_id))?.nama || "-",
+        namaPeriode: raw.namaPeriode || raw.nama || "-",
+        kodePeriode: raw.kodePeriode || raw.kode || "-",
+        status: raw.status,
+        tanggalMulai: raw.tanggalMulai || raw.tanggal_mulai || "",
+        tanggalSelesai: raw.tanggalSelesai || raw.tanggal_selesai || "",
+    }));
 
     // Prepare options for the 'Tahun' dropdown (format: { value: ID, label: Name })
     const academicYearOptions = academicYears.map(year => ({
@@ -181,6 +198,7 @@ const PeriodAdminAcademic: React.FC = () => {
                     kodePeriode: periodToEdit.kodePeriode,
                     tanggalMulai: periodToEdit.tanggalMulai,
                     tanggalSelesai: periodToEdit.tanggalSelesai,
+                    status: periodToEdit.status,
                 });
                 setIsAddingNewRow(false);
             }
@@ -313,7 +331,7 @@ const PeriodAdminAcademic: React.FC = () => {
                 {pagination && (
                     <Pagination
                         currentPage={pagination.currentPage}
-                        totalPages={pagination.totalPages}
+                        totalPages={pagination.totalPage}
                         onPageChange={(page) => {
                             setCurrentPage(page);
                         }}

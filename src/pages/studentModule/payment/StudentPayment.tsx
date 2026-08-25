@@ -76,38 +76,39 @@ export default function StudentPayment() {
   const labelMetode = opsiPembayaran.find(opt => opt.value === metodePembayaran)?.label || metodePembayaran;
 
   return (
-    <MainLayout titlePage="Tagihan Mahasiswa" isGreeting={false}>
-      <div className="space-y-4">
-        <PaymentSteps step={step} setStep={setStep} />
-        {step === 1 && (
-          <PaymentTable
-            paymentOptions={opsiPembayaran}
-            data={tagihanAktif}
-            loading={isLoading}
-            error={isError}
-            total={total}
-            onProceed={handleProceedPayment}
-            selectedMethod={metodePembayaran}
-            onMethodChange={setMetodePembayaran}
-          />
-        )}
-        {step === 2 && (
-          <PaymentConfirmation
-            method={metodePembayaran}
-            total={total}
-            deadline={batasWaktu}
-          />
-        )}
-        {/* Contoh jika ada Langkah 3 */}
-        {step === 3 && (
-          <PaymentReceipt
-            bills={tagihanAktif}
-            total={total}
-            method={labelMetode}
-            paymentDate={new Date()}
-          />
-        )}
-      </div>
-    </MainLayout>
+      <MainLayout titlePage="Tagihan Mahasiswa" isGreeting={false}>
+        <div className="space-y-4">
+          <PaymentSteps step={step} setStep={handleStepChange} />
+          {step === 1 && (
+              <PaymentTable
+                  paymentOptions={opsiPembayaran}
+                  data={tagihanAktif}
+                  loading={isLoading}
+                  error={isError}
+                  total={total}
+                  onProceed={handleProceedPayment}
+                  selectedMethod={metodePembayaran}
+                  onMethodChange={setMetodePembayaran}
+              />
+          )}
+          {step === 2 && (
+              <PaymentConfirmation
+                  method={metodePembayaran}
+                  total={total}
+                  deadline={batasWaktu}
+                  onCheckStatus={() => handleStepChange(3)}
+              />
+          )}
+          {/* Contoh jika ada Langkah 3 */}
+          {step === 3 && (
+              <PaymentReceipt
+                  bills={tagihanAktif}
+                  total={total}
+                  method={labelMetode}
+                  paymentDate={new Date()}
+              />
+          )}
+        </div>
+      </MainLayout>
   );
 }

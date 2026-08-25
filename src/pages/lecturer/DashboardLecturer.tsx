@@ -14,6 +14,9 @@ const DashboardLecturer = () => {
 
   const [currentDate, setCurrentDate] = useState<string | undefined>();
   const [day, setDay] = useState<string | undefined>();
+  const [weekDays, setWeekDays] = useState<{ date: Date; label: string; dayName: string }[]>([]);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
 
   useEffect(() => {
     const options: Intl.DateTimeFormatOptions = {
@@ -57,10 +60,34 @@ const DashboardLecturer = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <CalendarDays color="#001b36" size={18} />
-                    <h1 className="font-semibold text-primary-blue">
-                      {currentDate}
-                    </h1>
+                    <h1 className="font-semibold text-primary-blue">{currentDate}</h1>
+                    <ChevronDown
+                        color="#001b36"
+                        size={16}
+                        className={`transition-transform ${isDateDropdownOpen ? "rotate-180" : ""}`}
+                    />
                   </div>
+                  {isDateDropdownOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md border z-10">
+                        {weekDays.map((day, index) => (
+                            <div
+                                key={index}
+                                className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                                    index === selectedDayIndex ? "text-primary-blue font-semibold" : ""
+                                }`}
+                                onClick={() => {
+                                  setSelectedDayIndex(index);
+                                  setCurrentDate(day.label);
+                                  setDay(day.dayName);
+                                  setIsDateDropdownOpen(false);
+                                }}
+                            >
+                              {day.label}
+                            </div>
+                        ))}
+                      </div>
+                  )}
+                </div>
                 </div>
                 <div className="space-y-4">
                   {todaySchedule.map((item, index) => (

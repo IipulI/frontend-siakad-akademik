@@ -38,40 +38,55 @@ interface CollegeClassTableProps {
 
 const CollegeClass = () => {
   const [filter, setFilter] = useState({
-    periodeAkademik: "",
-    programStudi: "",
-    tahunKuriKulum: "",
+    siakPeriodeAkademikId: "",
+    siakProgramStudiId: "",
+    siakTahunKurikulumId: "",
+    sistemKuliah: "",
+    search: "",
   });
-  const systemOptions = [{ value: "", label: "Semua Sistem Kuliah" }];
-  const prodiOptions = [{ value: "", label: "Universitas Ibnu Khaldun" }];
-  const curiculumOptions = [{ value: "", label: "Semua Kurikulum" }];
+  const [searchInput, setSearchInput] = useState("");
+  const systemOptions = [
+    { value: "Reguler", label: "Reguler" },
+    { value: "Karyawan", label: "Karyawan" },
+  ];
 
-  const { data: periods, isLoading: isLoadingPeriods } =
-    getAcademicPeriodeDropdown();
-
+  const { data: periods, isLoading: isLoadingPeriods } = getAcademicPeriodeDropdown();
   const { data: programs, isLoading: isLoadingPrograms } = getProgramStudi();
-  const { data: curiculums, isLoading: isLoadingCuriculums } =
-    getYearCuriculum();
+  const { data: curiculums, isLoading: isLoadingCuriculums } = getYearCuriculum();
+
+  const location = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangeFilter = (fieldName, selectedValue) => {
+    setCurrentPage(1);
     setFilter((prev) => ({
       ...prev,
       [fieldName]: selectedValue,
     }));
   };
 
-  console.log("filter", filter);
-
-  const location = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const refresh = () => alert("refresh");
-  const searchSubmit = () => alert("Search");
+  const refresh = () => {
+    setSearchInput("");
+    setCurrentPage(1);
+    setFilter({
+      siakPeriodeAkademikId: "",
+      siakProgramStudiId: "",
+      siakTahunKurikulumId: "",
+      sistemKuliah: "",
+      search: "",
+    });
+  };
+  const searchSubmit = () => handleChangeFilter("search", searchInput);
   const Create = () => location(AdminAcademicRoute.collegeClass.createClass);
   const Delete = () => alert("Delete");
 
-  const { data, isLoading, error } = getCollegeClass(filter);
+  const { data: result, isLoading, error } = getCollegeClass({
+    ...filter,
+    page: currentPage,
+    size: rowsPerPage,
+  });
+  const data = result?.items;
 
   //   if (isLoading) {
   //     return <LoadingSpinner title="Kelas Kuliah" />;
@@ -90,30 +105,37 @@ const CollegeClass = () => {
         {/* FILTER SECTION */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-white border-t-2 border-primary-yellow p-3 rounded shadow-sm">
           <SelectInput
-            getOptionLabel={(opt) => opt.namaPeriode}
-            getOptionValue={(opt) => opt.namaPeriode}
+            getOptionLabel={(opt) => opt.nama}
+            getOptionValue={(opt) => opt.id}
             onChange={(val) =>
-              handleChangeFilter("periodeAkademik", val.namaPeriode)
+              handleChangeFilter("siakPeriodeAkademikId", val?.id ?? "")
             }
-            value={filter.periodeAkademik}
+            value={filter.siakPeriodeAkademikId}
             options={periods}
             label="Periode Akademik"
           />
           <SelectInput
             options={programs}
-            getOptionLabel={(opt) => opt.namaProgramStudi}
+            getOptionLabel={(opt) => opt.nama}
             getOptionValue={(opt) => opt.id}
-            onChange={(val) => handleChangeFilter("programStudi", val.id)}
-            value={filter.programStudi}
+            onChange={(val) => handleChangeFilter("siakProgramStudiId", val?.id ?? "")}
+            value={filter.siakProgramStudiId}
             label="Program Studi"
           />
-          <SelectInput options={systemOptions} label="Sistem Kuliah" />
+          <SelectInput
+              options={systemOptions}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
+              label="Sistem Kuliah"
+              value={filter.sistemKuliah}
+              onChange={(val) => handleChangeFilter("sistemKuliah", val?.value ?? "")}
+          />
           <SelectInput
             options={curiculums}
             getOptionLabel={(opt) => opt.tahun}
             getOptionValue={(opt) => opt.id}
-            onChange={(val) => handleChangeFilter("tahunKuriKulum", val.id)}
-            value={filter.tahunKuriKulum}
+            onChange={(val) => handleChangeFilter("siakTahunKurikulumId", val?.id ?? "")}
+            value={filter.siakTahunKurikulumId}
             label="Tahun Kurikulum"
           />
         </div>
@@ -127,6 +149,11 @@ const CollegeClass = () => {
                 type="text"
                 className="border-2 p-2 rounded text-sm w-full sm:w-[240px]"
                 placeholder="Cari Kelas Kuliah"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") searchSubmit();
+                }}
               />
               <div className="flex gap-1">
                 <ButtonClick
@@ -168,11 +195,14 @@ const CollegeClass = () => {
           <div className="mt-4">
             <Pagination
               currentPage={currentPage}
-              totalPages={1000}
+              totalPages={result?.totalPage || 1}
               onPageChange={setCurrentPage}
               rowsPerPage={rowsPerPage}
-              totalRows={65}
-              onRowsPerPageChange={setRowsPerPage}
+              totalRows={result?.total || 0}
+              onRowsPerPageChange={(rows) => {
+                setRowsPerPage(rows);
+                setCurrentPage(1);
+              }}
             />
           </div>
         </BorderedGreenContainer>
@@ -319,7 +349,19 @@ const CollegeClassTable = ({ data }) => {
                   {student.peserta}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {student.statusPenilaian}
+                  <span
+                    className={`inline-block px-2 py-1 rounded text-xs font-semibold border whitespace-nowrap ${
+                      student.statusPenilaian === "Sudah Dikunci"
+                        ? "bg-green-50 text-green-700 border-green-200"
+                        : student.statusPenilaian === "Sebagian Dikunci"
+                        ? "bg-orange-50 text-orange-700 border-orange-200"
+                        : student.statusPenilaian === "Belum Dikunci"
+                        ? "bg-gray-50 text-gray-600 border-gray-200"
+                        : "bg-gray-50 text-gray-400 border-gray-200"
+                    }`}
+                  >
+                    {student.statusPenilaian || "-"}
+                  </span>
                 </td>
                 <td className="p-2 border border-gray-300 font-medium">
                   <div className="flex justify-center flex-wrap gap-1">

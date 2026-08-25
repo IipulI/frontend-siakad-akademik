@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { studentAcademicService } from '../../api/mahasiswa/studentAcademicService';
-import { IAcademicPeriod } from '../../types/mahasiswa.types';
+import { IAcademicPeriod } from '../../types/common.types';
 
 export const useStudentGradeData = () => {
     // State to hold the currently selected period name (e.g., "2024 Ganjil")

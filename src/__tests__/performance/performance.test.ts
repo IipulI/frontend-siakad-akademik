@@ -118,7 +118,7 @@ function generateMockTagihan(count: number): ITagihan[] {
 // PERFORMANCE TEST SUITE
 // ============================================================================
 
-describe('Performance Testing - Waktu Respons Sistem SIAKAD', () => {
+describe('Performance Testing - Waktu Respons Sistem NL-SIAK', () => {
 
     // ========================================================================
     // PT-01: Parsing & transformasi data transkrip (100 mata kuliah)

@@ -6,7 +6,7 @@ import { CurriculumData } from "../../../components/types.ts";
 import { RefreshCw, Search, Plus } from "lucide-react";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import LoadingSpinner from "../../../components/LoadingSpinner.tsx";
-import { getPeriodeAkdemikCoba } from "../../../hooks/academic/usePeriodeAkademikCoba.ts";
+// import { getAcademicPeriods as getPeriodeAkdemikCoba } from "../../../hooks/usePeriodeAkademik.ts";
 import {
   getCurriculumYear,
   useAddCurriculumYear,

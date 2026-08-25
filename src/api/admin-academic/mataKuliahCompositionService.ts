@@ -1,9 +1,7 @@
 // src/api/admin-akademik/mataKuliahCompositionService.ts
 import { Api } from '../Index';
-import {
-    IMataKuliahCompositionPayload,
-    IApiResponseSuccess,
-} from '../../types/models';
+import { IMataKuliahCompositionPayload } from '../../types/models';
+import { IApiResponseSuccess } from '../../types/common.types';
 
 export const mataKuliahCompositionService = {
     assignMataKuliahComposition: async (payload: IMataKuliahCompositionPayload): Promise<IApiResponseSuccess> => {

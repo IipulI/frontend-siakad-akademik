@@ -58,7 +58,7 @@ export function getLecturers() {
   return useQuery({
     queryKey: ["lecturers"],
     queryFn: async () => {
-      const response = await Api.get("/akademik/dosen");
+      const response = await Api.get("/public/dosen");
       return response.data.data;
     },
   });

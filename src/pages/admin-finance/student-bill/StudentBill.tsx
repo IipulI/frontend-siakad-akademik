@@ -25,7 +25,7 @@ import {
   ToastNotif,
   showToast,
 } from "../../../components/admin-finance/Toastify";
-import { getAcademicPeriodeDropdown, getProgramStudi } from "../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown, getProgramStudi } from "../../../hooks/useGeneral";
 
 export default function StudentBill() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -564,7 +564,7 @@ export default function StudentBill() {
         {pagination && (
           <Pagination
             currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
+            totalPages={pagination.totalPage}
             onPageChange={handlePageChange}
             rowsPerPage={pagination.perPage}
             totalRows={pagination.totalItems}

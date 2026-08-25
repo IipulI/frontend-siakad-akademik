@@ -40,6 +40,9 @@ export const AdminAcademicRoute = {
     class: "/admin-akademik/kelas-kuliah",
     createClass: "/admin-akademik/tambah-kelas-kuliah",
     detailClass: "/admin-akademik/detail-kelas",
+    laporanNilaiPerkuliahan: "/admin-akademik/kelas-kuliah/laporan-nilai-perkuliahan",
+    laporanDaftarNilai: "/admin-akademik/kelas-kuliah/laporan-daftar-nilai",
+    komposisiNilai: "/admin-akademik/kelas-kuliah/komposisi-nilai",
   } as routeType,
   student: {
     studentData: "/admin-akademik/mahasiswa",
@@ -60,12 +63,38 @@ export const AdminAcademicRoute = {
     rpsCourse: "/admin-akademik/mata-kuliah/rps-mata-kuliah",
   },
   obeManagement: {
-    obeManagement: "/admin-akademik/obe/manajemen-obe",
+    obeManagement: "/admin-akademik/obe/manajemen-obe", // Keep this for legacy / other features if needed
+    manajemenCapaian: "/admin-akademik/obe/manajemen-capaian",
+    templateEvaluasi: "/admin-akademik/obe/template-evaluasi",
+    kurikulumProdi: "/admin-akademik/obe/kurikulum-prodi",
+    kurikulumProdiDetail: "/admin-akademik/obe/kurikulum-prodi/detail",
+    setGrupMk: "/admin-akademik/obe/set-grup-mk",
+    tahunKurikulum: "/admin-akademik/obe/tahun-kurikulum",
+    tahunKurikulumDetail: "/admin-akademik/obe/tahun-kurikulum/detail",
+    cplUmum: "/admin-akademik/obe/tahun-kurikulum/cpl-umum",
+    ketentuanAkademik: "/admin-akademik/obe/tahun-kurikulum/ketentuan-akademik",
+    detailObeCourse: "/admin-akademik/obe/detail-mata-kuliah",
+    editObeCourse: "/admin-akademik/obe/edit-mata-kuliah",
+    addObeCourse: "/admin-akademik/obe/tambah-mata-kuliah",
     detailOBE: "/admin-akademik/obe/detail-obe",
     graduateProfile: "/admin-akademik/obe/profil-lulusan",
     cpl: "/admin-akademik/obe/cpl",
+    plToCpl: "/admin-akademik/obe/pl-ke-cpl",
+    cplMataKuliah: "/admin-akademik/obe/cpl-mata-kuliah",
+    cplKeMk: "/admin-akademik/obe/cpl-ke-mk",
+    cplKeMkLaporan: "/admin-akademik/obe/cpl-ke-mk/laporan",
     cpmk: "/admin-akademik/obe/cpmk",
     cpmkMataKuliah: "/admin-akademik/obe/cpmk-mata-kuliah",
+    detailRps: "/admin-akademik/obe/detail-rps",
+    editRps: "/admin-akademik/obe/edit-rps",
+    rencanaPembelajaran: "/admin-akademik/obe/rencana-pembelajaran",
+    rencanaEvaluasi: "/admin-akademik/obe/rencana-evaluasi",
+    nilaiKelas: "/admin-akademik/obe/nilai-kelas",
+    soalKomponen: "/admin-akademik/obe/soal-komponen",
+    nilaiSoal: "/admin-akademik/obe/nilai-soal",
+    integrasiCbt: "/admin-akademik/obe/integrasi-cbt",
+    monitoring: "/admin-akademik/obe/monitoring",
+    monitoringCetak: "/admin-akademik/obe/monitoring/cetak",
   },
   prodiCurriculum: "/admin-akademik/kurikulum-prodi",
   rpsManagement: {
@@ -83,6 +112,41 @@ export const AdminAcademicRoute = {
     composition: "/admin-akademik/komposisi-nilai",
     setComposition:
       "/admin-akademik/komposisi-nilai/set-komposisi-nilai-mata-kuliah",
+  } as routeType,
+  // --- Menu baru yang belum punya halaman sungguhan, sementara diarahkan ke placeholder ---
+  portal: {
+    dosen: "/admin-akademik/dosen",
+  } as routeType,
+  classData: {
+    monitoringRoom: "/admin-akademik/monitoring-ruang",
+  } as routeType,
+  administration: {
+    semesterStatus: "/admin-akademik/status-semester",
+    studentEvaluation: "/admin-akademik/evaluasi-mahasiswa",
+    studentTransfer: "/admin-akademik/transfer-mahasiswa",
+    studentDropout: "/admin-akademik/mahasiswa-keluar",
+  } as routeType,
+  institution: {
+    studySystem: "/admin-akademik/sistem-kuliah",
+    classroom: "/admin-akademik/ruang-kuliah",
+  } as routeType,
+  lectureSetting: {
+    courseType: "/admin-akademik/jenis-mata-kuliah",
+    timeSlot: "/admin-akademik/slot-waktu",
+    meetingType: "/admin-akademik/jenis-pertemuan",
+  } as routeType,
+  biodataSetting: {
+    religion: "/admin-akademik/agama",
+    ethnicity: "/admin-akademik/suku",
+    income: "/admin-akademik/penghasilan",
+    occupation: "/admin-akademik/pekerjaan",
+    almamaterJacket: "/admin-akademik/jas-almamater",
+  } as routeType,
+  studentSetting: {
+    studentStatus: "/admin-akademik/status-mahasiswa",
+    residenceType: "/admin-akademik/jenis-tinggal",
+    transportation: "/admin-akademik/transportasi",
+    specialNeeds: "/admin-akademik/kebutuhan-khusus",
   } as routeType,
 };
 
@@ -118,5 +182,10 @@ export const LecturerRoute = {
     class: "/dosen/perkuliahan/kelas-kuliah",
     detailClass: "/dosen/perkuliahan/kelas-kuliah/detail",
     detailCourse: "/dosen/perkuliahan/mata-kuliah/detail",
+    pemetaanCpl: "/dosen/perkuliahan/mata-kuliah/pemetaan-cpl",
+    pemetaanCpmk: "/dosen/perkuliahan/mata-kuliah/pemetaan-cpmk",
+    detailRps: "/dosen/perkuliahan/mata-kuliah/detail-rps",
+    rencanaPembelajaran: "/dosen/perkuliahan/mata-kuliah/rencana-pembelajaran",
+    rencanaEvaluasi: "/dosen/perkuliahan/mata-kuliah/rencana-evaluasi",
   },
 };

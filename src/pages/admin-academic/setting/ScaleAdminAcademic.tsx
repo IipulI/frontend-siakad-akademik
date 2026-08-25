@@ -16,7 +16,7 @@ import {
 
 // Import all necessary hooks
 import { useAcademicYears } from "../../../hooks/admin-akademik/useAcademicYears";
-import { useProgramStudi } from "../../../hooks/admin-akademik/useProgramStudi";
+import { getProdi as useProgramStudi } from "../../../hooks/academic/useProdi";
 import { useGradingScales } from "../../../hooks/admin-akademik/useGradingScales";
 
 const ScaleAdminAcademic: React.FC = () => {
@@ -315,7 +315,7 @@ const ScaleAdminAcademic: React.FC = () => {
                 {pagination && (
                     <Pagination
                         currentPage={pagination.currentPage}
-                        totalPages={pagination.totalPages}
+                        totalPages={pagination.totalPage}
                         onPageChange={(page) => {
                             setCurrentPage(page);
                         }}

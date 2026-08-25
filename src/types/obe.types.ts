@@ -1,17 +1,25 @@
 // src/types/obe.types.ts
 
 export interface MataKuliahOBE {
-  id: string;
+  id: string; // atau uuid dari backend
+  siakProgramStudiId: string;
+  siakTahunKurikulumId: string;
   kode: string;
   nama: string;
+  namaEn: string | null;
+  jenis: string;
+
+  // Field SKS sesuai JSON Postman
   sksTatapMuka: number;
   sksPraktikum: number;
-  sksPraktikLapangan?: number;
-  sksSimulasi?: number;
-  jenis: string;
+  sksPraktikLapangan: number;
+  sksSimulasi: number;
+
+  // Untuk data relasi yang di-join oleh backend (biasanya muncul di GET)
   prodi?: { nama: string };
   tahunKurikulum?: { tahun: string };
-  // Menyesuaikan dengan status pengisian di mockup
+
+  // Asumsi field status balikan dari backend (atau jika belum ada dari BE, di-handle null dulu)
   statusRps?: 'Belum Terisi' | 'Sudah Terisi';
   statusCpl?: 'Belum Terisi' | 'Sudah Terisi';
   statusCpmk?: 'Belum Terisi' | 'Sudah Terisi';
@@ -24,6 +32,7 @@ export interface ObeFilters {
   tahunKurikulumId?: string;
   jenis?: string;
   search?: string;
+  searchBy?: "kode" | "nama";
 }
 
 export interface PaginatedResponse<T> {

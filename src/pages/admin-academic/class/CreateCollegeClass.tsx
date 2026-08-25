@@ -13,7 +13,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import getAcademicPeriods from "../../../hooks/usePeriodeAkademik";
-import getProgramStudies from "../../../hooks/useProgramStudi";
+import { getProdi as getProgramStudies } from "../../../hooks/academic/useProdi";
 import { useMutation } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
 import {

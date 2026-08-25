@@ -1,8 +1,7 @@
 // hooks/useFetchComponentBill.ts
-import { json } from "stream/consumers";
 import { Api } from "../../api/Index";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { request } from "http";
+import { IPaginatedResponse } from "../../types/common.types";
 
 export interface StudentData {
   id: string;
@@ -17,17 +16,7 @@ export interface StudentData {
   ipk: string;
 }
 
-export interface PaginationResponse {
-  status: string;
-  message: string;
-  data: StudentData[];
-  pagination: {
-    currentPage: number;
-    perPage: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
+export type PaginationResponse = IPaginatedResponse<StudentData>;
 
 // GET - dengan pagination
 export function useStudentData(

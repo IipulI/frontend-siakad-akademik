@@ -4,7 +4,7 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { useNavigate, useParams } from "react-router-dom";
 import { TableRps } from "../../../components/Table";
 import { Search, ArrowLeft, Save, Edit } from "lucide-react";
-import { CourseData } from "../../../components/types.ts";
+import { RpsCourseData as CourseData } from "../../../components/types.ts";
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../../api/Index";
 import { getRpsMatkulById } from "../../../hooks/academic/useRpsManagement.ts";

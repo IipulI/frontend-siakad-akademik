@@ -61,7 +61,7 @@ const AnnouncementAdminAcademic = () => {
                     prioritas: item.isPriority,
                 }));
                 setAnnouncements(formattedData);
-                setTotalPages(result.pagination.totalPages);
+                setTotalPages(result.pagination.totalPage);
                 setTotalItems(result.pagination.totalItems);
             } else {
                 setError(result.message || "Gagal mengambil pengumuman.");

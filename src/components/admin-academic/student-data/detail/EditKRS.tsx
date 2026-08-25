@@ -1,7 +1,7 @@
 import { Check, Eye, Pen, Trash2, X } from "lucide-react";
 import ButtonClick from "../ButtonClick";
 import { BriefStudentData } from "./BriefStudentData";
-import { getAcademicPeriodeDropdown } from "../../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown } from "../../../../hooks/useGeneral";
 import { useEffect, useRef, useState } from "react";
 import {
   delSuntingDetail,

@@ -23,7 +23,7 @@ import {
   ToastNotif,
 } from "../../../components/admin-finance/Toastify";
 import ConfirmModal from "../../../components/admin-finance/ConfirmModal";
-import { getProgramStudi } from "../../../hooks/useFilter";
+import { getProgramStudi } from "../../../hooks/useGeneral";
 
 export default function StudentData() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -480,16 +480,16 @@ export default function StudentData() {
                       {student.nama}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold text-center">
-                      {student.jenjang}
+                      {student?.programStudi?.jenjang?.jenjang}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold text-center">
-                      {student.namaProgramStudi}
+                      {student?.programStudi?.nama}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold text-center">
                       {student.periodeMasuk}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold text-center">
-                      {student.statusMahasiswa}
+                      {student.statusMahasiswa?.nama}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold text-center">
                       {student.semester}
@@ -498,7 +498,7 @@ export default function StudentData() {
                       {student.sks}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold text-center">
-                      {student.ipk}
+                      {student?.hasilStudi?.ipk}
                     </td>
                     <td className="p-2 border border-gray-300 font-semibold">
                       <div className="flex justify-center space-x-2">
@@ -536,7 +536,7 @@ export default function StudentData() {
         {pagination && (
           <Pagination
             currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
+            totalPages={pagination.totalPage}
             onPageChange={handlePageChange}
             rowsPerPage={pagination.perPage}
             totalRows={pagination.totalItems}

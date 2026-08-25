@@ -70,11 +70,7 @@ export interface IApiKrsHistoryResponse {
     batasSks: number;
 }
 
-export interface IAcademicPeriod {
-    id: string | number;
-    nama?: string;
-    namaPeriode?: string;
-}
+// IAcademicPeriod now lives in common.types.ts (single source of truth).
 
 export interface IMataKuliah {
     id: string;

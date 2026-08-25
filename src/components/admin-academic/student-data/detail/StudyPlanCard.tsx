@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { getKrs } from "../../../../hooks/admin-akademik/useStudentDetail";
 import Biodata from "../../../biodata/Biodata";
 import { BriefStudentData } from "./BriefStudentData";
-import { getAcademicPeriodeDropdown } from "../../../../hooks/useFilter";
+import { getAcademicPeriodeDropdown } from "../../../../hooks/useGeneral";
 import { useState } from "react";
 
 export default function StudyPlanCard() {

@@ -1,48 +1,60 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../../types/VarRoutes";
 
 interface SidebarOBEProps {
   id: string;
-  activeTab: "pl" | "cpl" | "cpmk";
+  activeTab: "pl" | "cpl" | "plCpl" | "cplMk";
 }
 
 export default function SidebarOBE({ id, activeTab }: SidebarOBEProps) {
   const navigate = useNavigate();
+
   const handleNavigation = (path: string) => {
     navigate(path);
   };
+
+  const menuItems = [
+    {
+      key: "pl",
+      label: "Manajemen PL",
+      path: `${AdminAcademicRoute.obeManagement.detailOBE}/${id}`,
+    },
+    {
+      key: "cpl",
+      label: "Manajemen CPL",
+      path: `${AdminAcademicRoute.obeManagement.cpl}/${id}`,
+    },
+    {
+      key: "plCpl",
+      label: "Pemetaan PL → CPL",
+      path: `${AdminAcademicRoute.obeManagement.plToCpl}/${id}`,
+    },
+    {
+      key: "cplMk",
+      label: "Pemetaan CPL → MK",
+      path: `${AdminAcademicRoute.obeManagement.cplKeMk}/${id}`,
+    },
+  ];
+
   return (
-    <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-      <div
-        className={`flex items-center mb-1 cursor-pointer ${
-          activeTab === "pl" ? "bg-[#116E63]/60 text-black" : "bg-[#116E63]/30 text-gray-600"
-        }`}
-        onClick={() =>
-          handleNavigation(
-            `${AdminAcademicRoute.obeManagement.detailOBE}/${id}`
-          )
-        }
-      >
-        <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-        <p className={activeTab === "pl" ? "text-black font-semibold" : ""}>Profil Lulusan</p>
-      </div>
-      <div
-        className={`flex items-center mb-1 cursor-pointer ${
-          activeTab === "cpl" ? "bg-[#116E63]/60 text-black" : "bg-[#116E63]/30 text-gray-600"
-        }`}
-        onClick={() => handleNavigation(`${AdminAcademicRoute.obeManagement.cpl}/${id}`)}
-      >
-        <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-        <p className={activeTab === "cpl" ? "text-black font-semibold" : ""}>CPL</p>
-      </div>
-      <div
-        className={`flex items-center mb-1 cursor-pointer ${
-          activeTab === "cpmk" ? "bg-[#116E63]/60 text-black" : "bg-[#116E63]/30 text-gray-600"
-        }`}
-        onClick={() => handleNavigation(`${AdminAcademicRoute.obeManagement.cpmk}/${id}`)}
-      >
-        <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
-        <p className={activeTab === "cpmk" ? "text-black font-semibold" : ""}>CPMK</p>
+    <div className="w-full md:w-[20%] bg-white border border-gray-200 rounded-sm p-0 flex-shrink-0 overflow-hidden self-start">
+      <div className="flex flex-col">
+        {menuItems.map((item) => {
+          const isActive = activeTab === item.key;
+          return (
+            <button
+              key={item.key}
+              onClick={() => handleNavigation(item.path)}
+              className={`w-full text-left px-4 py-3 text-xs font-semibold border-b border-gray-100 transition-colors duration-150 cursor-pointer ${
+                isActive
+                  ? "bg-[#eef5f9] text-[#00c0ef] border-l-4 border-[#00c0ef] font-bold"
+                  : "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent"
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

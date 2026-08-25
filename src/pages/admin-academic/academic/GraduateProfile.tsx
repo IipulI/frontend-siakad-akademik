@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TableGraduateProfile } from "../../../components/Table";
-import { GraduateProfileData } from "../../../components/types.ts";
+import { GraduateProfileDataLegacy as GraduateProfileData } from "../../../components/types.ts";
 import { Search, ArrowLeft, Save, Plus } from "lucide-react";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";

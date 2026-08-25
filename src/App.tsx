@@ -34,6 +34,16 @@ import CreateStudent from "./pages/admin-academic/student/CreateStudent";
 import DetailStudent from "./pages/admin-academic/student/DetailStudent";
 import AcademikAdvisor from "./pages/admin-academic/student/AcademicAdvisor";
 import AnnouncementAdminAcademic from "./pages/admin-academic/announcement/AnnouncementAdminAcademic";
+import RencanaEvaluasi from "./pages/admin-academic/academic/ObeRencanaEvaluasi";
+import ObeManajemenCapaian from "./pages/admin-academic/academic/ObeManajemenCapaian";
+import ObeTemplateEvaluasi from "./pages/admin-academic/academic/ObeTemplateEvaluasi";
+import ObeKurikulumProdi from "./pages/admin-academic/academic/ObeKurikulumProdi";
+import ObeKurikulumProdiDetail from "./pages/admin-academic/academic/ObeKurikulumProdiDetail";
+import ObeSetGrupMk from "./pages/admin-academic/academic/ObeSetGrupMk";
+import ObeTahunKurikulum from "./pages/admin-academic/academic/ObeTahunKurikulum";
+import ObeTahunKurikulumDetail from "./pages/admin-academic/academic/ObeTahunKurikulumDetail";
+import ObeCplUmum from "./pages/admin-academic/academic/ObeCplUmum";
+import ObeKetentuanAkademik from "./pages/admin-academic/academic/ObeKetentuanAkademik";
 import YearAdminAcademic from "./pages/admin-academic/setting/YearAdminAcademic";
 import PeriodAdminAcademic from "./pages/admin-academic/setting/PeriodAdminAcademy";
 import ScaleAdminAcademic from "./pages/admin-academic/setting/ScaleAdminAcademic";
@@ -51,8 +61,24 @@ import RpsCourse from "./pages/admin-academic/academic/RpsCourse";
 import {OBEManagement} from "./pages/admin-academic/academic/OBEManagement";
 import GraduateProfile from "./pages/admin-academic/academic/GraduateProfile";
 import ObeCpl from "./pages/admin-academic/academic/ObeCpl";
+import ObePlCplMapping from "./pages/admin-academic/academic/ObePlCplMapping";
+import ObeInputNilaiKelas from "./pages/admin-academic/academic/ObeInputNilaiKelas";
+import ObeSoalKomponen from "./pages/admin-academic/academic/ObeSoalKomponen";
+import ObeInputNilaiSoal from "./pages/admin-academic/academic/ObeInputNilaiSoal";
+import ObeIntegrasiCbt from "./pages/admin-academic/academic/ObeIntegrasiCbt";
+import ObeMonitoring from "./pages/admin-academic/academic/ObeMonitoring";
+import ObeMonitoringCetak from "./pages/admin-academic/academic/ObeMonitoringCetak";
 import ObeCpmk from "./pages/admin-academic/academic/ObeCpmk";
+import ObePemetaanCplMk from "./pages/admin-academic/academic/ObePemetaanCplMk";
+import ObeLaporanCplMk from "./pages/admin-academic/academic/ObeLaporanCplMk";
 import ObeCpmkMatkul from "./pages/admin-academic/academic/ObeCpmkMatkul";
+import ObePemetaanCpl from "./pages/admin-academic/academic/ObePemetaanCpl";
+import ObeDataMataKuliah from "./pages/admin-academic/academic/ObeDataMataKuliah";
+import ObeEditMataKuliah from "./pages/admin-academic/academic/ObeEditMataKuliah";
+import ObeAddMataKuliah from "./pages/admin-academic/academic/ObeAddMataKuliah";
+import ObeDetailRps from "./pages/admin-academic/academic/ObeDetailRps";
+import ObeEditRps from "./pages/admin-academic/academic/ObeEditRps";
+import ObeRencanaPembelajaran from "./pages/admin-academic/academic/ObeRencanaPembelajaran";
 import CurriculumProdi from "./pages/admin-academic/academic/CurriculumProdi";
 import RpsManagement from "./pages/admin-academic/academic/RpsManagement";
 import AddRps from "./pages/admin-academic/academic/AddRps";
@@ -60,6 +86,9 @@ import EditRps from "./pages/admin-academic/academic/EditRps";
 import DetailRps from "./pages/admin-academic/academic/DetailRps";
 import CreateCollegeClass from "./pages/admin-academic/class/CreateCollegeClass";
 import DetailCollegeClass from "./pages/admin-academic/class/DetailCollegeClass";
+import LaporanNilaiPerkuliahan from "./pages/admin-academic/class/LaporanNilaiPerkuliahan";
+import LaporanDaftarNilai from "./pages/admin-academic/class/LaporanDaftarNilai";
+import KomposisiNilaiKelas from "./pages/admin-academic/class/KomposisiNilaiKelas";
 import DashboardLecturer from "./pages/lecturer/DashboardLecturer";
 import CourseLecturer from "./pages/lecturer/courses/CourseLecturer";
 import AdvisorLecturer from "./pages/lecturer/guidance/AdvisorLecturer";
@@ -81,12 +110,18 @@ import PaymentDetailTransaction from "./pages/studentModule/payment/PaymentDetai
 import DetailClassLecturer from "./pages/lecturer/courses/DetailClassLecturer";
 import DetailAdvisorLecturer from "./pages/lecturer/guidance/DetailAdvisorLecturer";
 import DetailCourseLecturer from "./pages/lecturer/courses/DetailCourseLecturer";
+import PemetaanCplLecturer from "./pages/lecturer/courses/PemetaanCplLecturer";
+import PemetaanCpmkLecturer from "./pages/lecturer/courses/PemetaanCpmkLecturer";
+import DetailRpsLecturer from "./pages/lecturer/courses/DetailRpsLecturer";
+import RencanaPembelajaranLecturer from "./pages/lecturer/courses/RencanaPembelajaranLecturer";
+import RencanaEvaluasiLecturer from "./pages/lecturer/courses/RencanaEvaluasiLecturer";
 import ScheduleLecturer from "./pages/lecturer/schedule/ScheduleLecturer";
 import DetailAnnouncement from "./components/schedule/DetailAnnouncement";
 import AddAnnouncementAdminAcademic from "./pages/admin-academic/announcement/AddAnnouncementAdminAcademic";
 import NotFound from "./pages/NotFound";
 import DetailOBE from "./pages/admin-academic/academic/DetailOBE";
 import Forbidden from "./pages/ForbiddenPage";
+import ComingSoon from "./pages/ComingSoon";
 
 export default function App() {
   return (
@@ -194,6 +229,18 @@ export default function App() {
       <Route
         path={String(`${AdminAcademicRoute.collegeClass.detailClass}/:id`)}
         element={<DetailCollegeClass />}
+      />
+      <Route
+        path={String(`${AdminAcademicRoute.collegeClass.laporanNilaiPerkuliahan}/:id`)}
+        element={<LaporanNilaiPerkuliahan />}
+      />
+      <Route
+        path={String(`${AdminAcademicRoute.collegeClass.laporanDaftarNilai}/:id`)}
+        element={<LaporanDaftarNilai />}
+      />
+      <Route
+        path={String(`${AdminAcademicRoute.collegeClass.komposisiNilai}/:id`)}
+        element={<KomposisiNilaiKelas />}
       />
       <Route
         path={String(AdminAcademicRoute.student.studentData)}
@@ -316,8 +363,23 @@ export default function App() {
       />
 
       <Route
+        path={`${AdminAcademicRoute.obeManagement.plToCpl}/:id`}
+        element={<ObePlCplMapping />}
+      />
+
+      <Route
         path={`${AdminAcademicRoute.obeManagement.cpmk}/:id`}
         element={<ObeCpmk />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.cplKeMk}/:id`}
+        element={<ObePemetaanCplMk />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.cplKeMkLaporan}/:id`}
+        element={<ObeLaporanCplMk />}
       />
 
       <Route
@@ -325,6 +387,109 @@ export default function App() {
         element={<ObeCpmkMatkul />}
       />
 
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.cplMataKuliah}/:obeId/:mataKuliahId`}
+        element={<ObePemetaanCpl />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.detailObeCourse}/:obeId/:mataKuliahId`}
+        element={<ObeDataMataKuliah />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.editObeCourse}/:obeId/:mataKuliahId`}
+        element={<ObeEditMataKuliah />}
+      />
+
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.addObeCourse)}
+        element={<ObeAddMataKuliah />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.detailRps}/:obeId/:mataKuliahId`}
+        element={<ObeDetailRps />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.editRps}/:obeId/:mataKuliahId`}
+        element={<ObeEditRps />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.rencanaPembelajaran}/:obeId/:mataKuliahId`}
+        element={<ObeRencanaPembelajaran />}
+      />
+
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.rencanaEvaluasi}/:obeId/:mataKuliahId`}
+        element={<RencanaEvaluasi />}
+      />
+
+      {/* Route untuk admin akademik - OBE Management (Sub-Dropdown) */}
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.manajemenCapaian)}
+        element={<ObeManajemenCapaian />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.templateEvaluasi)}
+        element={<ObeTemplateEvaluasi />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.kurikulumProdi)}
+        element={<ObeKurikulumProdi />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.kurikulumProdiDetail)}
+        element={<ObeKurikulumProdiDetail />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.setGrupMk)}
+        element={<ObeSetGrupMk />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.tahunKurikulum)}
+        element={<ObeTahunKurikulum />}
+      />
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.tahunKurikulumDetail}/:id`}
+        element={<ObeTahunKurikulumDetail />}
+      />
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.cplUmum}/:id`}
+        element={<ObeCplUmum />}
+      />
+      <Route
+        path={`${AdminAcademicRoute.obeManagement.ketentuanAkademik}/:id/:jenjangId`}
+        element={<ObeKetentuanAkademik />}
+      />
+
+      {/* Route untuk admin akademik - Penilaian & Monitoring OBE */}
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.nilaiKelas)}
+        element={<ObeInputNilaiKelas />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.soalKomponen)}
+        element={<ObeSoalKomponen />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.nilaiSoal)}
+        element={<ObeInputNilaiSoal />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.integrasiCbt)}
+        element={<ObeIntegrasiCbt />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.monitoring)}
+        element={<ObeMonitoring />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.obeManagement.monitoringCetak)}
+        element={<ObeMonitoringCetak />}
+      />
       {/* Route untuk admin akademik - Kurikulum Prodi */}
       <Route
         path={String(AdminAcademicRoute.prodiCurriculum)}
@@ -350,6 +515,88 @@ export default function App() {
       <Route
         path={`${AdminAcademicRoute.rpsManagement.detailRps}/:id`}
         element={<DetailRps />}
+      />
+
+      {/* Route untuk admin akademik - menu baru yang halamannya belum dibuat (placeholder) */}
+      <Route
+        path={String(AdminAcademicRoute.portal.dosen)}
+        element={<ComingSoon title="Dosen" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.classData.monitoringRoom)}
+        element={<ComingSoon title="Monitoring Ruang" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.semesterStatus)}
+        element={<ComingSoon title="Status Semester" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentEvaluation)}
+        element={<ComingSoon title="Evaluasi Mahasiswa" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentTransfer)}
+        element={<ComingSoon title="Transfer Mahasiswa" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentDropout)}
+        element={<ComingSoon title="Mahasiswa Keluar" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.institution.studySystem)}
+        element={<ComingSoon title="Sistem Kuliah" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.institution.classroom)}
+        element={<ComingSoon title="Ruang Kuliah" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.lectureSetting.courseType)}
+        element={<ComingSoon title="Jenis Mata Kuliah" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.lectureSetting.timeSlot)}
+        element={<ComingSoon title="Slot Waktu" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.lectureSetting.meetingType)}
+        element={<ComingSoon title="Jenis Pertemuan" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.religion)}
+        element={<ComingSoon title="Agama" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.ethnicity)}
+        element={<ComingSoon title="Suku" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.income)}
+        element={<ComingSoon title="Penghasilan" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.occupation)}
+        element={<ComingSoon title="Pekerjaan" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.biodataSetting.almamaterJacket)}
+        element={<ComingSoon title="Jas Almamater" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.studentStatus)}
+        element={<ComingSoon title="Status Mahasiswa" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.residenceType)}
+        element={<ComingSoon title="Jenis Tinggal" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.transportation)}
+        element={<ComingSoon title="Transportasi" />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.studentSetting.specialNeeds)}
+        element={<ComingSoon title="Kebutuhan Khusus" />}
       />
 
       {/* Route Untuk Admin Keuangan */}
@@ -440,6 +687,26 @@ export default function App() {
         path={String(LecturerRoute.courses.detailCourse)}
         element={<DetailCourseLecturer />}
       />
+      <Route
+        path={`${LecturerRoute.courses.pemetaanCpl}/:mataKuliahId`}
+        element={<PemetaanCplLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.pemetaanCpmk}/:mataKuliahId`}
+        element={<PemetaanCpmkLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.detailRps}/:mataKuliahId`}
+        element={<DetailRpsLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.rencanaPembelajaran}/:mataKuliahId`}
+        element={<RencanaPembelajaranLecturer />}
+      />
+      <Route
+        path={`${LecturerRoute.courses.rencanaEvaluasi}/:mataKuliahId`}
+        element={<RencanaEvaluasiLecturer />}
+      />
       {/* <Route
         path={String(LecturerRoute.courses.stopStudy)}
         element={<StopStudyLecturer />}
@@ -450,6 +717,10 @@ export default function App() {
       />
       <Route
         path={String(LecturerRoute.courses.detailClass)}
+        element={<DetailClassLecturer />}
+      />
+      <Route
+        path={`${String(LecturerRoute.courses.detailClass)}/:id`}
         element={<DetailClassLecturer />}
       />
       <Route

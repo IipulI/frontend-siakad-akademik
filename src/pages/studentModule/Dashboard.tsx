@@ -151,34 +151,41 @@ const Dashboard = () => {
             </div>
 
             <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
-            <div className="w-full flex flex-col sm:flex-row gap-4">
-              <DashboardBillCard
-                title={"Total Tagihan"}
-                price={dummyTagihanData.totalTagihan}
-                status="info"
-              />
-              <DashboardBillCard
-                title={"Total Lunas"}
-                price={dummyTagihanData.totalLunas}
-                status="info"
-              />
-            </div>
-            <div>
-              {dummyTagihanData.sisaTagihan > 0 ? (
-                <DashboardBillCard
-                  title={"Sisa Tagihan"}
-                  price={dummyTagihanData.sisaTagihan}
-                  status="payable"
-                  date={dummyTagihanData.tanggalTenggat}
-                />
-              ) : (
-                <DashboardBillCard
-                  title={"Status Tagihan"}
-                  price={0}
-                  status="paid"
-                />
-              )}
-            </div>
+            {isLoadingTagihan && <div>Loading financial status...</div>}
+            {isErrorTagihan && <div style={{ color: 'red' }}>Failed to load financial status.</div>}
+            {tagihanData && (
+              <>
+                <div className="w-full flex flex-col sm:flex-row gap-4">
+                  <DashboardBillCard
+                    title={"Total Tagihan"}
+                    price={tagihanData.totalTagihan}
+                    status="info"
+                  />
+                  <DashboardBillCard
+                    title={"Total Lunas"}
+                    price={tagihanData.totalLunas}
+                    status="info"
+                  />
+                </div>
+
+                <div>
+                  {tagihanData.sisaTagihan > 0 ? (
+                    <DashboardBillCard
+                      title={"Sisa Tagihan"}
+                      price={tagihanData.sisaTagihan}
+                      status="payable" // Kirim status 'payable'
+                      date={tagihanData.tanggalTenggat}
+                    />
+                  ) : (
+                    <DashboardBillCard
+                      title={"Status Tagihan"}
+                      price={0}
+                      status="paid" // Kirim status 'paid'
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* --- RIGHT COLUMN (SIDEBAR) --- */}

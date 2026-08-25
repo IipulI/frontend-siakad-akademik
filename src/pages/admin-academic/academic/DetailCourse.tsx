@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Search, ArrowLeft } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseDataById } from "../../../hooks/academic/useCourseManagement";
+import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
 
 // const fetchCourseDetail = async (id: string): Promise<CourseData> => {
 //   const token = localStorage.getItem("token");
@@ -21,6 +22,7 @@ const DetailCourse: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const { data: courseDetail, isLoading, error } = getCourseDataById(id!);
+  useSetBreadcrumbLabel(id, courseDetail?.nama);
 
   // --- event handlers ---
   const handleBack = () => {
@@ -113,11 +115,15 @@ const DetailCourse: React.FC = () => {
             <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <div className=" w-full md:w-1/2 flex items-center gap-3">
                 <label className="font-semibold w-40">Tahun Kurikulum:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.tahunKurikulum?.tahun}</p>
+                <p className="px-3 py-2 rounded flex-1">
+                  {typeof courseDetail.tahunKurikulum === 'object' ? courseDetail.tahunKurikulum?.tahun : courseDetail.tahunKurikulum?.tahun}
+                </p>
               </div>
               <div className=" w-full md:w-1/2 flex items-center gap-3 md:gap-10">
                 <label className="font-semibold w-40">Unit Pengampu:</label>
-                <p className="px-3 py-2 rounded flex-1">{courseDetail.programStudi?.nama}</p>
+                <p className="px-3 py-2 rounded flex-1">
+                  {typeof courseDetail.programStudi === 'object' ? courseDetail.programStudi?.nama : courseDetail.programStudi?.nama}
+                </p>
               </div>
             </div>
             <hr className="border-t-2 border-gray-200 " />
