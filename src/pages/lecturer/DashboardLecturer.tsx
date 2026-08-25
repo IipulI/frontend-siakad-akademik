@@ -20,17 +20,33 @@ const DashboardLecturer = () => {
 
   useEffect(() => {
     const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
     };
-    const today = new Date().toLocaleDateString("id-ID", options)
-    setCurrentDate(today)
 
-    const daysIndo = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"]
-    const todayIdx = new Date().getDay()
-    setDay(daysIndo[todayIdx])
+    const today = new Date();
+    const day = today.getDay(); // 0 = Sunday, 1 = Monday...
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diffToMonday);
+
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return {
+        date: d,
+        label: d.toLocaleDateString("id-ID", options),
+        dayName: d.toLocaleDateString("id-ID", { weekday: "long" }),
+      };
+    });
+
+    const todayIndex = days.findIndex(
+        (d) => d.date.toDateString() === today.toDateString()
+    );
+
+    setWeekDays(days);
+    setSelectedDayIndex(todayIndex >= 0 ? todayIndex : 0);
+    setCurrentDate(days[todayIndex >= 0 ? todayIndex : 0].label);
+    setDay(days[todayIndex >= 0 ? todayIndex : 0].dayName);
   }, []);
   
 
@@ -40,6 +56,10 @@ const DashboardLecturer = () => {
   const { data: courseSchedule } = useScheduleList(statusAktif?.data.id)
 
   const todaySchedule = courseSchedule?.data && day ? courseSchedule.data[day] : [];
+
+  console.log("courseSchedule", courseSchedule)
+  console.log("today :", day)
+  console.log("todaySchedule", todaySchedule)
 
   return (
     <>
@@ -58,7 +78,11 @@ const DashboardLecturer = () => {
                     </h1>
                     {/* <ChevronDown color="#001b36" size={18} /> */}
                   </div>
-                  <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <div
+                      className="flex items-center space-x-2 cursor-pointer"
+                      onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+                  >
                     <CalendarDays color="#001b36" size={18} />
                     <h1 className="font-semibold text-primary-blue">{currentDate}</h1>
                     <ChevronDown
@@ -96,8 +120,9 @@ const DashboardLecturer = () => {
                       time={`${item.jamMulai} - ${item.jamSelesai}`}
                       lecturer={item.dosen}
                       room={item.ruangan}
-                      subject={item.namaMataKuliah}
+                      subject={item.mataKuliah}
                       classes={item.kelas}
+                      sks={item.sks}
                     />
                   ))}
                 </div>

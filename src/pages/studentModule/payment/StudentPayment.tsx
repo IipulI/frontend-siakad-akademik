@@ -4,7 +4,7 @@ import PaymentSteps from '../../../components/payment/PaymentSteps';
 import PaymentTable from '../../../components/payment/PaymentTable';
 import PaymentConfirmation from '../../../components/payment/PaymentConfirmation';
 import PaymentReceipt from '../../../components/payment/PaymentReceipt';
-import { useTagihanAktif } from '../../../hooks/mahasiswa/useKeuanganMahasiswa';
+import { useNotifyPaymentStep3, useTagihanAktif } from '../../../hooks/mahasiswa/useKeuanganMahasiswa';
 import { ITagihan } from '../../../types/mahasiswa.types';
 
 const PAYMENT_SESSION_KEY = 'paymentSession';
@@ -23,6 +23,8 @@ export default function StudentPayment() {
   // Fetch langsung dari API backend — [] jika KRS belum disetujui
   const { data: fetchedTagihan, isLoading, isError } = useTagihanAktif();
   const tagihanAktif: ITagihan[] = fetchedTagihan ?? [];
+
+  const { mutate: notifyStep3 } = useNotifyPaymentStep3();
 
   const total = useMemo(() => {
     return tagihanAktif.reduce((acc: number, item: ITagihan) => acc + item.nominalTagihan, 0);
@@ -71,6 +73,17 @@ export default function StudentPayment() {
     localStorage.setItem(PAYMENT_SESSION_KEY, JSON.stringify(paymentSession));
 
     setStep(2);
+  };
+
+  const handleStepChange = (newStep: number) => {
+    if (newStep === 3) {
+      // Hit API menggunakan mutation, berjalan di background (fire-and-forget)
+      notifyStep3({
+        metode: metodePembayaran,
+        total: total
+      });
+    }
+    setStep(newStep);
   };
 
   const labelMetode = opsiPembayaran.find(opt => opt.value === metodePembayaran)?.label || metodePembayaran;

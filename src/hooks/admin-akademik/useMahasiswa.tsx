@@ -63,7 +63,7 @@ export function useStudentData(
       };
 
       // Tambahkan parameter filter hanya jika ada nilainya
-      if (keyword.trim()) params.keyword = keyword.trim();
+      if (keyword.trim()) params.search = keyword.trim();
       if (programStudi.trim()) params.programStudi = programStudi.trim();
       if (jenisPendaftaran.trim())
         params.jenisPendaftaran = jenisPendaftaran.trim();
