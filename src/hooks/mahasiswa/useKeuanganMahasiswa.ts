@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { financeService } from '../../api/mahasiswa/financeService';
 
 // --- Tipe untuk filter ---
@@ -35,12 +35,5 @@ export const useDetailTagihan = (invoiceId: string) => {
         queryKey: ['detailTagihan', invoiceId],
         queryFn: () => financeService.getDetailTagihan(invoiceId).then((res) => res.data),
         enabled: !!invoiceId,
-    });
-};
-
-export const useNotifyPaymentStep3 = () => {
-    return useMutation({
-        mutationFn: (payload: { metode: string; total: number }) =>
-            financeService.notifyPaymentStep3(payload),
     });
 };

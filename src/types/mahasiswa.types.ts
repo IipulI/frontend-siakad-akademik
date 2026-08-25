@@ -279,11 +279,6 @@ export interface ITagihanDetail extends ITagihan {
     };
 }
 
-export interface IPaymentNotifyPayload {
-    metode: string;
-    total: number;
-}
-
 export interface PaginatedBillsResponse {
     data: ITagihan[];
     pagination: {

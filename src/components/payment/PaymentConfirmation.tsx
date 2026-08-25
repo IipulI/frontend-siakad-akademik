@@ -44,10 +44,9 @@ interface PaymentConfirmationProps {
   method: string;
   total: number;
   deadline: Date | null;
-  onCheckStatus: () => void;
 }
 
-export default function PaymentConfirmation({ method, total, deadline, onCheckStatus }: PaymentConfirmationProps) {
+export default function PaymentConfirmation({ method, total, deadline }: PaymentConfirmationProps) {
   const formattedDeadline = deadline
       ? deadline.toLocaleString('id-ID', {
         weekday: 'long',
@@ -112,14 +111,6 @@ export default function PaymentConfirmation({ method, total, deadline, onCheckSt
                 </div>
               </div>
               {/* --- Akhir Bagian Dinamis --- */}
-
-              <button
-                  onClick={onCheckStatus}
-                  className="w-full bg-primary-green text-white font-bold py-3 rounded-md mt-4
-                             hover:bg-green-700 transition-colors shadow-sm"
-              >
-                Cek Status Pembayaran
-              </button>
             </div>
           </div>
         </div>
