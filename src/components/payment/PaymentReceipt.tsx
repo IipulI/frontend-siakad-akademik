@@ -1,6 +1,6 @@
 import { MapPin, Phone } from "lucide-react";
 import React, { useEffect } from "react";
-import LogoUika from "../../../public/img/logo_uika.png";
+const LogoUika = "/img/logo_uika.png";
 import { ITagihan } from "../../../types/mahasiswa.types";
 
 // Definisikan props untuk komponen utama

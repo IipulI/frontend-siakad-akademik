@@ -2,11 +2,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { Api } from "../../api/Index";
 
-export const useCourseList = (page: number, keyword: string, size: number) =>
+export const useCourseList = (
+    page: number,
+    keyword: string,
+    size: number,
+    prodiId?: string,
+    tahunKurikulumId?: string,
+    searchBy?: string
+) =>
     useQuery({
-        queryKey: ['dosen/mata-kuliah', page, keyword, size],
+        queryKey: ['dosen/mata-kuliah', page, keyword, size, prodiId, tahunKurikulumId, searchBy],
         queryFn: async () => {
-          const res = await Api.get(`/akademik/dosen/mata-kuliah?page=${page}&keyword=${keyword}&size=${size}`)
+          // Backend menggunakan konvensi "search" (lihat /akademik/mata-kuliah di useCourseManagement.ts),
+          // "keyword" tetap dikirim untuk jaga-jaga jika endpoint ini masih memakai nama lama.
+          // prodiId/tahunKurikulumId WAJIB dikirim ke server (bukan difilter di FE) supaya
+          // pagination ("Hal x/y", total data) tetap akurat -- sebelumnya filter cuma nyaring
+          // 1 halaman data yang sudah ke-fetch, jadi kelihatan datanya "ilang" padahal cuma
+          // gak ke-filter di server (lihat CourseLecturer.tsx).
+          const params = new URLSearchParams({
+            page: String(page),
+            size: String(size),
+            search: keyword,
+            keyword,
+          });
+          if (prodiId) params.set('prodiId', prodiId);
+          if (tahunKurikulumId) params.set('tahunKurikulumId', tahunKurikulumId);
+          if (searchBy) params.set('searchBy', searchBy);
+          const res = await Api.get(`/akademik/dosen/mata-kuliah?${params.toString()}`)
           return res.data
         },
     })
@@ -20,12 +42,54 @@ export const useCourseDetail = (id: string | null) =>
         },
     })
 
-export const useCourseRPS = (id: string | null) =>
+export const useCourseRPS = (id: string | null, periodeId?: string) =>
     useQuery({
-        queryKey: ['dosen/mata-kuliah/detail/rps', id],
+        queryKey: ['dosen/mata-kuliah/detail/rps', id, periodeId],
         queryFn: async () => {
-          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/detail-rps`)
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/detail-rps`, {
+            params: periodeId ? { periodeId } : {},
+          })
           return res.data
         },
+    })
+
+// Dipakai buat tab Pemetaan CPL/Rencana Pembelajaran/Rencana Evaluasi di halaman
+// dosen -- LIHAT SAJA, lewat /akademik/dosen/... (terbuka buat semua dosen
+// pengampu MK ini), BUKAN lewat /akademik/koordinator-mk/... (yang sekarang
+// cuma boleh diakses koordinator MK itu sendiri / admin). Simpan/edit tetap
+// lewat hook koordinator yang sudah ada (useSavePemetaanCplMk dkk), cuma
+// dirender kalau isKoordinator true.
+export const useCoursePemetaanCpl = (id: string | null) =>
+    useQuery({
+        queryKey: ['dosen/mata-kuliah/detail/pemetaan-cpl', id],
+        queryFn: async () => {
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/pemetaan-cpl`)
+          return res.data
+        },
+        enabled: !!id,
+    })
+
+export const useCourseRencanaPembelajaran = (id: string | null, periodeId?: string) =>
+    useQuery({
+        queryKey: ['dosen/mata-kuliah/detail/rencana-pembelajaran', id, periodeId],
+        queryFn: async () => {
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/rencana-pembelajaran`, {
+            params: periodeId ? { periodeId } : {},
+          })
+          return res.data
+        },
+        enabled: !!id,
+    })
+
+export const useCourseRencanaEvaluasi = (id: string | null, periodeId?: string) =>
+    useQuery({
+        queryKey: ['dosen/mata-kuliah/detail/rencana-evaluasi', id, periodeId],
+        queryFn: async () => {
+          const res = await Api.get(`/akademik/dosen/mata-kuliah/${id}/rencana-evaluasi`, {
+            params: periodeId ? { periodeId } : {},
+          })
+          return res.data
+        },
+        enabled: !!id,
     })
 

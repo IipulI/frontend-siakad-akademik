@@ -14,8 +14,18 @@ const navItems = [
     hasDropdown: false,
   },
   { id: "2", name: "Portal", dropdownKey: "portal", hasDropdown: true },
-  { id: "3", name: "Perkuliahan", dropdownKey: "perkuliahan", hasDropdown: true },
-  { id: "4", name: "Data Pelengkap", dropdownKey: "dataPelengkap", hasDropdown: true },
+  {
+    id: "3",
+    name: "Perkuliahan",
+    dropdownKey: "perkuliahan",
+    hasDropdown: true,
+  },
+  {
+    id: "4",
+    name: "Data Pelengkap",
+    dropdownKey: "dataPelengkap",
+    hasDropdown: true,
+  },
   { id: "5", name: "Pengaturan", dropdownKey: "pengaturan", hasDropdown: true },
   // Menu berisi item lama yang belum masuk ke struktur menu baru
   { id: "6", name: "Lainnya", dropdownKey: "lainnya", hasDropdown: true },
@@ -56,22 +66,32 @@ const dropdownMenus = {
           {
             title: "Mata Kuliah",
             description: "Manajemen Mata Kuliah",
-            to: String(AdminAcademicRoute.courseManagement.courseManagement),
-          },
-          {
-            title: "Kurikulum Prodi",
-            description: "Kurikulum Program Studi",
-            to: String(AdminAcademicRoute.prodiCurriculum),
-          },
-          {
-            title: "Manajemen OBE",
-            description: "Managemen OBE",
             to: String(AdminAcademicRoute.obeManagement.obeManagement),
           },
           {
-            title: "Tahun Kurikulum",
+            title: "Kurikulum Prodi (OBE)",
+            description: "Kurikulum Program Studi",
+            to: String(AdminAcademicRoute.obeManagement.kurikulumProdi),
+          },
+          {
+            title: "Template Evaluasi",
+            description: "Template Evaluasi",
+            to: String(AdminAcademicRoute.obeManagement.templateEvaluasi),
+          },
+          {
+            title: "Manajemen Capaian",
+            description: "Manajemen OBE",
+            to: String(AdminAcademicRoute.obeManagement.manajemenCapaian),
+          },
+          {
+            title: "Set Grup MK Wajib Pilihan",
+            description: "Set Grup MK Wajib Pilihan",
+            to: String(AdminAcademicRoute.obeManagement.setGrupMk),
+          },
+          {
+            title: "Tahun Kurikulum (OBE)",
             description: "Tahun Kurikulum",
-            to: String(AdminAcademicRoute.curriculumYear),
+            to: String(AdminAcademicRoute.obeManagement.tahunKurikulum),
           },
         ],
       },
@@ -248,6 +268,11 @@ const dropdownMenus = {
     title: "PENGATURAN",
     items: [
       {
+        title: "Tahun Ajaran",
+        description: "Manajemen Tahun Ajaran",
+        to: String(AdminAcademicRoute.setting.year),
+      },
+      {
         title: "Periode Akademik",
         description: "Manajemen Periode Akademik",
         to: String(AdminAcademicRoute.setting.period),
@@ -276,20 +301,15 @@ const dropdownMenus = {
         ],
       },
       {
-        title: "Tahun Ajaran",
-        description: "Manajemen Tahun Ajaran",
-        to: String(AdminAcademicRoute.setting.year),
-      },
-      {
         title: "Batas SKS",
         description: "Pengaturan Batas SKS",
         to: String(AdminAcademicRoute.setting.limit),
       },
-      {
-        title: "Skala Penilaian",
-        description: "Pengaturan Skala Penilaian",
-        to: String(AdminAcademicRoute.setting.scale),
-      },
+      // {
+      //   title: "Skala Penilaian",
+      //   description: "Pengaturan Skala Penilaian",
+      //   to: String(AdminAcademicRoute.setting.scale),
+      // },
       {
         title: "Komposisi Nilai",
         description: "Pengaturan Komposisi Nilai",
@@ -332,7 +352,7 @@ const ProfileDropdown = ({ userName, profileData, onClose }) => {
       alert("Terjadi kesalahan saat logout. Silakan coba lagi.");
     } finally {
       // Pastikan redirect selalu terjadi, terlepas dari sukses/gagalnya proses logout
-      navigate("/"); // Ganti ini menjadi '/login' jika halaman login Anda ada di sana
+      window.location.replace("http://103.158.196.79/eportal"); // Ganti ini menjadi '/login' jika halaman login Anda ada di sana
       // Atau '/' jika itu root halaman login
       onClose(); // Tutup dropdown
     }

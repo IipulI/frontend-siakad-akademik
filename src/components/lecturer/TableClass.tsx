@@ -162,7 +162,7 @@ export default function TableClass ({
                   >
                     <div className="flex items-center justify-center w-full">
                         <Link
-                          to={LecturerRoute.courses.detailClass}
+                          to={`${LecturerRoute.courses.detailClass}/${row.id}`}
                           onClick={() => localStorage.setItem("id_kelas_kuliah", row.id)}
                           className="bg-primary-blueSoft cursor-pointer rounded-sm flex items-center justify-center w-8 h-7"
                         >

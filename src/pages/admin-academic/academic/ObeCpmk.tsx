@@ -98,7 +98,7 @@ const ObeCpmk: React.FC = () => {
 
         <div className="flex flex-col md:flex-row">
           {/* Shared Sidebar */}
-          <SidebarOBE id={id!} activeTab="cpmk" />
+          <SidebarOBE id={id!} activeTab="cplMk" />
 
           <div className="w-full md:w-[80%] p-3">
             <div className="grid grid-cols-1 gap-2 bg-primary-green/10 p-4 md:grid-cols-2">

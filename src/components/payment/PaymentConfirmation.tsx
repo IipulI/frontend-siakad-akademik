@@ -1,5 +1,5 @@
 import React from "react";
-import LogoUika from "../../../public/img/logo_uika.png";
+const LogoUika = "/img/logo_uika.png";
 import { ChevronDown, Copy, ShoppingCart } from "lucide-react";
 
 // Definisikan data untuk setiap metode pembayaran

@@ -14,7 +14,7 @@ const DashboardLecturer = () => {
 
   const [currentDate, setCurrentDate] = useState<string | undefined>();
   const [day, setDay] = useState<string | undefined>();
-  const [weekDays, setWeekDays] = useState<{ date: Date; label: string }[]>([]);
+  const [weekDays, setWeekDays] = useState<{ date: Date; label: string; dayName: string }[]>([]);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
 
@@ -102,6 +102,7 @@ const DashboardLecturer = () => {
                                 onClick={() => {
                                   setSelectedDayIndex(index);
                                   setCurrentDate(day.label);
+                                  setDay(day.dayName);
                                   setIsDateDropdownOpen(false);
                                 }}
                             >

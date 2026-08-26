@@ -32,7 +32,7 @@ Api.interceptors.response.use(
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         localStorage.removeItem("account_info");
-        window.location.href = "/";
+        window.location.replace("http://103.158.196.79/eportal");
       }
     }
     return Promise.reject(error);

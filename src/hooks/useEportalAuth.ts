@@ -16,7 +16,7 @@ export function useAuthenticateEportal(
   return useQuery<UserResponse>({
     queryKey: ["userData", token, role_id, appModule_id, unit_id],
     queryFn: async () => {
-      // ← panggil BE SIAKAD sendiri, bukan E-Portal langsung
+      // ← panggil BE NL-SIAK sendiri, bukan E-Portal langsung
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/sso/callback`,
         {

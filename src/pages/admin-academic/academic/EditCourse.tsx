@@ -57,7 +57,8 @@ const EditCourse = () => {
   const { data: courseEdit, isLoading, error } = getCourseDataById(id!);
   const { data: curriculumData = [], isLoading: isCurriculumLoading, error: curriculumError } = getCurriculumYear();
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
-  const { data: courseData = [], isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const { data: courseResponse, isLoading: isCourseLoading, error: courseError } = getCourseData();
+  const courseData = courseResponse?.data ?? [];
   const [showPopup, setShowPopup] = useState(false);
   const [popupConfig, setPopupConfig] = useState<{ type: "success" | "error"; message: string }>({ type: "success", message: "" });
 
@@ -66,8 +67,8 @@ const EditCourse = () => {
 
     if (courseEdit) {
       setFormData({
-        tahunKurikulum: courseEdit.tahunKurikulum || "",
-        programStudi: courseEdit.programStudi || "",
+        tahunKurikulum: courseEdit.tahunKurikulum?.tahun || "",
+        programStudi: courseEdit.programStudi?.nama || "",
         siakProgramStudiId: courseEdit.siakProgramStudiId || "",
         siakTahunKurikulumId: courseEdit.siakTahunKurikulumId || "",
         sksTatapMuka: courseEdit.sksTatapMuka || 0,
@@ -75,13 +76,13 @@ const EditCourse = () => {
         semester: courseEdit.semester || "",
         adaPraktikum: courseEdit.adaPraktikum || false,
         nilaiMin: courseEdit.nilaiMin || "",
-        kodeMataKuliah: courseEdit.kodeMataKuliah || "",
-        namaMataKuliah: courseEdit.namaMataKuliah || "",
-        jenisMataKuliah: courseEdit.jenisMataKuliah || "",
-        opsiMataKuliah: courseEdit.opsiMataKuliah || false,
-        prasyaratMataKuliah1Id: courseEdit.prasyaratMataKuliah1Id || "",
-        prasyaratMataKuliah2Id: courseEdit.prasyaratMataKuliah2Id || "",
-        prasyaratMataKuliah3Id: courseEdit.prasyaratMataKuliah3Id || "",
+        kodeMataKuliah: courseEdit.kode || "",
+        namaMataKuliah: courseEdit.nama || "",
+        jenisMataKuliah: courseEdit.jenis || "",
+        opsiMataKuliah: courseEdit.opsiWajib || false,
+        prasyaratMataKuliah1Id: courseEdit.prasyaratMataKuliah1?.id || "",
+        prasyaratMataKuliah2Id: courseEdit.prasyaratMataKuliah2?.id || "",
+        prasyaratMataKuliah3Id: courseEdit.prasyaratMataKuliah3?.id || "",
       });
     }
   }, [courseEdit]);
@@ -316,7 +317,7 @@ const EditCourse = () => {
                   <option value="">Pilih Mata Kuliah Prasyarat</option>
                   {availableCoursesForPrerequisite.map((course) => (
                     <option key={course.id} value={course.id}>
-                      {course.kodeMataKuliah} - {course.namaMataKuliah}
+                      {course.kode} - {course.nama}
                     </option>
                   ))}
                 </select>
@@ -336,7 +337,7 @@ const EditCourse = () => {
                   <option value="">Pilih Mata Kuliah Prasyarat</option>
                   {availableCoursesForPrerequisite.map((course) => (
                     <option key={course.id} value={course.id}>
-                      {course.kodeMataKuliah} - {course.namaMataKuliah}
+                      {course.kode} - {course.nama}
                     </option>
                   ))}
                 </select>
@@ -356,7 +357,7 @@ const EditCourse = () => {
                   <option value="">Pilih Mata Kuliah Prasyarat</option>
                   {availableCoursesForPrerequisite.map((course) => (
                     <option key={course.id} value={course.id}>
-                      {course.kodeMataKuliah} - {course.namaMataKuliah}
+                      {course.kode} - {course.nama}
                     </option>
                   ))}
                 </select>

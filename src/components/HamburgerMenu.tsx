@@ -9,11 +9,12 @@ interface DropdownMenuItemProps {
   onClick?: () => void;
 }
 
-// Interface for sub-item children
+// Interface for sub-item children (recursive: a child may itself have children)
 interface SubItemChild {
   title: string;
   description: string;
-  to: string;
+  to?: string;
+  children?: SubItemChild[];
 }
 
 // Interface for dropdown menu item with optional children
@@ -45,17 +46,23 @@ const SubMenuItem = ({
   </li>
 );
 
-// Component for rendering a parent item with nested children (level 2)
+// Component for rendering a parent item with nested children (level 2+, recursive)
 const SubMenuItemWithChildren = ({
   item,
   onItemClick,
   isOpen,
   onToggle,
+  openMap,
+  onToggleKey,
+  nodeKey,
 }: {
   item: DropdownMenuItemWithChildren;
   onItemClick?: () => void;
   isOpen: boolean;
   onToggle: () => void;
+  openMap: Record<string, boolean>;
+  onToggleKey: (key: string) => void;
+  nodeKey: string;
 }) => (
   <li>
     <div
@@ -83,15 +90,35 @@ const SubMenuItemWithChildren = ({
     </div>
     {isOpen && item.children && (
       <ul className="ml-6 mb-2 space-y-1 border-l-2 border-gray-300 pl-2">
-        {item.children.map((child, idx) => (
-          <SubMenuItem
-            key={idx}
-            title={child.title}
-            description={child.description}
-            to={child.to}
-            onClick={onItemClick}
-          />
-        ))}
+        {item.children.map((child, idx) => {
+          const hasChildren = child.children && child.children.length > 0;
+          const childKey = `${nodeKey}-${idx}`;
+
+          if (hasChildren) {
+            return (
+              <SubMenuItemWithChildren
+                key={idx}
+                item={child}
+                onItemClick={onItemClick}
+                isOpen={openMap[childKey] || false}
+                onToggle={() => onToggleKey(childKey)}
+                openMap={openMap}
+                onToggleKey={onToggleKey}
+                nodeKey={childKey}
+              />
+            );
+          }
+
+          return (
+            <SubMenuItem
+              key={idx}
+              title={child.title}
+              description={child.description}
+              to={String(child.to)}
+              onClick={onItemClick}
+            />
+          );
+        })}
       </ul>
     )}
   </li>
@@ -334,6 +361,9 @@ const HamburgerMenu = ({
                                     onItemClick={handleMenuItemClick}
                                     isOpen={openSubDropdowns[subKey] || false}
                                     onToggle={() => toggleSubDropdown(subKey)}
+                                    openMap={openSubDropdowns}
+                                    onToggleKey={toggleSubDropdown}
+                                    nodeKey={subKey}
                                   />
                                 );
                               }

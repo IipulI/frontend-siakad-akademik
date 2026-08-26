@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import { Eye, Link2, Trash2 } from "lucide-react";
 import ButtonClick from "./ButtonClick";
 import { useNavigate } from "react-router-dom";
@@ -118,4 +116,3 @@ export default function TableStudent({ data }: TableProps) {
     </div>
   );
 }
->>>>>>> 8d9ad43a95da135fc7669a3d21c237d05f9680a0

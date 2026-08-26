@@ -114,7 +114,7 @@ export default function FormLogin() {
         <div className="text-white mb-10 md:mb-0 md:w-1/2 px-4 md:px-10">
           <img src="/img/logo_uika.png" className="w-20 mb-4" alt="Logo" />
           <h1 className="text-6xl font-bold tracking-widest mb-2">
-            SIAKAD <span className="text-orange-400">UIKA</span>
+            NL-SIAK <span className="text-orange-400">UIKA</span>
           </h1>
           <p className="text-md leading-relaxed">
             Sistem informasi{" "}
