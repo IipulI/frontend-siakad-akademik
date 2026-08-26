@@ -1840,87 +1840,108 @@ export const TableCurriculumProdi: React.FC<TableProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const totalSKS = data.reduce((acc, item) => acc + parseInt(item.sks), 0);
+  const totalSKS = data.reduce((acc, item) => acc + (parseInt(item.sks) || 0), 0);
   const totalWajib = data
     .filter((item) => item.status === "Wajib")
-    .reduce((acc, item) => acc + parseInt(item.sks), 0);
+    .reduce((acc, item) => acc + (parseInt(item.sks) || 0), 0);
   const totalPilihan = data
     .filter((item) => item.status === "Pilihan")
-    .reduce((acc, item) => acc + parseInt(item.sks), 0);
+    .reduce((acc, item) => acc + (parseInt(item.sks) || 0), 0);
+
+  const semesterGroups = React.useMemo(() => {
+    const groups: { semester: string | number; items: typeof data }[] = [];
+    data.forEach((item) => {
+      const semesterKey = item.semester ?? "-";
+      let group = groups.find((g) => g.semester === semesterKey);
+      if (!group) {
+        group = { semester: semesterKey, items: [] };
+        groups.push(group);
+      }
+      group.items.push(item);
+    });
+    return groups;
+  }, [data]);
 
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full border border-gray-600 border-collapse">
-        <thead className="bg-primary-green">
-          <tr>
-            <th className="p-2 text-white border " colSpan={9}>
-              Semester 1
-            </th>
-          </tr>
-          <tr>
-            <th className="p-2 text-white border font-medium">No</th>
-            <th className="p-2 text-white border font-medium">Kode</th>
-            <th className="p-2 text-white border font-medium">Mata Kuliah</th>
-            <th className="p-2 text-white border font-medium">SKS</th>
-            <th className="p-2 text-white border font-medium">Status</th>
-            <th className="p-2 text-white border font-medium">Nilai Min</th>
-            <th className="p-2 text-white border font-medium">Prasyarat</th>
-            <th className="p-2 text-white border font-medium">Konsentrasi</th>
-            <th className="p-2 text-white border font-medium">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <tr key={item.id} className="text-center">
-                <td className="p-2 border">{item.no}</td>
-                <td className="p-2 border">{item.kode}</td>
-                <td className="p-2 border text-left">{item.mataKuliah}</td>
-                <td className="p-2 border">{item.sks}</td>
-                <td className="p-2 border text-center">
-                  <div
-                    className={`inline-block px-3 py-1 rounded font-semibold
+        {semesterGroups.length > 0 ? (
+          semesterGroups.map((group) => (
+            <React.Fragment key={group.semester}>
+              <thead className="bg-primary-green">
+                <tr>
+                  <th className="p-2 text-white border" colSpan={9}>
+                    Semester {group.semester}
+                  </th>
+                </tr>
+                <tr>
+                  <th className="p-2 text-white border font-medium">No</th>
+                  <th className="p-2 text-white border font-medium">Kode</th>
+                  <th className="p-2 text-white border font-medium">Mata Kuliah</th>
+                  <th className="p-2 text-white border font-medium">SKS</th>
+                  <th className="p-2 text-white border font-medium">Status</th>
+                  <th className="p-2 text-white border font-medium">Nilai Min</th>
+                  <th className="p-2 text-white border font-medium">Prasyarat</th>
+                  <th className="p-2 text-white border font-medium">Konsentrasi</th>
+                  <th className="p-2 text-white border font-medium">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {group.items.map((item) => (
+                  <tr key={item.id} className="text-center">
+                    <td className="p-2 border">{item.no}</td>
+                    <td className="p-2 border">{item.kode}</td>
+                    <td className="p-2 border text-left">{item.mataKuliah}</td>
+                    <td className="p-2 border">{item.sks}</td>
+                    <td className="p-2 border text-center">
+                      <div
+                        className={`inline-block px-3 py-1 rounded font-semibold
       ${item.status === "Wajib" ? "bg-primary-blueSoft text-white" : ""}
       ${item.status === "Pilihan" ? "bg-yellow-400 text-black" : ""}
     `}
-                  >
-                    {item.status}
-                  </div>
-                </td>
-                <td className="p-2 border">{item.nilaiMin}</td>
-                <td className="p-2 border">{item.prasyarat}</td>
-                <td className="p-2 border">{item.konsentrasiBidang}</td>
-                <td className="p-2 border flex justify-center gap-2">
-                  <button
-                    onClick={() => onEdit?.(item.id)}
-                    className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8"
-                  >
-                    <Paperclip className="w-4 h-4" />
-                  </button>
+                      >
+                        {item.status}
+                      </div>
+                    </td>
+                    <td className="p-2 border">{item.nilaiMin}</td>
+                    <td className="p-2 border">{item.prasyarat}</td>
+                    <td className="p-2 border">{item.konsentrasiBidang}</td>
+                    <td className="p-2 border flex justify-center gap-2">
+                      <button
+                        onClick={() => onEdit?.(item.id)}
+                        className="bg-primary-yellow text-white px-2 py-1 rounded w-8 h-8"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </button>
 
-                  <button
-                    onClick={() => onEdit?.(item.id)}
-                    className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => onDelete?.(item.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+                      <button
+                        onClick={() => onEdit?.(item.id)}
+                        className="bg-primary-blueSoft text-white px-2 py-1 rounded w-8 h-8"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onDelete?.(item.id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded w-8 h-8"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </React.Fragment>
+          ))
+        ) : (
+          <tbody>
             <tr>
               <td colSpan={9} className="p-2 text-center">
                 Data tidak ditemukan.
               </td>
             </tr>
-          )}
-
+          </tbody>
+        )}
+        <tfoot>
           {/* Row for Total SKS and Summary */}
           <tr className="bg-gray-100 font-semibold">
             <td className="p-2 border text-center" colSpan={3}>
@@ -1930,10 +1951,9 @@ export const TableCurriculumProdi: React.FC<TableProps> = ({
             <td className="p-2 border text-center">
               Wajib: {totalWajib} | Pilihan: {totalPilihan}
             </td>
-            <td className="p-2 border text-center">D</td>
-            <td className="p-2 border" colSpan={3}></td>
+            <td className="p-2 border" colSpan={4}></td>
           </tr>
-        </tbody>
+        </tfoot>
       </table>
     </div>
   );

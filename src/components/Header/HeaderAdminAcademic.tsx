@@ -118,6 +118,11 @@ const dropdownMenus = {
             to: String(AdminAcademicRoute.administration.studentTransfer),
           },
           {
+            title: "Mahasiswa Pindahan",
+            description: "Mahasiswa Pindahan/Alih Program Studi",
+            to: String(AdminAcademicRoute.administration.studentTransferIn),
+          },
+          {
             title: "Mahasiswa Keluar",
             description: "Mahasiswa Keluar",
             to: String(AdminAcademicRoute.administration.studentDropout),
@@ -148,6 +153,11 @@ const dropdownMenus = {
             title: "Ruang Kuliah",
             description: "Manajemen Ruang Kuliah",
             to: String(AdminAcademicRoute.institution.classroom),
+          },
+          {
+            title: "Konsentrasi",
+            description: "Manajemen Konsentrasi",
+            to: String(AdminAcademicRoute.institution.concentration),
           },
         ],
       },

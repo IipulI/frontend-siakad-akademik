@@ -21,6 +21,7 @@ import StudyResultCard from "./pages/studentModule/study-result/StudyResultCard"
 import TranscriptGrade from "./pages/studentModule/study-result/TranscriptGrade";
 import StudentPaymentHistory from "./pages/studentModule/payment/StudentPaymentHistory";
 import CollegeClass from "./pages/admin-academic/class/CollegeClass";
+import MonitoringRuang from "./pages/admin-academic/class/MonitoringRuang";
 import {
   AdminFinanceRoute,
   StudentRoute,
@@ -30,6 +31,8 @@ import {
 import DashboardAdminFinance from "./pages/admin-finance/DashboardAdminFinance";
 import DashboardAdminAcademic from "./pages/admin-academic/DashboardAdminAcademic";
 import StudentData from "./pages/admin-academic/student/StudentData";
+import LecturerData from "./pages/admin-academic/lecturer/LecturerData";
+import DetailLecturer from "./pages/admin-academic/lecturer/DetailLecturer";
 import CreateStudent from "./pages/admin-academic/student/CreateStudent";
 import DetailStudent from "./pages/admin-academic/student/DetailStudent";
 import AcademikAdvisor from "./pages/admin-academic/student/AcademicAdvisor";
@@ -41,6 +44,7 @@ import LimitSKSAdminAcademic from "./pages/admin-academic/setting/LimitSKSAdminA
 import LevelAdminAcademic from "./pages/admin-academic/setting/LevelAdminAcademic";
 import SistemKuliahAdminAcademic from "./pages/admin-academic/setting/SistemKuliahAdminAcademic";
 import RuanganAdminAcademic from "./pages/admin-academic/setting/RuanganAdminAcademic";
+import KonsentrasiAdminAcademic from "./pages/admin-academic/setting/KonsentrasiAdminAcademic";
 import JenisMataKuliahAdminAcademic from "./pages/admin-academic/setting/JenisMataKuliahAdminAcademic";
 import SlotWaktuAdminAcademic from "./pages/admin-academic/setting/SlotWaktuAdminAcademic";
 import JenisPertemuanAdminAcademic from "./pages/admin-academic/setting/JenisPertemuanAdminAcademic";
@@ -102,6 +106,11 @@ import NotFound from "./pages/NotFound";
 import DetailOBE from "./pages/admin-academic/academic/DetailOBE";
 import Forbidden from "./pages/ForbiddenPage";
 import ComingSoon from "./pages/ComingSoon";
+import SemesterStatus from "./pages/admin-academic/administration/SemesterStatus";
+import StudentEvaluation from "./pages/admin-academic/administration/StudentEvaluation";
+import StudentTransfer from "./pages/admin-academic/administration/StudentTransfer";
+import StudentTransferIn from "./pages/admin-academic/administration/StudentTransferIn";
+import StudentDropout from "./pages/admin-academic/administration/StudentDropout";
 
 export default function App() {
   return (
@@ -370,27 +379,35 @@ export default function App() {
       {/* Route untuk admin akademik - menu baru yang halamannya belum dibuat (placeholder) */}
       <Route
         path={String(AdminAcademicRoute.portal.dosen)}
-        element={<ComingSoon title="Dosen" />}
+        element={<LecturerData />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.portal.detailDosen)}
+        element={<DetailLecturer />}
       />
       <Route
         path={String(AdminAcademicRoute.classData.monitoringRoom)}
-        element={<ComingSoon title="Monitoring Ruang" />}
+        element={<MonitoringRuang />}
       />
       <Route
         path={String(AdminAcademicRoute.administration.semesterStatus)}
-        element={<ComingSoon title="Status Semester" />}
+        element={<SemesterStatus />}
       />
       <Route
         path={String(AdminAcademicRoute.administration.studentEvaluation)}
-        element={<ComingSoon title="Evaluasi Mahasiswa" />}
+        element={<StudentEvaluation />}
       />
       <Route
         path={String(AdminAcademicRoute.administration.studentTransfer)}
-        element={<ComingSoon title="Transfer Mahasiswa" />}
+        element={<StudentTransfer />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.administration.studentTransferIn)}
+        element={<StudentTransferIn />}
       />
       <Route
         path={String(AdminAcademicRoute.administration.studentDropout)}
-        element={<ComingSoon title="Mahasiswa Keluar" />}
+        element={<StudentDropout />}
       />
       <Route
         path={String(AdminAcademicRoute.institution.studySystem)}
@@ -399,6 +416,10 @@ export default function App() {
       <Route
         path={String(AdminAcademicRoute.institution.classroom)}
         element={<RuanganAdminAcademic />}
+      />
+      <Route
+        path={String(AdminAcademicRoute.institution.concentration)}
+        element={<KonsentrasiAdminAcademic />}
       />
       <Route
         path={String(AdminAcademicRoute.lectureSetting.courseType)}

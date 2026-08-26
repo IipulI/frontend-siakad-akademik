@@ -4,9 +4,7 @@ import { ISlotWaktu, ISlotWaktuPayload } from "../../../types/models";
 import { useSlotWaktu } from "../../../hooks/admin-akademik/useSlotWaktu";
 
 const fields: ISimpleFieldConfig<ISlotWaktuPayload>[] = [
-    { key: "nama", header: "Nama Slot", inputType: "text" },
-    { key: "jamMulai", header: "Jam Mulai", inputType: "time" },
-    { key: "jamSelesai", header: "Jam Selesai", inputType: "time" },
+    { key: "waktu", header: "Waktu", inputType: "time" },
 ];
 
 const SlotWaktuAdminAcademic: React.FC = () => {
@@ -17,8 +15,8 @@ const SlotWaktuAdminAcademic: React.FC = () => {
             titlePage="Slot Waktu"
             entityLabel="Slot Waktu"
             fields={fields}
-            emptyPayload={{ nama: "", jamMulai: "", jamSelesai: "" }}
-            requiredKeys={["nama", "jamMulai", "jamSelesai"]}
+            emptyPayload={{ waktu: "" }}
+            requiredKeys={["waktu"]}
             data={data}
             isLoading={isLoading}
             isError={isError}

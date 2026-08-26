@@ -52,25 +52,35 @@ const CollegeClass = () => {
   const { data: programs, isLoading: isLoadingPrograms } = getProgramStudi();
   const { data: curiculums, isLoading: isLoadingCuriculums } = getYearCuriculum();
 
+  const location = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const handleChangeFilter = (fieldName, selectedValue) => {
     setFilter((prev) => ({
       ...prev,
       [fieldName]: selectedValue,
     }));
+    setCurrentPage(1);
   };
 
-  console.log("filter", filter);
-
-  const location = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleRowsPerPageChange = (rows: number) => {
+    setRowsPerPage(rows);
+    setCurrentPage(1);
+  };
 
   const refresh = () => alert("refresh");
   const searchSubmit = () => alert("Search");
   const Create = () => location(AdminAcademicRoute.collegeClass.createClass);
   const Delete = () => alert("Delete");
 
-  const { data, isLoading, error } = getCollegeClass(filter);
+  const { data: response, isLoading, error } = getCollegeClass(
+    filter,
+    currentPage,
+    rowsPerPage
+  );
+  const data = response?.data;
+  const pagination = response?.pagination;
 
   //   if (isLoading) {
   //     return <LoadingSpinner title="Kelas Kuliah" />;
@@ -80,9 +90,6 @@ const CollegeClass = () => {
     return <div>Terjadi Kesalahan Dalam Mengambil Data</div>;
   }
 
-  console.log("programs", programs);
-  console.log("curiculums", curiculums);
-
   return (
     <MainLayout isGreeting={false} titlePage="Kelas Kuliah">
       <div className="space-y-4">
@@ -90,9 +97,9 @@ const CollegeClass = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-white border-t-2 border-primary-yellow p-3 rounded shadow-sm">
           <SelectInput
             getOptionLabel={(opt) => opt.nama}
-            getOptionValue={(opt) => opt.kode}
+            getOptionValue={(opt) => opt.id}
             onChange={(val) =>
-              handleChangeFilter("periodeAkademik", val.namaPeriode)
+              handleChangeFilter("periodeAkademik", val?.id ?? "")
             }
             value={filter.periodeAkademik}
             options={periods}
@@ -173,12 +180,12 @@ const CollegeClass = () => {
           {/* PAGINATION */}
           <div className="mt-4">
             <Pagination
-              currentPage={currentPage}
-              totalPages={1000}
+              currentPage={pagination?.currentPage ?? currentPage}
+              totalPages={pagination?.totalPage ?? 1}
               onPageChange={setCurrentPage}
-              rowsPerPage={rowsPerPage}
-              totalRows={65}
-              onRowsPerPageChange={setRowsPerPage}
+              rowsPerPage={pagination?.perPage ?? rowsPerPage}
+              totalRows={pagination?.totalItems ?? 0}
+              onRowsPerPageChange={handleRowsPerPageChange}
             />
           </div>
         </BorderedGreenContainer>
@@ -305,18 +312,29 @@ const CollegeClassTable = ({ data }) => {
                   {student.nama}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {/*{student.dosen.map((dosen, i) => (*/}
-                  {/*  <span key={i} className="block">*/}
-                  {/*    {dosen}*/}
-                  {/*  </span>*/}
-                  {/*))}*/}
+                  {student.jadwalKuliah?.length > 0
+                    ? [
+                        ...new Set(
+                          student.jadwalKuliah
+                            .map((jadwal) => jadwal.dosen?.nama)
+                            .filter(Boolean)
+                        ),
+                      ].map((nama, i) => (
+                        <span key={i} className="block">
+                          {nama}
+                        </span>
+                      ))
+                    : "-"}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {/*{student.jadwalMingguan.map((jadwal, i) => (*/}
-                  {/*  <span key={i} className="block">*/}
-                  {/*    {jadwal}*/}
-                  {/*  </span>*/}
-                  {/*))}*/}
+                  {student.jadwalKuliah?.length > 0
+                    ? student.jadwalKuliah.map((jadwal, i) => (
+                        <span key={i} className="block">
+                          {jadwal.hari}, {jadwal.jamMulai?.slice(0, 5)}-
+                          {jadwal.jamSelesai?.slice(0, 5)}
+                        </span>
+                      ))
+                    : "-"}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
                   {student.kapasitas}

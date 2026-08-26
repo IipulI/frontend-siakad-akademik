@@ -143,7 +143,8 @@ export default function FormDomicili({
   };
 
   // Handler untuk perubahan provinsi KTP
-  const handleKtpProvinceChange = (value: string) => {
+  const handleKtpProvinceChange = (option: { value: string; label: string } | null) => {
+    const value = option?.value ?? "";
     onInputChange("provinsiKtp", value);
     onInputChange("kotaRt", ""); // Reset kota
     onInputChange("kecamatanRt", ""); // Reset kecamatan
@@ -157,7 +158,8 @@ export default function FormDomicili({
   };
 
   // Handler untuk perubahan kota KTP
-  const handleKtpRegencyChange = (value: string) => {
+  const handleKtpRegencyChange = (option: { value: string; label: string } | null) => {
+    const value = option?.value ?? "";
     onInputChange("kotaRt", value);
     onInputChange("kecamatanRt", ""); // Reset kecamatan
 
@@ -169,7 +171,8 @@ export default function FormDomicili({
   };
 
   // Handler untuk perubahan provinsi Domisili
-  const handleDomisiliProvinceChange = (value: string) => {
+  const handleDomisiliProvinceChange = (option: { value: string; label: string } | null) => {
+    const value = option?.value ?? "";
     onInputChange("provinsiDomisili", value);
     onInputChange("kotaDomisili", ""); // Reset kota
     onInputChange("kecamatanDomisili", ""); // Reset kecamatan
@@ -183,7 +186,8 @@ export default function FormDomicili({
   };
 
   // Handler untuk perubahan kota Domisili
-  const handleDomisiliRegencyChange = (value: string) => {
+  const handleDomisiliRegencyChange = (option: { value: string; label: string } | null) => {
+    const value = option?.value ?? "";
     onInputChange("kotaDomisili", value);
     onInputChange("kecamatanDomisili", ""); // Reset kecamatan
 
@@ -299,7 +303,7 @@ export default function FormDomicili({
               label="Kecamatan"
               options={ktpDistrictOptions}
               value={formData?.kecamatanRt}
-              onChange={(value) => onInputChange("kecamatanRt", value)}
+              onChange={(option) => onInputChange("kecamatanRt", option?.value ?? "")}
             />
             <TextInput
               label="Kode Pos"
@@ -381,7 +385,7 @@ export default function FormDomicili({
               label="Kecamatan"
               options={domisiliDistrictOptions}
               value={formData?.kecamatanDomisili}
-              onChange={(value) => onInputChange("kecamatanDomisili", value)}
+              onChange={(option) => onInputChange("kecamatanDomisili", option?.value ?? "")}
             />
             <TextInput
               label="Kode Pos"

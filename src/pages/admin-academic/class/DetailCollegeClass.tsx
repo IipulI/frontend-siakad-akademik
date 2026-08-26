@@ -15,6 +15,7 @@ import {
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
 import ButtonClick from "../../../components/admin-academic/student-data/ButtonClick";
 import { InputFilter } from "../../../components/admin-academic/student-data/Input";
+import { DosenAsyncSelect } from "../../../components/admin-academic/student-data/DosenAsyncSelect";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TabNavigationButtonStudent } from "../../../components/admin-academic/dashboard/TabNavigasiButton";
@@ -22,16 +23,18 @@ import {
   getClassRPS,
   getClassAttendants,
   getDetailCollegeClass,
-  getLecturers,
-  getLecturerSchedule,
-  addLecturerSchedule,
-  getClassesGrades,
+  getClassSchedule,
   getStudents,
   getAllDetailStudentAttendant,
   addStudentToClass,
   deleteStudentsFromClass,
   getStudentExams,
+  addClassSchedule,
+  deleteClassSchedule,
+  getRooms,
+  getSlotWaktu,
 } from "../../../hooks/useKelasKuliah";
+import { useJenisPertemuan } from "../../../hooks/admin-akademik/useJenisPertemuan";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import DateFormatter from "../../../helpers/DateFormatter";
 
@@ -54,6 +57,8 @@ const DetailCollegeClass = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
 
+  const queryClient = useQueryClient();
+
   const { data, isLoading, error } = getDetailCollegeClass(id!);
   const {
     data: classAttendants,
@@ -64,54 +69,89 @@ const DetailCollegeClass = () => {
     data: classRPS,
     isLoading: isLoadingRPS,
     error: isErrorRPS,
-  } = getClassRPS(id!);
+  } = getClassRPS(data?.mataKuliah?.id, data?.periodeAkademik?.id);
 
-  const {
-    data: classGrades,
-    isLoading: isLoadingClassGrades,
-    error: isErrorClassGrades,
-  } = getClassesGrades(id!);
+  const { data: rooms } = getRooms();
+  const { data: jenisPertemuanList } = useJenisPertemuan();
+  const { data: slotWaktuList } = getSlotWaktu();
 
-  const { data: lecturers, isLoading: isLoadingLecturers } = getLecturers();
+  const [newScheduleList, setNewScheduleList] = useState([]);
 
-  console.log("NIlai Kelas", classGrades);
-
-  const [scheduleList, setScheduleList] = useState([
-    {
-      day: "",
-      startTime: "",
-      endTime: "",
-      meetingType: "",
-      learningMethod: "",
-      room: "",
-    },
-  ]);
+  const { mutate: submitSchedule, isPending: isSubmittingSchedule } =
+    addClassSchedule(id!);
+  const { mutate: removeSchedule } = deleteClassSchedule(id!);
 
   const [activeTab, setActiveTab] = useState("classDetails");
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
-  const addNewSchedule = () => {
-    setScheduleList((prev) => [
-      ...prev,
-      {
-        day: "",
-        startTime: "",
-        endTime: "",
-        meetingType: "",
-        learningMethod: "",
-        room: "",
-      },
-    ]);
-  };
-
   const back = () => {
     navigate(AdminAcademicRoute.collegeClass.class);
   };
 
+  const addNewSchedule = () => {
+    setNewScheduleList((prev) => [...prev, emptyScheduleRow()]);
+  };
+
+  const handleChangeNewRow = (index, field, value) => {
+    const updated = [...newScheduleList];
+    updated[index][field] = value;
+    setNewScheduleList(updated);
+  };
+
+  const handleLecturerChangeNewRow = (index, lecId, label) => {
+    const updated = [...newScheduleList];
+    updated[index].lecturer = lecId;
+    updated[index].lecturerName = label;
+    setNewScheduleList(updated);
+  };
+
+  const handleRemoveNewRow = (index) => {
+    setNewScheduleList(newScheduleList.filter((_, i) => i !== index));
+  };
+
+  const handleDeleteSchedule = (jadwalId: string) => {
+    if (!confirm("Hapus jadwal ini?")) return;
+
+    removeSchedule(jadwalId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["classSchedule", id] });
+      },
+      onError: (error: any) => {
+        alert(error?.response?.data?.message || "Gagal menghapus jadwal.");
+      },
+    });
+  };
+
   const save = () => {
-    alert("save");
+    if (newScheduleList.length === 0) {
+      alert("Tidak ada perubahan jadwal untuk disimpan.");
+      return;
+    }
+
+    const payload = {
+      jadwalKuliah: newScheduleList.map((item) => ({
+        hari: item.day,
+        siakRuanganId: item.room,
+        siakDosenId: item.lecturer || null,
+        jamMulai: item.startTime + ":00",
+        jamSelesai: item.endTime + ":00",
+        jenisPertemuan: item.meetingType,
+        metodePembelajaran: item.learningMethod,
+      })),
+    };
+
+    submitSchedule(payload, {
+      onSuccess: () => {
+        alert("Jadwal berhasil ditambahkan.");
+        setNewScheduleList([]);
+        queryClient.invalidateQueries({ queryKey: ["classSchedule", id] });
+      },
+      onError: (error: any) => {
+        alert(error?.response?.data?.message || "Gagal menambahkan jadwal.");
+      },
+    });
   };
 
   if (isLoading) {
@@ -146,8 +186,9 @@ const DetailCollegeClass = () => {
               color={
                 activeTab == "classDetails" ? `bg-primary-blueSoft` : `hidden`
               }
-              text="Simpan"
+              text={isSubmittingSchedule ? "Menyimpan..." : "Simpan"}
               onClick={save}
+              disabled={isSubmittingSchedule}
             />
           </div>
 
@@ -163,12 +204,6 @@ const DetailCollegeClass = () => {
                   Detail Kelas
                 </TabNavigationButtonStudent>
                 <TabNavigationButtonStudent
-                  isActive={activeTab === "lecturer"}
-                  onClick={() => handleTabClick("lecturer")}
-                >
-                  Dosen Pengajar
-                </TabNavigationButtonStudent>
-                <TabNavigationButtonStudent
                   isActive={activeTab === "classAttendant"}
                   onClick={() => handleTabClick("classAttendant")}
                 >
@@ -179,12 +214,6 @@ const DetailCollegeClass = () => {
                   onClick={() => handleTabClick("rps")}
                 >
                   RPS
-                </TabNavigationButtonStudent>
-                <TabNavigationButtonStudent
-                  isActive={activeTab === "grading"}
-                  onClick={() => handleTabClick("grading")}
-                >
-                  Penilaian
                 </TabNavigationButtonStudent>
                 <TabNavigationButtonStudent
                   isActive={activeTab === "examSchedule"}
@@ -200,19 +229,21 @@ const DetailCollegeClass = () => {
               {activeTab === "classDetails" && (
                 <CollegeClassInformation
                   data={data}
-                  addNewSchedule={addNewSchedule}
+                  newScheduleList={newScheduleList}
+                  onAddNewSchedule={addNewSchedule}
+                  onChangeNewRow={handleChangeNewRow}
+                  onLecturerChangeNewRow={handleLecturerChangeNewRow}
+                  onRemoveNewRow={handleRemoveNewRow}
+                  onDeleteSchedule={handleDeleteSchedule}
+                  listRooms={rooms}
+                  listJenisPertemuan={jenisPertemuanList}
+                  listSlotWaktu={slotWaktuList}
                 />
               )}
-              {activeTab === "lecturer" && (
-                <Lecturer lecturerLists={lecturers} data={data} />
-              )}
               {activeTab === "classAttendant" && (
-                <ClassAttendant data={data.id} />
+                <ClassAttendant data={data.id} classData={data} />
               )}
               {activeTab === "rps" && <RPS RPS={classRPS} data={data} />}
-              {activeTab === "grading" && (
-                <Grading grades={classGrades} data={data} />
-              )}
               {activeTab === "examSchedule" && <ExamSchedule data={data} />}
             </div>
           </div>
@@ -222,8 +253,32 @@ const DetailCollegeClass = () => {
   );
 };
 
-const CollegeClassInformation = ({ data, addNewSchedule }) => {
-  console.log("TEST DATA", data);
+const emptyScheduleRow = () => ({
+  day: "",
+  startTime: "",
+  endTime: "",
+  meetingType: "",
+  learningMethod: "",
+  room: "",
+  lecturer: "",
+  lecturerName: "",
+});
+
+const CollegeClassInformation = ({
+  data,
+  newScheduleList,
+  onAddNewSchedule,
+  onChangeNewRow,
+  onLecturerChangeNewRow,
+  onRemoveNewRow,
+  onDeleteSchedule,
+  listRooms,
+  listJenisPertemuan,
+  listSlotWaktu,
+}) => {
+  const { data: schedule, isLoading: isLoadingSchedule } = getClassSchedule(
+    data.id
+  );
 
   return (
     <>
@@ -286,13 +341,28 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
         {/* Jadwal Mingguan */}
         <div className="space-y-4">
           <h1 className="font-bold text-xl sm:text-2xl">Jadwal Mingguan</h1>
-          {/* <DetailCollegeClassTable data={data} /> */}
+          {isLoadingSchedule ? (
+            <LoadingSpinner />
+          ) : (
+            <DetailCollegeClassTable
+              data={schedule}
+              onDelete={onDeleteSchedule}
+              newRows={newScheduleList}
+              onChangeNewRow={onChangeNewRow}
+              onLecturerChangeNewRow={onLecturerChangeNewRow}
+              onRemoveNewRow={onRemoveNewRow}
+              listRooms={listRooms}
+              listJenisPertemuan={listJenisPertemuan}
+              listSlotWaktu={listSlotWaktu}
+            />
+          )}
+
           <div className="flex justify-end">
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
               color="bg-primary-green"
               text="Tambah Jadwal"
-              onClick={addNewSchedule}
+              onClick={onAddNewSchedule}
             />
           </div>
         </div>
@@ -302,7 +372,6 @@ const CollegeClassInformation = ({ data, addNewSchedule }) => {
 };
 
 const ClassBio = ({ data }) => {
-  console.log("Class Bio", data);
   return (
     <div className="bg-[#F5FFF9] w-full px-4 py-4 mt-5 border-l-8 border-[#116E63] rounded-md">
       <h2 className="font-semibold text-base mb-4">Status</h2>
@@ -310,18 +379,18 @@ const ClassBio = ({ data }) => {
         <div className="flex flex-col space-y-2">
           <p>
             <span className="font-medium">
-              Program Studi: {`${data.programStudi.namaProgramStudi}`}
+              Program Studi: {data.mataKuliah.programStudi.nama}
             </span>
           </p>
           <p>
             <span className="font-medium">
               Mata Kuliah:
-              {` ${data.mataKuliah.kodeMataKuliah} - ${data.mataKuliah.namaMataKuliah} - 2SKS`}
+              {` ${data.mataKuliah.kode} - ${data.mataKuliah.nama} - ${data.mataKuliah.totalSks}SKS`}
             </span>
           </p>
           <p>
             <span className="font-medium">
-              Kurikulum: {data.mataKuliah.tahunKurikulum}
+              Kurikulum: {data.mataKuliah.tahunKurikulum.tahun}
             </span>
           </p>
           <p>
@@ -330,7 +399,9 @@ const ClassBio = ({ data }) => {
         </div>
         <div className="flex flex-col space-y-2">
           <p>
-            <span className="font-medium">Periode: {data.periodeAkademik}</span>
+            <span className="font-medium">
+              Periode: {data.periodeAkademik.nama}
+            </span>
           </p>
           <p>
             <span className="font-medium">Nama Kelas: {data.nama}</span>
@@ -349,167 +420,7 @@ const ClassBio = ({ data }) => {
   );
 };
 
-const Lecturer = ({ data, lecturerLists }) => {
-  const [lecturers, setLecturers] = useState([{ id: "", jadwalIds: [] }]);
-
-  const { data: lecturerSchedule, isLoading: isLoadingLecturerSchedule } =
-    getLecturerSchedule(data.id);
-
-  const { mutate: submitLecturerSchedule, isLoading: isSubmitting } =
-    addLecturerSchedule(data.id);
-
-  const handleAddLecturer = () => {
-    setLecturers((prev) => [...prev, { id: "", jadwalIds: [] }]);
-  };
-
-  const handleRemoveLecturer = (index) => {
-    setLecturers((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleChangeLecturer = (index, value) => {
-    const updated = [...lecturers];
-    updated[index].id = value;
-    setLecturers(updated);
-  };
-
-  const toggleJadwalCheckbox = (lecturerIndex, jadwalId) => {
-    const updated = [...lecturers];
-    const current = updated[lecturerIndex].jadwalIds || [];
-
-    if (current.includes(jadwalId)) {
-      updated[lecturerIndex].jadwalIds = current.filter(
-        (id) => id !== jadwalId
-      );
-    } else {
-      updated[lecturerIndex].jadwalIds = [...current, jadwalId];
-    }
-
-    setLecturers(updated);
-  };
-
-  const lecturerHandleSubmit = () => {
-    const payload = {
-      jadwal: lecturers
-        .filter((lec) => lec.id && lec.jadwalIds?.length > 0)
-        .map((lec) => ({
-          dosenId: lec.id,
-          jadwalIds: lec.jadwalIds,
-        })),
-    };
-
-    // console.log("Payload Yg dikirim", payload);
-
-    submitLecturerSchedule(payload, {
-      onSuccess: () => {
-        alert("Berhasil menyimpan jadwal dosen.");
-      },
-      onError: (error) => {
-        console.error("Gagal menyimpan jadwal dosen:", error);
-        alert("Terjadi kesalahan saat menyimpan.");
-      },
-    });
-  };
-
-  if (isLoadingLecturerSchedule) return <LoadingSpinner />;
-
-  return (
-    <div className="space-y-6">
-      {/* Informasi Kelas */}
-      <ClassBio data={data} />
-
-      {/* Tombol Tambah Dosen */}
-      <div className="flex justify-end">
-        <ButtonClick
-          text="Tambah Dosen Pengajar"
-          icon={<Plus size={15} />}
-          color={
-            lecturerSchedule.length === 1
-              ? "bg-primary-green cursor-not-allowed opacity-50"
-              : "bg-primary-green"
-          }
-          disabled={lecturerSchedule.length === 1}
-          onClick={handleAddLecturer}
-        />
-      </div>
-
-      {/* Form Dosen Pengajar */}
-      {lecturers.length === 0 ? (
-        <div className="text-center py-4">
-          <h1 className="font-semibold text-lg sm:text-xl text-gray-700">
-            Tidak Ada Dosen Pengajar
-          </h1>
-        </div>
-      ) : (
-        lecturers.map((lec, index) => (
-          <div key={index} className="border-b border-teal-700 pb-4 space-y-2">
-            <div className="flex justify-between items-center">
-              <label className="font-semibold">
-                Dosen Pengajar {index + 1}
-              </label>
-              <button
-                className="text-white bg-red-500 hover:bg-red-600 p-2 rounded"
-                onClick={() => handleRemoveLecturer(index)}
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-
-            <select
-              className="border border-gray-300 rounded p-2 w-full"
-              value={lec.id}
-              onChange={(e) => handleChangeLecturer(index, e.target.value)}
-            >
-              <option value="">-- Pilih Dosen --</option>
-              {lecturerLists.map((dosen) => (
-                <option key={dosen.id} value={dosen.id}>
-                  {dosen.nama}
-                </option>
-              ))}
-            </select>
-
-            <div className="flex flex-col gap-2 pt-2">
-              {lecturerSchedule.map((jadwalDosen, keyJadwalDosen) => {
-                const jadwalId = jadwalDosen.id;
-                const isChecked = lec.jadwalIds.includes(jadwalId);
-
-                return (
-                  <label
-                    key={keyJadwalDosen}
-                    className="flex items-center gap-2 font-medium"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => toggleJadwalCheckbox(index, jadwalId)}
-                    />
-                    <span>
-                      {jadwalDosen.hari}, {jadwalDosen.siakRuangan.namaRuangan}{" "}
-                      • {jadwalDosen.jamMulai?.split(":").slice(0, 2).join(":")}{" "}
-                      -{" "}
-                      {jadwalDosen.jamSelesai?.split(":").slice(0, 2).join(":")}
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
-        ))
-      )}
-
-      {/* Tombol Simpan */}
-      <ButtonClick
-        spacing="2"
-        icon={<Save />}
-        text={isSubmitting ? "Menyimpan..." : "Simpan"}
-        color="bg-primary-blueSoft cursor-pointer"
-        onClick={lecturerHandleSubmit}
-        disabled={isSubmitting}
-      />
-    </div>
-  );
-};
-
-const ClassAttendant = ({ data }) => {
+const ClassAttendant = ({ data, classData }) => {
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -563,7 +474,7 @@ const ClassAttendant = ({ data }) => {
   return (
     <div className="space-y-6">
       {/* Informasi Kelas */}
-      {/* <ClassBio data={data} /> */}
+      <ClassBio data={classData} />
 
       {/* Tombol Aksi */}
       <div className="flex flex-wrap justify-end items-center gap-2">
@@ -685,7 +596,7 @@ const CollegeClassTable = ({ data, selectedIds, onChangeSelectedIds }) => {
                   {student.nama}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {student.programStudiResDto.namaProgramStudi}
+                  {student.programStudi?.nama ?? "-"}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
                   {student.angkatan}
@@ -716,67 +627,202 @@ const CreateCollegeSelectOption = () => {
   );
 };
 
-// const DetailCollegeClassTable = ({ data }) => {
-//   return (
-//     <div className="w-full overflow-x-auto rounded-md border border-gray-200">
-//       <table className="min-w-[900px] w-full border-collapse text-sm">
-//         <thead>
-//           <tr className="bg-primary-green text-white text-center">
-//             <th className="p-3 border border-gray-300">No</th>
-//             <th className="p-3 border border-gray-300">Hari</th>
-//             <th className="p-3 border border-gray-300">Jam Mulai</th>
-//             <th className="p-3 border border-gray-300">Jam Selesai</th>
-//             <th className="p-3 border border-gray-300">Jenis Pertemuan</th>
-//             <th className="p-3 border border-gray-300">Metode Pembelajaran</th>
-//             <th className="p-3 border border-gray-300">Ruangan</th>
-//             <th className="p-3 border border-gray-300">Aksi</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {scheduleList.length > 0 ? (
-//             scheduleList.map((_, index) => (
-//               <tr key={index} className="text-center hover:bg-gray-50">
-//                 <td className="p-3 border border-gray-300">{index + 1}</td>
-//                 <td className="p-2 border border-gray-300">
-//                   <CreateCollegeSelectOption />
-//                 </td>
-//                 <td className="p-2 border border-gray-300">
-//                   <CreateCollegeSelectOption />
-//                 </td>
-//                 <td className="p-2 border border-gray-300">
-//                   <CreateCollegeSelectOption />
-//                 </td>
-//                 <td className="p-2 border border-gray-300">
-//                   <CreateCollegeSelectOption />
-//                 </td>
-//                 <td className="p-2 border border-gray-300">
-//                   <CreateCollegeSelectOption />
-//                 </td>
-//                 <td className="p-2 border border-gray-300">
-//                   <CreateCollegeSelectOption />
-//                 </td>
-//                 <td className="p-2 border border-gray-300">
-//                   <button
-//                     className="text-red-500 hover:underline text-xs"
-//                     onClick={() => alert(`Hapus jadwal ${index + 1}`)}
-//                   >
-//                     Hapus
-//                   </button>
-//                 </td>
-//               </tr>
-//             ))
-//           ) : (
-//             <tr>
-//               <td colSpan={8} className="text-center py-4 text-gray-500">
-//                 Tidak ada jadwal perkuliahan.
-//               </td>
-//             </tr>
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
+const DetailCollegeClassTable = ({
+  data,
+  onDelete,
+  newRows = [],
+  onChangeNewRow,
+  onLecturerChangeNewRow,
+  onRemoveNewRow,
+  listRooms,
+  listJenisPertemuan,
+  listSlotWaktu,
+}) => {
+  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const learningMethod = ["Offline", "Online", "Hybrid"];
+  const savedCount = data?.length ?? 0;
+
+  return (
+    <div className="w-full overflow-x-auto rounded-md border border-gray-200">
+      <table className="min-w-[900px] w-full border-collapse text-sm">
+        <thead>
+          <tr className="bg-primary-green text-white text-center">
+            <th className="p-3 border border-gray-300">No</th>
+            <th className="p-3 border border-gray-300">Hari</th>
+            <th className="p-3 border border-gray-300">Jam Mulai</th>
+            <th className="p-3 border border-gray-300">Jam Selesai</th>
+            <th className="p-3 border border-gray-300">Jenis Pertemuan</th>
+            <th className="p-3 border border-gray-300">Metode Pembelajaran</th>
+            <th className="p-3 border border-gray-300">Ruangan</th>
+            <th className="p-3 border border-gray-300">Dosen</th>
+            <th className="p-3 border border-gray-300">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {savedCount === 0 && newRows.length === 0 && (
+            <tr>
+              <td colSpan={9} className="text-center py-4 text-gray-500">
+                Tidak ada jadwal perkuliahan.
+              </td>
+            </tr>
+          )}
+          {data?.map((jadwal, index) => (
+            <tr key={jadwal.id ?? index} className="text-center hover:bg-gray-50">
+              <td className="p-3 border border-gray-300">{index + 1}</td>
+              <td className="p-2 border border-gray-300">{jadwal.hari}</td>
+              <td className="p-2 border border-gray-300">
+                {jadwal.jamMulai?.slice(0, 5)}
+              </td>
+              <td className="p-2 border border-gray-300">
+                {jadwal.jamSelesai?.slice(0, 5)}
+              </td>
+              <td className="p-2 border border-gray-300">
+                {jadwal.jenisPertemuan}
+              </td>
+              <td className="p-2 border border-gray-300">
+                {jadwal.metodePembelajaran}
+              </td>
+              <td className="p-2 border border-gray-300">
+                {jadwal.ruangan?.nama ?? "-"}
+              </td>
+              <td className="p-2 border border-gray-300">
+                {jadwal.dosen?.nama ?? "-"}
+              </td>
+              <td className="p-2 border border-gray-300">
+                <button
+                  className="text-red-500 hover:underline text-xs"
+                  onClick={() => onDelete(jadwal.id)}
+                >
+                  Hapus
+                </button>
+              </td>
+            </tr>
+          ))}
+          {newRows.map((item, index) => (
+            <tr key={`new-${index}`} className="hover:bg-gray-50 text-center bg-yellow-50/40">
+              <td className="p-2 border border-gray-300">
+                {savedCount + index + 1}
+              </td>
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.day}
+                  onChange={(e) =>
+                    onChangeNewRow(index, "day", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {days.map((day) => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.startTime}
+                  onChange={(e) =>
+                    onChangeNewRow(index, "startTime", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {listSlotWaktu?.map((slot) => (
+                    <option key={slot.id} value={slot.waktu.slice(0, 5)}>
+                      {slot.waktu.slice(0, 5)}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.endTime}
+                  onChange={(e) =>
+                    onChangeNewRow(index, "endTime", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {listSlotWaktu?.map((slot) => (
+                    <option key={slot.id} value={slot.waktu.slice(0, 5)}>
+                      {slot.waktu.slice(0, 5)}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.meetingType}
+                  onChange={(e) =>
+                    onChangeNewRow(index, "meetingType", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {listJenisPertemuan?.map((jenis) => (
+                    <option key={jenis.id} value={jenis.nama}>
+                      {jenis.nama}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.learningMethod}
+                  onChange={(e) =>
+                    onChangeNewRow(index, "learningMethod", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {learningMethod.map((method) => (
+                    <option key={method} value={method}>
+                      {method}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border border-gray-300">
+                <select
+                  value={item.room}
+                  onChange={(e) =>
+                    onChangeNewRow(index, "room", e.target.value)
+                  }
+                  className="border p-1 w-full"
+                >
+                  <option value="">-- Pilih --</option>
+                  {listRooms?.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.nama}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 border border-gray-300">
+                <DosenAsyncSelect
+                  value={item.lecturer}
+                  selectedLabel={item.lecturerName}
+                  onChange={(id, label) =>
+                    onLecturerChangeNewRow(index, id, label)
+                  }
+                />
+              </td>
+              <td className="p-2 border border-gray-300">
+                <button
+                  className="text-red-500 hover:underline text-xs"
+                  onClick={() => onRemoveNewRow(index)}
+                >
+                  Hapus
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 const RPS = ({ RPS, data }) => {
   const InfoItem = ({ label, children }) => (
@@ -788,155 +834,67 @@ const RPS = ({ RPS, data }) => {
     </div>
   );
 
-  if (!RPS) {
+  if (!RPS?.rpsData) {
     return (
       <div className="space-y-4 w-full px-4 md:px-0">
         <ClassBio data={data} />
         <div className="w-full p-4 md:p-6 bg-white rounded-lg shadow text-center text-gray-500">
           📭{" "}
           <span className="block mt-2">
-            RPS belum tersedia untuk kelas ini.
+            RPS belum tersedia untuk mata kuliah ini pada periode berjalan.
           </span>
         </div>
       </div>
     );
   }
 
+  const { mataKuliah, rpsData } = RPS;
+
   return (
     <div className="space-y-4 w-full px-4 md:px-0">
       <ClassBio data={data} />
       <div className="w-full p-4 md:p-6 bg-white rounded-lg shadow overflow-x-auto">
-        <InfoItem label="Mata Kuliah">{RPS.mataKuliah.namaMataKuliah}</InfoItem>
-        <InfoItem label="Tanggal Penyusunan">
-          {DateFormatter(RPS.tanggalPenyusun)}
+        <InfoItem label="Mata Kuliah">
+          {mataKuliah.kode} - {mataKuliah.nama}
         </InfoItem>
-        <InfoItem label="Dosen Penyusun">
-          {RPS.dosenPenyusun.map((dosenPenyusun, key) => (
-            <span key={key}>
-              {dosenPenyusun.nidn} - {dosenPenyusun.nama}
-              <br />
-            </span>
-          ))}
+        <InfoItem label="Tanggal Penyusunan">
+          {rpsData.tanggalPenyusunan
+            ? DateFormatter(rpsData.tanggalPenyusunan)
+            : "-"}
         </InfoItem>
 
         <InfoItem label="Deskripsi Mata Kuliah">
-          {RPS.deskripsiMataKuliah}
+          {rpsData.deskripsiMataKuliah || "-"}
         </InfoItem>
 
-        <InfoItem label="Tujuan Mata Kuliah">{RPS.tujuanMataKuliah}</InfoItem>
+        <InfoItem label="Tujuan Mata Kuliah">
+          {rpsData.tujuanMataKuliah || "-"}
+        </InfoItem>
 
         <InfoItem label="Materi Pembelajaran">
-          {RPS.materiPembelajaran}
+          {rpsData.materiPembelajaran || "-"}
         </InfoItem>
 
-        <InfoItem label="Pustaka Utama">{RPS.pustakaUtama}</InfoItem>
+        <InfoItem label="Pustaka Utama">{rpsData.pustakaUtama || "-"}</InfoItem>
 
-        <InfoItem label="Pustaka Pendukung">{RPS.pustakaPendukung}</InfoItem>
+        <InfoItem label="Pustaka Pendukung">
+          {rpsData.pustakaPendukung || "-"}
+        </InfoItem>
 
         <InfoItem label="Dokumen RPS">
-          <a
-            href="#"
-            className="text-green-700 underline hover:text-green-900 break-words"
-          >
-            RPS Pengantar Akuntansi 1.pdf
-          </a>
+          {rpsData.dokumenRpsUrl ? (
+            <a
+              href={rpsData.dokumenRpsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-green-700 underline hover:text-green-900 break-words"
+            >
+              {rpsData.dokumenRpsNamaFile}
+            </a>
+          ) : (
+            "-"
+          )}
         </InfoItem>
-      </div>
-    </div>
-  );
-};
-
-const Grading = ({ grades, data }) => {
-  console.log("NILAI", grades);
-
-  return (
-    <div className="space-y-4 px-4 md:px-0">
-      <ClassBio data={data} />
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm md:text-base border-collapse">
-          <thead>
-            <tr className="bg-primary-green text-white">
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                No
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                NIM
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Nama Mahasiswa
-              </th>
-
-              {grades.komposisiPenilaian.map((bobot, keyBobot) => (
-                <th
-                  key={keyBobot}
-                  className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap"
-                >
-                  {bobot.nama} {`${bobot.persentase}%`}
-                </th>
-              ))}
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Nilai
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Grade
-              </th>
-              <th className="py-2 px-4 border border-gray-300 font-semibold whitespace-nowrap">
-                Lulus
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {grades.mahasiswa.length > 0 ? (
-              grades.mahasiswa.map((grade) => (
-                <tr key={grade.npm} className="hover:bg-gray-50 text-center">
-                  <td className="py-2 px-4 border border-gray-300 font-medium">
-                    {grade.npm}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.npm}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.nama}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.tugas ? grade.tugas : "Belum Ada Nilai"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.uts ? grade.uts : "Belum Ada Nilai"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.uas ? grade.uas : "Belum Ada Nilai"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.kehadiran ? grade.kehadiran : "Belum Ada Nilai"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.nilai ? grade.nilai : "Belum Ada Nilai"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.grade ? grade.grade : "Belum Ada Nilai"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {grade.status === "A" ? (
-                      <span className="text-green-600 text-lg">✅</span>
-                    ) : (
-                      <span className="text-red-600 text-lg">❌</span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={10}
-                  className="text-center py-4 text-gray-500 border"
-                >
-                  Tidak ada data peserta kelas.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );
@@ -998,10 +956,10 @@ const ExamSchedule = ({ data }) => {
                   {exam.jamMulai}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.siakRuangan.namaRuangan}
+                  {exam.siakRuangan?.namaRuangan ?? "-"}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
-                  {exam.siakDosen.nama}
+                  {exam.siakDosen?.nama ?? "-"}
                 </td>
 
                 <td className="py-2 px-4 border border-gray-300">

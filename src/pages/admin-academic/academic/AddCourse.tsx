@@ -268,17 +268,17 @@ const AddCourse: React.FC = () => {
                 </div>
 
                 {/* Semester (UI only, not sent yet) */}
-                <div>
-                  <label className="block mb-2 font-medium">Semester</label>
-                  <select name="semester" value={formData.semester} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
-                    <option value="">-- Pilih Semester --</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
-                        <option key={sem} value={sem}>
-                          {sem}
-                        </option>
-                    ))}
-                  </select>
-                </div>
+                {/*<div>*/}
+                {/*  <label className="block mb-2 font-medium">Semester</label>*/}
+                {/*  <select name="semester" value={formData.semester} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">*/}
+                {/*    <option value="">-- Pilih Semester --</option>*/}
+                {/*    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (*/}
+                {/*        <option key={sem} value={sem}>*/}
+                {/*          {sem}*/}
+                {/*        </option>*/}
+                {/*    ))}*/}
+                {/*  </select>*/}
+                {/*</div>*/}
 
                 {/* Jenis Mata Kuliah */}
                 <div>
@@ -290,17 +290,17 @@ const AddCourse: React.FC = () => {
                   </select>
                 </div>
 
-                {/* Nilai Minimum (UI only, not sent yet) */}
-                <div>
-                  <label className="block mb-2 font-medium">Nilai Minimum</label>
-                  <select name="nilaiMin" value={formData.nilaiMin} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="E">E</option>
-                  </select>
-                </div>
+                {/*/!* Nilai Minimum (UI only, not sent yet) *!/*/}
+                {/*<div>*/}
+                {/*  <label className="block mb-2 font-medium">Nilai Minimum</label>*/}
+                {/*  <select name="nilaiMin" value={formData.nilaiMin} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">*/}
+                {/*    <option value="A">A</option>*/}
+                {/*    <option value="B">B</option>*/}
+                {/*    <option value="C">C</option>*/}
+                {/*    <option value="D">D</option>*/}
+                {/*    <option value="E">E</option>*/}
+                {/*  </select>*/}
+                {/*</div>*/}
 
                 {/* Prasyarat 1 */}
                 <div>

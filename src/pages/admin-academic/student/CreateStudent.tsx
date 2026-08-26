@@ -33,7 +33,9 @@ import {
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   getAcademicPeriodeDropdown,
+  getJalurPendaftaran,
   getProgramStudi,
+  getSistemKuliah,
   getYearCuriculum,
 } from "../../../hooks/useGeneral";
 
@@ -206,21 +208,14 @@ export default function CreateStudent() {
   const { data: kurikulumOptions, isLoading: isLoadingKurikulum } =
     getYearCuriculum();
 
-  const sistemOptions = [
-    { value: "reguler", label: "Reguler" },
-    { value: "karyawan", label: "Karyawan" },
-  ];
+  const { data: sistemKuliahOptions } = getSistemKuliah();
+  const { data: jalurPendaftaranDropdown } = getJalurPendaftaran();
 
   const kelasOptions = [{ value: "-", label: "Belum ada Kelasssss" }];
 
   const jenisPendaftaranOptions = [
     { value: "peserta didik baru", label: "Peserta Didik Baru" },
     { value: "transfer", label: "Transfer" },
-  ];
-
-  const jalurPendaftaranOptions = [
-    { value: "mandiri", label: "Seleksi Mandiri" },
-    { value: "beasiswa", label: "Beasiswa" },
   ];
 
   const gelombangOptions = [
@@ -379,22 +374,22 @@ export default function CreateStudent() {
               label="Tahun Kurikulum"
               options={kurikulumOptions}
               getOptionLabel={(opt) => opt.tahun}
-              getOptionValue={(opt) => opt.tahun}
+              getOptionValue={(opt) => opt.id}
               required={true}
               value={formData.kurikulum}
               onChange={(value) =>
-                handleInputChange("kurikulum", value?.tahun ?? "")
+                handleInputChange("kurikulum", value?.id ?? "")
               }
             />
             <SelectInput
               label="Sistem Kuliah"
-              options={sistemOptions}
+              options={sistemKuliahOptions}
               required={true}
-              getOptionLabel={(opt) => opt.label}
-              getOptionValue={(opt) => opt.value}
+              getOptionLabel={(opt) => opt.nama}
+              getOptionValue={(opt) => opt.id}
               value={formData.sistemKuliah}
               onChange={(option) =>
-                handleInputChange("sistemKuliah", option?.value ?? "")
+                handleInputChange("sistemKuliah", option?.id ?? "")
               }
             />
             <SelectInput
@@ -424,13 +419,13 @@ export default function CreateStudent() {
 
             <SelectInput
               label="Jalur Pendaftaran"
-              options={jalurPendaftaranOptions}
-              getOptionLabel={(opt) => opt.label}
-              getOptionValue={(opt) => opt.value}
+              options={jalurPendaftaranDropdown}
+              getOptionLabel={(opt) => opt.nama}
+              getOptionValue={(opt) => opt.id}
               required={true}
               value={formData.jalurPendaftaran}
               onChange={(option) =>
-                handleInputChange("jalurPendaftaran", option?.value ?? "")
+                handleInputChange("jalurPendaftaran", option?.id ?? "")
               }
             />
 

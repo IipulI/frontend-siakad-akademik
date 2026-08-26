@@ -78,6 +78,8 @@ interface SelectProps<T> {
   value?: string;
   defaultValue?: string;
   error?: string;
+  disabled?: boolean;
+  disabledPlaceholder?: string;
   onChange?: (val: T | null) => void;
   getOptionLabel?: (option: T) => string; // optional
   getOptionValue?: (option: T) => string; // optional
@@ -91,6 +93,8 @@ export function SelectInput<T>({
   value,
   defaultValue = "",
   error,
+  disabled = false,
+  disabledPlaceholder,
   name,
   getOptionLabel = (opt: T) => String(opt),
   getOptionValue = (opt: T) => String(opt),
@@ -157,12 +161,22 @@ export function SelectInput<T>({
           <input
             type="text"
             name={name}
-            className={`w-full bg-white border text-sm sm:text-base ${
+            disabled={disabled}
+            className={`w-full border text-sm sm:text-base ${
               error ? "border-red-500" : "border-gray-300"
-            } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1 pr-12`}
-            placeholder={`-- Pilih ${label} --`}
+            } ${
+              disabled
+                ? "bg-gray-100 cursor-not-allowed text-black/40"
+                : "bg-white text-black/60"
+            } font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1 pr-12`}
+            placeholder={
+              disabled
+                ? disabledPlaceholder ?? `-- Pilih ${label} --`
+                : `-- Pilih ${label} --`
+            }
             value={isOpen ? search : selectedOption ? getLabel(selectedOption) : ""}
             onFocus={() => {
+              if (disabled) return;
               setIsOpen(true);
               setSearch("");
             }}

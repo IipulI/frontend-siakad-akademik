@@ -112,40 +112,40 @@ export default function FormParents({
               label="Status Hidup"
               options={statusHidupOptions}
               value={ayahData?.statusHidup || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "statusHidup", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ayahIndex, "statusHidup", option?.value ?? "")
               }
             />
             <SelectInput
               label="Status Kekerabatan"
               options={statusKerabatanOptions}
               value={ayahData?.statusKerabat || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "statusKerabat", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ayahIndex, "statusKerabat", option?.value ?? "")
               }
             />
             <SelectInput
               label="Pendidikan Terakhir"
               options={pendidikanOptions}
               value={ayahData?.pendidikan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "pendidikan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ayahIndex, "pendidikan", option?.value ?? "")
               }
             />
             <SelectInput
               label="Pekerjaan"
               options={pekerjaanOptions}
               value={ayahData?.pekerjaan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "pekerjaan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ayahIndex, "pekerjaan", option?.value ?? "")
               }
             />
             <SelectInput
               label="Penghasilan"
               options={penghasilanOptions}
               value={ayahData?.penghasilan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "penghasilan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ayahIndex, "penghasilan", option?.value ?? "")
               }
             />
             <TextInput
@@ -206,40 +206,40 @@ export default function FormParents({
               label="Status Hidup"
               options={statusHidupOptions}
               value={ibuData?.statusHidup || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "statusHidup", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ibuIndex, "statusHidup", option?.value ?? "")
               }
             />
             <SelectInput
               label="Status Kekerabatan"
               options={statusKerabatanOptions}
               value={ibuData?.statusKerabat || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "statusKerabat", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ibuIndex, "statusKerabat", option?.value ?? "")
               }
             />
             <SelectInput
               label="Pendidikan Terakhir"
               options={pendidikanOptions}
               value={ibuData?.pendidikan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "pendidikan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ibuIndex, "pendidikan", option?.value ?? "")
               }
             />
             <SelectInput
               label="Pekerjaan"
               options={pekerjaanOptions}
               value={ibuData?.pekerjaan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "pekerjaan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ibuIndex, "pekerjaan", option?.value ?? "")
               }
             />
             <SelectInput
               label="Penghasilan"
               options={penghasilanOptions}
               value={ibuData?.penghasilan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "penghasilan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(ibuIndex, "penghasilan", option?.value ?? "")
               }
             />
             <TextInput

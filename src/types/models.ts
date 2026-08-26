@@ -39,12 +39,12 @@ export interface IAcademicYearPayload {
 // --- Period (Periode Akademik) ---
 export interface IPeriod {
     id: string;
-    tahun: string; // Nama Tahun Ajaran (e.g., "2016/2017")
-    namaPeriode: string;
-    kodePeriode: string;
+    tahun: string;
+    nama: string;
+    kode: string;
     status: 'aktif' | 'inaktif' | 'ACTIVE' | 'INACTIVE';
-    tanggalMulai: string; // Format "YYYY-MM-DD"
-    tanggalSelesai: string; // Format "YYYY-MM-DD"
+    tanggalMulai: string;
+    tanggalSelesai: string;
 }
 
 export interface IPeriodPayload {
@@ -86,7 +86,8 @@ export interface ILimitSKSPayload {
 // --- Program Studi ---
 export interface IProgramStudi {
     id: string;
-    namaProgramStudi: string; // Contoh: "Teknik Informatika"
+    kode: string;
+    nama: string; // Contoh: "Teknik Informatika"
     jenjang: { // Nested object
         id: string;
         nama: string;
@@ -196,6 +197,19 @@ export interface IRuanganPayload {
     lantai: number;
 }
 
+// --- Data Pelengkap: Konsentrasi ---
+export interface IKonsentrasi {
+    id: string;
+    siakProgramStudiId: string;
+    kode: string;
+    nama: string;
+}
+export interface IKonsentrasiPayload {
+    siakProgramStudiId: string;
+    kode: string;
+    nama: string;
+}
+
 // --- Data Pelengkap: Perkuliahan ---
 export interface IJenisMataKuliah {
     id: string;
@@ -209,14 +223,10 @@ export interface IJenisMataKuliahPayload {
 
 export interface ISlotWaktu {
     id: string;
-    nama: string;
-    jamMulai: string;
-    jamSelesai: string;
+    waktu: string;
 }
 export interface ISlotWaktuPayload {
-    nama: string;
-    jamMulai: string;
-    jamSelesai: string;
+    waktu: string;
 }
 
 export interface IJenisPertemuan {
@@ -332,7 +342,8 @@ export type TableFormPayload =
     IStatusMahasiswaPayload |
     IJenisTinggalPayload |
     ITransportasiPayload |
-    IKebutuhanKhususPayload;
+    IKebutuhanKhususPayload |
+    IKonsentrasiPayload;
 
 // --- Bulk Assignment Payload (Initial Concept, not used in final SetComposition logic) ---
 // Kept for context if backend implements a true bulk set assignment
