@@ -21,6 +21,7 @@ import {
   addCollegeClass,
   CreateCollegeClassPayload,
   getRooms,
+  getSlotWaktu,
   getSubjects,
   getYearCuriculum,
 } from "../../../hooks/useKelasKuliah";
@@ -147,6 +148,8 @@ const CreateCollegeClass = () => {
     isLoading: isLoadingRooms,
     error: isErrorRooms,
   } = getRooms();
+
+  const { data: slotWaktuList } = getSlotWaktu();
 
   const { data: jenisPertemuanList, isLoading: isLoadingJenisPertemuan } =
     useJenisPertemuan();
@@ -327,6 +330,7 @@ const CreateCollegeClass = () => {
               scheduleList={scheduleList}
               listRooms={rooms}
               listJenisPertemuan={jenisPertemuanList}
+              listSlotWaktu={slotWaktuList}
             />
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
@@ -354,6 +358,7 @@ const CreateCollegeClassTable = ({
   setScheduleList,
   listRooms,
   listJenisPertemuan,
+  listSlotWaktu,
 }) => {
   const learningMethod = ["Offline", "Online", "Hybrid"];
   const handleChange = (index, field, value) => {
@@ -423,26 +428,38 @@ const CreateCollegeClassTable = ({
 
               {/* Jam Mulai */}
               <td className="p-2 border border-gray-300">
-                <input
-                  type="time"
+                <select
                   value={item.startTime}
                   onChange={(e) =>
                     handleChange(index, "startTime", e.target.value)
                   }
                   className="border p-1 w-full"
-                />
+                >
+                  <option value="">-- Pilih --</option>
+                  {listSlotWaktu?.map((slot) => (
+                    <option key={slot.id} value={slot.waktu.slice(0, 5)}>
+                      {slot.waktu.slice(0, 5)}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               {/* Jam Selesai */}
               <td className="p-2 border border-gray-300">
-                <input
-                  type="time"
+                <select
                   value={item.endTime}
                   onChange={(e) =>
                     handleChange(index, "endTime", e.target.value)
                   }
                   className="border p-1 w-full"
-                />
+                >
+                  <option value="">-- Pilih --</option>
+                  {listSlotWaktu?.map((slot) => (
+                    <option key={slot.id} value={slot.waktu.slice(0, 5)}>
+                      {slot.waktu.slice(0, 5)}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               {/* Jenis Pertemuan */}

@@ -14,6 +14,8 @@ import {
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { getProdi } from "../../../hooks/academic/useProdi";
 import { getDosen } from "../../../hooks/academic/useDosen";
+import { useJenisMataKuliah } from "../../../hooks/admin-akademik/useJenisMataKuliah";
+import { DosenAsyncSelect } from "../../../components/admin-academic/student-data/DosenAsyncSelect";
 
 // Bentuk GET, POST (create), PUT (update), dan DELETE sudah dikonfirmasi Backend dan saling
 // simetris (ID langsung tersedia, tidak perlu lagi menebak lewat pencocokan nama). Satu-satunya
@@ -55,6 +57,7 @@ export default function ObeEditMataKuliah() {
   const { data: curriculumData = [] } = getCurriculumYear();
   const { data: prodiData = [] } = getProdi();
   const { data: dosenData = [] } = getDosen();
+  const { data: jenisMataKuliahData = [] } = useJenisMataKuliah();
   const { data: kelompokMataKuliahResult } = getKelompokMataKuliah();
   const kelompokMataKuliahData = kelompokMataKuliahResult?.items || [];
   const updateMutation = useUpdateObeMataKuliah();
@@ -63,6 +66,7 @@ export default function ObeEditMataKuliah() {
   const [formData, setFormData] = useState<FormState>(emptyForm);
   const [rumpunNama, setRumpunNama] = useState("");
   const [kelompokNama, setKelompokNama] = useState("");
+  const [koordinatorMkNama, setKoordinatorMkNama] = useState("");
   const [pengajarDisplay, setPengajarDisplay] = useState<string>("-");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -104,6 +108,7 @@ export default function ObeEditMataKuliah() {
 
     setRumpunNama("");
     setKelompokNama(kelompokAda ? detail.kelompokMataKuliah : "");
+    setKoordinatorMkNama(detail.koordinatorMataKuliah?.nama || "");
     setPengajarDisplay("-");
   }, [detail]);
 
@@ -295,10 +300,11 @@ export default function ObeEditMataKuliah() {
                       className="w-full px-3 py-2 border border-gray-300 rounded"
                     >
                       <option value="">Pilih Jenis Mata Kuliah</option>
-                      <option value="Kuliah">Kuliah</option>
-                      <option value="Praktikum">Praktikum</option>
-                      <option value="Praktik Lapangan">Praktik Lapangan</option>
-                      <option value="Simulasi">Simulasi</option>
+                      {jenisMataKuliahData.map((item) => (
+                        <option key={item.id} value={item.nama}>
+                          {item.nama}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -469,29 +475,15 @@ export default function ObeEditMataKuliah() {
                 <div className="text-sm space-y-4">
                   <div>
                     <label className="block mb-1 font-semibold text-[#666666]">Koordinator Mata Kuliah</label>
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={formData.koordinatorMkId || ""}
-                        onChange={(e) => handleChange("koordinatorMkId", e.target.value || null)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded"
-                      >
-                        <option value="">Pilih Koordinator Mata Kuliah</option>
-                        {dosenData.map((d: any) => (
-                          <option key={d.id} value={d.id}>
-                            {d.nama}
-                          </option>
-                        ))}
-                      </select>
-                      {formData.koordinatorMkId && (
-                        <button
-                          onClick={() => handleChange("koordinatorMkId", null)}
-                          className="bg-primary-yellow text-white p-2 rounded flex items-center justify-center hover:bg-opacity-90 cursor-pointer"
-                          title="Hapus Koordinator"
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
+                    <DosenAsyncSelect
+                      value={formData.koordinatorMkId || ""}
+                      selectedLabel={koordinatorMkNama}
+                      onChange={(id, label) => {
+                        handleChange("koordinatorMkId", id || null);
+                        setKoordinatorMkNama(label);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded"
+                    />
                   </div>
 
                   <div>

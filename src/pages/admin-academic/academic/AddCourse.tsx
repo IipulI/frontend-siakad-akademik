@@ -7,6 +7,7 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseData, useAddCourse } from "../../../hooks/academic/useCourseManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
+import { useJenisMataKuliah } from "../../../hooks/admin-akademik/useJenisMataKuliah";
 
 // Popup Component
 const NotificationPopup = ({ show, type, message, onClose }) => {
@@ -38,7 +39,7 @@ const AddCourse: React.FC = () => {
 
     nama: "",
     kode: "",
-    jenis: "Kuliah",
+    jenis: "",
     sksTatapMuka: "",
     sksPraktikum: "",
     sksPraktikLapangan: "",
@@ -65,6 +66,7 @@ const AddCourse: React.FC = () => {
   const courseData = courseResponse?.data ?? [];
   const { data: curriculumData = [] } = getCurriculumYear();
   const { data: programStudiData = [] } = getProdi();
+  const { data: jenisMataKuliahData = [] } = useJenisMataKuliah();
   const createMutation = useAddCourse();
 
   // --- Event Handlers ---
@@ -284,9 +286,12 @@ const AddCourse: React.FC = () => {
                 <div>
                   <label className="block mb-2 font-medium">Jenis Mata Kuliah</label>
                   <select name="jenis" value={formData.jenis} onChange={handleInputChange} className="w-full px-3 py-2 border border-black/50 rounded">
-                    <option value="Kuliah">Kuliah</option>
-                    <option value="Praktikum">Praktikum</option>
-                    <option value="Praktik Lapangan">Praktik Lapangan</option>
+                    <option value="">-- Pilih Jenis Mata Kuliah --</option>
+                    {jenisMataKuliahData.map((item) => (
+                        <option key={item.id} value={item.nama}>
+                          {item.nama}
+                        </option>
+                    ))}
                   </select>
                 </div>
 

@@ -7,6 +7,7 @@ import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { getCourseData, getCourseDataById, useUpdateCourse } from "../../../hooks/academic/useCourseManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
+import { useJenisMataKuliah } from "../../../hooks/admin-akademik/useJenisMataKuliah";
 
 // Popup Component
 const NotificationPopup = ({ show, type, message, onClose }) => {
@@ -59,6 +60,7 @@ const EditCourse = () => {
   const { data: prodiData = [], isLoading: isProdiLoading, error: prodiError } = getProdi();
   const { data: courseResponse, isLoading: isCourseLoading, error: courseError } = getCourseData();
   const courseData = courseResponse?.data ?? [];
+  const { data: jenisMataKuliahData = [] } = useJenisMataKuliah();
   const [showPopup, setShowPopup] = useState(false);
   const [popupConfig, setPopupConfig] = useState<{ type: "success" | "error"; message: string }>({ type: "success", message: "" });
 
@@ -373,8 +375,11 @@ const EditCourse = () => {
                 <label className="block mb-2 font-medium">Jenis Mata Kuliah</label>
                 <select value={formData.jenisMataKuliah} onChange={(e) => handleInputChange("jenisMataKuliah", e.target.value)} className="w-full px-3 py-2 border border-black/50 rounded">
                   <option value="">Pilih Jenis Mata Kuliah</option>
-                  <option value="Wajib">Wajib</option>
-                  <option value="Pilihan">Pilihan</option>
+                  {jenisMataKuliahData.map((item) => (
+                    <option key={item.id} value={item.nama}>
+                      {item.nama}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
