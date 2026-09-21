@@ -116,6 +116,7 @@ export const AdminAcademicRoute = {
   // --- Menu baru yang belum punya halaman sungguhan, sementara diarahkan ke placeholder ---
   portal: {
     dosen: "/admin-akademik/dosen",
+    detailDosen: "/admin-akademik/dosen/detail",
   } as routeType,
   classData: {
     monitoringRoom: "/admin-akademik/monitoring-ruang",
@@ -124,11 +125,13 @@ export const AdminAcademicRoute = {
     semesterStatus: "/admin-akademik/status-semester",
     studentEvaluation: "/admin-akademik/evaluasi-mahasiswa",
     studentTransfer: "/admin-akademik/transfer-mahasiswa",
+    studentTransferIn: "/admin-akademik/mahasiswa-pindahan",
     studentDropout: "/admin-akademik/mahasiswa-keluar",
   } as routeType,
   institution: {
     studySystem: "/admin-akademik/sistem-kuliah",
     classroom: "/admin-akademik/ruang-kuliah",
+    concentration: "/admin-akademik/konsentrasi",
   } as routeType,
   lectureSetting: {
     courseType: "/admin-akademik/jenis-mata-kuliah",

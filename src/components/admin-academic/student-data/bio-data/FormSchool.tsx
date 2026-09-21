@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CreateStudentData } from "../../../../hooks/admin-akademik/useMahasiswa";
 import LayoutForTabNavigation from "../../dashboard/LayoutForTabNavigation";
 import { DateInput, SelectInput, TextInput } from "./../Input";
+import { getPendidikan } from "../../../../hooks/useGeneral";
 
 interface FormSchoolProps {
   formData?: CreateStudentData;
@@ -74,7 +75,8 @@ export default function FormSchool({
   };
 
   // Handler untuk perubahan provinsi sekolah
-  const handleProvinceChange = (value: string) => {
+  const handleProvinceChange = (option: { value: string; label: string } | null) => {
+    const value = option?.value ?? "";
     onInputChange("provinsiSekolah", value);
     onInputChange("kotaKabSekolah", ""); // Reset kota
 
@@ -85,16 +87,7 @@ export default function FormSchool({
     }
   };
 
-  const pendidikanAsalOptions = [
-    { value: "sd", label: "SD/Sederajat" },
-    { value: "smp", label: "SMP/Sederajat" },
-    { value: "sma", label: "SMA/Sederajat" },
-    { value: "smk", label: "SMK/Sederajat" },
-    { value: "ma", label: "MA/Sederajat" },
-    { value: "paket_a", label: "Paket A" },
-    { value: "paket_b", label: "Paket B" },
-    { value: "paket_c", label: "Paket C" },
-  ];
+  const { data: pendidikanAsalOptions } = getPendidikan();
 
   const statusHidupOptions = [
     { value: "hidup", label: "Hidup" },
@@ -150,8 +143,10 @@ export default function FormSchool({
             <SelectInput
               label="Pendidikan Asal"
               options={pendidikanAsalOptions}
+              getOptionLabel={(opt) => opt.nama}
+              getOptionValue={(opt) => opt.id}
               value={formData?.pendidikanAsal}
-              onChange={(value) => onInputChange("pendidikanAsal", value)}
+              onChange={(option) => onInputChange("pendidikanAsal", option?.id ?? "")}
             />
             <SelectInput
               label="Provinsi Sekolah"
@@ -162,7 +157,7 @@ export default function FormSchool({
             <SelectInput
               label="Kota Sekolah"
               value={formData?.kotaKabSekolah}
-              onChange={(value) => onInputChange("kotaKabSekolah", value)}
+              onChange={(option) => onInputChange("kotaKabSekolah", option?.value ?? "")}
               options={regencyOptions}
             />
             <TextInput

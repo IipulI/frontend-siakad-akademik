@@ -38,13 +38,11 @@ interface CollegeClassTableProps {
 
 const CollegeClass = () => {
   const [filter, setFilter] = useState({
-    siakPeriodeAkademikId: "",
-    siakProgramStudiId: "",
-    siakTahunKurikulumId: "",
+    periodeAkademik: "",
+    programStudi: "",
+    tahunKuriKulum: "",
     sistemKuliah: "",
-    search: "",
   });
-  const [searchInput, setSearchInput] = useState("");
   const systemOptions = [
     { value: "Reguler", label: "Reguler" },
     { value: "Karyawan", label: "Karyawan" },
@@ -59,34 +57,30 @@ const CollegeClass = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangeFilter = (fieldName, selectedValue) => {
-    setCurrentPage(1);
     setFilter((prev) => ({
       ...prev,
       [fieldName]: selectedValue,
     }));
+    setCurrentPage(1);
   };
 
-  const refresh = () => {
-    setSearchInput("");
+  const handleRowsPerPageChange = (rows: number) => {
+    setRowsPerPage(rows);
     setCurrentPage(1);
-    setFilter({
-      siakPeriodeAkademikId: "",
-      siakProgramStudiId: "",
-      siakTahunKurikulumId: "",
-      sistemKuliah: "",
-      search: "",
-    });
   };
-  const searchSubmit = () => handleChangeFilter("search", searchInput);
+
+  const refresh = () => alert("refresh");
+  const searchSubmit = () => alert("Search");
   const Create = () => location(AdminAcademicRoute.collegeClass.createClass);
   const Delete = () => alert("Delete");
 
-  const { data: result, isLoading, error } = getCollegeClass({
-    ...filter,
-    page: currentPage,
-    size: rowsPerPage,
-  });
-  const data = result?.items;
+  const { data: response, isLoading, error } = getCollegeClass(
+    filter,
+    currentPage,
+    rowsPerPage
+  );
+  const data = response?.data;
+  const pagination = response?.pagination;
 
   //   if (isLoading) {
   //     return <LoadingSpinner title="Kelas Kuliah" />;
@@ -95,9 +89,6 @@ const CollegeClass = () => {
   if (error) {
     return <div>Terjadi Kesalahan Dalam Mengambil Data</div>;
   }
-
-  console.log("programs", programs);
-  console.log("curiculums", curiculums);
 
   return (
     <MainLayout isGreeting={false} titlePage="Kelas Kuliah">
@@ -108,9 +99,9 @@ const CollegeClass = () => {
             getOptionLabel={(opt) => opt.nama}
             getOptionValue={(opt) => opt.id}
             onChange={(val) =>
-              handleChangeFilter("siakPeriodeAkademikId", val?.id ?? "")
+              handleChangeFilter("periodeAkademik", val?.id ?? "")
             }
-            value={filter.siakPeriodeAkademikId}
+            value={filter.periodeAkademik}
             options={periods}
             label="Periode Akademik"
           />
@@ -118,8 +109,8 @@ const CollegeClass = () => {
             options={programs}
             getOptionLabel={(opt) => opt.nama}
             getOptionValue={(opt) => opt.id}
-            onChange={(val) => handleChangeFilter("siakProgramStudiId", val?.id ?? "")}
-            value={filter.siakProgramStudiId}
+            onChange={(val) => handleChangeFilter("programStudi", val.id)}
+            value={filter.programStudi}
             label="Program Studi"
           />
           <SelectInput
@@ -134,8 +125,8 @@ const CollegeClass = () => {
             options={curiculums}
             getOptionLabel={(opt) => opt.tahun}
             getOptionValue={(opt) => opt.id}
-            onChange={(val) => handleChangeFilter("siakTahunKurikulumId", val?.id ?? "")}
-            value={filter.siakTahunKurikulumId}
+            onChange={(val) => handleChangeFilter("tahunKuriKulum", val.id)}
+            value={filter.tahunKuriKulum}
             label="Tahun Kurikulum"
           />
         </div>
@@ -149,11 +140,6 @@ const CollegeClass = () => {
                 type="text"
                 className="border-2 p-2 rounded text-sm w-full sm:w-[240px]"
                 placeholder="Cari Kelas Kuliah"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") searchSubmit();
-                }}
               />
               <div className="flex gap-1">
                 <ButtonClick
@@ -194,15 +180,12 @@ const CollegeClass = () => {
           {/* PAGINATION */}
           <div className="mt-4">
             <Pagination
-              currentPage={currentPage}
-              totalPages={result?.totalPage || 1}
+              currentPage={pagination?.currentPage ?? currentPage}
+              totalPages={pagination?.totalPage ?? 1}
               onPageChange={setCurrentPage}
-              rowsPerPage={rowsPerPage}
-              totalRows={result?.total || 0}
-              onRowsPerPageChange={(rows) => {
-                setRowsPerPage(rows);
-                setCurrentPage(1);
-              }}
+              rowsPerPage={pagination?.perPage ?? rowsPerPage}
+              totalRows={pagination?.totalItems ?? 0}
+              onRowsPerPageChange={handleRowsPerPageChange}
             />
           </div>
         </BorderedGreenContainer>
@@ -329,18 +312,29 @@ const CollegeClassTable = ({ data }) => {
                   {student.nama}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {/*{student.dosen.map((dosen, i) => (*/}
-                  {/*  <span key={i} className="block">*/}
-                  {/*    {dosen}*/}
-                  {/*  </span>*/}
-                  {/*))}*/}
+                  {student.jadwalKuliah?.length > 0
+                    ? [
+                        ...new Set(
+                          student.jadwalKuliah
+                            .map((jadwal) => jadwal.dosen?.nama)
+                            .filter(Boolean)
+                        ),
+                      ].map((nama, i) => (
+                        <span key={i} className="block">
+                          {nama}
+                        </span>
+                      ))
+                    : "-"}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {/*{student.jadwalMingguan.map((jadwal, i) => (*/}
-                  {/*  <span key={i} className="block">*/}
-                  {/*    {jadwal}*/}
-                  {/*  </span>*/}
-                  {/*))}*/}
+                  {student.jadwalKuliah?.length > 0
+                    ? student.jadwalKuliah.map((jadwal, i) => (
+                        <span key={i} className="block">
+                          {jadwal.hari}, {jadwal.jamMulai?.slice(0, 5)}-
+                          {jadwal.jamSelesai?.slice(0, 5)}
+                        </span>
+                      ))
+                    : "-"}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
                   {student.kapasitas}
@@ -349,19 +343,7 @@ const CollegeClassTable = ({ data }) => {
                   {student.peserta}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  <span
-                    className={`inline-block px-2 py-1 rounded text-xs font-semibold border whitespace-nowrap ${
-                      student.statusPenilaian === "Sudah Dikunci"
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : student.statusPenilaian === "Sebagian Dikunci"
-                        ? "bg-orange-50 text-orange-700 border-orange-200"
-                        : student.statusPenilaian === "Belum Dikunci"
-                        ? "bg-gray-50 text-gray-600 border-gray-200"
-                        : "bg-gray-50 text-gray-400 border-gray-200"
-                    }`}
-                  >
-                    {student.statusPenilaian || "-"}
-                  </span>
+                  {student.statusPenilaian}
                 </td>
                 <td className="p-2 border border-gray-300 font-medium">
                   <div className="flex justify-center flex-wrap gap-1">

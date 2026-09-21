@@ -10,6 +10,7 @@ import {
   SelectInput,
   TextInput,
 } from "../../../components/admin-academic/student-data/Input";
+import { DosenAsyncSelect } from "../../../components/admin-academic/student-data/DosenAsyncSelect";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import getAcademicPeriods from "../../../hooks/usePeriodeAkademik";
@@ -20,9 +21,11 @@ import {
   addCollegeClass,
   CreateCollegeClassPayload,
   getRooms,
+  getSlotWaktu,
   getSubjects,
   getYearCuriculum,
 } from "../../../hooks/useKelasKuliah";
+import { useJenisPertemuan } from "../../../hooks/admin-akademik/useJenisPertemuan";
 
 const CreateCollegeClass = () => {
   const navigate = useNavigate();
@@ -34,13 +37,14 @@ const CreateCollegeClass = () => {
       meetingType: "",
       learningMethod: "",
       room: "",
+      lecturer: "",
+      lecturerName: "",
     },
   ]);
 
   const [academicPeriodId, setAcademicPeriodId] = useState("");
   const [systemType, setSystemType] = useState("");
   const [programStudyId, setProgramStudyId] = useState("");
-  const [selectedProgramStudyName, setSelectedProgramStudyName] = useState("");
 
   const [yearCurriculum, setYearCurriculum] = useState("");
 
@@ -58,6 +62,7 @@ const CreateCollegeClass = () => {
     },
     onSuccess: () => {
       alert("Kelas berhasil ditambahkan!");
+      navigate(AdminAcademicRoute.collegeClass.class);
     },
     onError: (err) => {
       console.error("Terjadi kesalahan:", err);
@@ -74,6 +79,8 @@ const CreateCollegeClass = () => {
         meetingType: "",
         learningMethod: "",
         room: "",
+        lecturer: "",
+        lecturerName: "",
       },
     ]);
   };
@@ -97,6 +104,7 @@ const CreateCollegeClass = () => {
       jadwalKuliah: scheduleList.map((item) => ({
         hari: item.day,
         siakRuanganId: item.room,
+        siakDosenId: item.lecturer || null,
         jamMulai: item.startTime + ":00", // tambahkan detik
         jamSelesai: item.endTime + ":00", // tambahkan detik
         jenisPertemuan: item.meetingType,
@@ -130,13 +138,21 @@ const CreateCollegeClass = () => {
     data: subjects,
     isLoading: isLoadingSubjects,
     error: isErrorSubjects,
-  } = getSubjects();
+  } = getSubjects({
+    programStudiId: programStudyId,
+    tahunKurikulumId: yearCurriculum,
+  });
 
   const {
     data: rooms,
     isLoading: isLoadingRooms,
     error: isErrorRooms,
   } = getRooms();
+
+  const { data: slotWaktuList } = getSlotWaktu();
+
+  const { data: jenisPertemuanList, isLoading: isLoadingJenisPertemuan } =
+    useJenisPertemuan();
 
   console.log("Periode Akademik", academicPeriods);
   console.log("Program Studi", programStudies);
@@ -180,13 +196,6 @@ const CreateCollegeClass = () => {
       type: "Karyawan",
     },
   ];
-
-  console.log(subjects?.map((matkul) => matkul.programStudi.nama) ?? [])
-  console.log(selectedProgramStudyName)
-  console.log(subjects?.filter(
-      (matkul) =>
-          matkul.programStudi.nama === selectedProgramStudyName
-  ) ?? [])
 
   return (
     <MainLayout titlePage="Data Kelas" isGreeting={false}>
@@ -246,7 +255,7 @@ const CreateCollegeClass = () => {
                 getOptionValue={(opt) => opt.id}
                 onChange={(val) => {
                   setProgramStudyId(val?.id ?? "");
-                  setSelectedProgramStudyName(val?.nama ?? "");
+                  setSubject("");
                 }}
               />
               <TextInput
@@ -260,8 +269,11 @@ const CreateCollegeClass = () => {
                 value={yearCurriculum}
                 required
                 getOptionLabel={(opt) => opt.tahun}
-                getOptionValue={(opt) => opt.tahun}
-                onChange={(val) => setYearCurriculum(val?.tahun ?? "")}
+                getOptionValue={(opt) => opt.id}
+                onChange={(val) => {
+                  setYearCurriculum(val?.id ?? "");
+                  setSubject("");
+                }}
               />
               {/* <SelectInput
                 label="Tahun Kurikulum"
@@ -279,19 +291,15 @@ const CreateCollegeClass = () => {
               />
 
               <SelectInput
-                options={
-                  subjects?.filter(
-                    (matkul) =>
-                      matkul.programStudi.nama === selectedProgramStudyName
-                  ) ?? []
-                }
+                options={subjects ?? []}
                 required={true}
                 value={subject}
+                disabled={!programStudyId || !yearCurriculum}
+                disabledPlaceholder="-- Pilih Program Studi & Tahun Kurikulum dahulu --"
                 getOptionLabel={(opt) => opt.nama}
                 getOptionValue={(opt) => opt.id}
                 label="Mata Kuliah"
                 onChange={(val) => {
-                  console.log("Selected Mata Kuliah:", val);
                   setSubject(val?.id ?? "");
                 }}
               />
@@ -321,6 +329,8 @@ const CreateCollegeClass = () => {
               setScheduleList={setScheduleList}
               scheduleList={scheduleList}
               listRooms={rooms}
+              listJenisPertemuan={jenisPertemuanList}
+              listSlotWaktu={slotWaktuList}
             />
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
@@ -347,12 +357,20 @@ const CreateCollegeClassTable = ({
   scheduleList,
   setScheduleList,
   listRooms,
+  listJenisPertemuan,
+  listSlotWaktu,
 }) => {
-  const meetingTypes = ["Kuliah", "Kuliah Lapangan", "Praktikum"];
   const learningMethod = ["Offline", "Online", "Hybrid"];
   const handleChange = (index, field, value) => {
     const newSchedule = [...scheduleList];
     newSchedule[index][field] = value;
+    setScheduleList(newSchedule);
+  };
+
+  const handleLecturerChange = (index, id, label) => {
+    const newSchedule = [...scheduleList];
+    newSchedule[index].lecturer = id;
+    newSchedule[index].lecturerName = label;
     setScheduleList(newSchedule);
   };
 
@@ -382,6 +400,9 @@ const CreateCollegeClassTable = ({
             <th className="p-2 border font-semibold border-gray-300">
               Ruangan
             </th>
+            <th className="p-2 border font-semibold border-gray-300">
+              Dosen Pengajar
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -407,50 +428,74 @@ const CreateCollegeClassTable = ({
 
               {/* Jam Mulai */}
               <td className="p-2 border border-gray-300">
-                <input
-                  type="time"
+                <select
                   value={item.startTime}
                   onChange={(e) =>
                     handleChange(index, "startTime", e.target.value)
                   }
                   className="border p-1 w-full"
-                />
+                >
+                  <option value="">-- Pilih --</option>
+                  {listSlotWaktu?.map((slot) => (
+                    <option key={slot.id} value={slot.waktu.slice(0, 5)}>
+                      {slot.waktu.slice(0, 5)}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               {/* Jam Selesai */}
               <td className="p-2 border border-gray-300">
-                <input
-                  type="time"
+                <select
                   value={item.endTime}
                   onChange={(e) =>
                     handleChange(index, "endTime", e.target.value)
                   }
                   className="border p-1 w-full"
-                />
+                >
+                  <option value="">-- Pilih --</option>
+                  {listSlotWaktu?.map((slot) => (
+                    <option key={slot.id} value={slot.waktu.slice(0, 5)}>
+                      {slot.waktu.slice(0, 5)}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               {/* Jenis Pertemuan */}
               <td className="p-2 border border-gray-300">
-                <input
-                  type="text"
+                <select
                   value={item.meetingType}
                   onChange={(e) =>
                     handleChange(index, "meetingType", e.target.value)
                   }
                   className="border p-1 w-full"
-                />
+                >
+                  <option value="">-- Pilih --</option>
+                  {listJenisPertemuan?.map((jenis) => (
+                    <option key={jenis.id} value={jenis.nama}>
+                      {jenis.nama}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               {/* Metode Pembelajaran */}
               <td className="p-2 border border-gray-300">
-                <input
-                  type="text"
+                <select
                   value={item.learningMethod}
                   onChange={(e) =>
                     handleChange(index, "learningMethod", e.target.value)
                   }
                   className="border p-1 w-full"
-                />
+                >
+                  <option value="">-- Pilih --</option>
+                  {learningMethod.map((method) => (
+                    <option key={method} value={method}>
+                      {method}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               {/* Ruangan */}
@@ -463,10 +508,21 @@ const CreateCollegeClassTable = ({
                   <option value="">-- Pilih --</option>
                   {listRooms?.map((room) => (
                     <option key={room.id} value={room.id}>
-                      {room.namaRuangan}
+                      {room.nama}
                     </option>
                   ))}
                 </select>
+              </td>
+
+              {/* Dosen Pengajar */}
+              <td className="p-2 border border-gray-300">
+                <DosenAsyncSelect
+                  value={item.lecturer}
+                  selectedLabel={item.lecturerName}
+                  onChange={(id, label) =>
+                    handleLecturerChange(index, id, label)
+                  }
+                />
               </td>
             </tr>
           ))}

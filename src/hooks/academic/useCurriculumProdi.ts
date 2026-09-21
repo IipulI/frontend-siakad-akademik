@@ -1,120 +1,104 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../../api/Index.tsx";
 
-interface CurriculumProdiData {
-  siakProgramStudiId: string;
-  siakTahunKurikulumId: string;
+interface AssignCurriculumProdiData {
+  mataKuliahId: string;
   semester: number;
-  opsiMataKuliah: boolean;
   nilaiMin: string;
+  statusMk: "Wajib" | "Pilihan";
 }
 
+interface UpdateCurriculumProdiData {
+  semester: number;
+  statusMataKuliah: "Wajib" | "Pilihan";
+  nilaiMinimal?: string;
+  prasyaratData?: { mataKuliahId: string }[];
+  konsentrasiIds?: string[];
+}
+
+// GET: daftar mata kuliah per semester untuk 1 prodi + 1 tahun kurikulum
+export function useMataKuliahPerSemester(prodiId: string, tahunKurikulumId: string) {
+  return useQuery({
+    queryKey: ["mataKuliahPerSemester", prodiId, tahunKurikulumId],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+      }
+
+      const response = await Api.get("/akademik/mata-kuliah-kurikulum/per-semester", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { prodiId, tahunKurikulumId },
+      });
+
+      return response.data?.data;
+    },
+    enabled: !!prodiId && !!tahunKurikulumId,
+  });
+}
+
+// POST: assign mata kuliah ke semester tertentu dalam kurikulum
 export function useAddCurriculumProdi() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: CurriculumProdiData }) => {
+    mutationFn: async (data: AssignCurriculumProdiData) => {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
       }
 
-      const payload = {
-        siakProgramStudiId: data.siakProgramStudiId,
-        siakTahunKurikulumId: data.siakTahunKurikulumId,
-        semester: data.semester,
-        opsiMataKuliah: data.opsiMataKuliah,
-        nilaiMin: data.nilaiMin,
-      };
-
-      console.log("Final Payload:", payload);
-
-      try {
-        const response = await Api.put(`/akademik/kurikulum-prodi/add/${id}`, payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        console.log("✅ API Response:", response.data);
-        return response.data;
-      } catch (error: any) {
-        console.error("❌ API Error:", error);
-
-        // Log detail error untuk debugging
-        if (error.response) {
-          console.error("Error Status:", error.response.status);
-          console.error("Error Data:", error.response.data);
-          console.error("Error Headers:", error.response.headers);
-        } else if (error.request) {
-          console.error("No Response Received:", error.request);
-        } else {
-          console.error("Error Message:", error.message);
-        }
-
-        throw error;
-      }
-    },
-    onSuccess: (data) => {
-      console.log("✅ Mutation Success:", data);
-
-      // Invalidate queries untuk refresh data
-      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
-      queryClient.invalidateQueries({ queryKey: ["curriculumProdi"] });
-
-      // Optional: Juga bisa invalidate queries lain yang terkait
-      queryClient.invalidateQueries({ queryKey: ["kurikulumData"] });
-    },
-    onError: (error: any) => {
-      console.error("❌ Mutation Error:", error);
-
-      // Bisa tambahkan logic untuk handle error secara global
-      // Misalnya redirect ke login jika token expired
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        // window.location.href = "/login"; // Uncomment jika perlu
-      }
-    },
-  });
-}
-
-// Hook untuk update curriculum prodi (jika diperlukan)
-export function useUpdateCurriculumProdi() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: CurriculumProdiData }) => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-      }
-
-      console.log("=== DEBUG UPDATE CURRICULUM PRODI ===");
-      console.log("Course ID:", id);
-      console.log("Update Data:", data);
-
-      const response = await Api.put(`/akademik/kurikulum-prodi/${id}`, data, {
+      const response = await Api.post("/akademik/mata-kuliah-kurikulum/assign", data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
-      console.log("✅ Update Response:", response.data);
       return response.data;
     },
-    onSuccess: (data) => {
-      console.log("✅ Update Success:", data);
-      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mataKuliahPerSemester"] });
     },
     onError: (error: any) => {
-      console.error("❌ Update Error:", error);
+      console.error("❌ Gagal menambahkan Mata Kuliah ke kurikulum:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+      }
     },
   });
 }
 
-// Hook untuk delete curriculum prodi (jika diperlukan)
+// PUT: ubah data mata kuliah dalam kurikulum (semester, status, nilai min, dst)
+export function useUpdateCurriculumProdi() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateCurriculumProdiData }) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
+      }
+
+      const response = await Api.put(`/akademik/mata-kuliah-kurikulum/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mataKuliahPerSemester"] });
+    },
+    onError: (error: any) => {
+      console.error("❌ Gagal memperbarui Mata Kuliah dalam kurikulum:", error);
+    },
+  });
+}
+
+// DELETE: keluarkan mata kuliah dari kurikulum
 export function useDeleteCurriculumProdi() {
   const queryClient = useQueryClient();
 
@@ -125,22 +109,17 @@ export function useDeleteCurriculumProdi() {
         throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
       }
 
-      console.log("=== DEBUG DELETE CURRICULUM PRODI ===");
-      console.log("Course ID:", id);
-
-      const response = await Api.put(`/akademik/kurikulum-prodi/delete/${id}`, {
+      const response = await Api.delete(`/akademik/mata-kuliah-kurikulum/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Delete Response:", response.data);
       return response.data;
     },
-    onSuccess: (data) => {
-      console.log("✅ Delete Success:", data);
-      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mataKuliahPerSemester"] });
     },
     onError: (error: any) => {
-      console.error("❌ Delete Error:", error);
+      console.error("❌ Gagal menghapus Mata Kuliah dari kurikulum:", error);
     },
   });
 }

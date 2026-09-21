@@ -103,24 +103,24 @@ export default function FormGuardian({
               label="Status Hidup"
               options={statusHidupOptions}
               value={waliData?.statusHidup || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "statusHidup", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(waliIndex, "statusHidup", option?.value ?? "")
               }
             />
             <SelectInput
               label="Status Kekerabatan"
               options={statusKerabatanOptions}
               value={waliData?.statusKerabat || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "statusKerabat", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(waliIndex, "statusKerabat", option?.value ?? "")
               }
             />
             <SelectInput
               label="Pendidikan Terakhir"
               options={pendidikanOptions}
               value={waliData?.pendidikan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "pendidikan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(waliIndex, "pendidikan", option?.value ?? "")
               }
             />
           </div>
@@ -133,16 +133,16 @@ export default function FormGuardian({
               label="Pekerjaan"
               options={pekerjaanOptions}
               value={waliData?.pekerjaan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "pekerjaan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(waliIndex, "pekerjaan", option?.value ?? "")
               }
             />
             <SelectInput
               label="Penghasilan"
               options={penghasilanOptions}
               value={waliData?.penghasilan || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "penghasilan", value)
+              onChange={(option) =>
+                onInputChangeKeluarga(waliIndex, "penghasilan", option?.value ?? "")
               }
             />
             <TextInput

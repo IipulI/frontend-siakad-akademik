@@ -103,7 +103,7 @@ const DetailAdvisorLecturer = () => {
       {/* Student Profile Info */}
       <div className="bg-[#F5FFF9] border-l-4 border-primary-green p-4 rounded-r-md mt-4 shadow-sm">
         <h2 className="text-lg font-bold text-primary-green">{namaMahasiswa}</h2>
-        <p className="text-sm text-slate-600 font-semibold mt-1">NIM: {nimMahasiswa}</p>
+        <p className="text-sm text-slate-600 font-semibold mt-1">NPM: {nimMahasiswa}</p>
       </div>
 
       {/* 5-Column Grid Header matching StudyPlanCard */}

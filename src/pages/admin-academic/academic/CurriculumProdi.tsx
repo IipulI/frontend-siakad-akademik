@@ -1,47 +1,52 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Api } from "../../../api/Index";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { TableCurriculumProdi } from "../../../components/Table";
-import { RefreshCw, Plus, Trash, Save } from "lucide-react";
-import { getCourseData } from "../../../hooks/academic/useCourseManagement.ts";
+import { RefreshCw, Plus } from "lucide-react";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
-import { useDeleteCurriculumProdi } from "../../../hooks/academic/useCurriculumProdi.ts";
+import {
+  useMataKuliahPerSemester,
+  useAddCurriculumProdi,
+  useDeleteCurriculumProdi,
+} from "../../../hooks/academic/useCurriculumProdi.ts";
 import { SelectInput } from "../../../components/admin-academic/student-data/Input.tsx";
 import { getSubjects } from "../../../hooks/useKelasKuliah.ts";
 
-type CurriculumQueryParams = {
-  programStudi: string;
-  tahunKurikulum: string;
-};
-
-interface AddCurriculumProdiData {
-  siakProgramStudiId: string;
-  siakTahunKurikulumId: string;
-  semester: number;
-  opsiMataKuliah: boolean;
-  nilaiMin: string;
+interface SemesterGroup {
+  semester: number | string;
+  totalSksSemester: number;
+  mataKuliah: {
+    id: string;
+    kode: string;
+    nama: string;
+    totalSks: number;
+    opsiWajib: boolean;
+    statusMk: string;
+    nilaiMin: string;
+    semester: number | string;
+    prasyarat: string;
+    konsentrasi: string;
+  }[];
 }
 
-const transformDataForTable = (data: any[]): any[] => {
+const transformDataForTable = (semesterData: SemesterGroup[] = []): any[] => {
   const flatData: any[] = [];
+  let no = 0;
 
-  data.forEach((semesterData) => {
-    semesterData.mataKuliah.forEach((mk: any, index: number) => {
+  semesterData.forEach((group) => {
+    group.mataKuliah.forEach((mk) => {
+      no += 1;
       flatData.push({
-        ...mk,
-        semester: semesterData.semester,
-        totalSks: mk.sksTatapMuka + mk.sksPraktikum,
-        prasyarat:
-          [
-            mk.prasyaratMataKuliah1?.kodeMataKuliah,
-            mk.prasyaratMataKuliah2?.kodeMataKuliah,
-            mk.prasyaratMataKuliah3?.kodeMataKuliah,
-          ]
-            .filter(Boolean)
-            .join(", ") || "-",
-        status: mk.opsiMataKuliah ? "Wajib" : "Pilihan",
+        id: mk.id,
+        no,
+        semester: group.semester,
+        kode: mk.kode,
+        mataKuliah: mk.nama,
+        sks: mk.totalSks,
+        status: mk.statusMk,
+        nilaiMin: mk.nilaiMin,
+        prasyarat: mk.prasyarat,
+        konsentrasiBidang: mk.konsentrasi,
       });
     });
   });
@@ -49,166 +54,58 @@ const transformDataForTable = (data: any[]): any[] => {
   return flatData;
 };
 
-const fetchCurriculumProdiData = async ({
-  queryKey,
-}: {
-  queryKey: [string, CurriculumQueryParams];
-}): Promise<any[]> => {
-  const [, { programStudi, tahunKurikulum }] = queryKey;
-  const token = localStorage.getItem("token");
-  if (!token)
-    throw new Error("Token tidak ditemukan. Silakan login terlebih dahulu.");
-
-  const response = await Api.get("/akademik/kurikulum-prodi", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    params: {
-      programStudi,
-      tahunKurikulum,
-    },
-  });
-
-  const data = response.data?.data;
-  console.log("🔍 Raw kurikulum prodi API data:", data);
-
-  return Array.isArray(data) ? data : [];
-};
-
-const useAddCurriculumProdi = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: AddCurriculumProdiData;
-    }) => {
-      const token = localStorage.getItem("token");
-      if (!token)
-        throw new Error(
-          "Token tidak ditemukan. Silakan login terlebih dahulu."
-        );
-
-      const payload = {
-        siakProgramStudiId: data.siakProgramStudiId,
-        siakTahunKurikulumId: data.siakTahunKurikulumId,
-        semester: data.semester,
-        opsiMataKuliah: data.opsiMataKuliah,
-        nilaiMin: data.nilaiMin,
-      };
-
-      console.log("Final payload:", payload);
-
-      const response = await Api.put(
-        `/akademik/kurikulum-prodi/add/${id}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
-    },
-    onError: (error: any) => {
-      console.error("❌ Mutation error:", error);
-      if (error.response) {
-        console.error("Error status:", error.response.status);
-        console.error("Error data:", error.response.data);
-      }
-    },
-  });
-};
-
 const CurriculumProdi: React.FC = () => {
   // --- State Management ---
-  const [selectedProgramStudi, setSelectedProgramStudi] = useState<string>("");
-  const [selectedTahunKurikulum, setSelectedTahunKurikulum] =
-    useState<string>("");
+  const [selectedProgramStudiId, setSelectedProgramStudiId] = useState<string>("");
+  const [selectedTahunKurikulumId, setSelectedTahunKurikulumId] = useState<string>("");
   const [selectedSemester, setSelectedSemester] = useState<string>("all");
   const [selectedMataKuliah, setSelectedMataKuliah] = useState<string>("all");
   const [selectedNilaiMin, setSelectedNilaiMin] = useState<string>("all");
   const [opsiMataKuliah, setOpsiMataKuliah] = useState<string | null>(null);
 
-  // Get query client for cache invalidation
-  const queryClient = useQueryClient();
-
-  const {
-    data: courseData = [],
-    isLoading: isCourseLoading,
-    error: courseError,
-  } = getSubjects();
   const {
     data: prodiData = [],
     isLoading: isProdiLoading,
-    error: prodiError,
   } = getProdi();
   const {
     data: curriculumData = [],
     isLoading: isCurriculumLoading,
-    error: curriculumError,
   } = getCurriculumYear();
-
-  const { mutate } = useDeleteCurriculumProdi();
-
-  useEffect(() => {
-    if (prodiData.length > 0 && selectedProgramStudi === "") {
-      setSelectedProgramStudi(prodiData[0].namaProgramStudi);
-    }
-  }, [prodiData, selectedProgramStudi]);
-
-  useEffect(() => {
-    if (curriculumData.length > 0 && selectedTahunKurikulum === "") {
-      setSelectedTahunKurikulum(curriculumData[0].tahun.toString());
-    }
-  }, [curriculumData, selectedTahunKurikulum]);
-
-  const queryParams = {
-    programStudi: selectedProgramStudi,
-    tahunKurikulum: selectedTahunKurikulum,
-  };
-
-  const { data: rawCurriculumProdiData = [], isLoading } = useQuery({
-    queryKey: ["kurikulumProdi", queryParams],
-    queryFn: fetchCurriculumProdiData,
-    enabled: selectedProgramStudi !== "" && selectedTahunKurikulum !== "",
+  const {
+    data: courseData = [],
+    isLoading: isCourseLoading,
+  } = getSubjects({
+    programStudiId: selectedProgramStudiId,
+    tahunKurikulumId: selectedTahunKurikulumId,
   });
 
+  useEffect(() => {
+    if (prodiData.length > 0 && selectedProgramStudiId === "") {
+      setSelectedProgramStudiId(prodiData[0].id);
+    }
+  }, [prodiData, selectedProgramStudiId]);
+
+  useEffect(() => {
+    if (curriculumData.length > 0 && selectedTahunKurikulumId === "") {
+      setSelectedTahunKurikulumId(curriculumData[0].id);
+    }
+  }, [curriculumData, selectedTahunKurikulumId]);
+
+  const {
+    data: perSemesterData,
+    isLoading: isCurriculumProdiLoading,
+  } = useMataKuliahPerSemester(selectedProgramStudiId, selectedTahunKurikulumId);
+
   const curriculumProdiData = React.useMemo(() => {
-    return transformDataForTable(rawCurriculumProdiData);
-  }, [rawCurriculumProdiData]);
-
-  const filteredData = React.useMemo(() => {
-    let filtered = [...curriculumProdiData];
-
-    return filtered;
-  }, [curriculumProdiData]);
+    return transformDataForTable(perSemesterData?.semesterData ?? []);
+  }, [perSemesterData]);
 
   const addCurriculumProdi = useAddCurriculumProdi();
+  const deleteCurriculumProdi = useDeleteCurriculumProdi();
 
   const handleTambahData = () => {
-    const selectedCourse = courseData.find(
-      (course) => course.namaMataKuliah === selectedMataKuliah
-    );
-    const selectedKurikulum = curriculumData.find(
-      (item) => item.tahun.toString() === selectedTahunKurikulum
-    );
-    const selectedProdi = prodiData.find(
-      (prodi) => prodi.namaProgramStudi === selectedProgramStudi
-    );
-
     if (
-      !selectedCourse ||
-      !selectedKurikulum ||
-      !selectedProdi ||
+      selectedMataKuliah === "all" ||
       selectedSemester === "all" ||
       selectedNilaiMin === "all" ||
       !opsiMataKuliah ||
@@ -218,27 +115,21 @@ const CurriculumProdi: React.FC = () => {
       return;
     }
 
-    const newData: AddCurriculumProdiData = {
-      siakProgramStudiId: selectedProdi.id,
-      siakTahunKurikulumId: selectedKurikulum.id,
-      semester: Number(selectedSemester),
-      opsiMataKuliah: opsiMataKuliah === "wajib",
-      nilaiMin: selectedNilaiMin,
-    };
-
     addCurriculumProdi.mutate(
-      { id: selectedCourse.id, data: newData },
+      {
+        mataKuliahId: selectedMataKuliah,
+        semester: Number(selectedSemester),
+        nilaiMin: selectedNilaiMin,
+        statusMk: opsiMataKuliah === "wajib" ? "Wajib" : "Pilihan",
+      },
       {
         onSuccess: () => {
           setSelectedMataKuliah("all");
           setSelectedSemester("all");
           setSelectedNilaiMin("all");
           setOpsiMataKuliah(null);
-          queryClient.invalidateQueries({ queryKey: ["kurikulumProdi"] });
         },
         onError: (error: any) => {
-          console.error("❌ Gagal menambahkan data:", error);
-
           let errorMessage = "❌ Gagal menambahkan data.";
 
           if (error.response) {
@@ -278,33 +169,36 @@ const CurriculumProdi: React.FC = () => {
     );
   };
 
-  // Get unique semesters for dropdown
-  const availableSemesters = React.useMemo(() => {
-    const semesters = [
-      ...new Set(curriculumProdiData.map((item) => item.semester)),
-    ];
-    return semesters.sort((a, b) => parseInt(a) - parseInt(b));
-  }, [curriculumProdiData]);
+  const handleHapusData = (id: string) => {
+    if (!confirm("Yakin ingin menghapus Mata Kuliah ini dari kurikulum?")) return;
+    deleteCurriculumProdi.mutate(id, {
+      onError: (error: any) => {
+        alert(
+          `❌ Gagal menghapus data: ${
+            error.response?.data?.message || error.message
+          }`
+        );
+      },
+    });
+  };
 
   // Event Handlers
   const handleProgramStudiChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedProgramStudi(e.target.value);
+    setSelectedProgramStudiId(e.target.value);
+    setSelectedMataKuliah("all");
   };
 
   const handleTahunKurikulumChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedTahunKurikulum(e.target.value);
+    setSelectedTahunKurikulumId(e.target.value);
+    setSelectedMataKuliah("all");
   };
 
   const handleSemesterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSemester(e.target.value);
-  };
-
-  const handleMataKuliahChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedMataKuliah(e.target.value);
   };
 
   const handleNilaiMinChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -315,17 +209,17 @@ const CurriculumProdi: React.FC = () => {
     setOpsiMataKuliah(value);
   };
 
-  // PERBAIKAN: Form validation yang lebih tepat
   const isFormValid =
-    selectedProgramStudi !== "" &&
-    selectedTahunKurikulum !== "" &&
+    selectedProgramStudiId !== "" &&
+    selectedTahunKurikulumId !== "" &&
     selectedMataKuliah !== "all" &&
     selectedSemester !== "all" &&
     selectedNilaiMin !== "all" &&
     opsiMataKuliah !== null &&
     (opsiMataKuliah === "wajib" || opsiMataKuliah === "pilihan");
 
-  console.log("COURSE DATA", courseData);
+  const isLoading =
+    isProdiLoading || isCurriculumLoading || isCurriculumProdiLoading;
 
   return (
     <MainLayout isGreeting={false} titlePage="Kurikulum Prodi" className="">
@@ -337,13 +231,13 @@ const CurriculumProdi: React.FC = () => {
             </span>
             <select
               className="rounded px-3 py-2 border border-primary-brown flex-1 w-20"
-              value={selectedProgramStudi}
+              value={selectedProgramStudiId}
               onChange={handleProgramStudiChange}
             >
               <option value="">-- Pilih Program Studi --</option>
               {prodiData.map((prodi) => (
-                <option key={prodi.id} value={prodi.namaProgramStudi}>
-                  {prodi.namaProgramStudi}
+                <option key={prodi.id} value={prodi.id}>
+                  {prodi.nama}
                 </option>
               ))}
             </select>
@@ -354,12 +248,12 @@ const CurriculumProdi: React.FC = () => {
             </span>
             <select
               className="rounded px-3 py-2 border border-primary-brown flex-1"
-              value={selectedTahunKurikulum}
+              value={selectedTahunKurikulumId}
               onChange={handleTahunKurikulumChange}
             >
               <option value="">-- Pilih Tahun Kurikulum --</option>
               {curriculumData.map((item) => (
-                <option key={item.id} value={item.tahun.toString()}>
+                <option key={item.id} value={item.id}>
                   {item.tahun}
                 </option>
               ))}
@@ -378,37 +272,14 @@ const CurriculumProdi: React.FC = () => {
                 Mata Kuliah
               </span>
               <div className="relative">
-                {/* <select
-                  className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
-                  value={selectedMataKuliah}
-                  onChange={handleMataKuliahChange}
-                >
-                  <option value="all">-- Cari Mata Kuliah --</option>
-                  {courseData.map((mataKuliah) => (
-                    <option
-                      key={mataKuliah.id}
-                      value={mataKuliah.namaMataKuliah}
-                    >
-                      {mataKuliah.namaMataKuliah}
-                    </option>
-                  ))}
-                </select> */}
-
                 <SelectInput
                   label="Mata Kuliah"
-                  options={
-                    courseData?.filter(
-                      (matkul) =>
-                        matkul.namaProgramStudi === selectedProgramStudi
-                    ) ?? []
-                  }
+                  options={courseData ?? []}
                   required
-                  getOptionLabel={(opt) => opt.namaMataKuliah}
+                  getOptionLabel={(opt) => opt.nama}
                   getOptionValue={(opt) => opt.id}
                   value={selectedMataKuliah}
-                  onChange={(val) =>
-                    setSelectedMataKuliah(val?.mataKuliahId ?? "")
-                  }
+                  onChange={(val) => setSelectedMataKuliah(val?.id ?? "all")}
                 />
               </div>
             </div>
@@ -514,15 +385,15 @@ const CurriculumProdi: React.FC = () => {
                 className="bg-primary-green text-white rounded px-4 py-2 flex items-center gap-1 cursor-pointer duration-200 disabled:bg-gray-400"
                 onClick={handleTambahData}
                 disabled={
-                  !isFormValid || isLoading || addCurriculumProdi.isPending
+                  !isFormValid || isCourseLoading || addCurriculumProdi.isPending
                 }
               >
-                {isLoading || addCurriculumProdi.isPending ? (
+                {isCourseLoading || addCurriculumProdi.isPending ? (
                   <RefreshCw size={16} className="animate-spin" />
                 ) : (
                   <Plus size={16} />
                 )}
-                {isLoading || addCurriculumProdi.isPending
+                {isCourseLoading || addCurriculumProdi.isPending
                   ? "Loading..."
                   : "Tambah"}
               </button>
@@ -543,7 +414,7 @@ const CurriculumProdi: React.FC = () => {
             </div>
           ) : (
             <TableCurriculumProdi
-              data={filteredData}
+              data={curriculumProdiData}
               tableHead={[
                 "No",
                 "Semester",
@@ -556,7 +427,7 @@ const CurriculumProdi: React.FC = () => {
                 "Aksi",
               ]}
               error="Data tidak ditemukan."
-              onDelete={mutate}
+              onDelete={handleHapusData}
             />
           )}
         </div>

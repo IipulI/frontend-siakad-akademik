@@ -11,6 +11,8 @@ import {
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { getProdi } from "../../../hooks/academic/useProdi";
 import { getDosen } from "../../../hooks/academic/useDosen";
+import { useJenisMataKuliah } from "../../../hooks/admin-akademik/useJenisMataKuliah";
+import { DosenAsyncSelect } from "../../../components/admin-academic/student-data/DosenAsyncSelect";
 
 // Sama seperti ObeEditMataKuliah.tsx, tapi mode CREATE: payload tidak menyertakan
 // prasyaratMataKuliah1/2/3Id (dikonfirmasi Backend hanya ada di UPDATE), dan sidebar
@@ -56,11 +58,13 @@ export default function ObeAddMataKuliah() {
   const { data: curriculumData = [] } = getCurriculumYear();
   const { data: prodiData = [] } = getProdi();
   const { data: dosenData = [] } = getDosen();
+  const { data: jenisMataKuliahData = [] } = useJenisMataKuliah();
   const { data: kelompokMataKuliahResult } = getKelompokMataKuliah();
   const kelompokMataKuliahData = kelompokMataKuliahResult?.items || [];
   const createMutation = useCreateObeMataKuliah();
 
   const [formData, setFormData] = useState<FormState>(emptyForm);
+  const [koordinatorMkNama, setKoordinatorMkNama] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const totalSks =
@@ -255,10 +259,11 @@ export default function ObeAddMataKuliah() {
                       className="w-full px-3 py-2 border border-gray-300 rounded"
                     >
                       <option value="">Pilih Jenis Mata Kuliah</option>
-                      <option value="Kuliah">Kuliah</option>
-                      <option value="Praktikum">Praktikum</option>
-                      <option value="Praktik Lapangan">Praktik Lapangan</option>
-                      <option value="Simulasi">Simulasi</option>
+                      {jenisMataKuliahData.map((item) => (
+                        <option key={item.id} value={item.nama}>
+                          {item.nama}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -418,29 +423,15 @@ export default function ObeAddMataKuliah() {
                 <div className="text-sm space-y-4">
                   <div>
                     <label className="block mb-1 font-semibold text-[#666666]">Koordinator Mata Kuliah</label>
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={formData.koordinatorMkId || ""}
-                        onChange={(e) => handleChange("koordinatorMkId", e.target.value || null)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded"
-                      >
-                        <option value="">Pilih Koordinator Mata Kuliah</option>
-                        {dosenData.map((d: any) => (
-                          <option key={d.id} value={d.id}>
-                            {d.nama}
-                          </option>
-                        ))}
-                      </select>
-                      {formData.koordinatorMkId && (
-                        <button
-                          onClick={() => handleChange("koordinatorMkId", null)}
-                          className="bg-primary-yellow text-white p-2 rounded flex items-center justify-center hover:bg-opacity-90 cursor-pointer"
-                          title="Hapus Koordinator"
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
+                    <DosenAsyncSelect
+                      value={formData.koordinatorMkId || ""}
+                      selectedLabel={koordinatorMkNama}
+                      onChange={(id, label) => {
+                        handleChange("koordinatorMkId", id || null);
+                        setKoordinatorMkNama(label);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded"
+                    />
                   </div>
 
                   <div>

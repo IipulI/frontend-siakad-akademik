@@ -138,6 +138,11 @@ const dropdownMenus = {
             to: String(AdminAcademicRoute.administration.studentTransfer),
           },
           {
+            title: "Mahasiswa Pindahan",
+            description: "Mahasiswa Pindahan/Alih Program Studi",
+            to: String(AdminAcademicRoute.administration.studentTransferIn),
+          },
+          {
             title: "Mahasiswa Keluar",
             description: "Mahasiswa Keluar",
             to: String(AdminAcademicRoute.administration.studentDropout),
@@ -168,6 +173,11 @@ const dropdownMenus = {
             title: "Ruang Kuliah",
             description: "Manajemen Ruang Kuliah",
             to: String(AdminAcademicRoute.institution.classroom),
+          },
+          {
+            title: "Konsentrasi",
+            description: "Manajemen Konsentrasi",
+            to: String(AdminAcademicRoute.institution.concentration),
           },
         ],
       },
@@ -258,6 +268,11 @@ const dropdownMenus = {
     title: "PENGATURAN",
     items: [
       {
+        title: "Tahun Ajaran",
+        description: "Manajemen Tahun Ajaran",
+        to: String(AdminAcademicRoute.setting.year),
+      },
+      {
         title: "Periode Akademik",
         description: "Manajemen Periode Akademik",
         to: String(AdminAcademicRoute.setting.period),
@@ -286,20 +301,15 @@ const dropdownMenus = {
         ],
       },
       {
-        title: "Tahun Ajaran",
-        description: "Manajemen Tahun Ajaran",
-        to: String(AdminAcademicRoute.setting.year),
-      },
-      {
         title: "Batas SKS",
         description: "Pengaturan Batas SKS",
         to: String(AdminAcademicRoute.setting.limit),
       },
-      {
-        title: "Skala Penilaian",
-        description: "Pengaturan Skala Penilaian",
-        to: String(AdminAcademicRoute.setting.scale),
-      },
+      // {
+      //   title: "Skala Penilaian",
+      //   description: "Pengaturan Skala Penilaian",
+      //   to: String(AdminAcademicRoute.setting.scale),
+      // },
       {
         title: "Komposisi Nilai",
         description: "Pengaturan Komposisi Nilai",

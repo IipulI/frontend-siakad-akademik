@@ -124,8 +124,8 @@ const PeriodAdminAcademic: React.FC = () => {
             inputType: 'select',
             options: academicYearOptions // Pass the prepared options here!
         },
-        { key: 'kodePeriode', header: 'Kode Periode', isEditable: true, inputType: 'text' },
-        { key: 'namaPeriode', header: 'Nama Periode', isEditable: true, inputType: 'text' },
+        { key: 'kode', header: 'Kode Periode', isEditable: true, inputType: 'text' },
+        { key: 'nama', header: 'Nama Periode', isEditable: true, inputType: 'text' },
         { key: 'tanggalMulai', header: 'Tanggal Mulai', isEditable: true, inputType: 'date' },
         { key: 'tanggalSelesai', header: 'Tanggal Selesai', isEditable: true, inputType: 'date' },
         { key: 'status', header: 'Status' },

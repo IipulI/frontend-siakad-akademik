@@ -19,8 +19,9 @@ export interface ITableColumn<T> {
     key: keyof T | 'actions'; // Kunci properti di objek data, atau 'actions' untuk kolom tombol
     header: string;           // Teks header kolom
     isEditable?: boolean;     // Apakah kolom ini bisa diedit dalam mode inline
-    inputType?: 'text' | 'number' | 'email' | 'date' | 'select'; // Tipe input HTML
+    inputType?: 'text' | 'number' | 'email' | 'date' | 'time' | 'select'; // Tipe input HTML
     options?: IOption[];      // Opsi untuk select input
+    isBoolean?: boolean;      // Apakah kolom ini merepresentasikan nilai boolean (ditampilkan sebagai checkbox)
 }
 
 // --- Academic Year (Tahun Ajaran) ---
@@ -38,12 +39,12 @@ export interface IAcademicYearPayload {
 // --- Period (Periode Akademik) ---
 export interface IPeriod {
     id: string;
-    tahun: string; // Nama Tahun Ajaran (e.g., "2016/2017")
-    namaPeriode: string;
-    kodePeriode: string;
+    tahun: string;
+    nama: string;
+    kode: string;
     status: 'aktif' | 'inaktif' | 'ACTIVE' | 'INACTIVE';
-    tanggalMulai: string; // Format "YYYY-MM-DD"
-    tanggalSelesai: string; // Format "YYYY-MM-DD"
+    tanggalMulai: string;
+    tanggalSelesai: string;
 }
 
 export interface IPeriodPayload {
@@ -90,7 +91,8 @@ export interface ILimitSKSPayload {
 // --- Program Studi ---
 export interface IProgramStudi {
     id: string;
-    namaProgramStudi: string; // Contoh: "Teknik Informatika"
+    kode: string;
+    nama: string; // Contoh: "Teknik Informatika"
     jenjang: { // Nested object
         id: string;
         nama: string;
@@ -173,6 +175,157 @@ export interface IMataKuliahCompositionDetailsResponse {
     persentase: number;
 }
 
+// --- Data Pelengkap: Perguruan Tinggi ---
+export interface ISistemKuliah {
+    id: string;
+    nama: string;
+    keterangan?: string | null;
+}
+export interface ISistemKuliahPayload {
+    nama: string;
+    keterangan?: string;
+}
+
+export interface IRuangan {
+    id: string;
+    siakFakultasId: string;
+    nama: string;
+    ruangan: string;
+    kapasitas: number;
+    lantai: number;
+}
+export interface IRuanganPayload {
+    siakFakultasId: string;
+    nama: string;
+    ruangan: string;
+    kapasitas: number;
+    lantai: number;
+}
+
+// --- Data Pelengkap: Konsentrasi ---
+export interface IKonsentrasi {
+    id: string;
+    siakProgramStudiId: string;
+    kode: string;
+    nama: string;
+}
+export interface IKonsentrasiPayload {
+    siakProgramStudiId: string;
+    kode: string;
+    nama: string;
+}
+
+// --- Data Pelengkap: Perkuliahan ---
+export interface IJenisMataKuliah {
+    id: string;
+    kode: string;
+    nama: string;
+}
+export interface IJenisMataKuliahPayload {
+    kode: string;
+    nama: string;
+}
+
+export interface ISlotWaktu {
+    id: string;
+    waktu: string;
+}
+export interface ISlotWaktuPayload {
+    waktu: string;
+}
+
+export interface IJenisPertemuan {
+    id: string;
+    nama: string;
+}
+export interface IJenisPertemuanPayload {
+    nama: string;
+}
+
+// --- Data Pelengkap: Biodata ---
+export interface IAgama {
+    id: string;
+    nama: string;
+}
+export interface IAgamaPayload {
+    nama: string;
+}
+
+export interface ISuku {
+    id: string;
+    nama: string;
+}
+export interface ISukuPayload {
+    nama: string;
+}
+
+export interface IPenghasilan {
+    id: string;
+    range: string;
+}
+export interface IPenghasilanPayload {
+    range: string;
+}
+
+export interface IPekerjaan {
+    id: string;
+    nama: string;
+}
+export interface IPekerjaanPayload {
+    nama: string;
+}
+
+export interface IJasAlmamater {
+    id: string;
+    nama: string;
+}
+export interface IJasAlmamaterPayload {
+    nama: string;
+}
+
+// --- Data Pelengkap: Mahasiswa ---
+export interface IStatusMahasiswa {
+    id: string;
+    kode: string;
+    nama: string;
+    aktif: boolean;
+    kuliah: boolean;
+}
+export interface IStatusMahasiswaPayload {
+    kode: string;
+    nama: string;
+    aktif: boolean;
+    kuliah: boolean;
+}
+
+export interface IJenisTinggal {
+    id: string;
+    kode: string;
+    nama: string;
+}
+export interface IJenisTinggalPayload {
+    kode: string;
+    nama: string;
+}
+
+export interface ITransportasi {
+    id: string;
+    kode: string;
+    nama: string;
+}
+export interface ITransportasiPayload {
+    kode: string;
+    nama: string;
+}
+
+export interface IKebutuhanKhusus {
+    id: string;
+    nama: string;
+}
+export interface IKebutuhanKhususPayload {
+    nama: string;
+}
+
 // --- Generic Payload Type for TableSetting's forms ---
 export type TableFormPayload =
     IAcademicYearPayload |
@@ -180,7 +333,22 @@ export type TableFormPayload =
     ILevelPayload |
     ILimitSKSPayload |
     IGradingScalePayload |
-    IGradeCompositionPayload;
+    IGradeCompositionPayload |
+    ISistemKuliahPayload |
+    IRuanganPayload |
+    IJenisMataKuliahPayload |
+    ISlotWaktuPayload |
+    IJenisPertemuanPayload |
+    IAgamaPayload |
+    ISukuPayload |
+    IPenghasilanPayload |
+    IPekerjaanPayload |
+    IJasAlmamaterPayload |
+    IStatusMahasiswaPayload |
+    IJenisTinggalPayload |
+    ITransportasiPayload |
+    IKebutuhanKhususPayload |
+    IKonsentrasiPayload;
 
 // --- Bulk Assignment Payload (Initial Concept, not used in final SetComposition logic) ---
 // Kept for context if backend implements a true bulk set assignment

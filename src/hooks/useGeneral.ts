@@ -23,6 +23,56 @@ export function getProgramStudi() {
   });
 }
 
+export function getSistemKuliah() {
+  return useQuery({
+    queryKey: ["sistemKuliah"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/sistem-kuliah");
+      return response.data.data;
+    },
+  });
+}
+
+export function getJalurPendaftaran() {
+  return useQuery({
+    queryKey: ["jalurPendaftaran"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/jalur-pendaftaran");
+      return response.data.data;
+    },
+  });
+}
+
+export function getPendidikan() {
+  return useQuery({
+    queryKey: ["pendidikan"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/pendidikan");
+      return response.data.data;
+    },
+  });
+}
+
+export function getAgama() {
+  return useQuery({
+    queryKey: ["agama"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/agama");
+      return response.data.data;
+    },
+  });
+}
+
+export function getTransportasi() {
+  return useQuery({
+    queryKey: ["transportasi"],
+    queryFn: async () => {
+      const response = await Api.get("/akademik/transportasi");
+      return response.data.data;
+    },
+  });
+}
+
 export function getAcademicPeriodeDropdown() {
   return useQuery({
     queryKey: ["academicPeriodsDropdown"],

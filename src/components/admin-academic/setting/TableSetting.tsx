@@ -94,6 +94,7 @@ function TableSetting<T extends { id: string }>({
             case 'number':
             case 'email':
             case 'date':
+            case 'time':
                 return (
                     <input
                         type={column.inputType}
@@ -196,7 +197,17 @@ function TableSetting<T extends { id: string }>({
                                             {editingRowId === row.id && column.isEditable ? (
                                                 renderInput(column, row, editedRowData, false, true)
                                             ) : column.key !== 'actions' ? (
-                                                <span className="px-2 py-1 lg:text-sm text-xs text-primary-brown">{(row as any)[column.key]?.toString() || ''}</span>
+                                                column.isBoolean ? (
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={(row as any)[column.key] === true || (row as any)[column.key] === 'true'}
+                                                        disabled
+                                                        readOnly
+                                                        className="w-4 h-4 accent-primary-green align-middle"
+                                                    />
+                                                ) : (
+                                                    <span className="px-2 py-1 lg:text-sm text-xs text-primary-brown">{(row as any)[column.key]?.toString() || ''}</span>
+                                                )
                                             ) : (
                                                 <div className="flex items-center justify-center space-x-2">
                                                     {editingRowId === row.id ? (

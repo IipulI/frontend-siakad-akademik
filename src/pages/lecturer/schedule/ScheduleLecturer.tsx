@@ -26,12 +26,12 @@ const ScheduleLecturer = () => {
   }, [periodeAkademikDropdown]);
 
   const hariList = [
-    { key: "senin", label: "Senin" },
-    { key: "selasa", label: "Selasa" },
-    { key: "rabu", label: "Rabu" },
-    { key: "kamis", label: "Kamis" },
-    { key: "jumat", label: "Jumat" },
-    { key: "sabtu", label: "Sabtu" },
+    { key: "Senin", label: "Senin" },
+    { key: "Selasa", label: "Selasa" },
+    { key: "Rabu", label: "Rabu" },
+    { key: "Kamis", label: "Kamis" },
+    { key: "Jumat", label: "Jumat" },
+    { key: "Sabtu", label: "Sabtu" },
   ];
 
   const jadwalData = data?.data

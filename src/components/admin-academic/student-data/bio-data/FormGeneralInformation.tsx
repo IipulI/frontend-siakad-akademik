@@ -1,6 +1,8 @@
 import LayoutForTabNavigation from "../../dashboard/LayoutForTabNavigation";
 import { DateInput, SelectInput, TextInput } from "./../Input";
 import { CreateStudentData } from "../../../../hooks/admin-akademik/useMahasiswa";
+import { useJasAlmamater } from "../../../../hooks/admin-akademik/useJasAlmamater";
+import { getAgama, getTransportasi } from "../../../../hooks/useGeneral";
 
 interface FormGeneralInformationProps {
   formData?: CreateStudentData;
@@ -16,27 +18,14 @@ export default function FormGeneralInformation({
     { value: "perempuan", label: "Perempuan" },
   ];
 
-  const agamaOptions = [
-    { value: "islam", label: "Islam" },
-    { value: "kristen", label: "Kristen" },
-    { value: "katolik", label: "Katolik" },
-    { value: "hindu", label: "Hindu" },
-    { value: "buddha", label: "Buddha" },
-    { value: "konghucu", label: "Konghucu" },
-  ];
+  const { data: agamaOptions } = getAgama();
+  const { data: transportasiOptions } = getTransportasi();
 
   const golonganDarahOptions = [
     { value: "a", label: "A" },
     { value: "b", label: "B" },
     { value: "ab", label: "AB" },
     { value: "o", label: "O" },
-  ];
-
-  const transportasiOptions = [
-    { value: "motor", label: "Motor" },
-    { value: "mobil", label: "Mobil" },
-    { value: "angkutan umum", label: "Angkutan Umum" },
-    { value: "jalan kaki", label: "Jalan Kaki" },
   ];
 
   const kewarganegaraanOptions = [
@@ -50,13 +39,11 @@ export default function FormGeneralInformation({
     { value: "cerai", label: "Cerai" },
   ];
 
-  const ukuranJasOptions = [
-    { value: "s", label: "S" },
-    { value: "m", label: "M" },
-    { value: "l", label: "L" },
-    { value: "xl", label: "XL" },
-    { value: "xxl", label: "XXL" },
-  ];
+  const { data: jasAlmamaterList } = useJasAlmamater();
+  const ukuranJasOptions = (jasAlmamaterList ?? []).map((jas) => ({
+    value: jas.id,
+    label: jas.nama,
+  }));
 
   const pekerjaanOptions = [
     { value: "pns", label: "PNS" },
@@ -108,10 +95,10 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Agama"
               options={agamaOptions}
-              getOptionLabel={(opt) => opt.label}
-              getOptionValue={(opt) => opt.value}
+              getOptionLabel={(opt) => opt.nama}
+              getOptionValue={(opt) => opt.id}
               value={formData?.agama}
-              onChange={(option) => onInputChange("agama", option?.value ?? "")}
+              onChange={(option) => onInputChange("agama", option?.id ?? "")}
             />
             <TextInput
               label="Berat Badan (kg)"
@@ -136,11 +123,11 @@ export default function FormGeneralInformation({
             <SelectInput
               label="Transportasi"
               options={transportasiOptions}
-              getOptionLabel={(opt) => opt.label}
-              getOptionValue={(opt) => opt.value}
+              getOptionLabel={(opt) => opt.nama}
+              getOptionValue={(opt) => opt.id}
               value={formData?.transportasi}
               onChange={(option) =>
-                onInputChange("transportasi", option?.value ?? "")
+                onInputChange("transportasi", option?.id ?? "")
               }
             />
           </div>
