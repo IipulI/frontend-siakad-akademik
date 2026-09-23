@@ -509,18 +509,17 @@ const ClassAttendant = ({ data, classData }) => {
 
       {/* Modal Tambah Mahasiswa */}
       {showModal && (
-        <AddStudentModal
-          students={allStudents}
-          kelasId={data}
-          onClose={() => setShowModal(false)}
-          onSuccess={() => {
-            // invalidate query atau refresh data
-            queryClient.invalidateQueries({
-              queryKey: ["kelas-detail", data.id],
-            });
-            setShowModal(false); // tutup modal
-          }}
-        />
+          <AddStudentModal
+              students={allStudents}
+              kelasId={data}
+              periodeAkademikId={classData?.periodeAkademik?.id}
+              existingStudentIds={getAllStudentDetailAttendant?.map((s: any) => s.id) ?? []}
+              onClose={() => setShowModal(false)}
+              onSuccess={() => {
+                queryClient.invalidateQueries({ queryKey: ["kelas-detail", data] }); // sekaligus fix bug data.id
+                setShowModal(false);
+              }}
+          />
       )}
     </div>
   );
@@ -977,108 +976,162 @@ const ExamSchedule = ({ data }) => {
 };
 
 const AddStudentModal = ({
-  onClose,
-  onSuccess,
-  students,
-  kelasId,
-}: {
+                           onClose,
+                           onSuccess,
+                           students,
+                           kelasId,
+                           periodeAkademikId,
+                           existingStudentIds = [],
+                         }: {
   onClose: () => void;
   onSuccess: () => void;
   students: any[];
   kelasId: string;
+  periodeAkademikId: string;
+  existingStudentIds?: string[];
 }) => {
   const [show, setShow] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { mutate, isPending } = addStudentToClass(kelasId);
 
   useEffect(() => {
     setShow(true);
   }, []);
 
+  const availableStudents = students.filter(
+      (s) =>
+          !existingStudentIds.includes(s.id) &&
+          s.nama?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const toggleStudent = (id: string) => {
+    setSelectedIds((prev) =>
+        prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+    );
+  };
+
   const addStudentClassAttendant = () => {
-    if (!selectedStudentId) {
-      alert("Pilih mahasiswa terlebih dahulu.");
+    if (selectedIds.length === 0) {
+      alert("Pilih minimal satu mahasiswa.");
+      return;
+    }
+    if (!periodeAkademikId) {
+      alert("Periode akademik tidak ditemukan.");
       return;
     }
 
     mutate(
-      { mahasiswaIds: [selectedStudentId] },
-      {
-        onSuccess: () => {
-          Swal.fire({
-            icon: "success",
-            title: "Berhasil",
-            text: "Peserta berhasil ditambahkan ke kelas.",
-            confirmButtonColor: "#10b981", // Tailwind green
-            timer: 1500,
-            showConfirmButton: false,
-          });
-          onSuccess(); // Panggil fungsi parent (invalidate + tutup modal)
-        },
-        onError: (err: any) => {
-          Swal.fire({
-            icon: "error",
-            title: "Gagal",
-            text: err.message || "Gagal menambahkan peserta.",
-            confirmButtonColor: "#ef4444", // Tailwind red
-          });
-        },
-      }
+        { mahasiswaIds: selectedIds, siakPeriodeAkademikId: periodeAkademikId },
+        {
+          onSuccess: (res: any) => {
+            const results = res?.data?.results ?? res?.results;
+            const failedList = results?.failed ?? [];
+
+            if (failedList.length > 0) {
+              const failedNames = failedList
+                  .map((f: any) => `${f.nama}: ${f.error}`)
+                  .join("<br/>");
+              Swal.fire({
+                icon: "warning",
+                title: "Sebagian berhasil ditambahkan",
+                html: `${results.success.length} berhasil, ${failedList.length} gagal:<br/><small>${failedNames}</small>`,
+                confirmButtonColor: "#10b981",
+              });
+            } else {
+              Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: "Peserta berhasil ditambahkan ke kelas.",
+                confirmButtonColor: "#10b981",
+                timer: 1500,
+                showConfirmButton: false,
+              });
+            }
+            onSuccess();
+          },
+          onError: (err: any) => {
+            Swal.fire({
+              icon: "error",
+              title: "Gagal",
+              text:
+                  err?.response?.data?.message ||
+                  err.message ||
+                  "Gagal menambahkan peserta.",
+              confirmButtonColor: "#ef4444",
+            });
+          },
+        }
     );
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-white/30 backdrop-blur-sm transition-opacity duration-300"
-        onClick={onClose}
-      />
-      <div
-        className={`relative bg-white rounded-lg shadow-lg p-6 z-50 w-full max-w-md transform transition-all duration-300 ${
-          show ? "opacity-100 scale-100" : "opacity-0 scale-95"
-        }`}
-      >
-        <h2 className="text-center text-lg font-semibold mb-4">
-          Tambah Peserta Kelas
-        </h2>
-
-        <div className="mb-4">
-          <label htmlFor="mahasiswa" className="block text-sm font-medium mb-1">
-            Mahasiswa
-          </label>
-          <select
-            id="mahasiswa"
-            value={selectedStudentId}
-            onChange={(e) => setSelectedStudentId(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-primary-green"
-          >
-            <option value="">-- Cari Mahasiswa --</option>
-            {students.map((student) => (
-              <option key={student.id} value={student.id}>
-                {student.nama}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-between">
-          <button
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div
+            className="absolute inset-0 bg-white/30 backdrop-blur-sm transition-opacity duration-300"
             onClick={onClose}
-            className="border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
-            disabled={isPending}
-          >
-            Batalkan
-          </button>
-          <button
-            onClick={addStudentClassAttendant}
-            className="bg-primary-green text-white px-4 py-2 rounded hover:bg-green-700"
-            disabled={isPending}
-          >
-            {isPending ? "Menambahkan..." : "Tambah Peserta"}
-          </button>
+        />
+        <div
+            className={`relative bg-white rounded-lg shadow-lg p-6 z-50 w-full max-w-md transform transition-all duration-300 ${
+                show ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            }`}
+        >
+          <h2 className="text-center text-lg font-semibold mb-4">
+            Tambah Peserta Kelas
+          </h2>
+
+          <input
+              type="text"
+              placeholder="Cari nama mahasiswa..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-2 focus:outline-none focus:ring focus:ring-primary-green"
+          />
+
+          <div className="max-h-64 overflow-y-auto border border-gray-200 rounded mb-4">
+            {availableStudents.length === 0 ? (
+                <p className="text-center text-sm text-gray-500 py-4">
+                  Tidak ada mahasiswa yang bisa ditambahkan.
+                </p>
+            ) : (
+                availableStudents.map((student) => (
+                    <label
+                        key={student.id}
+                        className="flex items-center gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                          type="checkbox"
+                          checked={selectedIds.includes(student.id)}
+                          onChange={() => toggleStudent(student.id)}
+                      />
+                      <span className="text-sm">{student.nama}</span>
+                    </label>
+                ))
+            )}
+          </div>
+
+          <p className="text-xs text-gray-500 mb-4">
+            {selectedIds.length} mahasiswa dipilih
+          </p>
+
+          <div className="flex justify-between">
+            <button
+                onClick={onClose}
+                className="border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
+                disabled={isPending}
+            >
+              Batalkan
+            </button>
+            <button
+                onClick={addStudentClassAttendant}
+                className="bg-primary-green text-white px-4 py-2 rounded hover:bg-green-700"
+                disabled={isPending || selectedIds.length === 0}
+            >
+              {isPending ? "Menambahkan..." : `Tambah (${selectedIds.length})`}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -29,18 +29,7 @@ import { useJenisPertemuan } from "../../../hooks/admin-akademik/useJenisPertemu
 
 const CreateCollegeClass = () => {
   const navigate = useNavigate();
-  const [scheduleList, setScheduleList] = useState([
-    {
-      day: "",
-      startTime: "",
-      endTime: "",
-      meetingType: "",
-      learningMethod: "",
-      room: "",
-      lecturer: "",
-      lecturerName: "",
-    },
-  ]);
+  const [scheduleList, setScheduleList] = useState([]);
 
   const [academicPeriodId, setAcademicPeriodId] = useState("");
   const [systemType, setSystemType] = useState("");
@@ -88,6 +77,25 @@ const CreateCollegeClass = () => {
     navigate(AdminAcademicRoute.collegeClass.class);
   };
 
+  const removeSchedule = (index) => {
+    setScheduleList((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const validSchedules = scheduleList.filter(
+      (item) =>
+          item.day || item.startTime || item.endTime || item.meetingType ||
+          item.learningMethod || item.room || item.lecturer
+  ); // drop fully-empty rows
+
+  // optional: guard against half-filled rows before submit
+  const incomplete = validSchedules.some(
+      (item) => !item.day || !item.startTime || !item.endTime || !item.room
+  );
+  if (incomplete) {
+    alert("Lengkapi jadwal yang sudah diisi, atau hapus baris yang kosong.");
+    return;
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -101,12 +109,12 @@ const CreateCollegeClass = () => {
       siakMataKuliahId: subject,
       nama: nameClass,
       jumlahPertemuan: parseInt(totalMeet),
-      jadwalKuliah: scheduleList.map((item) => ({
+      jadwalKuliah: validSchedules.map((item) => ({
         hari: item.day,
         siakRuanganId: item.room,
         siakDosenId: item.lecturer || null,
-        jamMulai: item.startTime + ":00", // tambahkan detik
-        jamSelesai: item.endTime + ":00", // tambahkan detik
+        jamMulai: item.startTime + ":00",
+        jamSelesai: item.endTime + ":00",
         jenisPertemuan: item.meetingType,
         metodePembelajaran: item.learningMethod,
       })),
@@ -331,6 +339,7 @@ const CreateCollegeClass = () => {
               listRooms={rooms}
               listJenisPertemuan={jenisPertemuanList}
               listSlotWaktu={slotWaktuList}
+              removeSchedule={removeSchedule}
             />
             <ButtonClick
               icon={<Plus size={15} strokeWidth={3} />}
@@ -359,6 +368,7 @@ const CreateCollegeClassTable = ({
   listRooms,
   listJenisPertemuan,
   listSlotWaktu,
+  removeSchedule,
 }) => {
   const learningMethod = ["Offline", "Online", "Hybrid"];
   const handleChange = (index, field, value) => {
@@ -402,6 +412,9 @@ const CreateCollegeClassTable = ({
             </th>
             <th className="p-2 border font-semibold border-gray-300">
               Dosen Pengajar
+            </th>
+            <th className="p-2 border font-semibold border-gray-300">
+              Aksi
             </th>
           </tr>
         </thead>
@@ -523,6 +536,16 @@ const CreateCollegeClassTable = ({
                     handleLecturerChange(index, id, label)
                   }
                 />
+              </td>
+              <td className="p-2 border border-gray-300">
+                <button
+                    type="button"
+                    onClick={() => removeSchedule(index)}
+                    className="text-red-600 hover:text-red-800"
+                    title="Hapus Jadwal"
+                >
+                  <CircleX size={18} strokeWidth={2} />
+                </button>
               </td>
             </tr>
           ))}
