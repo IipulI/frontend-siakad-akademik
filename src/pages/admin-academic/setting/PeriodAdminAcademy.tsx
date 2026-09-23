@@ -124,8 +124,8 @@ const PeriodAdminAcademic: React.FC = () => {
             inputType: 'select',
             options: academicYearOptions // Pass the prepared options here!
         },
-        { key: 'kode', header: 'Kode Periode', isEditable: true, inputType: 'text' },
-        { key: 'nama', header: 'Nama Periode', isEditable: true, inputType: 'text' },
+        { key: 'kodePeriode', header: 'Kode Periode', isEditable: true, inputType: 'text' },
+        { key: 'namaPeriode', header: 'Nama Periode', isEditable: true, inputType: 'text' },
         { key: 'tanggalMulai', header: 'Tanggal Mulai', isEditable: true, inputType: 'date' },
         { key: 'tanggalSelesai', header: 'Tanggal Selesai', isEditable: true, inputType: 'date' },
         { key: 'status', header: 'Status' },
@@ -171,6 +171,7 @@ const PeriodAdminAcademic: React.FC = () => {
             await createPeriod(newRowData);
             setIsAddingNewRow(false);
             alert("Periode berhasil ditambahkan!");
+            refetch();
         } catch (err: any) {
             console.error("Error saving new period:", err);
             alert(`Gagal menambahkan periode: ${err.response?.data?.message || err.message || 'Terjadi kesalahan'}`);
@@ -225,6 +226,7 @@ const PeriodAdminAcademic: React.FC = () => {
             await updatePeriod({ id: editingRowId, payload: editedRowData });
             setEditingRowId(null);
             alert("Periode berhasil diperbarui!");
+            refetch();
         } catch (err: any) {
             console.error("Error saving edited period:", err);
             alert(`Gagal memperbarui periode: ${err.response?.data?.message || err.message || 'Terjadi kesalahan'}`);
@@ -242,6 +244,7 @@ const PeriodAdminAcademic: React.FC = () => {
             try {
                 await deletePeriod(id);
                 alert("Periode berhasil dihapus!");
+                refetch();
             } catch (err: any) {
                 console.error("Error deleting period:", err);
                 alert(`Gagal menghapus periode: ${err.response?.data?.message || err.message || 'Terjadi kesalahan'}`);
