@@ -55,5 +55,10 @@
     "typescript": "^5.8.3",
     "vite": "^6.2.0",
     "vitest": "^4.1.7"
+  },
+  "allowScripts": {
+    "@swc/core@1.11.5": true,
+    "core-js@3.42.0": true,
+    "esbuild@0.25.0": true
   }
 }

@@ -551,31 +551,33 @@ export default function RencanaEvaluasiLecturer() {
                         </tr>
                       </thead>
                       <tbody className="text-sm text-gray-700 text-center font-semibold">
-                        {PELAPORAN_METODE_EVALUASI_GROUPS.map((group, gIdx) =>
-                          group.items.map((item, iIdx) => {
+                        {PELAPORAN_METODE_EVALUASI_GROUPS.map((group, gIdx) => {
+                          const matchedItems = group.items.filter((item) =>
+                            existing.some((e: any) => e.jenisEvaluasi === item.jenisMatch)
+                          );
+                          if (matchedItems.length === 0) return null;
+                          return matchedItems.map((item, iIdx) => {
                             const match = existing.find((e: any) => e.jenisEvaluasi === item.jenisMatch);
                             return (
                               <tr key={`${gIdx}-${iIdx}`} className="hover:bg-gray-50 border-b border-gray-200">
                                 {iIdx === 0 && (
-                                  <td className="p-3 border border-gray-200" rowSpan={group.items.length}>
+                                  <td className="p-3 border border-gray-200" rowSpan={matchedItems.length}>
                                     {gIdx + 1}
                                   </td>
                                 )}
                                 {iIdx === 0 && (
-                                  <td className="p-3 border border-gray-200 text-left font-normal" rowSpan={group.items.length}>
+                                  <td className="p-3 border border-gray-200 text-left font-normal" rowSpan={matchedItems.length}>
                                     {group.basis}
                                   </td>
                                 )}
                                 <td className="p-3 border border-gray-200">{item.komponen || "-"}</td>
-                                <td className="p-3 border border-gray-200">{match ? `${match.bobotEvaluasi}%` : "-"}</td>
-                                <td className="p-3 border border-gray-200 text-left font-normal">
-                                  {match ? item.deskripsi : "-"}
-                                </td>
+                                <td className="p-3 border border-gray-200">{`${match.bobotEvaluasi}%`}</td>
+                                <td className="p-3 border border-gray-200 text-left font-normal">{item.deskripsi}</td>
                                 <td className="p-3 border border-gray-200 text-left font-normal">-</td>
                               </tr>
                             );
-                          })
-                        )}
+                          });
+                        })}
                       </tbody>
                     </table>
                   </div>

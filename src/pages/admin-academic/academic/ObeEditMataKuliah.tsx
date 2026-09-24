@@ -10,6 +10,8 @@ import {
   useUpdateObeMataKuliah,
   getKelompokMataKuliah,
   ObeMataKuliahUpdatePayload,
+  ObeMataKuliahFiles,
+  getObeFileUrl,
 } from "../../../hooks/academic/useObeManagement";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { getProdi } from "../../../hooks/academic/useProdi";
@@ -64,6 +66,7 @@ export default function ObeEditMataKuliah() {
 
 
   const [formData, setFormData] = useState<FormState>(emptyForm);
+  const [files, setFiles] = useState<ObeMataKuliahFiles>({});
   const [rumpunNama, setRumpunNama] = useState("");
   const [kelompokNama, setKelompokNama] = useState("");
   const [koordinatorMkNama, setKoordinatorMkNama] = useState("");
@@ -163,7 +166,7 @@ export default function ObeEditMataKuliah() {
     };
 
     updateMutation.mutate(
-      { id: mataKuliahId, payload },
+      { id: mataKuliahId, payload, files },
       {
         onSuccess: () => {
           navigate(`${AdminAcademicRoute.obeManagement.detailObeCourse}/${obeId || "default"}/${mataKuliahId}`);
@@ -427,41 +430,85 @@ export default function ObeEditMataKuliah() {
                       className="w-4 h-4"
                     />
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada SAP</span>
-                    <input
-                      type="checkbox"
-                      checked={formData.adaSap}
-                      onChange={(e) => handleChange("adaSap", e.target.checked)}
-                      className="w-4 h-4"
-                    />
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada SAP</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        onChange={(e) => setFiles((prev) => ({ ...prev, sap: e.target.files?.[0] || null }))}
+                        className="w-full text-sm"
+                      />
+                      {getObeFileUrl(detail.atribut?.sap) && (
+                        <a
+                          href={getObeFileUrl(detail.atribut?.sap) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold whitespace-nowrap underline"
+                        >
+                          {files.sap ? "File baru dipilih" : "Lihat file"}
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada Silabus</span>
-                    <input
-                      type="checkbox"
-                      checked={formData.adaSilabus}
-                      onChange={(e) => handleChange("adaSilabus", e.target.checked)}
-                      className="w-4 h-4"
-                    />
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada Silabus</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        onChange={(e) => setFiles((prev) => ({ ...prev, silabus: e.target.files?.[0] || null }))}
+                        className="w-full text-sm"
+                      />
+                      {getObeFileUrl(detail.atribut?.silabus) && (
+                        <a
+                          href={getObeFileUrl(detail.atribut?.silabus) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold whitespace-nowrap underline"
+                        >
+                          {files.silabus ? "File baru dipilih" : "Lihat file"}
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada Bahan Ajar</span>
-                    <input
-                      type="checkbox"
-                      checked={formData.adaBahanAjar}
-                      onChange={(e) => handleChange("adaBahanAjar", e.target.checked)}
-                      className="w-4 h-4"
-                    />
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada Bahan Ajar</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        onChange={(e) => setFiles((prev) => ({ ...prev, bahanAjar: e.target.files?.[0] || null }))}
+                        className="w-full text-sm"
+                      />
+                      {getObeFileUrl(detail.atribut?.bahanAjar) && (
+                        <a
+                          href={getObeFileUrl(detail.atribut?.bahanAjar) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold whitespace-nowrap underline"
+                        >
+                          {files.bahanAjar ? "File baru dipilih" : "Lihat file"}
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada Diktat</span>
-                    <input
-                      type="checkbox"
-                      checked={formData.adaDiktat}
-                      onChange={(e) => handleChange("adaDiktat", e.target.checked)}
-                      className="w-4 h-4"
-                    />
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada Diktat</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        onChange={(e) => setFiles((prev) => ({ ...prev, diktat: e.target.files?.[0] || null }))}
+                        className="w-full text-sm"
+                      />
+                      {getObeFileUrl(detail.atribut?.diktat) && (
+                        <a
+                          href={getObeFileUrl(detail.atribut?.diktat) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold whitespace-nowrap underline"
+                        >
+                          {files.diktat ? "File baru dipilih" : "Lihat file"}
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

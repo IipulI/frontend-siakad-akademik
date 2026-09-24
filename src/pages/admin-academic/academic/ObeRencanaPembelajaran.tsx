@@ -195,7 +195,6 @@ export default function ObeRencanaPembelajaran() {
     if (!form.sesi || form.sesi < 1 || form.sesi > 16) return "Sesi (Pertemuan Ke-) harus angka 1-16.";
     if (!form.jenisPertemuan) return "Jenis Pertemuan wajib dipilih.";
     if (!form.materiPembelajaran.trim()) return "Materi Pembelajaran (IND) wajib diisi.";
-    if (form.bobotPenilaian < 0 || form.bobotPenilaian > 100) return "Bobot Penilaian harus 0-100.";
     if (form.cpmkIds.length === 0) return "Pilih minimal 1 CPMK/Sub-CPMK.";
     return null;
   };
@@ -550,15 +549,7 @@ export default function ObeRencanaPembelajaran() {
 
                           {/* Metode Pembelajaran */}
                           <td className="p-3 border border-gray-200 text-left font-normal">
-                            {sesi.metodePembelajaranLuring && (
-                              <p className="text-xs"><strong>Luring:</strong> {sesi.metodePembelajaranLuring}</p>
-                            )}
-                            {sesi.metodePembelajaranDaring && (
-                              <p className="text-xs"><strong>Daring:</strong> {sesi.metodePembelajaranDaring}</p>
-                            )}
-                            {!sesi.metodePembelajaranLuring && !sesi.metodePembelajaranDaring && (
-                              <span className="text-gray-400 italic">-</span>
-                            )}
+                            {sesi.metodePembelajaranLuring ? "Luring" : sesi.metodePembelajaranDaring ? "Daring" : <span className="text-gray-400 italic">-</span>}
                           </td>
 
                           {/* Action Buttons */}
@@ -685,37 +676,26 @@ export default function ObeRencanaPembelajaran() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Metode Pembelajaran Luring</label>
-                  <input
-                    type="text"
-                    value={form.metodePembelajaranLuring}
-                    onChange={(e) => setForm((f) => ({ ...f, metodePembelajaranLuring: e.target.value }))}
-                    className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green w-full"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Metode Pembelajaran Daring</label>
-                  <input
-                    type="text"
-                    value={form.metodePembelajaranDaring}
-                    onChange={(e) => setForm((f) => ({ ...f, metodePembelajaranDaring: e.target.value }))}
-                    className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green w-full"
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Bobot Penilaian (%)</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={form.bobotPenilaian}
-                  onChange={(e) => setForm((f) => ({ ...f, bobotPenilaian: Number(e.target.value) }))}
-                  className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green w-full md:w-48"
-                />
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Metode Pembelajaran</label>
+                <select
+                  value={form.metodePembelajaranLuring ? "Luring" : (form.metodePembelajaranDaring ? "Daring" : "")}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "Luring") {
+                      setForm((f) => ({ ...f, metodePembelajaranLuring: "Luring", metodePembelajaranDaring: "" }));
+                    } else if (val === "Daring") {
+                      setForm((f) => ({ ...f, metodePembelajaranLuring: "", metodePembelajaranDaring: "Daring" }));
+                    } else {
+                      setForm((f) => ({ ...f, metodePembelajaranLuring: "", metodePembelajaranDaring: "" }));
+                    }
+                  }}
+                  className="p-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-1 focus:ring-primary-green w-full"
+                >
+                  <option value="">Pilih Metode Pembelajaran</option>
+                  <option value="Luring">Luring</option>
+                  <option value="Daring">Daring</option>
+                </select>
               </div>
 
               <div>
@@ -792,16 +772,10 @@ export default function ObeRencanaPembelajaran() {
                       <span className="md:col-span-3 whitespace-pre-line">{detailData.kriteriaPenilaian || <span className="text-gray-400 italic">-</span>}</span>
                     </div>
                     <div className="p-3 grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <span className="font-semibold text-gray-600">Metode Pembelajaran Luring</span>
-                      <span className="md:col-span-3">{detailData.metodePembelajaranLuring || <span className="text-gray-400 italic">-</span>}</span>
-                    </div>
-                    <div className="p-3 grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <span className="font-semibold text-gray-600">Metode Pembelajaran Daring</span>
-                      <span className="md:col-span-3">{detailData.metodePembelajaranDaring || <span className="text-gray-400 italic">-</span>}</span>
-                    </div>
-                    <div className="p-3 grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <span className="font-semibold text-gray-600">Bobot Penilaian (%)</span>
-                      <span className="md:col-span-3">{detailData.bobotPenilaian}</span>
+                      <span className="font-semibold text-gray-600">Metode Pembelajaran</span>
+                      <span className="md:col-span-3">
+                        {detailData.metodePembelajaranLuring ? "Luring" : (detailData.metodePembelajaranDaring ? "Daring" : <span className="text-gray-400 italic">-</span>)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -939,7 +913,7 @@ export default function ObeRencanaPembelajaran() {
                   <div className="space-y-1 max-h-60 overflow-y-auto">
                     {previewSalin.sesi.map((s, i) => (
                       <p key={i} className="text-xs text-gray-600">
-                        Sesi {s.sesi} ({s.jenisPertemuan}) — {s.materiPembelajaran} — bobot {s.bobotPenilaian}% — CPMK: {s.cpmk.join(", ") || "-"}
+                        Sesi {s.sesi} ({s.jenisPertemuan}) — {s.materiPembelajaran} — CPMK: {s.cpmk.join(", ") || "-"}
                       </p>
                     ))}
                   </div>

@@ -3,7 +3,7 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Search, Edit, Plus, Check, X } from "lucide-react";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
-import { getObeMataKuliahDetail, getObeMataKuliah } from "../../../hooks/academic/useObeManagement";
+import { getObeMataKuliahDetail, getObeMataKuliah, getObeFileUrl } from "../../../hooks/academic/useObeManagement";
 import SidebarObeCourse from "../../../components/admin-academic/academic/obe/SidebarObeCourse";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useSetBreadcrumbLabel } from "../../../context/BreadcrumbLabelContext";
@@ -256,26 +256,74 @@ export default function ObeDataMataKuliah() {
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada SAP</span>
-                    <span className={courseDetail.atribut?.adaSap ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
-                      {courseDetail.atribut?.adaSap ? <Check size={16} /> : <X size={16} />}
+                    <span className="flex items-center gap-2">
+                      {courseDetail.atribut?.sap && (
+                        <a
+                          href={getObeFileUrl(courseDetail.atribut.sap) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold underline"
+                        >
+                          Buka file
+                        </a>
+                      )}
+                      <span className={courseDetail.atribut?.adaSap ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                        {courseDetail.atribut?.adaSap ? <Check size={16} /> : <X size={16} />}
+                      </span>
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada Silabus</span>
-                    <span className={courseDetail.atribut?.adaSilabus ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
-                      {courseDetail.atribut?.adaSilabus ? <Check size={16} /> : <X size={16} />}
+                    <span className="flex items-center gap-2">
+                      {courseDetail.atribut?.silabus && (
+                        <a
+                          href={getObeFileUrl(courseDetail.atribut.silabus) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold underline"
+                        >
+                          Buka file
+                        </a>
+                      )}
+                      <span className={courseDetail.atribut?.adaSilabus ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                        {courseDetail.atribut?.adaSilabus ? <Check size={16} /> : <X size={16} />}
+                      </span>
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada Bahan Ajar</span>
-                    <span className={courseDetail.atribut?.adaBahanAjar ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
-                      {courseDetail.atribut?.adaBahanAjar ? <Check size={16} /> : <X size={16} />}
+                    <span className="flex items-center gap-2">
+                      {courseDetail.atribut?.bahanAjar && (
+                        <a
+                          href={getObeFileUrl(courseDetail.atribut.bahanAjar) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold underline"
+                        >
+                          Buka file
+                        </a>
+                      )}
+                      <span className={courseDetail.atribut?.adaBahanAjar ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                        {courseDetail.atribut?.adaBahanAjar ? <Check size={16} /> : <X size={16} />}
+                      </span>
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 py-3">
                     <span className="font-semibold text-[#666666]">Ada Diktat</span>
-                    <span className={courseDetail.atribut?.adaDiktat ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
-                      {courseDetail.atribut?.adaDiktat ? <Check size={16} /> : <X size={16} />}
+                    <span className="flex items-center gap-2">
+                      {courseDetail.atribut?.diktat && (
+                        <a
+                          href={getObeFileUrl(courseDetail.atribut.diktat) || undefined}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary-green text-xs font-semibold underline"
+                        >
+                          Buka file
+                        </a>
+                      )}
+                      <span className={courseDetail.atribut?.adaDiktat ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
+                        {courseDetail.atribut?.adaDiktat ? <Check size={16} /> : <X size={16} />}
+                      </span>
                     </span>
                   </div>
                 </div>

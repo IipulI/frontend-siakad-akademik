@@ -7,6 +7,7 @@ import {
   useCreateObeMataKuliah,
   getKelompokMataKuliah,
   ObeMataKuliahCreatePayload,
+  ObeMataKuliahFiles,
 } from "../../../hooks/academic/useObeManagement";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear";
 import { getProdi } from "../../../hooks/academic/useProdi";
@@ -64,6 +65,7 @@ export default function ObeAddMataKuliah() {
   const createMutation = useCreateObeMataKuliah();
 
   const [formData, setFormData] = useState<FormState>(emptyForm);
+  const [files, setFiles] = useState<ObeMataKuliahFiles>({});
   const [koordinatorMkNama, setKoordinatorMkNama] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -120,19 +122,22 @@ export default function ObeAddMataKuliah() {
       pengembangRpsIds: formData.pengembangRpsIds.filter(Boolean),
     };
 
-    createMutation.mutate(payload, {
-      onSuccess: (created: any) => {
-        const newId = created?.id;
-        if (newId) {
-          navigate(`${AdminAcademicRoute.obeManagement.detailObeCourse}/default/${newId}`);
-        } else {
-          navigate(AdminAcademicRoute.obeManagement.obeManagement);
-        }
-      },
-      onError: (err: any) => {
-        setErrorMessage(err?.response?.data?.message || "Gagal menambahkan mata kuliah.");
-      },
-    });
+    createMutation.mutate(
+      { payload, files },
+      {
+        onSuccess: (created: any) => {
+          const newId = created?.id;
+          if (newId) {
+            navigate(`${AdminAcademicRoute.obeManagement.detailObeCourse}/default/${newId}`);
+          } else {
+            navigate(AdminAcademicRoute.obeManagement.obeManagement);
+          }
+        },
+        onError: (err: any) => {
+          setErrorMessage(err?.response?.data?.message || "Gagal menambahkan mata kuliah.");
+        },
+      }
+    );
   };
 
   return (
@@ -375,40 +380,36 @@ export default function ObeAddMataKuliah() {
                       className="w-4 h-4"
                     />
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada SAP</span>
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada SAP</label>
                     <input
-                      type="checkbox"
-                      checked={formData.adaSap}
-                      onChange={(e) => handleChange("adaSap", e.target.checked)}
-                      className="w-4 h-4"
+                      type="file"
+                      onChange={(e) => setFiles((prev) => ({ ...prev, sap: e.target.files?.[0] || null }))}
+                      className="w-full text-sm"
                     />
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada Silabus</span>
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada Silabus</label>
                     <input
-                      type="checkbox"
-                      checked={formData.adaSilabus}
-                      onChange={(e) => handleChange("adaSilabus", e.target.checked)}
-                      className="w-4 h-4"
+                      type="file"
+                      onChange={(e) => setFiles((prev) => ({ ...prev, silabus: e.target.files?.[0] || null }))}
+                      className="w-full text-sm"
                     />
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada Bahan Ajar</span>
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada Bahan Ajar</label>
                     <input
-                      type="checkbox"
-                      checked={formData.adaBahanAjar}
-                      onChange={(e) => handleChange("adaBahanAjar", e.target.checked)}
-                      className="w-4 h-4"
+                      type="file"
+                      onChange={(e) => setFiles((prev) => ({ ...prev, bahanAjar: e.target.files?.[0] || null }))}
+                      className="w-full text-sm"
                     />
                   </div>
-                  <div className="py-3 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#666666]">Ada Diktat</span>
+                  <div className="py-3 border-b border-gray-100">
+                    <label className="block mb-1 font-semibold text-[#666666]">Ada Diktat</label>
                     <input
-                      type="checkbox"
-                      checked={formData.adaDiktat}
-                      onChange={(e) => handleChange("adaDiktat", e.target.checked)}
-                      className="w-4 h-4"
+                      type="file"
+                      onChange={(e) => setFiles((prev) => ({ ...prev, diktat: e.target.files?.[0] || null }))}
+                      className="w-full text-sm"
                     />
                   </div>
                 </div>

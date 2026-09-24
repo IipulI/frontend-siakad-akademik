@@ -122,6 +122,43 @@ export type ObeMataKuliahCreatePayload = Omit<
   "prasyaratMataKuliah1Id" | "prasyaratMataKuliah2Id" | "prasyaratMataKuliah3Id"
 >;
 
+// File dokumen "Ada SAP/Silabus/Bahan Ajar/Diktat" — dikirim multipart saat create/update.
+export interface ObeMataKuliahFiles {
+  sap?: File | null;
+  silabus?: File | null;
+  bahanAjar?: File | null;
+  diktat?: File | null;
+}
+
+// Ubah path file (mis. "public/obe/1737..x.pdf") jadi URL absolut yang bisa dibuka browser.
+export function getObeFileUrl(filePath?: string | null) {
+  if (!filePath) return null;
+  const clean = filePath.replace(/^\/+/, "");
+  const base = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  try {
+    return base ? `${new URL(base).origin}/${clean}` : `/${clean}`;
+  } catch {
+    return `/${clean}`;
+  }
+}
+
+function buildMataKuliahFormData(payload: object, files?: ObeMataKuliahFiles) {
+  const formData = new FormData();
+  (Object.entries(payload) as [string, unknown][]).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    if (Array.isArray(value)) {
+      value.forEach((v) => formData.append(key, String(v)));
+    } else {
+      formData.append(key, String(value));
+    }
+  });
+  if (files?.sap) formData.append("sapFile", files.sap);
+  if (files?.silabus) formData.append("silabusFile", files.silabus);
+  if (files?.bahanAjar) formData.append("bahanAjarFile", files.bahanAjar);
+  if (files?.diktat) formData.append("diktatFile", files.diktat);
+  return formData;
+}
+
 export interface KelompokMataKuliah {
   id: string;
   kode: string;
@@ -168,9 +205,10 @@ export function useCreateObeMataKuliah() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: ObeMataKuliahCreatePayload) => {
+    mutationFn: async ({ payload, files }: { payload: ObeMataKuliahCreatePayload; files?: ObeMataKuliahFiles }) => {
       const token = localStorage.getItem("token");
-      const response = await Api.post("/akademik/obe/mata-kuliah", payload, {
+      const formData = buildMataKuliahFormData(payload, files);
+      const response = await Api.post("/akademik/obe/mata-kuliah", formData, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       // Backend langsung balikin detail lengkap mata kuliah yang baru dibuat (sama bentuk dengan GET).
@@ -186,9 +224,18 @@ export function useUpdateObeMataKuliah() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: { id: string; payload: ObeMataKuliahUpdatePayload }) => {
+    mutationFn: async ({
+      id,
+      payload,
+      files,
+    }: {
+      id: string;
+      payload: ObeMataKuliahUpdatePayload;
+      files?: ObeMataKuliahFiles;
+    }) => {
       const token = localStorage.getItem("token");
-      const response = await Api.put(`/akademik/obe/mata-kuliah/${id}`, payload, {
+      const formData = buildMataKuliahFormData(payload, files);
+      const response = await Api.put(`/akademik/obe/mata-kuliah/${id}`, formData, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       return response.data?.data ?? response.data;
