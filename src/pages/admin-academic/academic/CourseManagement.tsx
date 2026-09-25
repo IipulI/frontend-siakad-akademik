@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../../components/admin-academic/Pagination.tsx";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import { TableCourseManagement } from "../../../components/Table";
-import { RefreshCw, Search, Plus, Trash } from "lucide-react";
+import { RefreshCw, Search, Plus, Trash, Filter } from "lucide-react";
 import { getCourseData, useDeleteCourse } from "../../../hooks/academic/useCourseManagement.ts";
 import { getCurriculumYear } from "../../../hooks/academic/useCurriculumYear.ts";
 import { getProdi } from "../../../hooks/academic/useProdi.ts";
@@ -126,13 +126,22 @@ const CourseManagement: React.FC = () => {
   const totalItems = coursePagination?.totalItems ?? 0;
 
   return (
-    <MainLayout isGreeting={false} titlePage="Mata Kuliah" className="">
-      <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-yellow px-5">
-        <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-3">
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Tahun Kurikulum</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown" value={selectedCurriculum} onChange={handleCurriculumChange}>
-              <option value="all">-- Semua --</option>
+    <MainLayout isGreeting={false} titlePage="Mata Kuliah" subTitle="Kurikulum & Mata Kuliah" className="">
+      {/* Filter Card */}
+      <div className="w-full bg-white p-4 rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-yellow mb-5">
+        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100 text-slate-800 font-semibold text-xs md:text-sm">
+          <Filter size={16} className="text-primary-yellow shrink-0" />
+          <span>Filter Mata Kuliah</span>
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-slate-700 tracking-tight">Tahun Kurikulum</label>
+            <select
+              className="w-full bg-white border border-slate-300 text-slate-700 font-medium text-xs rounded-lg focus:ring-1 focus:ring-primary-green focus:border-primary-green px-2.5 py-1.5 transition-all shadow-2xs hover:border-slate-400"
+              value={selectedCurriculum}
+              onChange={handleCurriculumChange}
+            >
+              <option value="all">-- Semua Tahun --</option>
               {curriculumData.map((item) => (
                 <option key={item.id} value={item.tahun}>
                   {item.tahun}
@@ -141,19 +150,27 @@ const CourseManagement: React.FC = () => {
             </select>
           </div>
 
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Jenis Mata Kuliah</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown" value={selectedCourseType} onChange={handleCourseTypeChange}>
-              <option value="all">-- Semua --</option>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-slate-700 tracking-tight">Jenis Mata Kuliah</label>
+            <select
+              className="w-full bg-white border border-slate-300 text-slate-700 font-medium text-xs rounded-lg focus:ring-1 focus:ring-primary-green focus:border-primary-green px-2.5 py-1.5 transition-all shadow-2xs hover:border-slate-400"
+              value={selectedCourseType}
+              onChange={handleCourseTypeChange}
+            >
+              <option value="all">-- Semua Jenis --</option>
               <option value="Wajib">Wajib</option>
               <option value="Pilihan">Pilihan</option>
             </select>
           </div>
 
-          <div className="flex items-center gap-3">
-            <label className="w-36 text-gray-700">Unit / Prodi Pengampu</label>
-            <select className="flex-1 rounded px-3 py-2 border border-primary-brown md:w-10 w-10" value={selectedProdi} onChange={handleProdiChange}>
-              <option value="all">-- Semua --</option>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-slate-700 tracking-tight">Unit / Prodi Pengampu</label>
+            <select
+              className="w-full bg-white border border-slate-300 text-slate-700 font-medium text-xs rounded-lg focus:ring-1 focus:ring-primary-green focus:border-primary-green px-2.5 py-1.5 transition-all shadow-2xs hover:border-slate-400"
+              value={selectedProdi}
+              onChange={handleProdiChange}
+            >
+              <option value="all">-- Semua Program Studi --</option>
               {programStudiData.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}
@@ -161,48 +178,71 @@ const CourseManagement: React.FC = () => {
               ))}
             </select>
           </div>
-
-          {/* <FilterDropdown title="Unit / Prodi Pengampu" options={programStudiData.map((item) => item.namaProgramStudi)} /> */}
         </div>
       </div>
 
-      <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-green mt-8 ">
-        <div className="flex flex-col md:flex-row px-4 py-2 gap-4 border-b-2">
-          <div className="flex">
-            <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-1 w-72 rounded-l-md border border-black/50" value={searchTerm} onChange={handleSearchChange} />
-            <button className="bg-primary-yellow w-10 flex items-center justify-center">
-              <Search color="white" size={20} />
+      {/* Table Card */}
+      <div className="w-full bg-white p-4 rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-green">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center">
+            <input
+              type="search"
+              placeholder="Cari Mata Kuliah..."
+              className="border border-slate-300 px-3 py-1.5 rounded-l-lg text-xs w-48 sm:w-64 focus:outline-none focus:ring-1 focus:ring-primary-green h-[34px]"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <button
+              type="button"
+              className="bg-primary-yellow hover:bg-[#e89012] text-white px-3.5 h-[34px] flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+            >
+              <Search size={16} strokeWidth={2.5} />
             </button>
-            <button onClick={handleRefresh} className="bg-primary-blueDark rounded-r-md w-10 flex items-center justify-center">
-              <RefreshCw color="white" size={20} />
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="bg-primary-blueDark hover:bg-[#2e42a8] text-white px-3.5 h-[34px] rounded-r-lg flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+            >
+              <RefreshCw size={16} strokeWidth={2.5} />
             </button>
           </div>
-          <div className="flex ml-auto gap-2">
-            <button onClick={handleAdd} className="bg-primary-green rounded py-2 px-4 text-white flex items-center cursor-pointer">
-              <Plus className="mr-2" size={16} />
-              Tambah
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleAdd}
+              className="bg-primary-green hover:bg-[#0d5950] text-white px-3.5 py-1.5 h-[34px] rounded-lg font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+            >
+              <Plus size={16} strokeWidth={2.5} />
+              <span>Tambah</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 if (selectedIds.length > 0 && window.confirm(`Apakah Anda yakin ingin menghapus ${selectedIds.length} data yang dipilih?`)) {
                   selectedIds.forEach((id) => deleteMutation.mutate(id));
                   setSelectedIds([]);
                 }
               }}
-              className="bg-red-500 rounded py-2 px-4 text-white flex items-center cursor-pointer disabled:opacity-50"
               disabled={selectedIds.length === 0}
+              className="bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:hover:bg-red-500 text-white px-3.5 py-1.5 h-[34px] rounded-lg font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer disabled:cursor-not-allowed"
             >
-              <Trash className="mr-2" size={16} />
-              Hapus
+              <Trash size={15} strokeWidth={2.5} />
+              <span>Hapus</span>
+              {selectedIds.length > 0 && (
+                <span className="bg-white/20 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                  {selectedIds.length}
+                </span>
+              )}
             </button>
           </div>
         </div>
 
         {/* Error Message Display */}
-        {errorMessage && <div className="mx-4 mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>}
+        {errorMessage && <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">{errorMessage}</div>}
 
-        <div className="mt-8">
+        <div className="mt-8 overflow-x-auto">
           <TableCourseManagement
             data={courseData}
             tableHead={["Combo BOX", "Kurikulum", "Kode", "Mata Kuliah", "SKS", "Jenis MK", "Prodi Pengampu", "Aksi"]}

@@ -253,7 +253,7 @@ export default function StudentTransferIn() {
         </div>
 
         <div className="overflow-x-auto my-4">
-          <table className="w-full border-collapse">
+          <table className="min-w-[1300px] w-full border-collapse">
             <thead>
               <tr className="bg-primary-green text-white">
                 <th className="p-2 border font-semibold border-gray-300">NIM</th>

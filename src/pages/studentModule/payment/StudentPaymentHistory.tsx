@@ -21,7 +21,7 @@ const StudentPaymentHistory = () => {
 
   const ItemList = ({ title, data }: { title: string; data: string | null }) => (
       <div>
-        <h1 className="text-[#444] italic text-xs sm:text-sm font-semibold">{title}</h1>
+        <h1 className="text-primary-brown italic text-xs sm:text-sm font-semibold">{title}</h1>
         <h1 className="font-semibold text-xs sm:text-sm">{data || '-'}</h1>
       </div>
   );

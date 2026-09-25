@@ -77,7 +77,7 @@ const CalendarAcademic = () => {
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
                   disabled={isLoadingPeriods}
-                  className="rounded-md border-[#969696] border w-full text-gray-700 p-1"
+                  className="rounded-md border-secondary-gray border w-full text-gray-700 p-1"
               >
                 {isLoadingPeriods ? (
                     <option>Loading periods...</option>

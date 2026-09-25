@@ -70,7 +70,7 @@ export default function ObeMonitoringCetak() {
         <div className="px-4 py-3 flex items-center justify-between">
           <p className="font-semibold text-gray-700">Monitoring OBE ({JENIS_LABEL[jenis]})</p>
           <div className="flex gap-2">
-            <button onClick={handleKembali} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90">
+            <button onClick={handleKembali} className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90">
               <ArrowLeft size={16} /> Kembali ke Daftar
             </button>
             <button onClick={handleCetak} disabled={!pdfUrl} className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90 disabled:opacity-50">

@@ -32,7 +32,7 @@ export default function CpmkChecklistTree({ masterCpmk, checkedIds, onChange, re
   }
 
   return (
-    <div className="border border-gray-200 rounded-sm overflow-hidden">
+    <div className="border border-gray-200 rounded-sm overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
           <tr className="bg-primary-blueDark text-white">

@@ -6,7 +6,7 @@ import StudenLectureGraph from "./StudentLectureGraph";
 
 export default function LearningProgress() {
   return (
-    <div className="p-2 md:p-4 border border-gray-200 rounded-sm shadow-sm">
+    <div className="p-4 border rounded-sm shadow-sm">
       <BriefStudentData showLine={false}/>
 
       <StudenLectureGraph />

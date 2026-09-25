@@ -77,7 +77,7 @@ export default function SidebarObeCourse({ obeId, mataKuliahId, activeTab }: Sid
               title={isMuted ? "Prodi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya" : undefined}
               className={`w-full text-left px-4 py-3 text-xs font-semibold border-b border-gray-100 transition-colors duration-150 cursor-pointer ${
                 isActive
-                  ? "bg-[#eef5f9] text-[#00c0ef] border-l-4 border-[#00c0ef] font-bold"
+                  ? "bg-[#eef5f9] text-primary-blue border-l-4 border-primary-blue font-bold"
                   : isMuted
                     ? "bg-white text-gray-300 hover:bg-gray-50 hover:text-gray-400 border-l-4 border-transparent"
                     : "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent"

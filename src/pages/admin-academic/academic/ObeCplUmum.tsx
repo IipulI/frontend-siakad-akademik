@@ -204,18 +204,18 @@ export default function ObeCplUmum() {
     <MainLayout isGreeting={false} titlePage="CPL Umum">
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-6 md:flex-row gap-4">
-          <div className="flex items-center">
-            <button onClick={handleBack} className="flex items-center bg-primary-yellow text-white px-2 py-3 rounded-l-md">
+          <div className="flex items-center w-full sm:w-auto">
+            <button onClick={handleBack} className="flex items-center bg-primary-yellow text-white px-2 py-3 rounded-l-md flex-shrink-0">
               <ArrowLeft className="mr-2" size={16} />
             </button>
-            <div className="flex items-center">
+            <div className="flex items-center flex-1 min-w-0 sm:flex-none">
               <input
                 type="search"
                 placeholder="Cari Tahun Kurikulum"
-                className="px-3 py-2 border border-black/50 w-64"
+                className="px-3 py-2 border border-black/50 w-full sm:w-64 min-w-0"
                 onChange={() => {}}
               />
-              <button className="bg-primary-blueSoft px-3 py-3 rounded-r-md">
+              <button className="bg-primary-blueSoft px-3 py-3 rounded-r-md flex-shrink-0">
                 <Search color="white" size={20} />
               </button>
             </div>
@@ -279,9 +279,9 @@ export default function ObeCplUmum() {
                       placeholder="Cari Kode / Deskripsi CPL"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="p-2 border border-gray-300 rounded-l-md text-sm outline-none focus:ring-1 focus:ring-primary-green w-72"
+                      className="p-2 border border-gray-300 rounded-l-md text-sm outline-none focus:ring-1 focus:ring-primary-green w-full md:w-72 min-w-0"
                     />
-                    <button onClick={() => setSearchTerm("")} className="bg-primary-blueDark text-white p-2.5 rounded-r-md flex items-center justify-center">
+                    <button onClick={() => setSearchTerm("")} className="bg-primary-blueDark text-white p-2.5 rounded-r-md flex items-center justify-center flex-shrink-0">
                       <RefreshCw size={16} />
                     </button>
                   </div>

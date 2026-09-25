@@ -43,7 +43,7 @@ export default function EditBill() {
   if (!state) {
     return (
       <MainLayout isGreeting={false} titlePage="Edit Tagihan">
-        <div className="border-t-2 border-t-primary-green border-2 h-lvh rounded-sm p-2">
+        <div className="border-t-2 border-t-primary-green h-lvh rounded-sm p-2">
           <p>Data tidak tersedia</p>
         </div>
       </MainLayout>

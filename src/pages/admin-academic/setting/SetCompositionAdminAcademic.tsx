@@ -254,7 +254,7 @@ const SetCompositionAdminAcademic: React.FC = () => {
             titlePage={"Set Komposisi Nilai Mata Kuliah"}
             isGreeting={false}
         >
-            <div className="max-w-4xl mx-auto mt-8 flex bg-white py-4 rounded-sm border-t-2 border-primary-yellow shadow-md p-6">
+            <div className="max-w-4xl mx-auto mt-8 flex flex-wrap gap-2 bg-white py-4 rounded-sm border-t-2 border-primary-yellow shadow-md p-6">
                 <FilterDropdown
                     title="Tahun Kurikulum"
                     options={["", ...academicYearOptions.map(opt => opt.label)]}
@@ -324,41 +324,43 @@ const SetCompositionAdminAcademic: React.FC = () => {
                             ) : addedComponentsToPreview.length === 0 ? (
                                 <p className="text-gray-600">Tambahkan komponen komposisi dari dropdown di atas.</p>
                             ) : (
-                                <table className="min-w-full bg-white border border-gray-200 text-sm">
-                                    <thead>
-                                    <tr className="bg-gray-100">
-                                        <th className="py-2 px-3 border-b text-left">Komponen</th>
-                                        <th className="py-2 px-3 border-b text-left">Persentase (%)</th>
-                                        <th className="py-2 px-3 border-b text-left">Aksi</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {addedComponentsToPreview.map((comp) => (
-                                        <tr key={comp.id}>
-                                            <td className="py-2 px-3 border-b">{comp.nama}</td>
-                                            <td className="py-2 px-3 border-b">{comp.persentase}%</td>
-                                            <td className="py-2 px-3 border-b">
-                                                <button
-                                                    onClick={() => handleRemoveCompositionFromPreview(comp.id)}
-                                                    className="text-red-500 hover:text-red-700 p-1 rounded flex items-center gap-1 cursor-pointer"
-                                                    title="Hapus Komponen"
-                                                >
-                                                    <X size={16} /> Hapus
-                                                </button>
-                                            </td>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full bg-white border border-gray-200 text-sm">
+                                        <thead>
+                                        <tr className="bg-gray-100">
+                                            <th className="py-2 px-3 border-b text-left">Komponen</th>
+                                            <th className="py-2 px-3 border-b text-left">Persentase (%)</th>
+                                            <th className="py-2 px-3 border-b text-left">Aksi</th>
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                    <tfoot>
-                                    <tr className="bg-gray-100 font-bold">
-                                        <td className="py-2 px-3 border-t text-right" colSpan={1}>Total Persentase:</td>
-                                        <td className={`py-2 px-3 border-t ${totalPercentageInPreview === 100 ? 'text-primary-green' : 'text-red-500'}`}>
-                                            {totalPercentageInPreview}%
-                                        </td>
-                                        <td className="py-2 px-3 border-t"></td>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        {addedComponentsToPreview.map((comp) => (
+                                            <tr key={comp.id}>
+                                                <td className="py-2 px-3 border-b">{comp.nama}</td>
+                                                <td className="py-2 px-3 border-b">{comp.persentase}%</td>
+                                                <td className="py-2 px-3 border-b">
+                                                    <button
+                                                        onClick={() => handleRemoveCompositionFromPreview(comp.id)}
+                                                        className="text-red-500 hover:text-red-700 p-1 rounded flex items-center gap-1 cursor-pointer"
+                                                        title="Hapus Komponen"
+                                                    >
+                                                        <X size={16} /> Hapus
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr className="bg-gray-100 font-bold">
+                                            <td className="py-2 px-3 border-t text-right" colSpan={1}>Total Persentase:</td>
+                                            <td className={`py-2 px-3 border-t ${totalPercentageInPreview === 100 ? 'text-primary-green' : 'text-red-500'}`}>
+                                                {totalPercentageInPreview}%
+                                            </td>
+                                            <td className="py-2 px-3 border-t"></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             )}
                         </div>
 

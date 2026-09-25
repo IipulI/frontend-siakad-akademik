@@ -7,10 +7,10 @@ import HeaderAdminFinance from "../Header/HeaderAdminFinance";
 import HeaderLecturer from "../Header/HeaderLecturer";
 
 interface MainLayoutProps {
-  // Renamed for clarity, a common convention
   children: React.ReactNode;
   isGreeting: boolean;
   titlePage: string;
+  subTitle?: string;
   className?: string;
 }
 
@@ -18,20 +18,18 @@ export default function MainLayout({
   children,
   isGreeting,
   titlePage,
-  className,
+  subTitle,
+  className = "",
 }: MainLayoutProps) {
   const [greeting, setGreeting] = useState("");
   const [userRole, setUserRole] = useState<string>("");
-  // 1. Add state for the user's name
   const [userName, setUserName] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve both user and account info from localStorage
     const userString = localStorage.getItem("user");
     const accountInfoString = localStorage.getItem("account_info");
 
-    // Check if user exists before proceeding
     if (userString) {
       const user = JSON.parse(userString);
       setUserRole(user.roles[0]);
@@ -40,15 +38,12 @@ export default function MainLayout({
         const accountInfo = JSON.parse(accountInfoString);
         setUserName(accountInfo.nama);
       } else {
-        // Fallback to username if account_info is missing (e.g. for academic admin / admin prodi)
         setUserName(user.username);
       }
     } else {
-      // If essential data is missing, redirect to login
       navigate("/");
     }
 
-    // --- Greeting Logic (unchanged) ---
     const hour = new Date().getHours();
     let message = "";
     if (hour >= 6 && hour <= 11) {
@@ -61,8 +56,6 @@ export default function MainLayout({
       message = "Selamat Malam";
     }
     setGreeting(message);
-
-    // Add navigate to the dependency array as it's an external function used inside the effect
   }, [navigate]);
 
   const renderHeader = () => {
@@ -81,18 +74,24 @@ export default function MainLayout({
   return (
     <div className={`bg-primary-white min-h-screen ${className}`}>
       {renderHeader()}
-      <div className="px-5 md:px-10 xl:px-40">
+      <div className="px-4 sm:px-6 md:px-8 xl:px-12 max-w-[1780px] mx-auto pb-10">
         {isGreeting ? (
           <div className="md:text-2xl text-lg md:justify-start justify-center flex py-4">
-            <h1>{greeting},&nbsp;</h1>
-            {/* 3. Render the userName state variable instead of the hardcoded string */}
-            <h1 className="text-gray-text font-semibold">{userName}</h1>
+            <h1 className="text-slate-600">{greeting},&nbsp;</h1>
+            <h1 className="text-slate-800 font-bold">{userName}</h1>
           </div>
         ) : (
-          <div className="py-4">
+          <div className="py-3 sm:py-4">
             <Breadcrumb />
-            <div className="text-2xl flex">
-              <h1 className="text-gray-text font-semibold">{titlePage}</h1>
+            <div className="mt-2 flex items-baseline gap-3">
+              <h1 className="text-slate-800 font-bold text-xl md:text-2xl tracking-tight">
+                {titlePage}
+              </h1>
+              {subTitle && (
+                <span className="text-xs md:text-sm font-medium text-slate-400">
+                  {subTitle}
+                </span>
+              )}
             </div>
           </div>
         )}

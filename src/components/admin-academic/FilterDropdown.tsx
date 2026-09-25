@@ -22,14 +22,14 @@ export default function FilterDropdown({ title, options, onSelect, value }: Filt
     };
 
     return (
-        <div className="flex text-xs bg-white space-x-5 items-center w-full p-2 px-4 border-t-2  rounded-sm shadow-sm">
-            <label htmlFor={title.replace(/\s/g, '')} className="font-semibold">
-                {title}
+        <div className="flex text-xs md:text-sm bg-white gap-3 items-center w-full p-3 px-4 rounded-xl border border-slate-200/80 border-t-4 border-t-primary-yellow shadow-xs">
+            <label htmlFor={title.replace(/\s/g, '')} className="font-semibold text-slate-800 whitespace-nowrap">
+                {title}:
             </label>
             <select
                 name={title.replace(/\s/g, '')}
                 id={title.replace(/\s/g, '')}
-                className="border-2 p-1 rounded w-40 "
+                className="border border-slate-300 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium text-slate-700 bg-white shadow-2xs focus:ring-1 focus:ring-primary-green focus:border-primary-green flex-1 transition-all"
                 onChange={handleChange}
                 // CRITICAL FIX: Use the 'value' prop if provided, otherwise default to the first option.
                 // This makes it a controlled component if the parent provides 'value',

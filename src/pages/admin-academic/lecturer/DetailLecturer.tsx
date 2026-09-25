@@ -227,7 +227,7 @@ export default function DetailLecturer() {
               </div>
 
               {/* sub tab */}
-              <div className="flex">
+              <div className="flex flex-wrap">
                 <TabNavigationButton
                   isActive={infoTab === "kontak"}
                   onClick={() => setInfoTab("kontak")}
@@ -355,7 +355,7 @@ export default function DetailLecturer() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-sm">
+                <table className="min-w-[1000px] w-full border-collapse text-sm">
                   <thead>
                     <tr className="bg-blue-900 text-white">
                       <th className="p-2 border border-gray-300 font-semibold">No</th>

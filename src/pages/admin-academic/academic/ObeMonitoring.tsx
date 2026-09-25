@@ -224,7 +224,7 @@ export default function ObeMonitoring() {
               </div>
             )}
 
-            <div className="flex items-center gap-2 py-3">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 py-3">
               <label className="text-sm font-semibold text-primary-blueDark w-full md:w-48">KOP</label>
               <label className="flex items-center gap-1.5 text-sm text-gray-700">
                 <input type="checkbox" checked={filters.kop !== false} onChange={(e) => updateFilter({ kop: e.target.checked })} />

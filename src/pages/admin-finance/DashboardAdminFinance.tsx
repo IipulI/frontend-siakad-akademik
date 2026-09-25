@@ -184,7 +184,7 @@ const DashboardAdminFinance = () => {
           <select
             name=""
             id=""
-            className="p-1 text-xs border-1 rounded w-22 text-gray-500"
+            className="p-1 text-xs border-1 rounded w-24 text-gray-500"
           >
             <option value="semua">- Semua -</option>
           </select>

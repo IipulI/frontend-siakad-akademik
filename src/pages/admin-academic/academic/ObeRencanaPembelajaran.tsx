@@ -396,7 +396,7 @@ export default function ObeRencanaPembelajaran() {
             </div>
 
             <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
-              <button onClick={handleBack} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button onClick={handleBack} className="bg-primary-blue text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
               <button onClick={openTambahModal} className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
@@ -557,7 +557,7 @@ export default function ObeRencanaPembelajaran() {
                             <div className="flex gap-1.5 justify-center">
                               <button
                                 onClick={() => openDetailModal(sesi.id)}
-                                className="bg-[#00c0ef] hover:bg-opacity-90 text-white p-1.5 rounded transition cursor-pointer"
+                                className="bg-primary-blue hover:bg-opacity-90 text-white p-1.5 rounded transition cursor-pointer"
                                 title="Lihat Sesi"
                               >
                                 <Eye size={14} />

@@ -88,15 +88,15 @@ const CplCpmkCourse: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Menu */}
           <div className="w-full  md:w-[20%] h-50 text-white p-3 space-y-2 mr-3">
-            <div className="flex items-center bg-[#116E63]/30  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.detailCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/30  mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.detailCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p className="text-black font-semibold">CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>RPS</p>
             </div>
@@ -143,7 +143,7 @@ const CplCpmkCourse: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-4 ml-[-10px]">
+            <div className="mt-4 ml-[-10px] overflow-x-auto">
               <h2 className="font-semibold">Capaian Pembelajaran Lulusan</h2>
               <TableCpl
                 data={cplCpmkData?.capaianPembelajaranLulusan}
@@ -151,7 +151,7 @@ const CplCpmkCourse: React.FC = () => {
                 error={cplCpmkError ? "Gagal memuat data CPL." : isCplCpmkLoading ? "Memuat..." : "Data CPL tidak ditemukan."}
               />
             </div>
-            <div className="mt-4 ml-[-10px]">
+            <div className="mt-4 ml-[-10px] overflow-x-auto">
               <h2 className="font-semibold">CapaianMata Kuliah</h2>
               <TableCpmk
                 data={cplCpmkData?.capaianMataKuliah}

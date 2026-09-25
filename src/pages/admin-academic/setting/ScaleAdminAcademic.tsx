@@ -242,7 +242,7 @@ const ScaleAdminAcademic: React.FC = () => {
 
     return (
         <MainLayout titlePage={"Skala Penilaian"} isGreeting={false}>
-            <div className="flex max-w-2xl mx-auto mt-8 rounded-sm bg-white border-t-2 border-primary-yellow">
+            <div className="grid sm:grid-cols-2 gap-3 max-w-4xl mx-auto mt-4">
                 <FilterDropdown
                     title="Tahun Kurikulum"
                     // CRITICAL FIX: Pass the selected filter's label as the 'value' prop
@@ -269,16 +269,15 @@ const ScaleAdminAcademic: React.FC = () => {
                 />
             </div>
 
-
-            <div className="max-w-2xl mx-auto mt-8 bg-white py-2 rounded-sm border-t-2 border-primary-green">
-                <div className="flex justify-end">
+            <div className="max-w-4xl mx-auto mt-4 bg-white p-4 rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-green">
+                <div className="flex justify-end mb-4 pb-2 border-b border-slate-100">
                     <button
                         onClick={handleAddClick}
-                        className="bg-primary-green cursor-pointer py-2 mr-4 text-sm text-white px-4 rounded flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-primary-green hover:bg-[#0d5950] text-white px-4 py-2 rounded-lg text-xs md:text-sm font-medium flex items-center gap-2 shadow-xs transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={isAddingNewRow || editingRowId !== null || isLoading || isCreating || isUpdating || isDeleting || isLoadingYears || isLoadingProgramStudi}
                     >
-                        <Plus color="white" size={16} className="mr-2" />
-                        Tambah
+                        <Plus color="white" size={16} strokeWidth={2.5} />
+                        <span>Tambah Skala</span>
                     </button>
                 </div>
 

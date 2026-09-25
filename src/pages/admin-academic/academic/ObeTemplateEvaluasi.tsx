@@ -450,7 +450,7 @@ const ObeTemplateEvaluasi: React.FC = () => {
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                     className="p-2 pl-3 border border-gray-300 rounded-l-md text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700"
                   />
-                  <button className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90">
+                  <button className="bg-primary-green text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90">
                     <Search size={16} />
                   </button>
                 </div>
@@ -559,7 +559,7 @@ const ObeTemplateEvaluasi: React.FC = () => {
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h3 className="text-lg font-bold text-gray-800">Template Evaluasi</h3>
               <div className="flex gap-2 flex-wrap">
-                <button onClick={handleBackToList} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:opacity-90">
+                <button onClick={handleBackToList} className="bg-primary-blue text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:opacity-90">
                   <ArrowLeft size={16} /> Kembali ke Daftar
                 </button>
                 <button onClick={handleTambahData} className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:opacity-90">
@@ -915,24 +915,26 @@ const ObeTemplateEvaluasi: React.FC = () => {
                     <div className="bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-600">
                       Pratinjau data asal: {salinPreview.header.programStudi} - {salinPreview.header.tahunKurikulum} - {salinPreview.header.jenisMataKuliah}
                     </div>
-                    <table className="min-w-full text-xs">
-                      <thead>
-                        <tr className="bg-gray-100 text-gray-700">
-                          <th className="p-2 border border-gray-200 text-left">Metode Evaluasi</th>
-                          <th className="p-2 border border-gray-200 text-left">Jenis Evaluasi</th>
-                          <th className="p-2 border border-gray-200">Bobot</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {salinPreview.komponen.map((k, idx) => (
-                          <tr key={idx}>
-                            <td className="p-2 border border-gray-200">{k.komponenEvaluasi}</td>
-                            <td className="p-2 border border-gray-200">{k.metodeEvaluasi}</td>
-                            <td className="p-2 border border-gray-200 text-center">{k.bobot}%</td>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full text-xs">
+                        <thead>
+                          <tr className="bg-gray-100 text-gray-700">
+                            <th className="p-2 border border-gray-200 text-left">Metode Evaluasi</th>
+                            <th className="p-2 border border-gray-200 text-left">Jenis Evaluasi</th>
+                            <th className="p-2 border border-gray-200">Bobot</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {salinPreview.komponen.map((k, idx) => (
+                            <tr key={idx}>
+                              <td className="p-2 border border-gray-200">{k.komponenEvaluasi}</td>
+                              <td className="p-2 border border-gray-200">{k.metodeEvaluasi}</td>
+                              <td className="p-2 border border-gray-200 text-center">{k.bobot}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
 

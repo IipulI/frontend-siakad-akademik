@@ -45,7 +45,7 @@ export default function DetailCourseLecturer() {
             </div>
 
             <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
-              <button onClick={handleBack} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button onClick={handleBack} className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
             </div>
@@ -67,12 +67,12 @@ export default function DetailCourseLecturer() {
               ) : (
                 <>
                   {/* Alert Banner */}
-                  <div className="bg-[#eef5f9] border-l-4 border-[#00c0ef] p-4 mb-6 flex items-start gap-3">
-                    <div className="text-[#00c0ef] mt-0.5">
+                  <div className="bg-[#eef5f9] border-l-4 border-primary-blueSoft p-4 mb-6 flex items-start gap-3">
+                    <div className="text-primary-blueSoft mt-0.5">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-[#00c0ef] mb-1">Informasi</p>
+                      <p className="text-sm font-semibold text-primary-blueSoft mb-1">Informasi</p>
                       <p className="text-sm text-gray-700">Data inti mata kuliah (kode, nama, SKS, dst) hanya bisa diubah oleh Admin Akademik.</p>
                     </div>
                   </div>

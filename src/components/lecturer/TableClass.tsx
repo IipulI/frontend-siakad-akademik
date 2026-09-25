@@ -43,6 +43,7 @@ export default function TableClass ({
     };
 
     return (
+      <div className="w-full overflow-x-auto">
       <table className="w-full my-4">
         <thead>
           <tr>
@@ -185,5 +186,6 @@ export default function TableClass ({
           )}
         </tbody>
       </table>
+      </div>
     );
   };

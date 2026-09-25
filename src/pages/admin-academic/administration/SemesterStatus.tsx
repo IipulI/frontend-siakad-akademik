@@ -193,78 +193,88 @@ export default function SemesterStatus() {
   }
 
   return (
-    <MainLayout titlePage="Status Semester" isGreeting={false}>
-      <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
-        <InputFilter
-          options={periodeAkademik}
-          label="Periode Akademik"
-          value={filters.periodeAkademik}
-          onChange={(value) => handleFilterChange("periodeAkademik", value)}
-        />
-        <InputFilter
-          options={periodeMasuk}
-          label="Periode Masuk"
-          value={filters.periodeMasuk}
-          onChange={(value) => handleFilterChange("periodeMasuk", value)}
-        />
-        <InputFilter
-          options={unitProgramStudi}
-          label="Unit / Program Studi"
-          value={filters.unitProgramStudi}
-          onChange={(value) => handleFilterChange("unitProgramStudi", value)}
-        />
+    <MainLayout titlePage="Status Semester" subTitle="Rekapitulasi & Pelaporan" isGreeting={false}>
+      {/* Filter Card */}
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-yellow p-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <InputFilter
+            options={periodeAkademik}
+            label="Periode Akademik"
+            value={filters.periodeAkademik}
+            onChange={(value) => handleFilterChange("periodeAkademik", value)}
+          />
+          <InputFilter
+            options={periodeMasuk}
+            label="Periode Masuk"
+            value={filters.periodeMasuk}
+            onChange={(value) => handleFilterChange("periodeMasuk", value)}
+          />
+          <InputFilter
+            options={unitProgramStudi}
+            label="Unit / Program Studi"
+            value={filters.unitProgramStudi}
+            onChange={(value) => handleFilterChange("unitProgramStudi", value)}
+          />
+        </div>
       </div>
 
-      <div className="border-t-2 border-primary-green bg-white mt-5 p-2 py-4 rounded-sm shadow-sm pb-4">
+      {/* Main Content Card */}
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-green p-4">
         {resultMessage && (
-          <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded p-3 mb-4">
+          <div className="bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-lg p-3 mb-4 font-medium">
             {resultMessage}
           </div>
         )}
 
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
           {dummyStats.map((stat) => (
             <div
               key={stat.label}
-              className="border rounded-sm p-3 bg-gray-50 shadow-sm"
+              className="border border-slate-200/80 rounded-xl p-3.5 bg-slate-50/60 shadow-2xs hover:bg-slate-50 transition-colors"
             >
               <div className="flex justify-between items-start">
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-xs font-semibold text-slate-600">
                   {stat.label}
                 </span>
               </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold text-gray-800">
+              <div className="flex items-baseline gap-2 mt-1.5">
+                <span className="text-2xl font-bold text-slate-800">
                   {stat.value.toLocaleString("id-ID")}
                 </span>
-                <span className="text-xs font-semibold text-green-600">
+                <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
                   {stat.percentage}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">{stat.description}</p>
+              <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{stat.description}</p>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end gap-2 mb-2">
-          <ButtonClick
-            icon={<Play size={15} strokeWidth={3} />}
-            color="bg-primary-yellow"
-            text="Generate Status Semester"
+        <div className="flex flex-wrap justify-end gap-2 mb-4">
+          <button
+            type="button"
             onClick={bukaKonfirmasi}
-          />
-          <ButtonClick
-            icon={<RefreshCw size={15} strokeWidth={3} />}
-            color="bg-blue-900"
-            text="Hitung Ulang"
+            className="bg-primary-yellow hover:bg-[#e89012] text-white px-3.5 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+          >
+            <Play size={14} strokeWidth={2.5} />
+            <span>Generate Status Semester</span>
+          </button>
+          <button
+            type="button"
             onClick={() => alert("Hitung ulang rekap status semester (dummy)")}
-          />
-          <ButtonClick
-            icon={<Printer size={15} strokeWidth={3} />}
-            color="bg-primary-green"
-            text="Cetak"
+            className="bg-primary-blueDark hover:bg-[#2e42a8] text-white px-3.5 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+          >
+            <RefreshCw size={14} strokeWidth={2.5} />
+            <span>Hitung Ulang</span>
+          </button>
+          <button
+            type="button"
             onClick={Cetak}
-          />
+            className="bg-primary-green hover:bg-[#0d5950] text-white px-3.5 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+          >
+            <Printer size={14} strokeWidth={2.5} />
+            <span>Cetak</span>
+          </button>
         </div>
 
         <p className="text-xs text-gray-400 mb-2">

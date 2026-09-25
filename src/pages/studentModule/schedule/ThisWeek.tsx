@@ -26,7 +26,7 @@ const JadwalHari = ({ tanggal, dataKuliah }) => (
           <tr>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Mulai</th>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Selesai</th>
-            <th className="p-4 bg-primary-green text-white font-semibold border border-ray-300">Jenis</th>
+            <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Jenis</th>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Kuliah</th>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Ruang</th>
             <th className="p-4 bg-primary-green text-white font-semibold border border-gray-300">Pengajar</th>

@@ -107,7 +107,7 @@ const AnnouncementAdminAcademic = () => {
         >
            <FilterDropdown title={"Status"} options={statusOptions}/>
                         <div className="w-full mt-8 bg-white py-2 rounded-sm border-t-2 border-primary-green">
-                            <div className="flex px-4 justify-between">
+                            <div className="flex flex-col sm:flex-row sm:justify-between gap-2 px-4">
                                 <div className="flex">
                                     <input
                                         type="search"

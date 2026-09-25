@@ -35,7 +35,7 @@ const SubDropdownPanel = ({
   items: SubItem[];
   iconBasePath?: string;
 }) => (
-  <div className="absolute left-full top-0 w-72 bg-primary-green rounded-md shadow-xl py-1 z-[70] p-2 pointer-events-auto">
+  <div className="w-72 bg-primary-green rounded-md shadow-xl py-1 p-2 border border-emerald-600/30">
     {items.map((item, idx) => (
       <Link
         key={idx}
@@ -72,7 +72,7 @@ const DropdownSubMenuItem = ({ title, description, to, children }: DropdownSubIt
   const hasChildren = children && children.length > 0;
 
   if (hasChildren) {
-    // Nested sub-dropdown: opens further to the right on hover
+    // Nested sub-dropdown: opens further to the right on hover with seamless bridge
     return (
       <div className="relative group/nested">
         <div className="px-3 py-2.5 text-sm flex items-center justify-between cursor-default group-hover/nested:bg-[#6FCF97] group-hover/nested:rounded-sm">
@@ -92,10 +92,13 @@ const DropdownSubMenuItem = ({ title, description, to, children }: DropdownSubIt
           </svg>
         </div>
 
-        <div className="absolute left-full top-0 ml-1 w-72 max-h-[70vh] overflow-y-auto bg-primary-green rounded-md shadow-lg px-2 pt-3 pb-3 z-[70] hidden group-hover/nested:block">
-          {children!.map((child, index) => (
-            <DropdownSubMenuItem key={index} {...child} />
-          ))}
+        {/* Seamless hover bridge: overlaps parent by 8px, padding-left 12px */}
+        <div className="absolute left-full top-0 -ml-2 pl-3 w-[304px] z-[70] hidden group-hover/nested:block pointer-events-auto">
+          <div className="w-72 max-h-[70vh] overflow-y-auto bg-primary-green rounded-md shadow-xl px-2 pt-3 pb-3 border border-emerald-600/30">
+            {children!.map((child, index) => (
+              <DropdownSubMenuItem key={index} {...child} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -155,8 +158,8 @@ const DropdownMenuItem = ({
           </svg>
         </div>
 
-        {/* Sub-dropdown: hidden by default, shown on group hover */}
-        <div className="absolute left-full top-0 hidden group-hover/subitem:block">
+        {/* Seamless hover bridge: overlaps parent by 8px, padding-left 12px */}
+        <div className="absolute left-full top-0 -ml-2 pl-3 w-[304px] z-[70] hidden group-hover/subitem:block pointer-events-auto">
           <SubDropdownPanel items={subItems!} iconBasePath={iconBasePath} />
         </div>
       </div>
@@ -191,11 +194,13 @@ const DropdownMenuItem = ({
           </svg>
         </div>
 
-        {/* Sub-menu (level 2+) — overflow must stay visible so nested flyouts (level 3+) aren't clipped */}
-        <div className="absolute left-full top-0 ml-1 w-72 bg-primary-green rounded-md shadow-lg px-2 pt-3 pb-3 z-[60] hidden group-hover/subitem:block">
-          {children!.map((subItem, index) => (
-            <DropdownSubMenuItem key={index} {...subItem} />
-          ))}
+        {/* Sub-menu (level 2+) — seamless hover bridge ensures it never disappears */}
+        <div className="absolute left-full top-0 -ml-2 pl-3 w-[304px] z-[60] hidden group-hover/subitem:block pointer-events-auto">
+          <div className="w-72 bg-primary-green rounded-md shadow-xl px-2 pt-3 pb-3 border border-emerald-600/30">
+            {children!.map((subItem, index) => (
+              <DropdownSubMenuItem key={index} {...subItem} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -289,8 +294,8 @@ interface NavbarProps {
 const Navbar = ({
   navItems,
   dropdownMenus,
-  className = "xl:flex space-x-6 text-white hidden bg-primary-green w-fit text-sm py-2.5 px-6 rounded-full",
-  containerClassName = "px-40",
+  className = "xl:flex space-x-6 text-white hidden bg-primary-green w-fit text-sm py-2.5 px-6 rounded-full shadow-md",
+  containerClassName = "px-4 sm:px-6 md:px-8 xl:px-12",
   activeItemClassName = "",
   defaultClassName = "",
   iconBasePath = "/img/",

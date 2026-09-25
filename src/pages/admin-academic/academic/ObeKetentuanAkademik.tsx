@@ -50,7 +50,7 @@ export default function ObeKetentuanAkademik() {
               <input
                 type="search"
                 placeholder="Cari Tahun Kurikulum"
-                className="px-3 py-2 border border-black/50 w-64"
+                className="px-3 py-2 border border-gray-300 text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white text-gray-700 w-64"
                 onChange={() => {}}
               />
               <button className="bg-primary-blueSoft px-3 py-3 rounded-r-md">

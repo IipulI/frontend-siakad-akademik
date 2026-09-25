@@ -60,40 +60,42 @@ export default function LaporanDaftarNilai() {
               <div className="flex"><span className="w-24 shrink-0">Sistem Kuliah</span><span>: {data.kelas.sistemKuliah}</span></div>
             </div>
 
-            <table className="w-full border-collapse border border-gray-400 text-xs">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-1.5 border border-gray-400">No</th>
-                  <th className="p-1.5 border border-gray-400">NIM</th>
-                  <th className="p-1.5 border border-gray-400">NAMA</th>
-                  {(data.komponenEvaluasi || []).map((k) => (
-                    <th key={k.id} className="p-1.5 border border-gray-400">{k.labelKolom}</th>
-                  ))}
-                  <th className="p-1.5 border border-gray-400">NILAI</th>
-                  <th className="p-1.5 border border-gray-400">NILAI ANGKA</th>
-                  <th className="p-1.5 border border-gray-400">NILAI HURUF</th>
-                  <th className="p-1.5 border border-gray-400">KET.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(data.mahasiswa || []).map((m) => (
-                  <tr key={m.rincianKrsId}>
-                    <td className="p-1.5 border border-gray-400 text-center">{m.no}</td>
-                    <td className="p-1.5 border border-gray-400">{m.nim}</td>
-                    <td className="p-1.5 border border-gray-400">{m.nama}</td>
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-[700px] w-full border-collapse border border-gray-400 text-xs">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="p-1.5 border border-gray-400">No</th>
+                    <th className="p-1.5 border border-gray-400">NIM</th>
+                    <th className="p-1.5 border border-gray-400">NAMA</th>
                     {(data.komponenEvaluasi || []).map((k) => (
-                      <td key={k.id} className="p-1.5 border border-gray-400 text-center">
-                        {m.nilaiPerKomponen?.[k.label] ?? "-"}
-                      </td>
+                      <th key={k.id} className="p-1.5 border border-gray-400">{k.labelKolom}</th>
                     ))}
-                    <td className="p-1.5 border border-gray-400 text-center">{m.nilaiAkhir.toFixed(2)}</td>
-                    <td className="p-1.5 border border-gray-400 text-center">{m.nilaiAngka.toFixed(2)}</td>
-                    <td className="p-1.5 border border-gray-400 text-center">{m.nilaiHuruf}</td>
-                    <td className="p-1.5 border border-gray-400"></td>
+                    <th className="p-1.5 border border-gray-400">NILAI</th>
+                    <th className="p-1.5 border border-gray-400">NILAI ANGKA</th>
+                    <th className="p-1.5 border border-gray-400">NILAI HURUF</th>
+                    <th className="p-1.5 border border-gray-400">KET.</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {(data.mahasiswa || []).map((m) => (
+                    <tr key={m.rincianKrsId}>
+                      <td className="p-1.5 border border-gray-400 text-center">{m.no}</td>
+                      <td className="p-1.5 border border-gray-400">{m.nim}</td>
+                      <td className="p-1.5 border border-gray-400">{m.nama}</td>
+                      {(data.komponenEvaluasi || []).map((k) => (
+                        <td key={k.id} className="p-1.5 border border-gray-400 text-center">
+                          {m.nilaiPerKomponen?.[k.label] ?? "-"}
+                        </td>
+                      ))}
+                      <td className="p-1.5 border border-gray-400 text-center">{m.nilaiAkhir.toFixed(2)}</td>
+                      <td className="p-1.5 border border-gray-400 text-center">{m.nilaiAngka.toFixed(2)}</td>
+                      <td className="p-1.5 border border-gray-400 text-center">{m.nilaiHuruf}</td>
+                      <td className="p-1.5 border border-gray-400"></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

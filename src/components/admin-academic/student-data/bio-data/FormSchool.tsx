@@ -135,7 +135,7 @@ export default function FormSchool({
   }));
 
   return (
-    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border-1 border-gray-400 p-3">
+    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
       {/* Sekolah Section */}
       <div>
         <div className="grid grid-cols-1 gap-4">
@@ -223,7 +223,7 @@ export default function FormSchool({
               <div>
                 <input
                   type="file"
-                  className="text-xs border-1 p-0.5 w-full"
+                  className="text-xs border p-0.5 w-full"
                   accept=".pdf,.doc,.docx"
                   onChange={onIjazahChange}
                 />

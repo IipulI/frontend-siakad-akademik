@@ -123,7 +123,7 @@ export default function FinantialHistoryBills() {
             ) : (
               <tr>
                 <td
-                  className="border-1 text-center border-gray-500 font-semibold p-2"
+                  className="border text-center border-gray-500 font-semibold p-2"
                   colSpan={5}
                 >
                   Tidak Ada Data Tagihan

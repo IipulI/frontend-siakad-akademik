@@ -67,61 +67,45 @@ const dataAngkatan = [
 // TABEL AKM ANGKATAN
 export function TabelAKMAngkatan() {
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-full border-collapse">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
+      <table className="w-full border-collapse text-left">
         <thead>
-          <tr>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              Angkatan
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              Aktif
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              Cuti
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              Non Aktif
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              Menunggu Ukom
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              Tidak Memiliki AKM
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              AKM Tidak Sesuai
-            </th>
-            <th className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold">
-              TOTAL
-            </th>
+          <tr className="bg-primary-green text-white text-xs font-bold tracking-wider select-none">
+            <th className="py-3 px-3 text-center border-r border-white/20">Angkatan</th>
+            <th className="py-3 px-3 text-center border-r border-white/20">Aktif</th>
+            <th className="py-3 px-3 text-center border-r border-white/20">Cuti</th>
+            <th className="py-3 px-3 text-center border-r border-white/20">Non Aktif</th>
+            <th className="py-3 px-3 text-center border-r border-white/20">Menunggu Ukom</th>
+            <th className="py-3 px-3 text-center border-r border-white/20">Tidak Memiliki AKM</th>
+            <th className="py-3 px-3 text-center border-r border-white/20">AKM Tidak Sesuai</th>
+            <th className="py-3 px-3 text-center">TOTAL</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-xs">
           {dataAngkatan.map((row, index) => (
-            <tr key={index} className="hover:bg-gray-100">
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+            <tr key={index} className="border-b border-slate-200 hover:bg-slate-50/80 bg-white transition-colors">
+              <td className="py-2.5 px-3 text-center font-bold text-slate-800 border-r border-slate-200">
                 {row.angkatan}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center font-semibold text-emerald-700 border-r border-slate-200">
                 {row.aktif}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center text-slate-600 border-r border-slate-200">
                 {row.cuti}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center text-slate-600 border-r border-slate-200">
                 {row.nonAktif}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center text-slate-600 border-r border-slate-200">
                 {row.menungguUkom}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center text-slate-600 border-r border-slate-200">
                 {row.tidakMemilikiAkm}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center text-slate-600 border-r border-slate-200">
                 {row.akmTidakSesuai}
               </td>
-              <td className="border-2 border-gray-500/70 font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 text-center font-bold text-slate-900">
                 {row.total}
               </td>
             </tr>
@@ -216,101 +200,65 @@ const dataAKMProdi = [
 // TABEL AKM PRODI
 export function TabelAKMProdi() {
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-full border-collapse">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
+      <table className="w-full border-collapse text-left">
         <thead>
-          <tr>
+          <tr className="bg-primary-green text-white text-xs font-bold tracking-wider select-none">
             <th
               rowSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-3 px-4 text-left border-r border-white/20"
             >
               Program Studi
             </th>
             <th
               rowSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-3 px-3 text-center border-r border-white/20"
             >
               Total
             </th>
             <th
-              colSpan={5}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              colSpan={6}
+              className="py-2 px-3 text-center border-r border-white/20 border-b border-white/20"
             >
               Status Semester
             </th>
             <th
-              colSpan={4}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              colSpan={3}
+              className="py-2 px-3 text-center border-b border-white/20"
             >
-              Status Semester
+              Prestasi & SKS
             </th>
           </tr>
-          <tr>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              A
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              C
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              G
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              KM
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              N
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              U
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              SKS
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              IPS
-            </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
-              IPK
-            </th>
+          <tr className="bg-primary-green text-white text-[11px] font-bold tracking-wider select-none">
+            <th className="py-2 px-2 text-center border-r border-white/20">A</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">C</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">G</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">KM</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">N</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">U</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">SKS</th>
+            <th className="py-2 px-2 text-center border-r border-white/20">IPS</th>
+            <th className="py-2 px-2 text-center">IPK</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-xs">
           {dataAKMProdi.map((row, index) => (
-            <tr key={index} className="hover:bg-gray-100">
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-4 py-2">
+            <tr key={index} className="border-b border-slate-200 hover:bg-slate-50/80 bg-white transition-colors">
+              <td className="py-2.5 px-4 font-semibold text-slate-800 border-r border-slate-200">
                 {row.program}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 font-bold text-center text-slate-900 border-r border-slate-200">
                 {row.total}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.A}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.C}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.G}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.KM}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.N}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.U}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.SKS}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.IPS}
-              </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
-                {row.IPK}
-              </td>
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">{row.A}</td>
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">{row.C}</td>
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">{row.G}</td>
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">{row.KM}</td>
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">{row.N}</td>
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">{row.U}</td>
+              <td className="py-2.5 px-2 font-semibold text-center border-r border-slate-200">{row.SKS}</td>
+              <td className="py-2.5 px-2 font-mono text-center border-r border-slate-200">{row.IPS}</td>
+              <td className="py-2.5 px-2 font-bold text-center text-slate-800">{row.IPK}</td>
             </tr>
           ))}
         </tbody>
@@ -371,78 +319,78 @@ export function TableNewStudent() {
   ];
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-full border-collapse">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
+      <table className="w-full border-collapse text-left">
         <thead>
-          <tr>
+          <tr className="bg-primary-green text-white text-xs font-bold tracking-wider select-none">
             <th
               rowSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-3 px-3 text-center border-r border-white/20"
             >
               Jenjang
             </th>
             <th
               rowSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-3 px-4 text-left border-r border-white/20"
             >
               Nama
             </th>
             <th
               rowSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-3 px-3 text-center border-r border-white/20"
             >
               Jumlah
             </th>
             <th
               colSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-2 px-3 text-center border-r border-white/20 border-b border-white/20"
             >
               Pendaftaran
             </th>
             <th
               colSpan={2}
-              className="bg-teal-700 text-white px-4 py-3 text-center border-2 border-gray-500/70 font-semibold"
+              className="py-2 px-3 text-center border-b border-white/20"
             >
               Status Semester
             </th>
           </tr>
-          <tr>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
+          <tr className="bg-primary-green text-white text-[11px] font-bold tracking-wider select-none">
+            <th className="py-2 px-2 text-center border-r border-white/20">
               PDB
             </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
+            <th className="py-2 px-2 text-center border-r border-white/20">
               Lainnya
             </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
+            <th className="py-2 px-2 text-center border-r border-white/20">
               L
             </th>
-            <th className="bg-teal-700 text-white px-2 py-2 text-center border-2 border-gray-500/70 font-semibold">
+            <th className="py-2 px-2 text-center">
               P
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-xs">
           {data.map((row, index) => (
-            <tr key={index} className="hover:bg-gray-100">
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-4 py-2 text-center">
+            <tr key={index} className="border-b border-slate-200 hover:bg-slate-50/80 bg-white transition-colors">
+              <td className="py-2.5 px-3 font-semibold text-center text-slate-800 border-r border-slate-200">
                 {row.jenjang}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-4 font-semibold text-slate-800 border-r border-slate-200">
                 {row.nama}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-4 py-2 text-center">
+              <td className="py-2.5 px-3 font-bold text-center text-slate-900 border-r border-slate-200">
                 {row.jumlah}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">
                 {row.pdb}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">
                 {row.lainnya}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
+              <td className="py-2.5 px-2 text-center border-r border-slate-200">
                 {row.L}
               </td>
-              <td className="border-2 border-gray-500/70 text-black font-semibold px-2 py-2 text-center">
+              <td className="py-2.5 px-2 text-center">
                 {row.P}
               </td>
             </tr>

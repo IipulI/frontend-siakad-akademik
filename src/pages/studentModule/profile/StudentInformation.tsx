@@ -15,7 +15,7 @@ import { useMahasiswaProfile } from "../../../hooks/mahasiswa/useProfile";
 // Child Component: Displays personal data
 const PersonalProfile = ({ profile }: { profile: MahasiswaProfile }) => {
   return (
-      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={"items-start gap-4 text-gray-text"}>
         <div className="flex flex-col space-y-5 ">
           <DataCard title={"Nama Mahasiswa"} desc={profile.nama || "-"} />
           <DataCard title={"Tempat Lahir"} desc={profile.tempatLahir || "-"} />
@@ -39,7 +39,7 @@ const PersonalProfile = ({ profile }: { profile: MahasiswaProfile }) => {
 // Child Component: Displays address data
 const Domicile = ({ profile }: { profile: MahasiswaProfile }) => {
   return (
-      <RoundedBorderLayout className={" items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={" items-start gap-4 text-gray-text"}>
         <div className="flex flex-col space-y-5 ">
           <h1 className="text-primary-green text-sm font-semibold">Alamat KTP</h1>
           <div className="h-px border-2 border-primary-green"></div>
@@ -67,7 +67,7 @@ const Domicile = ({ profile }: { profile: MahasiswaProfile }) => {
 // Child Component: Displays contact data
 const Contact = ({ profile }: { profile: MahasiswaProfile }) => {
   return (
-      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={"items-start gap-4 text-gray-text"}>
         <div className="flex flex-col space-y-4 ">
           <DataCard title={"No. HP*"} desc={profile.noHp || "-"} />
           <DataCard title={"No. Telepon"} desc={profile.noTelepon || "-"} />

@@ -164,29 +164,30 @@ const YearAdminAcademic: React.FC = () => {
 
     return (
         <MainLayout titlePage={"Tahun Ajaran"} isGreeting={false}>
-            <div className="max-w-2xl mx-auto mt-2 bg-white py-2 rounded-sm border-t-2 border-primary-green">
-                <div className="flex justify-between">
-                    <div className="flex gap-4 p-2">
-                        <select className="rounded px-1 lg:px-3 lg:text-base appearance-none text-primary-brown text-xs border-slate-300 border p-1">
+            <div className="max-w-4xl mx-auto mt-4 bg-white p-4 rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-green">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 pb-2 border-b border-slate-100">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <select className="px-3 py-1.5 text-xs md:text-sm font-medium border border-slate-300 rounded-lg text-slate-700 bg-white shadow-2xs focus:ring-1 focus:ring-primary-green focus:border-primary-green transition-all">
                             <option value={"semua"}>-Semua-</option>
                         </select>
-                        <div className="flex">
+                        <div className="flex items-center">
                             <input
                                 type="search"
-                                placeholder="Cari Tahun Ajaran"
-                                className="px-2 py-1 lg:w-70 w-40 text-xs lg:text-base rounded border border-slate-300"
+                                placeholder="Cari Tahun Ajaran..."
+                                className="px-3 py-1.5 lg:w-72 w-44 text-xs md:text-sm rounded-l-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary-green focus:border-primary-green transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <button
-                                className="bg-primary-yellow mx-1 w-8 rounded flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+                                className="bg-primary-yellow hover:bg-[#e89012] text-white px-3 py-1.5 h-[34px] flex items-center justify-center cursor-pointer disabled:cursor-not-allowed transition-all"
                                 onClick={() => refetch()}
                                 disabled={isLoading || isCreating || isUpdating || isDeleting}
+                                title="Cari"
                             >
-                                <Search color="white" size={18} />
+                                <Search color="white" size={16} strokeWidth={2.5} />
                             </button>
                             <button
-                                className="bg-primary-blueDark w-8 rounded flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+                                className="bg-primary-blueDark hover:bg-[#2e42a8] text-white px-3 py-1.5 h-[34px] rounded-r-lg flex items-center justify-center cursor-pointer disabled:cursor-not-allowed transition-all"
                                 onClick={() => {
                                     setSearchTerm("");
                                     setCurrentPage(1);
@@ -194,18 +195,19 @@ const YearAdminAcademic: React.FC = () => {
                                     refetch();
                                 }}
                                 disabled={isLoading || isCreating || isUpdating || isDeleting}
+                                title="Reset"
                             >
-                                <RefreshCw color="white" size={20} />
+                                <RefreshCw color="white" size={16} strokeWidth={2.5} />
                             </button>
                         </div>
                     </div>
                     <button
                         onClick={handleAddClick}
-                        className="bg-primary-green cursor-pointer my-2 mr-4 text-sm text-white px-4 rounded flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-primary-green hover:bg-[#0d5950] text-white px-4 py-2 rounded-lg text-xs md:text-sm font-medium flex items-center gap-2 shadow-xs transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={isAddingNewRow || editingRowId !== null || isLoading || isCreating || isUpdating || isDeleting}
                     >
-                        <Plus color="white" size={16} className="mr-2" />
-                        Tambah
+                        <Plus color="white" size={16} strokeWidth={2.5} />
+                        <span>Tambah Tahun Ajaran</span>
                     </button>
                 </div>
 

@@ -14,7 +14,7 @@ import { useMahasiswaProfile } from "../../../hooks/mahasiswa/useProfile";
 // Child Component for the Program Study Form
 const ProgramForm = ({ profile }: { profile: MahasiswaProfile }) => {
   return (
-      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={"items-start gap-4 text-gray-text"}>
         <div className="flex flex-col space-y-5 ">
           <DataCard title={"Sistem Kuliah"} desc={profile.sistemKuliah || "-"} />
           <DataCard title={"Tanggal Terdaftar"} desc={profile.tanggalMasuk || "-"} />

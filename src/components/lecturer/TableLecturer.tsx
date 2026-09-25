@@ -9,6 +9,7 @@ interface TableProps {
 
 export default function TableLecturer ({ data, tableHead, error, setId }: TableProps) {
     return (
+      <div className="w-full overflow-x-auto">
       <table className="md:w-full my-4">
         <thead>
           <tr>
@@ -65,5 +66,6 @@ export default function TableLecturer ({ data, tableHead, error, setId }: TableP
           )}
         </tbody>
       </table>
+      </div>
     );
   };

@@ -174,7 +174,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = ({onCancel, onSu
                 </button>
                 <button
                     type="submit"
-                    className="flex items-center px-4 py-2 bg-primary-green text-white rounded-md hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center px-4 py-2 bg-primary-green text-white rounded-md hover:opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                 >
                     {loading ? "Menyimpan..." : <><Save size={16} className="mr-2"/> Simpan</>}

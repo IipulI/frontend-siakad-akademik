@@ -199,7 +199,7 @@ const StudyPlanCard = () => {
             className=""
         >
             <HorizontalLine />
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 p-4 bg-[#F4F4F4] mx-auto">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 p-4 bg-gray-100 mx-auto">
                 <StudyPlanCardHeader
                     title={"Semester Saat Ini"}
                     subtitle={krsInfo?.semester ?? '...'}
@@ -407,30 +407,30 @@ const StudyPlanCardTable = ({
                         </div>
 
                         {/* Search and Icons */}
-                        <div className="flex">
+                        <div className="flex w-full sm:w-auto">
                             <input
                                 type="search"
                                 placeholder="Cari Kelas"
-                                className="px-4 py-2 w-64 text-sm border border-gray-300 focus:outline-none"
+                                className="px-4 py-2 w-full sm:w-64 text-sm border border-gray-300 focus:outline-none"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <button className="bg-[#00c274] hover:bg-[#00a864] w-10 flex items-center justify-center transition">
+                            <button className="bg-primary-green hover:bg-green-700 w-10 flex items-center justify-center transition">
                                 <Search color="white" size={18} />
                             </button>
-                            <button className="bg-[#4b6bfb] hover:bg-[#3b5beb] w-10 flex items-center justify-center transition">
+                            <button className="bg-primary-blueDark hover:bg-blue-700 w-10 flex items-center justify-center transition">
                                 <RefreshCw color="white" size={18} />
                             </button>
                         </div>
 
                         {/* Filter Button */}
-                        <button className="bg-[#ff9f1c] hover:bg-[#f0921a] text-white flex items-center gap-2 px-4 py-2 font-semibold text-sm transition">
+                        <button className="bg-primary-yellow hover:bg-yellow-600 text-white flex items-center gap-2 px-4 py-2 font-semibold text-sm transition">
                             <SlidersHorizontal size={16} /> Filter dan Urutkan
                         </button>
                     </div>
 
                     {/* Secondary Filters */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                         <button className="border border-gray-300 bg-white hover:bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 transition">Tepat Semester</button>
                         <button className="border border-gray-300 bg-white hover:bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 transition">Semester Lalu</button>
                         <button className="border border-gray-300 bg-white hover:bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 transition">Tidak Lulus</button>
@@ -440,7 +440,7 @@ const StudyPlanCardTable = ({
                 {activeButton === "pilihKelas" && (
                     <>
                         <div className="flex mb-4">
-                            <input type="search" placeholder="Cari Mata Kuliah..." className="px-4 py-2 w-60 text-sm rounded-l border border-slate-300" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input type="search" placeholder="Cari Mata Kuliah..." className="px-4 py-2 w-full sm:w-60 text-sm rounded-l border border-slate-300" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                             <button className="bg-primary-green w-8 cursor-pointer flex items-center justify-center"><Search color="white" size={18} /></button>
                             <button className="bg-primary-blueDark w-8 cursor-pointer rounded-r flex items-center justify-center"><RefreshCw color="white" size={20} /></button>
                         </div>

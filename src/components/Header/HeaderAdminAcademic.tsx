@@ -446,7 +446,7 @@ const HeaderAdminAcademic = () => {
   return (
     <div className="w-full flex flex-col space-y-4">
       <div className="flex">
-        <div className="flex bg-primary-green w-full rounded-tr-full py-4 px-5 md:px-10 xl:px-40">
+        <div className="flex bg-primary-green w-full rounded-tr-full py-4 px-4 sm:px-6 md:px-8 xl:px-12">
           <div>
             <div>
               <div>

@@ -71,7 +71,7 @@ const ProposalLecturer = () => {
                                 <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">Nama Pembimbing</th>
                                 <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">Tgl. Pengajuan</th>
                                 <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center">Status</th>
-                                <th className="bg-primary-yellow text-white border border-gray-500 font-semibold p-2 text-center w-16">Aksi</th>
+                                <th className="bg-primary-green text-white border border-gray-500 font-semibold p-2 text-center w-16">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

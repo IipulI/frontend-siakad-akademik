@@ -12,6 +12,7 @@ import {
   CornerUpLeft,
   Check,
   Pencil,
+  Link2,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -175,28 +176,29 @@ interface TableAnnouncementProps {
 
 export const Table = ({ data, tableHead, error }: TableProps) => {
   return (
-    <table className="w-full my-4">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 my-4">
+    <table className="w-full border-collapse text-left">
       <thead>
         <tr>
           {tableHead.map((head) => (
             <th
               key={head}
-              className="p-4 bg-primary-green text-white border border-gray-600"
+              className="py-3 px-4 bg-primary-green text-white text-xs md:text-sm font-semibold tracking-wider text-center"
             >
-              <p className="font-semibold text-center">{head}</p>
+              {head}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="font-semibold">
+      <tbody className="divide-y divide-slate-100 text-xs md:text-sm">
         {data && data.length > 0 ? (
           data.map((row, index) => {
             const { id, ...rowWithoutId } = row;
             const rowData = Object.values(rowWithoutId);
             return (
-              <tr key={index} className="text-center">
+              <tr key={index} className="text-center hover:bg-emerald-50/20 transition-colors">
                 {rowData.map((cell, idx) => (
-                  <td key={idx} className="p-2 border text-sm border-black/50">
+                  <td key={idx} className="py-2.5 px-3 text-slate-700 font-medium">
                     {String(cell)}
                   </td>
                 ))}
@@ -207,7 +209,7 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
           <tr>
             <td
               colSpan={tableHead.length}
-              className="text-center border-black border p-2"
+              className="text-center py-8 text-slate-400 text-xs md:text-sm"
             >
               {error}
             </td>
@@ -215,6 +217,7 @@ export const Table = ({ data, tableHead, error }: TableProps) => {
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -237,33 +240,33 @@ export const TableHistory = ({
   const isDataAvailable = data && data.length > 0;
 
   return (
-    <table className="w-full my-4">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 my-4">
+    <table className="w-full border-collapse text-left">
       <thead>
         <tr>
           {tableHead.map((head) => (
             <th
               key={head}
-              className="p-4 bg-primary-green text-white border border-gray-600"
+              className="py-3 px-4 bg-primary-green text-white text-xs md:text-sm font-semibold tracking-wider text-center"
             >
-              <p className="font-semibold text-center">{head}</p>
+              {head}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="font-semibold">
+      <tbody className="divide-y divide-slate-100 text-xs md:text-sm">
         {isDataAvailable ? (
           data.map((row, index) => {
-            // Gunakan row.kodeMataKuliah atau ID unik lain jika tersedia sebagai key
             const uniqueKey = row.kodeMataKuliah
               ? `${row.kodeMataKuliah}-${index}`
               : index;
             const { id, ...rowWithoutId } = row;
             const rowData = Object.values(rowWithoutId);
             return (
-              <tr key={uniqueKey} className="text-center">
+              <tr key={uniqueKey} className="text-center hover:bg-emerald-50/20 transition-colors">
                 {rowData.map((cell, idx) => (
-                  <td key={idx} className="p-2 border text-sm border-black/50">
-                    {String(cell ?? "-")} {/* Tampilkan '-' jika data null */}
+                  <td key={idx} className="py-2.5 px-3 text-slate-700 font-medium">
+                    {String(cell ?? "-")}
                   </td>
                 ))}
               </tr>
@@ -273,42 +276,42 @@ export const TableHistory = ({
           <tr>
             <td
               colSpan={tableHead.length}
-              className="text-center border-black border p-2"
+              className="text-center py-8 text-slate-400 text-xs md:text-sm"
             >
               {error}
             </td>
           </tr>
         )}
 
-        {/* Baris Total dan Batas SKS sekarang menggunakan props dinamis */}
-        <tr>
+        <tr className="bg-slate-50 font-semibold text-slate-800">
           <td
             colSpan={4}
-            className="border-black/50 text-sm text-center p-2 border"
+            className="py-2.5 px-4 text-center"
           >
             Total SKS
           </td>
-          <td className="border-black/50 text-sm border text-center p-2">25</td>
+          <td className="py-2.5 px-3 text-center">{totalSks ?? 25}</td>
           <td
             colSpan={4}
-            className="border-black/50 text-sm border text-center p-2"
+            className="py-2.5 px-3 text-center"
           ></td>
         </tr>
-        <tr>
+        <tr className="bg-slate-50 font-semibold text-slate-800">
           <td
             colSpan={4}
-            className="border-black/50 text-center p-2 text-sm border"
+            className="py-2.5 px-4 text-center"
           >
             Batas SKS
           </td>
-          <td className="border-black/50 text-center p-2 text-sm border">25</td>
+          <td className="py-2.5 px-3 text-center">{batasSks ?? 25}</td>
           <td
             colSpan={4}
-            className="border-black/50 text-sm border text-center p-2"
+            className="py-2.5 px-3 text-center"
           ></td>
         </tr>
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -319,43 +322,43 @@ export const TableAnnouncement = ({
   setId,
 }: TableProps) => {
   return (
-    <table className="w-full my-4">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 my-4">
+    <table className="w-full border-collapse text-left">
       <thead>
         <tr>
           {tableHead.map((head) => (
             <th
               key={head}
-              className="p-4 bg-primary-green text-white border border-gray-600"
+              className="py-3 px-4 bg-primary-green text-white text-xs md:text-sm font-semibold tracking-wider text-center"
             >
-              <p className="font-semibold text-center">{head}</p>
+              {head}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="font-semibold">
+      <tbody className="divide-y divide-slate-100 text-xs md:text-sm">
         {data && data.length > 0 ? (
           data.map((row, index) => {
             return (
-              <tr key={index} className="text-center">
-                <td className="p-2 border text-sm border-black/50">
+              <tr key={index} className="text-center hover:bg-emerald-50/20 transition-colors">
+                <td className="py-2.5 px-3 text-slate-700 font-medium">
                   {row.tanggal}
                 </td>
-                <td className="p-2 border text-sm border-black/50">
+                <td className="py-2.5 px-3 text-slate-700 font-medium">
                   {row.penulis}
                 </td>
-                <td className="p-2 border text-sm border-black/50">
+                <td className="py-2.5 px-3 text-slate-700 font-medium">
                   {row.judul}
                 </td>
-                <td
-                  className="p-2 border text-sm border-black/50 text-center"
-                  style={{ verticalAlign: "middle" }}
-                >
-                  <div
+                <td className="py-2.5 px-3 text-center align-middle">
+                  <button
+                    type="button"
                     onClick={() => setId && setId(row.id)}
-                    className="bg-primary-blueSoft cursor-pointer rounded-sm mx-auto flex items-center justify-center w-8 h-6"
+                    title="Lihat Pengumuman"
+                    className="bg-primary-blueSoft/90 hover:bg-primary-blueSoft text-white cursor-pointer rounded-lg mx-auto flex items-center justify-center w-8 h-7 shadow-2xs transition-transform active:scale-95"
                   >
                     <Eye className="text-white w-4 h-4" />
-                  </div>
+                  </button>
                 </td>
               </tr>
             );
@@ -364,7 +367,7 @@ export const TableAnnouncement = ({
           <tr>
             <td
               colSpan={tableHead.length}
-              className="text-center border-black border p-2"
+              className="text-center py-8 text-slate-400 text-xs md:text-sm"
             >
               {error}
             </td>
@@ -372,6 +375,7 @@ export const TableAnnouncement = ({
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -743,30 +747,34 @@ export const TableCourseManagement: React.FC<TableProps> = ({
     data.length > 0 && (selectedIds?.length ?? 0) === data.length;
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full my-4 border-collapse border border-gray-400">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 bg-white">
+      <table className="w-full border-collapse text-left">
         <thead>
-          <tr>
-            <th className="p-4 bg-primary-green text-white border border-gray-600">
+          <tr className="bg-primary-green text-white text-xs font-bold tracking-wider select-none">
+            <th rowSpan={2} className="py-3 px-3 text-center w-12 border-r border-white/20">
               <input
                 type="checkbox"
                 checked={isAllSelected}
-                onChange={() => onSelect?.(-1)}
-                className="cursor-pointer"
+                onChange={() => onSelect?.("-1")}
+                className="cursor-pointer rounded border-slate-300 text-primary-green focus:ring-primary-green h-4 w-4"
               />
             </th>
-
-            {tableHead.slice(1).map((head) => (
-              <th
-                key={head}
-                className="p-4 bg-primary-green text-white border border-gray-600"
-              >
-                <p className="font-semibold text-center">{head}</p>
-              </th>
-            ))}
+            <th rowSpan={2} className="py-3 px-3 text-center border-r border-white/20">KURIKULUM</th>
+            <th rowSpan={2} className="py-3 px-3 text-center border-r border-white/20">KODE MK</th>
+            <th rowSpan={2} className="py-3 px-4 text-left border-r border-white/20">NAMA MATA KULIAH</th>
+            <th rowSpan={2} className="py-3 px-3 text-center border-r border-white/20">SKS</th>
+            <th rowSpan={2} className="py-3 px-3 text-center border-r border-white/20">JENIS MK</th>
+            <th rowSpan={2} className="py-3 px-4 text-left border-r border-white/20">PRODI PENGAMPU</th>
+            <th colSpan={3} className="py-2.5 px-3 text-center border-r border-white/20 border-b border-white/20">STATUS PENGISIAN</th>
+            <th rowSpan={2} className="py-3 px-3 text-center">AKSI</th>
+          </tr>
+          <tr className="bg-primary-green text-white text-[11px] font-bold tracking-wider select-none">
+            <th className="py-2 px-3 text-center border-r border-white/20">RPS</th>
+            <th className="py-2 px-3 text-center border-r border-white/20">CPL</th>
+            <th className="py-2 px-3 text-center border-r border-white/20">CPMK</th>
           </tr>
         </thead>
-        <tbody className="font-semibold">
+        <tbody className="text-xs">
           {isDataAvailable ? (
             data.map((row) => {
               const {
@@ -781,50 +789,92 @@ export const TableCourseManagement: React.FC<TableProps> = ({
               const isChecked = selectedIds?.includes(id) ?? false;
 
               return (
-                <tr key={id} className="text-center">
-                  <td className="p-2 border text-sm border-black/50">
+                <tr key={id} className={`border-b border-slate-200 transition-colors ${isChecked ? "bg-emerald-50/50" : "hover:bg-slate-50/80 bg-white"}`}>
+                  <td className="py-3 px-3 text-center border-r border-slate-200">
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => onSelect?.(id)}
-                      className="mx-auto cursor-pointer"
+                      className="cursor-pointer rounded border-slate-300 text-primary-green focus:ring-primary-green h-4 w-4"
                     />
                   </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    {tahunKurikulum.tahun}
+                  <td className="py-3 px-3 text-center font-bold text-slate-800 border-r border-slate-200">
+                    {tahunKurikulum?.tahun || "-"}
                   </td>
-                  <td className="p-2 border text-sm border-black/50">{kode}</td>
-                  <td className="p-2 border text-sm border-black/50">
+                  <td className="py-3 px-3 font-bold font-mono text-center text-slate-800 border-r border-slate-200">
+                    {kode}
+                  </td>
+                  <td className="py-3 px-4 font-semibold text-slate-800 border-r border-slate-200">
                     {nama}
                   </td>
-                  <td className="p-2 border text-sm border-black/50">{totalSks}</td>
-                  <td className="p-2 border text-sm border-black/50">
-                    {jenis}
+                  <td className="py-3 px-3 text-center font-bold text-slate-800 border-r border-slate-200">
+                    {totalSks}
                   </td>
-                  <td className="p-2 border text-sm border-black/50">
-                    {programStudi.nama}
+                  <td className="py-3 px-3 text-center text-slate-700 border-r border-slate-200">
+                    {jenis || "Kuliah"}
                   </td>
-                  <td className="p-2 border text-sm border-black/50 text-center">
-                    <div className="flex justify-center gap-2">
-                      <div
+                  <td className="py-3 px-4 text-slate-700 border-r border-slate-200">
+                    {programStudi?.nama || "-"}
+                  </td>
+                  <td className="py-2.5 px-3 text-center border-r border-slate-200">
+                    <span
+                      onClick={() => navigate(`${AdminAcademicRoute.courseManagement.editRps}/${id}`)}
+                      className="inline-block border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded px-2.5 py-1 text-[11px] font-medium shadow-2xs cursor-pointer transition-colors"
+                      title="Klik untuk kelola RPS"
+                    >
+                      {row.rpsStatus || "Belum Terisi"}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-3 text-center border-r border-slate-200">
+                    <span
+                      onClick={() => navigate(`${AdminAcademicRoute.academic.cplCpmkCourse}/${id}`)}
+                      className="inline-block border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded px-2.5 py-1 text-[11px] font-medium shadow-2xs cursor-pointer transition-colors"
+                      title="Klik untuk kelola CPL"
+                    >
+                      {row.cplStatus || "Belum Terisi"}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-3 text-center border-r border-slate-200">
+                    <span
+                      onClick={() => navigate(`${AdminAcademicRoute.academic.cplCpmkCourse}/${id}`)}
+                      className="inline-block border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded px-2.5 py-1 text-[11px] font-medium shadow-2xs cursor-pointer transition-colors"
+                      title="Klik untuk kelola CPMK"
+                    >
+                      {row.cpmkStatus || "Belum Terisi"}
+                    </span>
+                  </td>
+                  <td className="py-3 px-3 text-center">
+                    <div className="flex justify-center items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`${AdminAcademicRoute.academic.cplCpmkCourse}/${id}`)}
+                        className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                        title="Tautan / CPL CPMK"
+                      >
+                        <Link2 size={13} />
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={() =>
                           navigate(
                             `${AdminAcademicRoute.courseManagement.detailCourse}/${id}`
                           )
                         }
-                        className="bg-blue-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8"
-                        title="Edit"
+                        className="p-1.5 bg-slate-100 hover:bg-sky-50 text-slate-600 hover:text-sky-600 rounded border border-slate-200 shadow-2xs transition-colors active:scale-95 cursor-pointer"
+                        title="Detail"
                       >
-                        <Eye className="text-white w-4 h-4" />
-                      </div>
+                        <Eye size={13} />
+                      </button>
 
-                      <div
+                      <button
+                        type="button"
                         onClick={() => onDelete?.(id)}
-                        className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-8"
+                        className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded shadow-2xs transition-all active:scale-95 cursor-pointer"
                         title="Hapus"
                       >
-                        <Trash2 className="text-white w-4 h-4" />
-                      </div>
+                        <Trash2 size={13} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -833,10 +883,10 @@ export const TableCourseManagement: React.FC<TableProps> = ({
           ) : (
             <tr>
               <td
-                colSpan={tableHead.length || 1}
-                className="text-center border-black border p-2"
+                colSpan={11}
+                className="text-center py-8 text-slate-400"
               >
-                {error}
+                {error || "Data tidak ditemukan."}
               </td>
             </tr>
           )}
@@ -977,8 +1027,7 @@ export const TableRps = ({ data, error }: TableRpsProps) => {
                   {row.kelas}
                 </td>
                 <td
-                  className="p-2 border text-sm border-black/50 text-center"
-                  style={{ verticalAlign: "middle" }}
+                  className="p-2 border text-sm border-black/50 text-center align-middle"
                 >
                   <div
                     onClick={() =>
@@ -1116,6 +1165,7 @@ export const TableGraduateProfile = ({
   const isDataAvailable = data && data.length > 0;
 
   return (
+    <div className="w-full overflow-x-auto">
     <table className="w-full my-4">
       <thead>
         <tr>
@@ -1323,6 +1373,7 @@ export const TableGraduateProfile = ({
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -1343,6 +1394,7 @@ export const TableObeCPL: React.FC<TableProps> = ({
   const isDataAvailable = data && data.length > 0;
 
   return (
+    <div className="w-full overflow-x-auto">
     <table className="w-full border border-gray-300">
       <thead className="bg-primary-green">
         <tr>
@@ -1544,6 +1596,7 @@ export const TableObeCPL: React.FC<TableProps> = ({
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -1565,6 +1618,7 @@ export const TableObeCpmk: React.FC<TableProps> = ({
   };
 
   return (
+    <div className="w-full overflow-x-auto">
     <table className="w-full border border-gray-300">
       <thead className="bg-primary-green">
         <tr>
@@ -1649,6 +1703,7 @@ export const TableObeCpmk: React.FC<TableProps> = ({
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -1689,6 +1744,7 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({
   };
 
   return (
+    <div className="w-full overflow-x-auto">
     <table className="w-full border border-gray-300">
       <thead className="bg-primary-green">
         <tr>
@@ -1843,6 +1899,7 @@ export const TableObeCpmkMatkul: React.FC<TableProps> = ({
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -2240,7 +2297,7 @@ export const TableRpsManagement: React.FC<TableProps> = ({
       {/* Modal for class mapping */}
       {isModalOpen && selectedItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white py-4 px-16 rounded-lg shadow-lg w-[400px] border-primary-green border-t-3">
+          <div className="bg-white py-4 px-6 sm:px-16 rounded-lg shadow-lg w-full max-w-[400px] mx-4 border-primary-green border-t-3">
             <h3 className="text-center text-lg mb-6 font-medium">
               Memetakan RPS ke Kelas
             </h3>
@@ -2287,7 +2344,7 @@ export const TableRpsManagement: React.FC<TableProps> = ({
 
             <div className="flex justify-end gap-2">
               <button
-                className="bg-[#828282] px-4 py-2 rounded-lg text-primary-white flex items-center gap-2 cursor-pointer"
+                className="bg-secondary-gray px-4 py-2 rounded-lg text-primary-white flex items-center gap-2 cursor-pointer"
                 onClick={handleCloseModal}
               >
                 <CornerUpLeft className="w-4 h-4" />

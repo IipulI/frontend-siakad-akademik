@@ -44,41 +44,50 @@ export default function ChartJSAKMClassOfYear() {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
         title: {
           display: true,
           text: "Jumlah Mahasiswa",
-          color: "#000",
+          color: "#475569",
+          font: {
+            size: 12,
+            weight: "bold" as const,
+          },
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
       x: {
         title: {
           display: true,
           text: "Angkatan",
-          color: "#000",
+          color: "#475569",
           font: {
-            size: 18,
+            size: 12,
+            weight: "bold" as const,
           },
         },
         ticks: {
-          maxRotation: 45,
-          minRotation: 30,
-          callback: function (val, index) {
-            const label = labels[index];
-            return label.length > 15 ? label.slice(0, 12) + "…" : label;
+          font: {
+            size: 11,
           },
+          maxRotation: 0,
         },
       },
     },
     plugins: {
       legend: {
-        display: false, // Karena hanya 1 dataset
+        display: false,
       },
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: any) {
             return `${context.dataset.label}: ${context.parsed.y}`;
           },
         },
@@ -87,8 +96,8 @@ export default function ChartJSAKMClassOfYear() {
   };
 
   return (
-    <div className="w-full relative">
-      <Bar data={data} options={options} className="w-full relative" />
+    <div className="w-full max-w-2xl mx-auto h-[260px] relative my-2">
+      <Bar data={data} options={options} />
     </div>
   );
 }

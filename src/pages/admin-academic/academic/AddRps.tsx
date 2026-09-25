@@ -454,8 +454,8 @@ const AddRps = () => {
           </div>
 
           {/* Dosen Penyusun */}
-          <div className="form-group flex flex-col items-start gap-4 md:flex">
-            <label className="font-medium">
+          <div className="form-group flex flex-col items-start gap-4 md:flex-row">
+            <label className="w-48 font-medium">
               Dosen Penyusun<span className="text-red-500">*</span>
             </label>
             <div className="space-y-3 w-full">

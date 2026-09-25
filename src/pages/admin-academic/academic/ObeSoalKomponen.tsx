@@ -284,7 +284,7 @@ export default function ObeSoalKomponen() {
                 <div className="overflow-x-auto border border-gray-200 rounded-sm mb-6">
                   <table className="min-w-full text-sm border-collapse">
                     <thead>
-                      <tr className="bg-gray-700 text-white text-xs">
+                      <tr className="bg-primary-green text-white text-xs">
                         <th className="p-2 border">No</th>
                         <th className="p-2 border">Jenis</th>
                         <th className="p-2 border">Pertanyaan/Label</th>

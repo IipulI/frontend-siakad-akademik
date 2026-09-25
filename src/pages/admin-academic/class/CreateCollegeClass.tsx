@@ -390,7 +390,7 @@ const CreateCollegeClassTable = ({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
+      <table className="min-w-[900px] w-full border-collapse">
         <thead>
           <tr className="bg-primary-green text-white">
             <th className="p-2 border font-semibold border-gray-300">No</th>

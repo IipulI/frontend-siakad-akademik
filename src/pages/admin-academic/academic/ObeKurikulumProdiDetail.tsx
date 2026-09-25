@@ -47,7 +47,7 @@ export default function ObeKurikulumProdiDetail() {
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <button
               onClick={handleBack}
-              className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90"
+              className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1.5 hover:opacity-90"
             >
               <ArrowLeft size={16} /> Kembali ke Daftar
             </button>

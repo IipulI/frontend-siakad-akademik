@@ -331,26 +331,26 @@ export default function ObeCpmkMatkul() {
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center w-full md:w-auto">
-              <button onClick={handleBack} className="bg-primary-yellow text-white p-2.5 rounded-l-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer">
+              <button onClick={handleBack} className="bg-primary-yellow text-white p-2.5 rounded-l-md flex items-center justify-center hover:bg-primary-yellow/90 cursor-pointer flex-shrink-0">
                 <ArrowLeft size={16} />
               </button>
-              <div className="flex items-center">
-                <input type="text" placeholder="Cari Mata Kuliah" className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700" disabled />
-                <button className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer" disabled>
+              <div className="flex items-center flex-1 min-w-0 sm:flex-none">
+                <input type="text" placeholder="Cari Mata Kuliah" className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-full sm:w-64 min-w-0 text-gray-700" disabled />
+                <button className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-indigo-600/90 cursor-pointer flex-shrink-0" disabled>
                   <Search size={16} />
                 </button>
               </div>
             </div>
 
             <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
-              <button onClick={handleBack} className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer">
+              <button onClick={handleBack} className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-primary-blueSoft/90 cursor-pointer">
                 <ArrowLeft size={16} /> Kembali ke Daftar
               </button>
               <button
                 onClick={handleSave}
                 disabled={saveMutation.isPending || !isObe}
                 title={!isObe ? "Prodi mata kuliah ini belum di-set OBE untuk tahun kurikulumnya" : undefined}
-                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary-green text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-primary-green/90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save size={16} /> {saveMutation.isPending ? "Menyimpan..." : "Simpan"}
               </button>
@@ -450,7 +450,7 @@ export default function ObeCpmkMatkul() {
               <div className="overflow-x-auto border border-gray-200 rounded-sm">
                 <table className="min-w-full bg-white border-collapse border border-gray-200">
                   <thead>
-                    <tr className="bg-[#0b5c77] text-white text-sm font-semibold text-center border-b border-gray-400">
+                    <tr className="bg-primary-green text-white text-sm font-semibold text-center border-b border-gray-400">
                       <th className="p-3 border-r border-gray-400 align-middle" rowSpan={2}>Kode CPMK</th>
                       <th className="p-3 border-r border-gray-400 align-middle" rowSpan={2}>Deskripsi CPMK</th>
                       <th className="p-3 border-r border-gray-400 align-middle" rowSpan={2}>Target</th>
@@ -460,7 +460,7 @@ export default function ObeCpmkMatkul() {
                       <th className="p-3 border-l border-gray-400 align-middle" rowSpan={2}>Bobot CPMK</th>
                       <th className="p-3 border-l border-gray-400 align-middle" rowSpan={2}>Aksi</th>
                     </tr>
-                    <tr className="bg-[#0b5c77] text-white text-xs font-semibold text-center">
+                    <tr className="bg-primary-green text-white text-xs font-semibold text-center">
                       {cplHeaders.length > 0 ? (
                         cplHeaders.map((cpl) => (
                           <th key={cpl.id} className="p-2 border-r border-gray-400 min-w-[60px] max-w-[80px]">

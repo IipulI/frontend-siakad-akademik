@@ -16,6 +16,7 @@ interface TableDetailClassProps {
 
 const TableDetailClass: React.FC<TableDetailClassProps> = ({ data, tableHead, error }) => {
   return (
+    <div className="w-full overflow-x-auto">
     <table className="w-full my-4">
       <thead>
         <tr>
@@ -59,6 +60,7 @@ const TableDetailClass: React.FC<TableDetailClassProps> = ({ data, tableHead, er
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 

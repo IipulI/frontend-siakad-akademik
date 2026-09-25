@@ -210,7 +210,7 @@ const DetailRps = () => {
               <div className="flex-1">
                 <button
                   onClick={handleOpenRps} // Panggil fungsi yang sudah diubah
-                  className="bg-primary-green text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors cursor-pointer"
+                  className="bg-primary-green text-white px-4 py-2 rounded hover:opacity-90 transition-colors cursor-pointer"
                 >
                   Lihat Dokumen
                 </button>

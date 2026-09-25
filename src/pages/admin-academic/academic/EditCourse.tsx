@@ -220,18 +220,18 @@ const EditCourse = () => {
       <NotificationPopup show={showPopup} type={popupConfig.type} message={popupConfig.message} onClose={handleClosePopup} />
       <div className="w-full bg-white my-4 py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col items-center justify-between mb-10 md:flex-row gap-4">
-          <div className="flex items-center gap-4">
-            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded">
+          <div className="flex items-center gap-4 flex-wrap w-full md:w-auto">
+            <button onClick={handleBack} className="flex items-center bg-primary-blueDark text-white px-3 py-3 rounded flex-shrink-0">
               <ArrowLeft className="mr-2" size={16} />
             </button>
-            <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="px-3 py-2 border border-black/50 rounded-l-md w-64" />
-              <button onClick={handleSearch} className="bg-primary-yellow px-3 py-3 rounded-r-md">
+            <div className="flex items-center flex-1 min-w-0 sm:flex-none">
+              <input type="search" placeholder="Cari Mata Kuliah" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="px-3 py-2 border border-black/50 rounded-l-md w-full sm:w-64 min-w-0" />
+              <button onClick={handleSearch} className="bg-primary-yellow px-3 py-3 rounded-r-md flex-shrink-0">
                 <Search color="white" size={20} />
               </button>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button onClick={handleBack} className="bg-primary-yellow text-white px-4 py-2 rounded flex items-center">
               <ArrowLeft className="mr-2" size={16} />
               Kembali ke Daftar
@@ -246,15 +246,15 @@ const EditCourse = () => {
         <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar Menu */}
           <div className="w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
+            <div className="flex items-center bg-primary-green/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.cplCpmkCourse)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.rpsCourse)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>RPS</p>
             </div>

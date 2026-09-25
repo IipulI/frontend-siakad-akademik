@@ -164,7 +164,7 @@ export default function ObeEditRps() {
             </div>
             <button
               onClick={handleBack}
-              className="bg-[#00c0ef] text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
+              className="bg-primary-blueSoft text-white px-3 py-2 rounded-md text-sm font-semibold flex items-center gap-1 hover:bg-opacity-90 cursor-pointer"
             >
               <ArrowLeft size={16} /> Kembali ke Detail RPS
             </button>

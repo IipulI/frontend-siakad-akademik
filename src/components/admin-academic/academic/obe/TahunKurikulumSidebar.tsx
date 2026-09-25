@@ -11,7 +11,7 @@ interface Props {
   activeJenjangId?: string;
 }
 
-const activeClass = "w-full text-left px-4 py-3 text-xs font-bold bg-[#eef5f9] text-[#00c0ef] border-l-4 border-[#00c0ef] border-b border-gray-100";
+const activeClass = "w-full text-left px-4 py-3 text-xs font-bold bg-[#eef5f9] text-primary-blue border-l-4 border-primary-blue border-b border-gray-100";
 const inactiveClass = "w-full text-left px-4 py-3 text-xs font-semibold text-gray-600 hover:bg-gray-50 border-b border-gray-100";
 
 export default function TahunKurikulumSidebar({ tahunKurikulumId, activeSection, activeJenjangId }: Props) {
@@ -44,7 +44,7 @@ export default function TahunKurikulumSidebar({ tahunKurikulumId, activeSection,
               onClick={() => navigate(`${AdminAcademicRoute.obeManagement.ketentuanAkademik}/${tahunKurikulumId}/${j.id}`)}
               className={
                 isActive
-                  ? "w-full text-left pl-6 pr-4 py-2 text-xs font-bold bg-[#eef5f9] text-[#00c0ef] border-l-4 border-[#00c0ef] border-b border-gray-50"
+                  ? "w-full text-left pl-6 pr-4 py-2 text-xs font-bold bg-[#eef5f9] text-primary-blue border-l-4 border-primary-blue border-b border-gray-50"
                   : "w-full text-left pl-6 pr-4 py-2 text-xs text-gray-500 hover:bg-gray-50 border-b border-gray-50"
               }
             >

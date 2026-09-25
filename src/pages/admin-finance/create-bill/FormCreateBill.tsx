@@ -283,8 +283,8 @@ export default function FormCreateBill() {
                 onChange={(e) => setPencarianTersedia(e.target.value)}
               />
             </div>
-            <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96">
-              <div className="p-2 max-h-90 overflow-y-auto">
+            <div className="bg-slate-100 rounded border-2 p-2 sm:px-10 text-sm h-96">
+              <div className="p-2 max-h-[22rem] overflow-y-auto">
                 {biayaTersedia
                   .filter((item) =>
                     item.nama
@@ -339,8 +339,8 @@ export default function FormCreateBill() {
                 onChange={(e) => setPencarianDipilih(e.target.value)}
               />
             </div>
-            <div className="bg-[#EEF2F6] rounded border-2 p-2 sm:px-10 text-sm h-96 overflow-auto">
-              <div className="p-2 max-h-90 overflow-y-auto">
+            <div className="bg-slate-100 rounded border-2 p-2 sm:px-10 text-sm h-96 overflow-auto">
+              <div className="p-2 max-h-[22rem] overflow-y-auto">
                 {biayaDipilih
                   .filter((item) =>
                     item.nama

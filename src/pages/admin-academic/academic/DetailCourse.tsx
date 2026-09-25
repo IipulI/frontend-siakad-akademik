@@ -72,8 +72,8 @@ const DetailCourse: React.FC = () => {
             <button onClick={handleBack} className="flex items-center bg-primary-blueSoft text-white px-2 py-3 rounded-l-md">
               <ArrowLeft className="mr-2" size={16} />
             </button>
-            <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50  w-64" />
+            <div className="flex items-center w-full sm:w-auto">
+              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50 w-full sm:w-64" />
               <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
                 <Search color="white" size={20} />
               </button>
@@ -90,15 +90,15 @@ const DetailCourse: React.FC = () => {
         <div className="flex flex-col md:flex-row ">
           {/* Sidebar Menu */}
           <div className="w-full h-50 text-white p-3 space-y-2 md:w-[20%]">
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
+            <div className="flex items-center bg-primary-green/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(AdminAcademicRoute.courseManagement.courseManagement)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p className="text-black font-semibold">Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3"></div>
               <p>RPS</p>
             </div>

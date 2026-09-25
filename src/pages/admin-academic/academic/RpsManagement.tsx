@@ -115,7 +115,7 @@ const RpsManagement: React.FC = () => {
         <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-4">
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Tahun Kurikulum</label>
-            <select value={selectedTahunKurikulum} onChange={(e) => setSelectedTahunKurikulum(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown w-10">
+            <select value={selectedTahunKurikulum} onChange={(e) => setSelectedTahunKurikulum(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown">
               <option value="">-- Tahun Kurikulum --</option>
               {curriculumData.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -139,7 +139,7 @@ const RpsManagement: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700 ">Program Studi</label>
-            <select value={selectedProgramStudi} onChange={(e) => setSelectedProgramStudi(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown md:w-18 w-10">
+            <select value={selectedProgramStudi} onChange={(e) => setSelectedProgramStudi(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown">
               <option value="">-- Program Studi --</option>
               {prodiData.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -151,7 +151,7 @@ const RpsManagement: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <label className="w-36 text-gray-700">Status RPS Kelas</label>
-            <select value={selectedStatusRpsKelas} onChange={(e) => setSelectedStatusRpsKelas(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown w-36">
+            <select value={selectedStatusRpsKelas} onChange={(e) => setSelectedStatusRpsKelas(e.target.value)} className="flex-1 rounded px-3 py-2 border border-primary-brown">
               <option value="">-- Status Kelas --</option>
               <option value="belum-punya-kelas">Rps Belum Memiliki Kelas</option>
               <option value="punya-kelas">Rps Sudah Memiliki Kelas</option>
@@ -163,7 +163,7 @@ const RpsManagement: React.FC = () => {
       <div className="w-full bg-white py-4 rounded-sm border-t-2 border-primary-green px-5">
         <div className="flex flex-col gap-6 md:flex-row md:gap-0">
           <div className="flex flex-row">
-            <input type="search" placeholder="Cari Program Studi" className="px-3 py-1 w-full md:w-72 rounded-l-md border border-black/50" />
+            <input type="search" placeholder="Cari Program Studi" className="px-3 py-1 w-full md:w-72 rounded-l-md border border-gray-300" />
             <button className="bg-primary-yellow rounded-r-md w-10 flex items-center justify-center">
               <Search color="white" size={20} />
             </button>

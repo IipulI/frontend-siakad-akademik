@@ -22,7 +22,7 @@ export default function () {
 
 
   return (
-    <div className="p-4 border-1 rounded-sm shadow-sm">
+    <div className="p-4 border rounded-sm shadow-sm">
       <BriefStudentData showLine={false} />
       <div className="mt-4 overflow-auto">
         <table className="w-full border-collapse border border-gray-300">
@@ -30,73 +30,73 @@ export default function () {
             <tr>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 No
               </th>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 Periode
               </th>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 Semester
               </th>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 Status
               </th>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 SKS
               </th>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 IPS
               </th>
               <th
                 colSpan={3}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 Total SKS
               </th>
               <th
                 colSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 IPK
               </th>
               <th
                 rowSpan={2}
-                className="border-1 border-gray-500 font-semibold p-2"
+                className="border border-gray-500 font-semibold p-2"
               >
                 Keterangan
               </th>
             </tr>
             <tr>
-              <th className="border-1 border-gray-500 font-semibold p-2 text-sm">
+              <th className="border border-gray-500 font-semibold p-2 text-sm">
                 Tempuh
               </th>
-              <th className="border-1 border-gray-500 font-semibold p-2">
+              <th className="border border-gray-500 font-semibold p-2">
                 Total
               </th>
-              <th className="border-1 border-gray-500 font-semibold p-2">
+              <th className="border border-gray-500 font-semibold p-2">
                 Lulus
               </th>
-              <th className="border-1 border-gray-500 font-semibold p-2">
+              <th className="border border-gray-500 font-semibold p-2">
                 Total
               </th>
-              <th className="border-1 border-gray-500 font-semibold p-2">
+              <th className="border border-gray-500 font-semibold p-2">
                 Lulus
               </th>
             </tr>
@@ -108,40 +108,40 @@ export default function () {
                   key={`${item.kodePeriode}-${index}`}
                   className="hover:bg-gray-100"
                 >
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {index + 1}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.kodePeriode}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.semester}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.status}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.sks}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.ips}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.sksTempuh}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.sksTotal}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.sksLulus}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.ipk}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2 text-center">
+                  <td className="border border-gray-500 font-semibold p-2 text-center">
                     {item.ipk}
                   </td>
-                  <td className="border-1 border-gray-500 font-semibold p-2">
+                  <td className="border border-gray-500 font-semibold p-2">
                     {item.dosen}
                   </td>
                 </tr>
@@ -149,7 +149,7 @@ export default function () {
             ) : (
               <tr>
                 <td
-                  className="border-1 text-center border-gray-500 font-semibold p-2"
+                  className="border text-center border-gray-500 font-semibold p-2"
                   colSpan={12}
                 >
                   Data Semester Tidak Tersedia

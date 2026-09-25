@@ -63,6 +63,7 @@ export default function TableCourseLecturer ({
     };
 
     return (
+      <div className="w-full overflow-x-auto">
       <table className="w-full my-4">
         <thead>
           <tr>
@@ -146,5 +147,6 @@ export default function TableCourseLecturer ({
             )}
         </tbody>
       </table>
+      </div>
     );
   };

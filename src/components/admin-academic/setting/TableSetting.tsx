@@ -109,7 +109,7 @@ function TableSetting<T extends { id: string }>({
                                 onEditedRowInputChange(e);
                             }
                         }}
-                        className="w-full p-1 border rounded text-xs text-primary-brown"
+                        className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs text-slate-700 focus:ring-1 focus:ring-primary-green focus:border-primary-green bg-white shadow-2xs"
                         disabled={isSavingOrUpdating}
                     />
                 );
@@ -125,7 +125,7 @@ function TableSetting<T extends { id: string }>({
                                 onEditedRowInputChange(e);
                             }
                         }}
-                        className="w-full p-1 border rounded text-xs text-primary-brown"
+                        className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs text-slate-700 focus:ring-1 focus:ring-primary-green focus:border-primary-green bg-white shadow-2xs"
                         disabled={isSavingOrUpdating}
                     >
                         <option value="">-- Pilih --</option>
@@ -137,32 +137,32 @@ function TableSetting<T extends { id: string }>({
                     </select>
                 );
             default:
-                return <span className="px-2 py-1 lg:text-sm text-xs text-primary-brown">{String((dataRow as any)[column.key] || '')}</span>;
+                return <span className="px-2 py-1 lg:text-sm text-xs text-slate-700">{String((dataRow as any)[column.key] || '')}</span>;
         }
     };
 
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full my-4 border-collapse">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 my-2">
+            <table className="w-full border-collapse text-left">
                 <thead>
                 <tr>
                     {columns.map((column) => (
                         <th
                             key={column.key.toString()}
-                            className="p-4 bg-primary-green text-white border border-gray-600"
+                            className="py-3 px-4 bg-primary-green text-white text-xs md:text-sm font-semibold tracking-wider text-center"
                         >
-                            <p className="font-semibold text-center">{column.header}</p>
+                            {column.header}
                         </th>
                     ))}
                 </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-100">
                 {(() => {
                     const rows: JSX.Element[] = [];
                     if (error && (!data || data.length === 0) && !isAddingNewRow) {
                         rows.push(
                             <tr key="initial-error-row">
-                                <td colSpan={columns.length} className="text-center py-4 text-red-500 border border-gray-300">
+                                <td colSpan={columns.length} className="text-center py-8 text-slate-400 text-xs md:text-sm">
                                     {error}
                                 </td>
                             </tr>
@@ -170,16 +170,16 @@ function TableSetting<T extends { id: string }>({
                     }
                     if (isAddingNewRow && !fixedComponents) {
                         rows.push(
-                            <tr key="new-general-row" className="text-center">
+                            <tr key="new-general-row" className="text-center bg-emerald-50/30">
                                 {columns.map((column) => (
-                                    <td key={column.key.toString()} className="p-2 border lg:text-sm text-xs border-gray-300">
+                                    <td key={column.key.toString()} className="py-2.5 px-3 lg:text-sm text-xs">
                                         {column.key !== 'actions' ? renderInput(column, newRowData, newRowData, true, false) : (
-                                            <div className="flex items-center justify-center space-x-2">
-                                                <button onClick={onSaveNew} className="bg-primary-green cursor-pointer rounded-sm flex items-center justify-center w-8 h-7 disabled:opacity-50" disabled={isSavingOrUpdating}>
-                                                    <Save size={16} className="text-white" />
+                                            <div className="flex items-center justify-center space-x-1.5">
+                                                <button onClick={onSaveNew} className="bg-primary-green hover:bg-[#0d5950] text-white cursor-pointer rounded-lg flex items-center justify-center w-8 h-8 shadow-xs transition-transform active:scale-95 disabled:opacity-50" disabled={isSavingOrUpdating} title="Simpan">
+                                                    <Save size={15} />
                                                 </button>
-                                                <button onClick={onCancelAdd} className="bg-red-500 cursor-pointer rounded-sm flex items-center justify-center w-8 h-7 disabled:opacity-50" disabled={isSavingOrUpdating}>
-                                                    <X size={16} className="text-white" />
+                                                <button onClick={onCancelAdd} className="bg-slate-400 hover:bg-slate-500 text-white cursor-pointer rounded-lg flex items-center justify-center w-8 h-8 shadow-xs transition-transform active:scale-95 disabled:opacity-50" disabled={isSavingOrUpdating} title="Batal">
+                                                    <X size={15} />
                                                 </button>
                                             </div>
                                         )}
@@ -191,9 +191,9 @@ function TableSetting<T extends { id: string }>({
                     if (data && data.length > 0) {
                         data.forEach((row) => {
                             rows.push(
-                                <tr key={row.id} className="text-center">
+                                <tr key={row.id} className="text-center hover:bg-emerald-50/20 transition-colors">
                                     {columns.map((column) => (
-                                        <td key={`${row.id}-${column.key.toString()}`} className="p-2 border lg:text-sm text-xs border-gray-300">
+                                        <td key={`${row.id}-${column.key.toString()}`} className="py-2.5 px-3 lg:text-sm text-xs text-slate-700 font-medium">
                                             {editingRowId === row.id && column.isEditable ? (
                                                 renderInput(column, row, editedRowData, false, true)
                                             ) : column.key !== 'actions' ? (
@@ -206,26 +206,26 @@ function TableSetting<T extends { id: string }>({
                                                         className="w-4 h-4 accent-primary-green align-middle"
                                                     />
                                                 ) : (
-                                                    <span className="px-2 py-1 lg:text-sm text-xs text-primary-brown">{(row as any)[column.key]?.toString() || ''}</span>
+                                                    <span className="px-2 py-1 text-slate-700">{(row as any)[column.key]?.toString() || ''}</span>
                                                 )
                                             ) : (
-                                                <div className="flex items-center justify-center space-x-2">
+                                                <div className="flex items-center justify-center space-x-1.5">
                                                     {editingRowId === row.id ? (
                                                         <>
-                                                            <button onClick={onSaveEdit} className="bg-primary-green cursor-pointer rounded-sm flex items-center justify-center w-8 h-7 disabled:opacity-50" disabled={isSavingOrUpdating} title="Simpan Perubahan">
-                                                                <Save size={16} className="text-white" />
+                                                            <button onClick={onSaveEdit} className="bg-primary-green hover:bg-[#0d5950] text-white cursor-pointer rounded-lg flex items-center justify-center w-8 h-8 shadow-xs transition-transform active:scale-95 disabled:opacity-50" disabled={isSavingOrUpdating} title="Simpan Perubahan">
+                                                                <Save size={15} />
                                                             </button>
-                                                            <button onClick={onCancelEdit} className="bg-red-400 cursor-pointer rounded-sm flex items-center justify-center w-8 h-7 disabled:opacity-50" disabled={isSavingOrUpdating} title="Batal Edit">
-                                                                <X size={16} className="text-white" />
+                                                            <button onClick={onCancelEdit} className="bg-slate-400 hover:bg-slate-500 text-white cursor-pointer rounded-lg flex items-center justify-center w-8 h-8 shadow-xs transition-transform active:scale-95 disabled:opacity-50" disabled={isSavingOrUpdating} title="Batal Edit">
+                                                                <X size={15} />
                                                             </button>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <button onClick={() => onEdit(row.id)} className="bg-primary-yellow cursor-pointer rounded-sm flex items-center justify-center w-8 h-7 disabled:opacity-50" disabled={isSavingOrUpdating || isDeleting} title="Edit">
-                                                                <Pencil size={16} className="text-white" />
+                                                            <button onClick={() => onEdit(row.id)} className="bg-primary-yellow hover:bg-[#e89012] text-white cursor-pointer rounded-lg flex items-center justify-center w-8 h-8 shadow-xs transition-transform active:scale-95 disabled:opacity-50" disabled={isSavingOrUpdating || isDeleting} title="Edit">
+                                                                <Pencil size={15} />
                                                             </button>
-                                                            <button onClick={() => onDelete(row.id)} className="bg-red-400 cursor-pointer rounded-sm flex items-center justify-center w-8 h-7 disabled:opacity-50" disabled={isSavingOrUpdating || isDeleting} title="Hapus">
-                                                                <Trash2 size={16} className="text-white" />
+                                                            <button onClick={() => onDelete(row.id)} className="bg-red-500 hover:bg-red-600 text-white cursor-pointer rounded-lg flex items-center justify-center w-8 h-8 shadow-xs transition-transform active:scale-95 disabled:opacity-50" disabled={isSavingOrUpdating || isDeleting} title="Hapus">
+                                                                <Trash2 size={15} />
                                                             </button>
                                                         </>
                                                     )}
@@ -240,7 +240,7 @@ function TableSetting<T extends { id: string }>({
                     if (data.length === 0 && !isAddingNewRow && !error) {
                         rows.push(
                             <tr key="no-data-row">
-                                <td colSpan={columns.length} className="text-center p-2 border border-gray-300">Tidak ada data.</td>
+                                <td colSpan={columns.length} className="text-center py-8 text-slate-400 text-xs md:text-sm">Tidak ada data.</td>
                             </tr>
                         );
                     }

@@ -91,13 +91,13 @@ export default function ObeDataMataKuliah() {
         <div className="bg-white p-5 rounded-sm border-t-2 border-primary-green shadow-sm mb-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center w-full md:w-auto">
-              <button 
-                onClick={handleBack} 
-                className="bg-primary-yellow text-white p-2.5 rounded-l-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer"
+              <button
+                onClick={handleBack}
+                className="bg-primary-yellow text-white p-2.5 rounded-l-md flex items-center justify-center hover:bg-primary-yellow/90 cursor-pointer flex-shrink-0"
               >
                 <ArrowLeft size={16} />
               </button>
-              <div className="relative" ref={searchBoxRef}>
+              <div className="relative flex-1 min-w-0 sm:flex-none" ref={searchBoxRef}>
                 <div className="flex items-center">
                   <input
                     type="text"
@@ -105,19 +105,19 @@ export default function ObeDataMataKuliah() {
                     value={searchText}
                     onChange={(e) => { setSearchText(e.target.value); setShowResults(true); }}
                     onFocus={() => setShowResults(true)}
-                    className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-64 text-gray-700"
+                    className="p-2 pl-3 border border-gray-300 rounded-none text-sm outline-none focus:ring-1 focus:ring-primary-green bg-white w-full sm:w-64 min-w-0 text-gray-700"
                   />
                   <button
                     type="button"
                     onClick={() => setShowResults(true)}
-                    className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-opacity-90 cursor-pointer"
+                    className="bg-indigo-600 text-white p-2.5 rounded-r-md flex items-center justify-center hover:bg-indigo-600/90 cursor-pointer flex-shrink-0"
                   >
                     <Search size={16} />
                   </button>
                 </div>
 
                 {showResults && searchTerm && (
-                  <div className="absolute z-20 top-full left-0 w-64 bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-64 overflow-y-auto">
+                  <div className="absolute z-20 top-full left-0 w-full sm:w-64 bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-64 overflow-y-auto">
                     {isSearching ? (
                       <div className="p-3 text-sm text-gray-400 italic">Mencari...</div>
                     ) : searchResults.length > 0 ? (

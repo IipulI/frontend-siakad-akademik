@@ -258,7 +258,7 @@ const CurriculumYear: React.FC = () => {
 
         {successMessage && <InfoAlert title="" boldText={successMessage} />}
 
-        <div className="mt-8">
+        <div className="mt-8 overflow-x-auto">
           <TableCurriculumYear
             data={paginatedData}
             tableHead={[

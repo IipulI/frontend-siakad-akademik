@@ -11,8 +11,8 @@ const Exam = () => {
   return (
     <MainLayout isGreeting={true} titlePage="" className="">
       <div className="w-full">
-        <div className="w-full grid grid-cols-5 gap-4">
-          <div className="col-span-3 space-y-4">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <div className="lg:col-span-3 space-y-4">
             <h1 className="font-semibold">Jadwal</h1>
             <div className="p-8 shadow-md bg-white w-full rounded-xl space-y-4">
               <div className="flex justify-between items-center w-full">
@@ -91,7 +91,7 @@ const Exam = () => {
               />
             </div>
           </div>
-          <div className="col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-4">
             <div>
               <h1 className="font-semibold">Grafik Akademik</h1>
             </div>

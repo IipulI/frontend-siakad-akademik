@@ -473,12 +473,12 @@ export default function CreateStudent() {
           </div>
 
           <div className="rounded-sm lg:col-span-3">
-            <div className=" rounded-xl flex w-full space-x-2 justify-between">
+            <div className="p-1 bg-slate-100/90 rounded-xl border border-slate-200/60 shadow-inner flex w-full gap-1 overflow-x-auto">
               <TabNavigationButton
                 isActive={activeTab === "general-information"}
                 onClick={() => handleTabClick("general-information")}
                 colorTab="bg-primary-green"
-                padding="py-1 sm:p-2"
+                className="flex-1"
               >
                 Informasi Umum
               </TabNavigationButton>
@@ -486,7 +486,7 @@ export default function CreateStudent() {
                 isActive={activeTab === "domicili"}
                 onClick={() => handleTabClick("domicili")}
                 colorTab="bg-primary-green"
-                padding="py-1 sm:p-2"
+                className="flex-1"
               >
                 Domisili
               </TabNavigationButton>
@@ -494,7 +494,7 @@ export default function CreateStudent() {
                 isActive={activeTab === "parents"}
                 onClick={() => handleTabClick("parents")}
                 colorTab="bg-primary-green"
-                padding="py-1 sm:p-2"
+                className="flex-1"
               >
                 Orang Tua
               </TabNavigationButton>
@@ -502,7 +502,7 @@ export default function CreateStudent() {
                 isActive={activeTab === "guardian"}
                 onClick={() => handleTabClick("guardian")}
                 colorTab="bg-primary-green"
-                padding="py-1 sm:p-2"
+                className="flex-1"
               >
                 Wali
               </TabNavigationButton>
@@ -510,7 +510,7 @@ export default function CreateStudent() {
                 isActive={activeTab === "school"}
                 onClick={() => handleTabClick("school")}
                 colorTab="bg-primary-green"
-                padding="py-0 sm:p-2"
+                className="flex-1"
               >
                 Sekolah
               </TabNavigationButton>

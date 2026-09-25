@@ -60,6 +60,7 @@ export const TableAnnouncement = ({
     };
 
     return (
+        <div className="overflow-x-auto">
         <table className="w-full my-4">
             <thead>
             <tr>
@@ -154,5 +155,6 @@ export const TableAnnouncement = ({
             )}
             </tbody>
         </table>
+        </div>
     );
 };

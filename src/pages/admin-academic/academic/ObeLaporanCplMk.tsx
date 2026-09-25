@@ -40,6 +40,7 @@ export default function ObeLaporanCplMk() {
               </p>
             </div>
 
+            <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-400 text-sm">
               <thead>
                 <tr className="bg-gray-100">
@@ -109,6 +110,7 @@ export default function ObeLaporanCplMk() {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

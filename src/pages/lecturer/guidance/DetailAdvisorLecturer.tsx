@@ -132,7 +132,7 @@ const DetailAdvisorLecturer = () => {
 
       {/* Slanted Tab Title matching StudyPlanCard */}
       <div className="flex items-center mt-6 mb-4">
-        <button className="font-semibold cursor-default py-2 px-5 pr-14 transform scale-y-[-1] w-fit text-white bg-primary-green border border-primary-green" style={{ clipPath: "polygon(0 0, 100% 0, 80% 100%, 0% 100%)" }}>
+        <button className="font-semibold cursor-default py-2 px-5 pr-14 transform scale-y-[-1] w-fit text-white bg-primary-green border border-primary-green [clip-path:polygon(0_0,100%_0,80%_100%,0%_100%)]">
           <p className="transform scale-y-[-1]">KRS Tersimpan</p>
         </button>
       </div>

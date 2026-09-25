@@ -11,15 +11,15 @@ export default function FinantialHistory() {
     setActiveTab(tab);
   };
   return (
-    <div className="p-4 border-1 rounded-sm shadow-sm">
+    <div className="p-4 border rounded-sm shadow-sm">
       <BriefStudentData showLine={false}/>
       <div className="my-4">
-        <div className="flex w-1/2 lg:w-1/3 gap-2">
+        <div className="inline-flex p-1 bg-slate-100/90 rounded-xl border border-slate-200/60 shadow-inner gap-1">
           <TabNavigationButton
             isActive={activeTab === "tagihan"}
             onClick={() => handleTabClick("tagihan")}
             colorTab="bg-primary-green"
-            padding="py-2 sm:p-2"
+            padding="py-2 px-4"
           >
             Tagihan & VA
           </TabNavigationButton>
@@ -27,7 +27,7 @@ export default function FinantialHistory() {
             isActive={activeTab === "pembayaran"}
             onClick={() => handleTabClick("pembayaran")}
             colorTab="bg-primary-green"
-            padding="py-2 sm:p-2"
+            padding="py-2 px-4"
           >
             Pembayaran
           </TabNavigationButton>

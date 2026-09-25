@@ -9,6 +9,7 @@ interface TableProps {
 
 export default function TableComposition ({ data, tableHead, error }: TableProps) {
     return (
+      <div className="overflow-x-auto">
       <table className="w-full my-4">
         <thead>
           <tr>
@@ -59,5 +60,6 @@ export default function TableComposition ({ data, tableHead, error }: TableProps
           )}
         </tbody>
       </table>
+      </div>
     );
   };

@@ -60,41 +60,55 @@ export default function ChartJSAKMProdi() {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
         title: {
           display: true,
           text: "Jumlah Mahasiswa",
-          color: "#000",
+          color: "#475569",
+          font: {
+            size: 12,
+            weight: "bold" as const,
+          },
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
       x: {
         title: {
           display: true,
           text: "Program Studi",
-          color: "#000",
+          color: "#475569",
           font: {
-            size: 18,
+            size: 12,
+            weight: "bold" as const,
           },
         },
         ticks: {
-          maxRotation: 45,
-          minRotation: 30,
-          callback: function (val, index) {
+          maxRotation: 40,
+          minRotation: 20,
+          font: {
+            size: 10,
+          },
+          callback: function (val: any, index: number) {
             const label = labels[index];
-            return label.length > 15 ? label.slice(0, 12) + "…" : label;
+            return label.length > 15 ? label.slice(0, 13) + "…" : label;
           },
         },
       },
     },
     plugins: {
       legend: {
-        display: false, // Karena hanya 1 dataset
+        display: false,
       },
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: any) {
             return `${context.dataset.label}: ${context.parsed.y}`;
           },
         },
@@ -103,8 +117,10 @@ export default function ChartJSAKMProdi() {
   };
 
   return (
-    <div className="w-full relative">
-      <Bar data={data} options={options} className="relative" />
+    <div className="w-full max-w-3xl mx-auto relative my-2">
+      <div className="h-[280px] w-full relative">
+        <Bar data={data} options={options} />
+      </div>
       <Status />
     </div>
   );

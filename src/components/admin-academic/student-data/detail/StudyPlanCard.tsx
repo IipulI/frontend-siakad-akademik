@@ -32,7 +32,7 @@ export default function StudyPlanCard() {
     .reverse();
 
   return (
-    <div className="p-4 border-1 rounded-sm shadow-sm">
+    <div className="p-4 border rounded-sm shadow-sm">
       <BriefStudentData showLine={false} />
 
       <div className="flex items-center space-x-2 mt-4">
@@ -83,7 +83,7 @@ export default function StudyPlanCard() {
             {!krs?.krs || krs.krs.length === 0 ? (
               <tr>
                 <td
-                  className="text-center font-semibold p-2"
+                  className="border text-center border-gray-500 font-semibold p-2"
                   colSpan={9}
                 >
                   Data KRS Tidak Tersedia

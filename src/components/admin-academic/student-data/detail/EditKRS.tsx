@@ -142,7 +142,7 @@ export default function EditKRS() {
     }, 0) || 0;
 
   return (
-    <div className="p-4 border-1 rounded-sm shadow-sm">
+    <div className="p-4 border rounded-sm shadow-sm">
       <ConfirmModal
         isOpen={isModalOpen}
         onConfirm={confirmDelete}
@@ -218,7 +218,7 @@ export default function EditKRS() {
               <tr>
                 <td
                   colSpan={12}
-                  className="border-1 text-center border-gray-500 font-semibold p-2"
+                  className="border text-center border-gray-500 font-semibold p-2"
                 >
                   Data KRS Tidak Tersedia
                 </td>
@@ -280,7 +280,7 @@ export default function EditKRS() {
                         {course.valid || "-"}
                       </td>
                       <td className="border border-gray-500 font-semibold p-2 text-center">
-                        <div className="flex justify-center align-center">
+                        <div className="flex justify-center items-center">
                           {course.lulus ? (
                             <Check color="green" />
                           ) : (

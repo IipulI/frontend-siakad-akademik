@@ -61,7 +61,7 @@ export default function FormGeneralInformation({
   ];
 
   return (
-    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border-1 border-gray-400 p-3">
+    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
       {/* Section Umum */}
       <div>
         <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">

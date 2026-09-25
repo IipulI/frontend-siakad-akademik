@@ -38,11 +38,13 @@ export function InputFilter({
   };
 
   return (
-    <div className={`input-filter-container grid grid-cols-2 items-center`}>
-      <label className="text-md w-fit font-medium">{label}</label>
+    <div className="input-filter-container flex flex-col gap-1 w-full">
+      <label className="text-xs font-semibold text-slate-700 tracking-tight truncate" title={label}>
+        {label}
+      </label>
       {select ? (
         <select
-          className="bg-white border border-gray-300 text-black/60 font-semibold text-xs rounded focus:ring-blue-500 focus:border-blue-500 p-1"
+          className="w-full bg-white border border-slate-300 text-slate-700 font-medium text-xs rounded-lg focus:ring-1 focus:ring-primary-green focus:border-primary-green px-2.5 py-1.5 transition-all shadow-2xs hover:border-slate-400"
           value={inputValue}
           onChange={isControlled ? handleChange : undefined}
         >
@@ -55,9 +57,9 @@ export function InputFilter({
       ) : (
         <input
           placeholder={placeholder}
-          className={`bg-white border text-sm sm:text-base ${
-            error ? "border-red-500" : "border-gray-300"
-          } text-black/60 font-semibold rounded focus:ring-blue-500 focus:border-blue-500 p-1`}
+          className={`w-full bg-white border ${
+            error ? "border-red-500" : "border-slate-300 hover:border-slate-400"
+          } text-slate-700 font-medium text-xs rounded-lg focus:ring-1 focus:ring-primary-green focus:border-primary-green px-2.5 py-1.5 transition-all shadow-2xs`}
           value={value}
           onChange={isControlled ? handleChange : undefined}
         />

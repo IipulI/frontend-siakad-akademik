@@ -70,7 +70,7 @@ const RPS: React.FC = () => {
               <ArrowLeft className="mr-2" size={16} />
             </button>
             <div className="flex items-center">
-              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-black/50  w-64" />
+              <input type="search" placeholder="Cari Mata Kuliah" className="px-3 py-2 border border-gray-300 w-64" />
               <button className="bg-primary-yellow px-3 py-3 rounded-r-md">
                 <Search color="white" size={20} />
               </button>
@@ -86,16 +86,16 @@ const RPS: React.FC = () => {
 
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Menu */}
-          <div className=" w-full md:w-[20%] h-50 text-white p-3 space-y-2">
-            <div className="flex items-center bg-[#116E63]/30  mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.detailCourse}/${id}`)}>
+          <div className=" w-full md:w-[20%] text-white p-3 space-y-2">
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.detailCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>Data Mata Kuliah</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/30 mb-1 text-gray-600 cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.cplCpmkCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p>CPL dan CPMK</p>
             </div>
-            <div className="flex items-center bg-[#116E63]/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
+            <div className="flex items-center bg-primary-green/60 mb-1 text-black cursor-pointer" onClick={() => handleNavigation(`${AdminAcademicRoute.courseManagement.rpsCourse}/${id}`)}>
               <div className="w-1.5 h-10 bg-primary-green mr-3 "></div>
               <p className="text-black font-semibold">RPS</p>
             </div>

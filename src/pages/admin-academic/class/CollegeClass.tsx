@@ -239,135 +239,151 @@ const CollegeClassTable = ({ data }) => {
   }
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-[1000px] w-full border-collapse">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200 bg-white">
+      <table className="min-w-[1000px] w-full border-collapse text-left">
         <thead>
-          <tr className="bg-primary-green text-white text-sm">
-            <th className="py-2 px-4 border font-semibold border-gray-300">
+          <tr className="bg-primary-green text-white text-xs font-bold tracking-wider select-none">
+            <th className="py-3 px-3 text-center w-12 border-r border-white/20">
               <input
                 type="checkbox"
                 checked={selectAll}
                 onChange={handleSelectAll}
+                className="rounded border-slate-300 text-primary-green focus:ring-primary-green cursor-pointer h-4 w-4"
               />
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Thn. Kur.
+            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
+              THN. KUR.
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Kode
+            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
+              KODE
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Mata Kuliah
+            <th className="py-3 px-4 border-r border-white/20 text-left whitespace-nowrap">
+              MATA KULIAH
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Prodi Pengampu
+            <th className="py-3 px-4 border-r border-white/20 text-left whitespace-nowrap">
+              PRODI PENGAMPU
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Nama Kelas
+            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
+              NAMA KELAS
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Pengajar
+            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
+              PENGAJAR
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Jadwal Mingguan
+            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
+              JADWAL MINGGUAN
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Kap
+            <th className="py-3 px-2 border-r border-white/20 text-center whitespace-nowrap">
+              KAP
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Pst.
+            <th className="py-3 px-2 border-r border-white/20 text-center whitespace-nowrap">
+              PST.
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Status Penilaian
+            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
+              STATUS PENILAIAN
             </th>
-            <th className="p-2 border font-semibold border-gray-300 whitespace-nowrap">
-              Aksi
+            <th className="py-3 px-3 text-center whitespace-nowrap">
+              AKSI
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-xs">
           {data?.length > 0 ? (
-            data?.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50 text-sm">
-                <td className="py-2 px-4 text-center border border-gray-300 font-semibold">
+            data?.map((item) => (
+              <tr key={item.id} className="border-b border-slate-200 hover:bg-slate-50/80 bg-white transition-colors">
+                <td className="py-3 px-3 text-center border-r border-slate-200">
                   <input
                     type="checkbox"
-                    checked={!!selectedItems[student.id]}
-                    onChange={() => handleSelectOne(student.id)}
+                    checked={!!selectedItems[item.id]}
+                    onChange={() => handleSelectOne(item.id)}
+                    className="rounded border-slate-300 text-primary-green focus:ring-primary-green cursor-pointer h-4 w-4"
                   />
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.periodeAkademik.nama}
+                <td className="py-3 px-3 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap">
+                  {item.periodeAkademik?.nama || "-"}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.mataKuliah.kode}
+                <td className="py-3 px-3 border-r border-slate-200 font-bold font-mono text-center text-slate-800 whitespace-nowrap">
+                  {item.mataKuliah?.kode || "-"}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                  {student.mataKuliah.nama}
+                <td className="py-3 px-4 border-r border-slate-200 font-semibold text-slate-800 text-left">
+                  {item.mataKuliah?.nama || "-"}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-left break-words">
-                  {`${student.mataKuliah.programStudi.jenjang.jenjang} - ${student.mataKuliah.programStudi.nama}`}
+                <td className="py-3 px-4 border-r border-slate-200 text-slate-700 text-left">
+                  {`${item.mataKuliah?.programStudi?.jenjang?.jenjang || ""} - ${item.mataKuliah?.programStudi?.nama || "-"}`}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.nama}
+                <td className="py-3 px-3 border-r border-slate-200 font-semibold text-center whitespace-nowrap">
+                  {item.nama}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {student.jadwalKuliah?.length > 0
+                <td className="py-3 px-3 border-r border-slate-200 text-slate-700 text-center">
+                  {item.jadwalKuliah?.length > 0
                     ? [
                         ...new Set(
-                          student.jadwalKuliah
-                            .map((jadwal) => jadwal.dosen?.nama)
+                          item.jadwalKuliah
+                            .map((jadwal: any) => jadwal.dosen?.nama)
                             .filter(Boolean)
                         ),
                       ].map((nama, i) => (
-                        <span key={i} className="block">
-                          {nama}
+                        <span key={i} className="block text-slate-800 font-medium">
+                          {String(nama)}
                         </span>
                       ))
                     : "-"}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {student.jadwalKuliah?.length > 0
-                    ? student.jadwalKuliah.map((jadwal, i) => (
+                <td className="py-3 px-3 border-r border-slate-200 text-slate-700 text-center">
+                  {item.jadwalKuliah?.length > 0
+                    ? item.jadwalKuliah.map((jadwal: any, i: number) => (
                         <span key={i} className="block">
-                          {jadwal.hari}, {jadwal.jamMulai?.slice(0, 5)}-
-                          {jadwal.jamSelesai?.slice(0, 5)}
+                          {jadwal.hari}, {jadwal.jamMulai?.slice(0, 5)}-{jadwal.jamSelesai?.slice(0, 5)}
                         </span>
                       ))
                     : "-"}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.kapasitas}
+                <td className="py-3 px-2 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap">
+                  {item.kapasitas}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center whitespace-nowrap">
-                  {student.peserta}
+                <td className="py-3 px-2 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap">
+                  {item.peserta}
                 </td>
-                <td className="p-2 border border-gray-300 font-medium text-center break-words">
-                  {student.statusPenilaian}
+                <td className="py-3 px-3 border-r border-slate-200 text-center">
+                  <span className="inline-block border border-slate-200 bg-white text-slate-600 rounded px-2.5 py-1 text-[11px] font-medium shadow-2xs">
+                    {item.statusPenilaian || "Belum Terisi"}
+                  </span>
                 </td>
-                <td className="p-2 border border-gray-300 font-medium">
-                  <div className="flex justify-center flex-wrap gap-1">
-                    <ButtonClick
-                      icon={<Link2 size={15} />}
-                      color="bg-primary-yellow"
+                <td className="py-3 px-3 text-center">
+                  <div className="flex justify-center items-center gap-1.5">
+                    <button
+                      type="button"
                       onClick={Link}
-                    />
-                    <ButtonClick
-                      icon={<Eye size={15} />}
-                      color="bg-primary-blueSoft"
-                      onClick={() => Detail(student.id)}
-                    />
-                    <ButtonClick
-                      icon={<Trash2 size={15} />}
-                      color="bg-red-400"
+                      className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                      title="Tautan Kelas"
+                    >
+                      <Link2 size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => Detail(item.id)}
+                      className="p-1.5 bg-slate-100 hover:bg-sky-50 text-slate-600 hover:text-sky-600 rounded border border-slate-200 shadow-2xs transition-colors active:scale-95 cursor-pointer"
+                      title="Detail Kelas"
+                    >
+                      <Eye size={13} />
+                    </button>
+                    <button
+                      type="button"
                       onClick={Remove}
-                    />
+                      className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded shadow-2xs transition-all active:scale-95 cursor-pointer"
+                      title="Hapus Kelas"
+                    >
+                      <Trash2 size={13} />
+                    </button>
                   </div>
                 </td>
               </tr>
             ))
           ) : (
-            <tr>Data TIdak ada</tr>
+            <tr>
+              <td colSpan={12} className="text-center py-8 text-slate-400">
+                Data Tidak ada
+              </td>
+            </tr>
           )}
         </tbody>
       </table>

@@ -230,7 +230,7 @@ const CurriculumProdi: React.FC = () => {
               Program Studi
             </span>
             <select
-              className="rounded px-3 py-2 border border-primary-brown flex-1 w-20"
+              className="rounded px-3 py-2 border border-primary-brown flex-1"
               value={selectedProgramStudiId}
               onChange={handleProgramStudiChange}
             >
@@ -289,7 +289,7 @@ const CurriculumProdi: React.FC = () => {
               <span className="text-primary-green font-semibold">Semester</span>
               <div className="relative">
                 <select
-                  className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
+                  className="w-full px-4 py-2 border border-primary-brown bg-primary-green/10 rounded hover:bg-primary-green/20 focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
                   value={selectedSemester}
                   onChange={handleSemesterChange}
                 >
@@ -314,7 +314,7 @@ const CurriculumProdi: React.FC = () => {
               </span>
               <div className="relative">
                 <select
-                  className="w-full px-4 py-2 border border-primary-brown bg-primary-light rounded hover:bg-primary-hover focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
+                  className="w-full px-4 py-2 border border-primary-brown bg-primary-green/10 rounded hover:bg-primary-green/20 focus:outline-primary-green transition duration-200 text-primary-green font-semibold"
                   value={selectedNilaiMin}
                   onChange={handleNilaiMinChange}
                 >
@@ -404,7 +404,7 @@ const CurriculumProdi: React.FC = () => {
 
       {/* Data Table */}
       <div className="w-full bg-white min-h-screen py-4 rounded-sm border-t-2 border-primary-yellow p-8">
-        <div className="mt-8">
+        <div className="mt-8 overflow-x-auto">
           {isLoading ? (
             <div className="text-center py-8 text-gray-500">
               <div className="flex items-center justify-center gap-2">

@@ -73,17 +73,18 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-end gap-2 lg:items-center justify-between mt-4 text-sm">
-      <div className="text-gray-600 flex gap-0 items-center lg:gap-20">
-        <span className="text-xs border-l-7 px-2 border-blue-100 p-1">
-          Hal {currentPage}/{totalPages} ({totalRows} Data)
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 text-sm">
+      <div className="text-slate-600 flex flex-wrap items-center gap-3 sm:gap-6">
+        <span className="text-xs font-medium bg-slate-100/80 text-slate-700 px-3 py-1 rounded-md border border-slate-200/60">
+          Hal <span className="font-semibold text-slate-900">{currentPage}</span> / <span className="font-semibold text-slate-900">{totalPages || 1}</span> ({totalRows} Data)
         </span>
 
         {/* baris */}
         {onRowsPerPageChange && (
-          <div className="flex items-center">
+          <div className="flex items-center gap-1.5 text-xs text-slate-600">
+            <span>Tampilkan</span>
             <select
-              className="border text-xs px-3 py-0.5"
+              className="border border-slate-300 text-xs px-2.5 py-1 rounded-md bg-white font-medium text-slate-700 shadow-xs focus:ring-1 focus:ring-primary-green focus:border-primary-green transition-all"
               value={rowsPerPage}
               onChange={(e) => onRowsPerPageChange(Number(e.target.value))}
             >
@@ -96,35 +97,37 @@ export const Pagination: React.FC<PaginationProps> = ({
         )}
       </div>
 
-      <div className="flex items-center">
-        <div className="flex items-center">
-          <button
-            className="border p-1 disabled:bg-gray-200 "
-            onClick={() => onPageChange(1)}
-            disabled={currentPage === 1}
-          >
-            <ChevronsLeft size={16} color="#116e63" />
-          </button>
+      <div className="flex items-center gap-1">
+        <button
+          className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1}
+          title="Halaman Pertama"
+        >
+          <ChevronsLeft size={16} className="text-primary-green" />
+        </button>
 
-          <button
-            className="border p-1 disabled:bg-gray-200"
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft size={16} color="#116e63" />
-          </button>
+        <button
+          className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          title="Halaman Sebelumnya"
+        >
+          <ChevronLeft size={16} className="text-primary-green" />
+        </button>
 
+        <div className="flex items-center gap-1">
           {getPageNumbers().map((page, index) => (
             <React.Fragment key={index}>
               {page < 0 ? (
-                <span className="px-2">...</span>
+                <span className="px-1.5 text-slate-400 text-xs">...</span>
               ) : (
                 <button
-                  className={`p-1 px-2 flex items-center justify-center text-xs 
+                  className={`min-w-[28px] h-[28px] px-2 rounded-md flex items-center justify-center text-xs transition-all cursor-pointer
                     ${
                       currentPage === page
-                        ? "bg-primary-green text-white"
-                        : "border hover:bg-gray-100"
+                        ? "bg-primary-green text-white font-semibold shadow-xs"
+                        : "border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium"
                     }`}
                   onClick={() => onPageChange(page)}
                 >
@@ -133,23 +136,25 @@ export const Pagination: React.FC<PaginationProps> = ({
               )}
             </React.Fragment>
           ))}
-
-          <button
-            className="border p-1 disabled:bg-gray-200"
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages || totalPages === 0}
-          >
-            <ChevronRight size={16} color="#116e63" />
-          </button>
-
-          <button
-            className="border p-1 disabled:bg-gray-200"
-            onClick={() => onPageChange(totalPages)}
-            disabled={currentPage === totalPages || totalPages === 0}
-          >
-            <ChevronsRight size={16} color="#116e63" />
-          </button>
         </div>
+
+        <button
+          className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages || totalPages === 0}
+          title="Halaman Berikutnya"
+        >
+          <ChevronRight size={16} className="text-primary-green" />
+        </button>
+
+        <button
+          className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages || totalPages === 0}
+          title="Halaman Terakhir"
+        >
+          <ChevronsRight size={16} className="text-primary-green" />
+        </button>
       </div>
     </div>
   );

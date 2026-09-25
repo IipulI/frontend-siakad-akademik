@@ -72,7 +72,7 @@ export default function FormGuardian({
   );
 
   return (
-    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border-1 border-gray-400 p-3">
+    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
       {/* Biodata Wali Section */}
       <div>
         <div className="grid grid-cols-1 gap-4">

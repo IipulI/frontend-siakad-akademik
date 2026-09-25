@@ -141,7 +141,7 @@ export default function StudentDropout() {
 
   return (
     <MainLayout titlePage="Mahasiswa Keluar" isGreeting={false}>
-      <div className="grid xl:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 bg-white border-t-2 border-primary-yellow p-2 rounded-sm shadow-sm gap-2">
         <InputFilter
           options={programStudi}
           label="Program Studi"
@@ -208,7 +208,7 @@ export default function StudentDropout() {
         </div>
 
         <div className="overflow-x-auto my-4">
-          <table className="w-full border-collapse">
+          <table className="min-w-[900px] w-full border-collapse">
             <thead>
               <tr className="bg-primary-green text-white">
                 <th className="p-2 border font-semibold border-gray-300">NIM</th>

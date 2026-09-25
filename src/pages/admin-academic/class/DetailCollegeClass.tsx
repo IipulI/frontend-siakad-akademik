@@ -288,7 +288,7 @@ const CollegeClassInformation = ({
           <h1 className="font-bold text-xl sm:text-2xl mb-2">
             Informasi Kelas
           </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputFilter
               select={false}
               value={data.periodeAkademik.nama}
@@ -373,7 +373,7 @@ const CollegeClassInformation = ({
 
 const ClassBio = ({ data }) => {
   return (
-    <div className="bg-[#F5FFF9] w-full px-4 py-4 mt-5 border-l-8 border-[#116E63] rounded-md">
+    <div className="bg-[#F5FFF9] w-full px-4 py-4 mt-5 border-l-8 border-primary-green rounded-md">
       <h2 className="font-semibold text-base mb-4">Status</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
         <div className="flex flex-col space-y-2">

@@ -15,7 +15,7 @@ import { useMahasiswaProfile } from "../../../hooks/mahasiswa/useProfile";
 // Child Component for Parent Data (Ayah & Ibu)
 const Parent = ({ ayah, ibu }: { ayah?: KeluargaMahasiswa; ibu?: KeluargaMahasiswa }) => {
   return (
-      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={"items-start gap-4 text-gray-text"}>
         {/* Ayah's Data */}
         <div className="flex flex-col space-y-5 ">
           <h1 className="text-primary-green text-sm font-semibold">Biodata Ayah</h1>
@@ -49,7 +49,7 @@ const Parent = ({ ayah, ibu }: { ayah?: KeluargaMahasiswa; ibu?: KeluargaMahasis
 // Child Component for Wali (Guardian) Data
 const Wali = ({ wali }: { wali?: KeluargaMahasiswa }) => {
   return (
-      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={"items-start gap-4 text-gray-text"}>
         <div className="flex flex-col space-y-5 ">
           <DataCard title={"Nama Lengkap"} desc={wali?.nama || "-"} />
           <DataCard title={"NIK"} desc={wali?.nik || "-"} />

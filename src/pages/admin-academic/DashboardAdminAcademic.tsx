@@ -12,6 +12,7 @@ import ChartJSAKMClassOfYear from "../../components/admin-academic/dashboard/Cha
 import ChartJSAKMProdi from "../../components/admin-academic/dashboard/ChartJSAKMProdi";
 import DashboardInfoCard from "../../components/admin-academic/dashboard/DashboardInfoCard";
 import FilterDropdown from "../../components/admin-academic/FilterDropdown";
+import { FileSpreadsheet, BarChart3, GraduationCap, BookOpen, UserPlus } from "lucide-react";
 export default function DashboardAdminFinance() {
   const [activeTab, setActiveTab] = useState("angkatan");
   const handleTabClick = (tab) => {
@@ -40,33 +41,58 @@ export default function DashboardAdminFinance() {
           color="bg-[#F43F5E]"
         />
 
-        <div className="border-t-2 p-3 shadow-sm bg-white border-primary-green rounded-sm sm:col-span-2 lg:col-span-3">
-          <h1 className="mb-3 font-semibold">
-            Statistik Mahasiswa Periode : 2024 Genap
-          </h1>
-          <div className="p-1 rounded-xl flex w-full space-x-4 justify-between">
-            <TabNavigationButton
-              isActive={activeTab === "angkatan"}
-              onClick={() => handleTabClick("angkatan")}
-            >
-              AKM Angkatan
-            </TabNavigationButton>
-            <TabNavigationButton
-              isActive={activeTab === "prodi"}
-              onClick={() => handleTabClick("prodi")}
-            >
-              AKM Prodi
-            </TabNavigationButton>
-            <TabNavigationButton
-              isActive={activeTab === "mahasiswa-baru"}
-              onClick={() => handleTabClick("mahasiswa-baru")}
-            >
-              Mahasiswa Baru
-            </TabNavigationButton>
+        <div className="bg-white rounded-xl shadow-xs border border-slate-200/80 border-t-4 border-t-primary-green p-5 sm:col-span-2 lg:col-span-3 transition-all">
+          {/* Header & Tabs */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 mb-5 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-primary-green/10 flex items-center justify-center text-primary-green shrink-0">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-800 leading-tight">
+                  Statistik Mahasiswa
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Periode Akademik: <span className="font-semibold text-primary-green">2024 Genap</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Segmented Pill Tabs */}
+            <div className="inline-flex p-1 bg-slate-100/90 rounded-xl border border-slate-200/60 shadow-inner self-start md:self-auto overflow-x-auto max-w-full gap-1">
+              <TabNavigationButton
+                isActive={activeTab === "angkatan"}
+                onClick={() => handleTabClick("angkatan")}
+                icon={<GraduationCap className="w-4 h-4" />}
+                padding="py-2 px-3 sm:px-4"
+              >
+                AKM Angkatan
+              </TabNavigationButton>
+              <TabNavigationButton
+                isActive={activeTab === "prodi"}
+                onClick={() => handleTabClick("prodi")}
+                icon={<BookOpen className="w-4 h-4" />}
+                padding="py-2 px-3 sm:px-4"
+              >
+                AKM Prodi
+              </TabNavigationButton>
+              <TabNavigationButton
+                isActive={activeTab === "mahasiswa-baru"}
+                onClick={() => handleTabClick("mahasiswa-baru")}
+                icon={<UserPlus className="w-4 h-4" />}
+                padding="py-2 px-3 sm:px-4"
+              >
+                Mahasiswa Baru
+              </TabNavigationButton>
+            </div>
           </div>
-          {activeTab === "angkatan" && <AKMClassOfYear />}
-          {activeTab === "prodi" && <AKMProdi />}
-          {activeTab === "mahasiswa-baru" && <NewStudent />}
+
+          {/* Tab Content */}
+          <div>
+            {activeTab === "angkatan" && <AKMClassOfYear />}
+            {activeTab === "prodi" && <AKMProdi />}
+            {activeTab === "mahasiswa-baru" && <NewStudent />}
+          </div>
         </div>
 
         <div className="flex flex-col gap-10 sm:col-span-2 lg:col-span-1">
@@ -94,16 +120,23 @@ export default function DashboardAdminFinance() {
 
 const AKMClassOfYear = () => {
   return (
-    <LayoutStatistik className={"items-start gap-4"}>
+    <LayoutStatistik className={"items-start gap-4 text-[#617182]"}>
       <div className="w-full">
-        <h3 className="text-lg font-semibold mb-4 text-center">
+        <h3 className="text-sm font-semibold mb-2 text-center text-slate-800">
           Mahasiswa Aktif Per Angkatan
         </h3>
         <ChartJSAKMClassOfYear />
       </div>
-      <button className="p-2 bg-blue-500 rounded-sm text-white text-sm px-5 my-5">
-        Download Exel
-      </button>
+      <div className="flex justify-between items-center w-full my-3">
+        <span className="text-xs font-medium text-slate-500">Tabel Rincian Angkatan</span>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 bg-primary-green hover:bg-[#0d5950] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+        >
+          <FileSpreadsheet size={14} />
+          <span>Unduh Excel</span>
+        </button>
+      </div>
 
       <TabelAKMAngkatan />
     </LayoutStatistik>
@@ -113,14 +146,21 @@ const AKMProdi = () => {
   return (
     <LayoutStatistik className={"items-start gap-4 text-[#617182]"}>
       <div className="w-full">
-        <h3 className="text-lg font-semibold mb-4 text-center">
+        <h3 className="text-sm font-semibold mb-2 text-center text-slate-800">
           AKM Program Studi
         </h3>
         <ChartJSAKMProdi />
       </div>
-      <button className="p-2 bg-blue-500 rounded-sm text-white text-sm px-5 my-5">
-        Download Exel
-      </button>
+      <div className="flex justify-between items-center w-full my-3">
+        <span className="text-xs font-medium text-slate-500">Tabel Rincian Program Studi</span>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 bg-primary-green hover:bg-[#0d5950] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+        >
+          <FileSpreadsheet size={14} />
+          <span>Unduh Excel</span>
+        </button>
+      </div>
       <TabelAKMProdi />
     </LayoutStatistik>
   );
@@ -128,9 +168,16 @@ const AKMProdi = () => {
 const NewStudent = () => {
   return (
     <LayoutStatistik className={"items-start gap-4 text-[#617182]"}>
-      <button className="p-2 bg-blue-500 rounded-sm text-white text-sm px-5 my-5">
-        Download Exel
-      </button>
+      <div className="flex justify-between items-center w-full mb-3">
+        <span className="text-xs font-medium text-slate-500">Tabel Data Mahasiswa Baru</span>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 bg-primary-green hover:bg-[#0d5950] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+        >
+          <FileSpreadsheet size={14} />
+          <span>Unduh Excel</span>
+        </button>
+      </div>
       <TableNewStudent />
     </LayoutStatistik>
   );

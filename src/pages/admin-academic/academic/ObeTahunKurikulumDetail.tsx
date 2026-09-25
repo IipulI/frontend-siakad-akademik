@@ -107,7 +107,7 @@ export default function ObeTahunKurikulumDetail() {
               <input
                 type="search"
                 placeholder="Cari Tahun Kurikulum"
-                className="px-3 py-2 border border-black/50 w-64"
+                className="px-3 py-2 border border-gray-300 w-64"
                 onChange={() => {}}
               />
               <button className="bg-primary-blueSoft px-3 py-3 rounded-r-md">

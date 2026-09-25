@@ -67,54 +67,56 @@ export default function LaporanNilaiPerkuliahan() {
               <div className="flex"><span className="w-32 shrink-0">Kode Mata kuliah</span><span>: {data.mataKuliah.kode}</span></div>
             </div>
 
-            <table className="w-full border-collapse border border-gray-400 text-xs">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-1.5 border border-gray-400">No</th>
-                  <th className="p-1.5 border border-gray-400">NIM</th>
-                  <th className="p-1.5 border border-gray-400">Nama Mahasiswa</th>
-                  {(data.komponenEvaluasi || []).map((k) => (
-                    <th key={k.id} className="p-1.5 border border-gray-400">{k.labelKolom}</th>
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-[800px] w-full border-collapse border border-gray-400 text-xs">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="p-1.5 border border-gray-400">No</th>
+                    <th className="p-1.5 border border-gray-400">NIM</th>
+                    <th className="p-1.5 border border-gray-400">Nama Mahasiswa</th>
+                    {(data.komponenEvaluasi || []).map((k) => (
+                      <th key={k.id} className="p-1.5 border border-gray-400">{k.labelKolom}</th>
+                    ))}
+                    <th className="p-1.5 border border-gray-400">Nilai</th>
+                    <th className="p-1.5 border border-gray-400">Grade</th>
+                    <th className="p-1.5 border border-gray-400">Lulus</th>
+                    <th className="p-1.5 border border-gray-400">Sunting KRS?</th>
+                    <th className="p-1.5 border border-gray-400">Info</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(data.mahasiswa || []).map((m) => (
+                    <tr key={m.rincianKrsId}>
+                      <td className="p-1.5 border border-gray-400 text-center">{m.no}</td>
+                      <td className="p-1.5 border border-gray-400">{m.nim}</td>
+                      <td className="p-1.5 border border-gray-400">{m.nama}</td>
+                      {(data.komponenEvaluasi || []).map((k) => (
+                        <td key={k.id} className="p-1.5 border border-gray-400 text-center">
+                          {m.nilaiPerKomponen?.[k.label] ?? "-"}
+                        </td>
+                      ))}
+                      <td className="p-1.5 border border-gray-400 text-center">{m.nilaiAkhir.toFixed(2)}</td>
+                      <td className="p-1.5 border border-gray-400 text-center">{m.grade}</td>
+                      <td className="p-1.5 border border-gray-400 text-center">{m.lulus ? "✔" : ""}</td>
+                      <td className="p-1.5 border border-gray-400"></td>
+                      <td className="p-1.5 border border-gray-400"></td>
+                    </tr>
                   ))}
-                  <th className="p-1.5 border border-gray-400">Nilai</th>
-                  <th className="p-1.5 border border-gray-400">Grade</th>
-                  <th className="p-1.5 border border-gray-400">Lulus</th>
-                  <th className="p-1.5 border border-gray-400">Sunting KRS?</th>
-                  <th className="p-1.5 border border-gray-400">Info</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(data.mahasiswa || []).map((m) => (
-                  <tr key={m.rincianKrsId}>
-                    <td className="p-1.5 border border-gray-400 text-center">{m.no}</td>
-                    <td className="p-1.5 border border-gray-400">{m.nim}</td>
-                    <td className="p-1.5 border border-gray-400">{m.nama}</td>
-                    {(data.komponenEvaluasi || []).map((k) => (
-                      <td key={k.id} className="p-1.5 border border-gray-400 text-center">
-                        {m.nilaiPerKomponen?.[k.label] ?? "-"}
-                      </td>
-                    ))}
-                    <td className="p-1.5 border border-gray-400 text-center">{m.nilaiAkhir.toFixed(2)}</td>
-                    <td className="p-1.5 border border-gray-400 text-center">{m.grade}</td>
-                    <td className="p-1.5 border border-gray-400 text-center">{m.lulus ? "✔" : ""}</td>
-                    <td className="p-1.5 border border-gray-400"></td>
-                    <td className="p-1.5 border border-gray-400"></td>
-                  </tr>
-                ))}
-                {data.rataRataKelas && (
-                  <tr className="font-semibold bg-gray-50">
-                    <td className="p-1.5 border border-gray-400" colSpan={3}>Rata-rata nilai kelas</td>
-                    {(data.komponenEvaluasi || []).map((k) => (
-                      <td key={k.id} className="p-1.5 border border-gray-400 text-center">
-                        {data.rataRataKelas?.rataPerKomponen[k.label]?.toFixed(2) ?? "-"}
-                      </td>
-                    ))}
-                    <td className="p-1.5 border border-gray-400 text-center">{data.rataRataKelas.rataNilaiAkhir.toFixed(2)}</td>
-                    <td className="p-1.5 border border-gray-400" colSpan={3}></td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  {data.rataRataKelas && (
+                    <tr className="font-semibold bg-gray-50">
+                      <td className="p-1.5 border border-gray-400" colSpan={3}>Rata-rata nilai kelas</td>
+                      {(data.komponenEvaluasi || []).map((k) => (
+                        <td key={k.id} className="p-1.5 border border-gray-400 text-center">
+                          {data.rataRataKelas?.rataPerKomponen[k.label]?.toFixed(2) ?? "-"}
+                        </td>
+                      ))}
+                      <td className="p-1.5 border border-gray-400 text-center">{data.rataRataKelas.rataNilaiAkhir.toFixed(2)}</td>
+                      <td className="p-1.5 border border-gray-400" colSpan={3}></td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
             <div className="mt-3 border border-gray-400 p-2 text-xs">
               Tanggal Cetak : {tanggalCetak}

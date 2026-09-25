@@ -31,7 +31,7 @@ export default function Repeat() {
     .reverse();
 
   return (
-    <div className="p-4 border-1 rounded-sm shadow-sm">
+    <div className="p-4 border rounded-sm shadow-sm">
       <BriefStudentData showLine={false} />
 
       <div className="flex items-center space-x-2 mt-4">

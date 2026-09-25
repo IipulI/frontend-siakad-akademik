@@ -69,7 +69,7 @@ const ConsultationLecturer = () => {
                         >
                             <Plus size={16} /> Tambah
                         </button>
-                        <button className="flex-1 sm:flex-initial justify-center bg-[#ff6b6b] hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition h-10">
+                        <button className="flex-1 sm:flex-initial justify-center bg-red-400 hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition h-10">
                             <Trash2 size={16} /> Hapus
                         </button>
                     </div>

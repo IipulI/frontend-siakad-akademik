@@ -14,7 +14,7 @@ import { useMahasiswaProfile } from "../../../hooks/mahasiswa/useProfile";
 // Child Component for the Education Form
 const EducationForm = ({ profile }: { profile: MahasiswaProfile }) => {
   return (
-      <RoundedBorderLayout className={"items-start gap-4 text-[#617182]"}>
+      <RoundedBorderLayout className={"items-start gap-4 text-gray-text"}>
         <div className="flex flex-col space-y-4 ">
           <DataCard title={"Pendidikan Asal"} desc={profile.pendidikanAsal || "-"} />
           <DataCard title={"Provinsi Sekolah"} desc={profile.provinsiSekolah || "-"} />

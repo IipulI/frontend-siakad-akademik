@@ -51,7 +51,7 @@ const FormConsultationLecturer = () => {
                     <div className="flex items-center gap-2">
                         <button 
                             onClick={() => navigate(LecturerRoute.guidance.consultation)}
-                            className="bg-[#00b4d8] hover:bg-[#0096c7] text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition"
+                            className="bg-primary-blueSoft hover:bg-opacity-90 text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2 transition"
                         >
                             <ChevronLeft size={16} /> Kembali ke Daftar
                         </button>

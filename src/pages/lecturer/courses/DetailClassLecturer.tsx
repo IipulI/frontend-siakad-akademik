@@ -145,7 +145,7 @@ const DetailClassLecturer = () => {
 };
 
 const ClassBio = ({ data }: { data: any }) => (
-  <div className="bg-[#F5FFF9] w-full px-4 py-4 mt-5 border-l-8 border-[#116E63] rounded-md">
+  <div className="bg-[#F5FFF9] w-full px-4 py-4 mt-5 border-l-8 border-primary-green rounded-md">
     <h2 className="font-semibold text-base mb-4">Status</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
       <div className="flex flex-col space-y-2">

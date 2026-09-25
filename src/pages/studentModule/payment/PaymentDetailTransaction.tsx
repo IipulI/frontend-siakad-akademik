@@ -44,7 +44,7 @@ const PaymentDetailTransaction = () => {
         </h2>
 
         {/* Informasi Umum */}
-        <div className="flex justify-between text-sm text-gray-700 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 text-sm text-gray-700 mb-6">
           <div>
             <p>
               No. Transaksi :{" "}
@@ -65,7 +65,8 @@ const PaymentDetailTransaction = () => {
         </div>
 
         {/* Tabel Pembayaran */}
-        <table className="w-full border text-sm text-gray-700 mb-6">
+        <div className="overflow-x-auto mb-6">
+        <table className="w-full min-w-[640px] border text-sm text-gray-700">
           <thead className="bg-gray-100">
             <tr>
               <th className="text-left px-4 py-2 border">Nama Tagihan</th>
@@ -121,9 +122,10 @@ const PaymentDetailTransaction = () => {
             </tr>
           </tfoot>
         </table>
+        </div>
 
         {/* Tanda Tangan */}
-        <div className="flex justify-between text-sm text-gray-700 mt-12">
+        <div className="flex flex-col sm:flex-row justify-between gap-6 text-sm text-gray-700 mt-12">
           <div className="text-center">
             <p>Bogor, 26 Februari 2025</p>
             <p className="mt-6 underline font-medium">MUHAMMAD RIDHO FATHAN</p>

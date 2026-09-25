@@ -171,7 +171,7 @@ const Dashboard = () => {
                 {activeView === 'kuliah' && (
                   <>
                     {isLoadingJadwal && <p>Loading schedule...</p>}
-                    {isErrorJadwal && <p style={{ color: 'red' }}>Gagal memuat jadwal kuliah.</p>}
+                    {isErrorJadwal && <p className="text-red-600">Gagal memuat jadwal kuliah.</p>}
                     {!isLoadingJadwal && !isErrorJadwal && (
                       jadwalKuliah && jadwalKuliah.length > 0 ? (
                         jadwalKuliah.map((item, index) => (
@@ -203,7 +203,7 @@ const Dashboard = () => {
 
             <h1 className="font-semibold md:p-0 p-2">Status Keuangan</h1>
             {isLoadingTagihan && <div>Loading financial status...</div>}
-            {isErrorTagihan && <div style={{ color: 'red' }}>Failed to load financial status.</div>}
+            {isErrorTagihan && <div className="text-red-600">Failed to load financial status.</div>}
             {tagihanData && (
               <>
                 <div className="w-full flex flex-col sm:flex-row gap-4">
@@ -242,7 +242,7 @@ const Dashboard = () => {
           {/* --- RIGHT COLUMN (SIDEBAR) --- */}
           <div className="md:col-span-2 space-y-4">
             {isLoadingGrafik && <div>Loading academic data...</div>}
-            {isErrorGrafik && <div style={{ color: 'red' }}>Failed to load academic data.</div>}
+            {isErrorGrafik && <div className="text-red-600">Failed to load academic data.</div>}
             {grafikData && (
               <>
                 <div>
@@ -270,7 +270,7 @@ const Dashboard = () => {
               <div className="p-8 bg-white shadow-md rounded-md space-y-6">
                 {/* 3. Add loading and error handling */}
                 {isLoadingPengumuman && <div>Loading announcements...</div>}
-                {isErrorPengumuman && <div style={{ color: 'red' }}>Failed to load announcements.</div>}
+                {isErrorPengumuman && <div className="text-red-600">Failed to load announcements.</div>}
 
                 {/* 4. Map over the fetched data */}
                 {pengumumanResponse?.data.map((item) => (
