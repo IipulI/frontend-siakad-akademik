@@ -31,8 +31,8 @@ Api.interceptors.response.use(
       if (token && !isAuthRequest) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        localStorage.removeItem("account_info");
-        window.location.replace("http://103.158.196.79/eportal");
+        const eportalUrl = import.meta.env.VITE_EPORTAL_URL || "https://eportal.uika-bogor.ac.id/";
+        window.location.replace(eportalUrl);
       }
     }
     return Promise.reject(error);

@@ -157,8 +157,8 @@ const ProfileDropdown = ({ nama, profileData, onClose }) => {
       alert("Terjadi kesalahan saat logout. Silakan coba lagi.");
     } finally {
       // Pastikan redirect selalu terjadi, terlepas dari sukses/gagalnya proses logout
-      window.location.replace("http://103.158.196.79/eportal"); // Ganti ini menjadi '/login' jika halaman login Anda ada di sana
-      // Atau '/' jika itu root halaman login
+      const eportalUrl = import.meta.env.VITE_EPORTAL_URL || "https://eportal.uika-bogor.ac.id/";
+      window.location.replace(eportalUrl);
       onClose(); // Tutup dropdown
     }
   };
