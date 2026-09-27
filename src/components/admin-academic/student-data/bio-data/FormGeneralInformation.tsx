@@ -179,21 +179,24 @@ export default function FormGeneralInformation({
             onInputChange("kewarganegaraan", option?.value ?? "")
           }
         />
+        {formData?.kewarganegaraan !== "indonesia" && (
+            <TextInput
+                label="Paspor"
+                required={formData?.kewarganegaraan === "wna"}
+                value={formData?.paspor}
+                onChange={(value) => onInputChange("paspor", value)}
+            />
+        )}
         <TextInput
-          label="Paspor"
-          required={true}
-          value={formData?.paspor}
-          onChange={(value) => onInputChange("paspor", value)}
+            label="No. KK"
+            value={formData?.noKk}
+            onChange={(value) => onInputChange("noKk", value)}
         />
         <TextInput
-          label="No. KK"
-          value={formData?.noKk}
-          onChange={(value) => onInputChange("noKk", value)}
-        />
-        <TextInput
-          label="NIK"
-          value={formData?.nik}
-          onChange={(value) => onInputChange("nik", value)}
+            label="NIK"
+            required={formData?.kewarganegaraan === "indonesia"}
+            value={formData?.nik}
+            onChange={(value) => onInputChange("nik", value)}
         />
         <SelectInput
           label="Status Nikah"

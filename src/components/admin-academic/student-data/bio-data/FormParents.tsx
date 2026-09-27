@@ -78,194 +78,214 @@ export default function FormParents({
   );
 
   return (
-    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
-      {/* Biodata Ayah Section */}
-      <div>
-        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
-          Biodata Ayah
-        </h2>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-4">
-            <TextInput
-              label="Nama Lengkap"
-              value={ayahData?.nama || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "nama", value)
-              }
-            />
-            <TextInput
-              label="NIK"
-              value={ayahData?.nik || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "nik", value)
-              }
-            />
-            <DateInput
-              label="Tanggal Lahir"
-              required={false}
-              value={ayahData?.tanggalLahir || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "tanggalLahir", value)
-              }
-            />
-            <SelectInput
-              label="Status Hidup"
-              options={statusHidupOptions}
-              value={ayahData?.statusHidup || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ayahIndex, "statusHidup", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Status Kekerabatan"
-              options={statusKerabatanOptions}
-              value={ayahData?.statusKerabat || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ayahIndex, "statusKerabat", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Pendidikan Terakhir"
-              options={pendidikanOptions}
-              value={ayahData?.pendidikan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ayahIndex, "pendidikan", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Pekerjaan"
-              options={pekerjaanOptions}
-              value={ayahData?.pekerjaan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ayahIndex, "pekerjaan", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Penghasilan"
-              options={penghasilanOptions}
-              value={ayahData?.penghasilan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ayahIndex, "penghasilan", option?.value ?? "")
-              }
-            />
-            <TextInput
-              label="Alamat"
-              value={ayahData?.alamat || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "alamat", value)
-              }
-            />
-            <TextInput
-              label="No. Telepon"
-              value={ayahData?.noTelepon || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "noTelepon", value)
-              }
-            />
-            <TextInput
-              label="Alamat Email"
-              value={ayahData?.email || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ayahIndex, "email", value)
-              }
-            />
+      <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
+        {/* Biodata Ayah Section */}
+        <div>
+          <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
+            Biodata Ayah
+          </h2>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-4">
+              <TextInput
+                  label="Nama Lengkap"
+                  value={ayahData?.nama || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ayahIndex, "nama", value)
+                  }
+              />
+              <TextInput
+                  label="NIK"
+                  value={ayahData?.nik || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ayahIndex, "nik", value)
+                  }
+              />
+              <DateInput
+                  label="Tanggal Lahir"
+                  required={false}
+                  value={ayahData?.tanggalLahir || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ayahIndex, "tanggalLahir", value)
+                  }
+              />
+              <SelectInput
+                  label="Status Hidup"
+                  options={statusHidupOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ayahData?.statusHidup || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ayahIndex, "statusHidup", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Status Kekerabatan"
+                  options={statusKerabatanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ayahData?.statusKerabat || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ayahIndex, "statusKerabat", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Pendidikan Terakhir"
+                  options={pendidikanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ayahData?.pendidikan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ayahIndex, "pendidikan", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Pekerjaan"
+                  options={pekerjaanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ayahData?.pekerjaan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ayahIndex, "pekerjaan", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Penghasilan"
+                  options={penghasilanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ayahData?.penghasilan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ayahIndex, "penghasilan", option?.value ?? "")
+                  }
+              />
+              <TextInput
+                  label="Alamat"
+                  value={ayahData?.alamat || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ayahIndex, "alamat", value)
+                  }
+              />
+              <TextInput
+                  label="No. Telepon"
+                  value={ayahData?.noTelepon || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ayahIndex, "noTelepon", value)
+                  }
+              />
+              <TextInput
+                  label="Alamat Email"
+                  value={ayahData?.email || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ayahIndex, "email", value)
+                  }
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Biodata Ibu Section */}
-      <div>
-        <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
-          Biodata Ibu
-        </h2>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-4">
-            <TextInput
-              label="Nama Lengkap"
-              value={ibuData?.nama || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "nama", value)
-              }
-            />
-            <TextInput
-              label="NIK"
-              value={ibuData?.nik || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "nik", value)
-              }
-            />
-            <DateInput
-              label="Tanggal Lahir"
-              required={false}
-              value={ibuData?.tanggalLahir || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "tanggalLahir", value)
-              }
-            />
-            <SelectInput
-              label="Status Hidup"
-              options={statusHidupOptions}
-              value={ibuData?.statusHidup || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ibuIndex, "statusHidup", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Status Kekerabatan"
-              options={statusKerabatanOptions}
-              value={ibuData?.statusKerabat || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ibuIndex, "statusKerabat", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Pendidikan Terakhir"
-              options={pendidikanOptions}
-              value={ibuData?.pendidikan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ibuIndex, "pendidikan", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Pekerjaan"
-              options={pekerjaanOptions}
-              value={ibuData?.pekerjaan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ibuIndex, "pekerjaan", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Penghasilan"
-              options={penghasilanOptions}
-              value={ibuData?.penghasilan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(ibuIndex, "penghasilan", option?.value ?? "")
-              }
-            />
-            <TextInput
-              label="Alamat"
-              value={ibuData?.alamat || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "alamat", value)
-              }
-            />
-            <TextInput
-              label="No. Telepon"
-              value={ibuData?.noTelepon || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "noTelepon", value)
-              }
-            />
-            <TextInput
-              label="Alamat Email"
-              value={ibuData?.email || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(ibuIndex, "email", value)
-              }
-            />
+        {/* Biodata Ibu Section */}
+        <div>
+          <h2 className="text-primary-green font-bold border-b-2 border-primary-green pb-1 mb-4">
+            Biodata Ibu
+          </h2>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-4">
+              <TextInput
+                  label="Nama Lengkap"
+                  value={ibuData?.nama || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ibuIndex, "nama", value)
+                  }
+              />
+              <TextInput
+                  label="NIK"
+                  value={ibuData?.nik || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ibuIndex, "nik", value)
+                  }
+              />
+              <DateInput
+                  label="Tanggal Lahir"
+                  required={false}
+                  value={ibuData?.tanggalLahir || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ibuIndex, "tanggalLahir", value)
+                  }
+              />
+              <SelectInput
+                  label="Status Hidup"
+                  options={statusHidupOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ibuData?.statusHidup || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ibuIndex, "statusHidup", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Status Kekerabatan"
+                  options={statusKerabatanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ibuData?.statusKerabat || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ibuIndex, "statusKerabat", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Pendidikan Terakhir"
+                  options={pendidikanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ibuData?.pendidikan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ibuIndex, "pendidikan", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Pekerjaan"
+                  options={pekerjaanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ibuData?.pekerjaan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ibuIndex, "pekerjaan", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Penghasilan"
+                  options={penghasilanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={ibuData?.penghasilan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(ibuIndex, "penghasilan", option?.value ?? "")
+                  }
+              />
+              <TextInput
+                  label="Alamat"
+                  value={ibuData?.alamat || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ibuIndex, "alamat", value)
+                  }
+              />
+              <TextInput
+                  label="No. Telepon"
+                  value={ibuData?.noTelepon || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ibuIndex, "noTelepon", value)
+                  }
+              />
+              <TextInput
+                  label="Alamat Email"
+                  value={ibuData?.email || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(ibuIndex, "email", value)
+                  }
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </LayoutForTabNavigation>
+      </LayoutForTabNavigation>
   );
 }

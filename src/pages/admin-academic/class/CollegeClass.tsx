@@ -269,9 +269,9 @@ const CollegeClassTable = ({ data }) => {
             <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
               PENGAJAR
             </th>
-            <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
-              JADWAL MINGGUAN
-            </th>
+            {/*<th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">*/}
+            {/*  JADWAL MINGGUAN*/}
+            {/*</th>*/}
             <th className="py-3 px-2 border-r border-white/20 text-center whitespace-nowrap">
               KAP
             </th>
@@ -328,15 +328,15 @@ const CollegeClassTable = ({ data }) => {
                       ))
                     : "-"}
                 </td>
-                <td className="py-3 px-3 border-r border-slate-200 text-slate-700 text-center">
-                  {item.jadwalKuliah?.length > 0
-                    ? item.jadwalKuliah.map((jadwal: any, i: number) => (
-                        <span key={i} className="block">
-                          {jadwal.hari}, {jadwal.jamMulai?.slice(0, 5)}-{jadwal.jamSelesai?.slice(0, 5)}
-                        </span>
-                      ))
-                    : "-"}
-                </td>
+                {/*<td className="py-3 px-3 border-r border-slate-200 text-slate-700 text-center">*/}
+                {/*  {item.jadwalKuliah?.length > 0*/}
+                {/*    ? item.jadwalKuliah.map((jadwal: any, i: number) => (*/}
+                {/*        <span key={i} className="block">*/}
+                {/*          {jadwal.hari}, {jadwal.jamMulai?.slice(0, 5)}-{jadwal.jamSelesai?.slice(0, 5)}*/}
+                {/*        </span>*/}
+                {/*      ))*/}
+                {/*    : "-"}*/}
+                {/*</td>*/}
                 <td className="py-3 px-2 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap">
                   {item.kapasitas}
                 </td>
