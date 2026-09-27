@@ -246,9 +246,16 @@ export default function CreateStudent() {
         "jenisKelamin",
         "tempatLahir",
         "tanggalLahir",
-        "paspor",
         "emailPribadi",
       ];
+
+      // Paspor wajib jika WNA, NIK wajib jika Indonesia
+      if (formData.kewarganegaraan === "wna") {
+        requiredFields.push("paspor");
+      } else if (formData.kewarganegaraan === "indonesia") {
+        requiredFields.push("nik");
+      }
+
       const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {

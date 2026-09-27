@@ -149,16 +149,20 @@ export default function FormSchool({
               onChange={(option) => onInputChange("pendidikanAsal", option?.id ?? "")}
             />
             <SelectInput
-              label="Provinsi Sekolah"
-              value={formData?.provinsiSekolah}
-              onChange={handleProvinceChange}
-              options={provinceOptions}
+                label="Provinsi Sekolah"
+                options={provinceOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.provinsiSekolah}
+                onChange={handleProvinceChange}
             />
             <SelectInput
-              label="Kota Sekolah"
-              value={formData?.kotaKabSekolah}
-              onChange={(option) => onInputChange("kotaKabSekolah", option?.value ?? "")}
-              options={regencyOptions}
+                label="Kota Sekolah"
+                options={regencyOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.kotaKabSekolah}
+                onChange={(option) => onInputChange("kotaKabSekolah", option?.value ?? "")}
             />
             <TextInput
               label="Sekolah"

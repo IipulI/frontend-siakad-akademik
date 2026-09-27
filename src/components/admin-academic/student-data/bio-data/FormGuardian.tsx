@@ -72,103 +72,113 @@ export default function FormGuardian({
   );
 
   return (
-    <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
-      {/* Biodata Wali Section */}
-      <div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-4">
-            <TextInput
-              label="Nama Lengkap"
-              value={waliData?.nama || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "nama", value)
-              }
-            />
-            <TextInput
-              label="NIK"
-              value={waliData?.nik || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "nik", value)
-              }
-            />
-            <DateInput
-              label="Tanggal Lahir"
-              required={false}
-              value={waliData?.tanggalLahir || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "tanggalLahir", value)
-              }
-            />
-            <SelectInput
-              label="Status Hidup"
-              options={statusHidupOptions}
-              value={waliData?.statusHidup || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(waliIndex, "statusHidup", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Status Kekerabatan"
-              options={statusKerabatanOptions}
-              value={waliData?.statusKerabat || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(waliIndex, "statusKerabat", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Pendidikan Terakhir"
-              options={pendidikanOptions}
-              value={waliData?.pendidikan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(waliIndex, "pendidikan", option?.value ?? "")
-              }
-            />
+      <LayoutForTabNavigation className="-mt-10 grid grid-cols-1 lg:grid-cols-2 gap-5 border border-gray-400 p-3">
+        {/* Biodata Wali Section */}
+        <div>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-4">
+              <TextInput
+                  label="Nama Lengkap"
+                  value={waliData?.nama || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(waliIndex, "nama", value)
+                  }
+              />
+              <TextInput
+                  label="NIK"
+                  value={waliData?.nik || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(waliIndex, "nik", value)
+                  }
+              />
+              <DateInput
+                  label="Tanggal Lahir"
+                  required={false}
+                  value={waliData?.tanggalLahir || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(waliIndex, "tanggalLahir", value)
+                  }
+              />
+              <SelectInput
+                  label="Status Hidup"
+                  options={statusHidupOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={waliData?.statusHidup || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(waliIndex, "statusHidup", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Status Kekerabatan"
+                  options={statusKerabatanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={waliData?.statusKerabat || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(waliIndex, "statusKerabat", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Pendidikan Terakhir"
+                  options={pendidikanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={waliData?.pendidikan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(waliIndex, "pendidikan", option?.value ?? "")
+                  }
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-4">
-            <SelectInput
-              label="Pekerjaan"
-              options={pekerjaanOptions}
-              value={waliData?.pekerjaan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(waliIndex, "pekerjaan", option?.value ?? "")
-              }
-            />
-            <SelectInput
-              label="Penghasilan"
-              options={penghasilanOptions}
-              value={waliData?.penghasilan || ""}
-              onChange={(option) =>
-                onInputChangeKeluarga(waliIndex, "penghasilan", option?.value ?? "")
-              }
-            />
-            <TextInput
-              label="Alamat"
-              value={waliData?.alamat || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "alamat", value)
-              }
-            />
-            <TextInput
-              label="No. Telepon"
-              value={waliData?.noTelepon || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "noTelepon", value)
-              }
-            />
-            <TextInput
-              label="Alamat Email"
-              value={waliData?.email || ""}
-              onChange={(value) =>
-                onInputChangeKeluarga(waliIndex, "email", value)
-              }
-            />
+        <div>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-4">
+              <SelectInput
+                  label="Pekerjaan"
+                  options={pekerjaanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={waliData?.pekerjaan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(waliIndex, "pekerjaan", option?.value ?? "")
+                  }
+              />
+              <SelectInput
+                  label="Penghasilan"
+                  options={penghasilanOptions}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
+                  value={waliData?.penghasilan || ""}
+                  onChange={(option) =>
+                      onInputChangeKeluarga(waliIndex, "penghasilan", option?.value ?? "")
+                  }
+              />
+              <TextInput
+                  label="Alamat"
+                  value={waliData?.alamat || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(waliIndex, "alamat", value)
+                  }
+              />
+              <TextInput
+                  label="No. Telepon"
+                  value={waliData?.noTelepon || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(waliIndex, "noTelepon", value)
+                  }
+              />
+              <TextInput
+                  label="Alamat Email"
+                  value={waliData?.email || ""}
+                  onChange={(value) =>
+                      onInputChangeKeluarga(waliIndex, "email", value)
+                  }
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </LayoutForTabNavigation>
+      </LayoutForTabNavigation>
   );
 }

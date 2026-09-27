@@ -294,16 +294,20 @@ export default function FormDomicili({
               onChange={handleKtpProvinceChange}
             />
             <SelectInput
-              label="Kota"
-              options={ktpRegencyOptions}
-              value={formData?.kotaRt}
-              onChange={handleKtpRegencyChange}
+                label="Kota"
+                options={ktpRegencyOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.kotaRt}
+                onChange={handleKtpRegencyChange}
             />
             <SelectInput
-              label="Kecamatan"
-              options={ktpDistrictOptions}
-              value={formData?.kecamatanRt}
-              onChange={(option) => onInputChange("kecamatanRt", option?.value ?? "")}
+                label="Kecamatan"
+                options={ktpDistrictOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.kecamatanRt}
+                onChange={(option) => onInputChange("kecamatanRt", option?.value ?? "")}
             />
             <TextInput
               label="Kode Pos"
@@ -311,10 +315,12 @@ export default function FormDomicili({
               onChange={(value) => onInputChange("kodePosKtp", value)}
             />
             <SelectInput
-              label="Status Tinggal"
-              options={statusTinggalOptions}
-              value={formData?.statusTinggalKtp}
-              onChange={(value) => onInputChange("statusTinggalKtp", value)}
+                label="Status Tinggal"
+                options={statusTinggalOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.statusTinggalKtp}
+                onChange={(option) => onInputChange("statusTinggalKtp", option?.value ?? "")}
             />
           </div>
         </div>
@@ -369,23 +375,28 @@ export default function FormDomicili({
               onChange={(value) => onInputChange("desaDomisili", value)}
             />
             <SelectInput
-              label="Provinsi"
-              options={provinceOptions}
-              value={formData?.provinsiDomisili}
-              onChange={handleDomisiliProvinceChange}
+                label="Provinsi"
+                options={provinceOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.provinsiDomisili}
+                onChange={handleDomisiliProvinceChange}
             />
             <SelectInput
-              label="Kota"
-              options={domisiliRegencyOptions}
-              value={formData?.kotaDomisili}
-              onChange={handleDomisiliRegencyChange}
-
+                label="Kota"
+                options={domisiliRegencyOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.kotaDomisili}
+                onChange={handleDomisiliRegencyChange}
             />
             <SelectInput
-              label="Kecamatan"
-              options={domisiliDistrictOptions}
-              value={formData?.kecamatanDomisili}
-              onChange={(option) => onInputChange("kecamatanDomisili", option?.value ?? "")}
+                label="Kecamatan"
+                options={domisiliDistrictOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.kecamatanDomisili}
+                onChange={(option) => onInputChange("kecamatanDomisili", option?.value ?? "")}
             />
             <TextInput
               label="Kode Pos"
@@ -393,12 +404,12 @@ export default function FormDomicili({
               onChange={(value) => onInputChange("kodePosDomisili", value)}
             />
             <SelectInput
-              label="Status Tinggal"
-              options={statusTinggalOptions}
-              value={formData?.statusTinggalDomisili}
-              onChange={(value) =>
-                onInputChange("statusTinggalDomisili", value)
-              }
+                label="Status Tinggal"
+                options={statusTinggalOptions}
+                getOptionLabel={(opt) => opt.label}
+                getOptionValue={(opt) => opt.value}
+                value={formData?.statusTinggalDomisili}
+                onChange={(option) => onInputChange("statusTinggalDomisili", option?.value ?? "")}
             />
           </div>
         </div>

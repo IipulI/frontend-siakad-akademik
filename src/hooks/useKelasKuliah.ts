@@ -54,6 +54,21 @@ export interface CreateCollegeClassPayload {
     }[];
 }
 
+export interface LecturerSchedulePayload {
+    jadwal: {
+        dosenId: string;
+        jadwalIds: string[];
+    }[];
+}
+
+export interface CollegeClassListResult {
+    items: CollegeClass[];
+    total: number;
+    perPage: number;
+    currentPage: number;
+    totalPage: number;
+}
+
 export function getCollegeClass(
     filter: {
         periodeAkademik?: string;
@@ -97,6 +112,18 @@ export function addCollegeClass() {
         mutationKey: ["addCollegeClass"],
         mutationFn: async (newClassData: CollegeClass) => {
             const response = await Api.post("/akademik/kelas-kuliah", newClassData);
+            return response.data.data;
+        },
+    });
+}
+
+export function addLecturerSchedule(id) {
+    return useMutation({
+        mutationFn: async (data: LecturerSchedulePayload) => {
+            const response = await Api.put(
+                `/akademik/kelas-kuliah/${id}/jadwal-dosen`,
+                data
+            ); // Ubah jadi PUT
             return response.data.data;
         },
     });
@@ -191,6 +218,16 @@ export function getClassRPS(mataKuliahId: string, periodeAkademikId?: string) {
     });
 }
 
+export function getClassesGrades(id: string) {
+    return useQuery({
+        queryKey: ["classesGrades"],
+        queryFn: async () => {
+            const response = await Api.get(`/akademik/kelas-kuliah/${id}/penilaian`);
+            return response.data.data;
+        },
+    });
+}
+
 export function getYearCuriculum() {
     return useQuery({
         queryKey: ["curiculumYear"],
@@ -248,6 +285,18 @@ export function getLecturers() {
         queryKey: ["lecturers"],
         queryFn: async () => {
             const response = await Api.get("/akademik/dosen");
+            return response.data.data;
+        },
+    });
+}
+
+export function getLecturerSchedule(id) {
+    return useQuery({
+        queryKey: ["lecturerSchedule"],
+        queryFn: async () => {
+            const response = await Api.get(
+                `/akademik/kelas-kuliah/${id}/jadwal-dosen`
+            );
             return response.data.data;
         },
     });
