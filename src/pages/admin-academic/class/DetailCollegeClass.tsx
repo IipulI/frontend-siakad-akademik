@@ -38,6 +38,7 @@ import {
   addStudentToClass,
   deleteStudentsFromClass,
   getStudentExams,
+  updateCollegeClass,
 } from "../../../hooks/useKelasKuliah";
 import {
   useNilaiKelas,
@@ -60,6 +61,10 @@ import {
 } from "../../../hooks/academic/useObeResetNilai";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import DateFormatter from "../../../helpers/DateFormatter";
+import {
+  DosenPengajarSection,
+  DosenItem,
+} from "../../../components/admin-academic/student-data/DosenPengajarSection";
 
 interface ClassAttendant {
   id: string;
@@ -73,6 +78,13 @@ interface ClassAttendant {
 interface CollegeClassTableProps {
   data: ClassAttendant[];
 }
+
+const mapDosen = (list: any[] | undefined): DosenItem[] =>
+    (list ?? []).map((d: any) => ({
+      id: d.id,
+      nama: d.nama,
+      nip: d.nip,
+    }));
 
 const DetailCollegeClass = () => {
   const navigate = useNavigate();
@@ -95,6 +107,43 @@ const DetailCollegeClass = () => {
   const [activeTab, setActiveTab] = useState("classDetails");
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+  };
+
+  const { mutate: saveClass, isPending: isSaving } = updateCollegeClass(id!);
+  const [dosenList, setDosenList] = useState<DosenItem[]>([]);
+
+  // isi/sinkronkan dari backend saat data dimuat atau setelah simpan (refetch)
+  useEffect(() => {
+    setDosenList(mapDosen(data?.dosen));
+  }, [data?.dosen]);
+
+  const savedIds = mapDosen(data?.dosen).map((d) => d.id).sort().join(",");
+  const currentIds = dosenList.map((d) => d.id).sort().join(",");
+  const isDirty = savedIds !== currentIds;
+
+  const handleSimpan = () => {
+    if (!data) return;
+    if (!isDirty) {
+      alert("Tidak ada perubahan untuk disimpan.");
+      return;
+    }
+    saveClass(
+        {
+          nama: data.nama,
+          kapasitas: data.kapasitas,
+          sistemKuliah: data.sistemKuliah,
+          statusKelas: data.statusKelas,
+          jumlahPertemuan: data.jumlahPertemuan,
+          tanggalMulai: data.tanggalMulai,
+          tanggalSelesai: data.tanggalSelesai,
+          dosenPengajar: dosenList.map((d) => ({ siakDosenId: d.id })),
+        },
+        {
+          onSuccess: () => alert("Perubahan berhasil disimpan."),
+          onError: (err: any) =>
+              alert(err?.response?.data?.message || "Gagal menyimpan perubahan."),
+        }
+    );
   };
 
   const back = () => {
@@ -128,6 +177,14 @@ const DetailCollegeClass = () => {
                   text="Kembali Ke Daftar"
                   onClick={back}
               />
+              {activeTab === "classDetails" && (
+                  <ButtonClick
+                      icon={<Save size={15} strokeWidth={3} />}
+                      color="bg-primary-blueSoft"
+                      text={isSaving ? "Menyimpan..." : "Simpan"}
+                      onClick={handleSimpan}
+                  />
+              )}
             </div>
 
             {/* Navigasi Tab dan Konten */}
@@ -177,7 +234,11 @@ const DetailCollegeClass = () => {
               {/* Konten Tab */}
               <div className="w-full lg:col-span-5">
                 {activeTab === "classDetails" && (
-                    <CollegeClassInformation data={data} />
+                    <CollegeClassInformation
+                        data={data}
+                        dosenList={dosenList}
+                        onDosenChange={setDosenList}
+                    />
                 )}
                 {activeTab === "classAttendant" && (
                     <ClassAttendant data={data.id} classData={data} />
@@ -194,7 +255,7 @@ const DetailCollegeClass = () => {
   );
 };
 
-const CollegeClassInformation = ({ data }) => {
+const CollegeClassInformation = ({ data, dosenList, onDosenChange }) => {
   return (
       <>
         {/* Informasi Kelas */}
@@ -255,88 +316,10 @@ const CollegeClassInformation = ({ data }) => {
 
           {/* Dosen Pengajar */}
           <div className="mt-10">
-            <DosenPengajarSection />
+            <DosenPengajarSection value={dosenList} onChange={onDosenChange} />
           </div>
         </div>
       </>
-  );
-};
-
-// Prototipe: dosen pengajar bisa lebih dari satu, disimpan sebagai state lokal
-// dulu (belum ada endpoint backend untuk relasi kelas <-> dosen).
-const DosenPengajarSection = () => {
-  const [dosenList, setDosenList] = useState<{ id: string; nama: string }[]>(
-      []
-  );
-  const [showPicker, setShowPicker] = useState(false);
-
-  const handleAddDosen = (id: string, label: string) => {
-    if (!id || dosenList.some((d) => d.id === id)) return;
-    setDosenList((prev) => [...prev, { id, nama: label }]);
-    setShowPicker(false);
-  };
-
-  const handleRemoveDosen = (id: string) => {
-    setDosenList((prev) => prev.filter((d) => d.id !== id));
-  };
-
-  return (
-      <div className="space-y-4">
-        <div className="flex flex-wrap justify-between items-center gap-2">
-          <h1 className="font-bold text-xl sm:text-2xl">Dosen Pengajar</h1>
-          {showPicker ? (
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <div className="flex-1 min-w-[220px]">
-                  <DosenAsyncSelect
-                      value=""
-                      selectedLabel=""
-                      onChange={(id, label) => handleAddDosen(id, label)}
-                  />
-                </div>
-                <button
-                    type="button"
-                    onClick={() => setShowPicker(false)}
-                    className="text-xs text-gray-500 hover:underline whitespace-nowrap"
-                >
-                  Batal
-                </button>
-              </div>
-          ) : (
-              <ButtonClick
-                  icon={<Plus size={15} strokeWidth={3} />}
-                  color="bg-primary-green"
-                  text="Tambah Dosen"
-                  onClick={() => setShowPicker(true)}
-              />
-          )}
-        </div>
-
-        <div className="rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-100">
-          {dosenList.length === 0 ? (
-              <p className="text-center text-sm text-gray-500 py-6">
-                Belum ada dosen pengajar untuk kelas ini.
-              </p>
-          ) : (
-              dosenList.map((d, index) => (
-                  <div
-                      key={d.id}
-                      className="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
-                  >
-              <span className="text-sm sm:text-base">
-                {index + 1}. {d.nama}
-              </span>
-                    <button
-                        type="button"
-                        onClick={() => handleRemoveDosen(d.id)}
-                        className="text-red-500 hover:underline text-xs"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-              ))
-          )}
-        </div>
-      </div>
   );
 };
 

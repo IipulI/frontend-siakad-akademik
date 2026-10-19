@@ -5,7 +5,7 @@ import { searchLecturers } from "../../../hooks/useKelasKuliah";
 interface DosenOption {
   id: string;
   nama: string;
-  nidn?: string;
+  nip?: string;
 }
 
 interface DosenAsyncSelectProps {
@@ -142,7 +142,7 @@ export function DosenAsyncSelect({
                   }`}
                 >
                   {dosen.nama}
-                  {dosen.nidn ? ` (${dosen.nidn})` : ""}
+                  {dosen.nip ? ` (${dosen.nip})` : ""}
                 </li>
               ))
             ) : (
