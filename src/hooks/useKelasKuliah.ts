@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "../api/Index";
 import { useMemo } from "react";
 import { useDebounce } from "use-debounce";
@@ -34,23 +34,30 @@ export interface CollegeClass {
 }
 
 export interface CreateCollegeClassPayload {
-    periode_akademik_id: string;
-    sistem_kuliah: string;
-    program_studi_id: string;
-    tahun_kurikulum_id: string;
+    siakPeriodeAkademikId: string;
+    sistemKuliah: string;
+    siakProgramStudiId: string;
     kapasitas: number;
-    tanggal_mulai: string;
-    tanggal_selesai: string;
-    mata_kuliah: string;
-    nama_kelas: string;
-    jumlah_pertemuan: number;
-    jadwal_mingguan: {
-        hari: string;
-        jam_mulai: string;
-        jam_selesai: string;
-        jenis_pertemuan: string;
-        metode_pembelajaran: string;
-        ruang: string;
+    tanggalMulai: string;
+    tanggalSelesai: string;
+    siakMataKuliahId: string;
+    nama: string;
+    jumlahPertemuan: number;
+    dosenPengajar?: {
+        siakDosenId: string
+    }[];
+}
+
+export interface UpdateCollegeClassPayload {
+    nama?: string;
+    kapasitas?: number;
+    sistemKuliah?: string;
+    statusKelas?: string;
+    jumlahPertemuan?: number;
+    tanggalMulai?: string;
+    tanggalSelesai?: string;
+    dosenPengajar?: {
+        siakDosenId: string
     }[];
 }
 
@@ -113,6 +120,34 @@ export function addCollegeClass() {
         mutationFn: async (newClassData: CollegeClass) => {
             const response = await Api.post("/akademik/kelas-kuliah", newClassData);
             return response.data.data;
+        },
+    });
+}
+
+export function updateCollegeClass(id: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: UpdateCollegeClassPayload) => {
+            const response = await Api.put(`/akademik/kelas-kuliah/${ id }`, data);
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["collegeClassDetail", id] });
+        },
+    });
+}
+
+export function deleteCollegeClass() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationKey: ["deleteCollegeClass"],
+        mutationFn: async (id: string) => {
+            const response = await Api.delete(`/akademik/kelas-kuliah/${ id }`);
+            return response.data;
+        },
+        onSuccess: () => {
+            // Prefix match: semua variasi filter/page dari list ikut ter-refetch
+            queryClient.invalidateQueries({ queryKey: ["classes"] });
         },
     });
 }

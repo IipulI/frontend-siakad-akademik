@@ -26,6 +26,10 @@ import {
   getYearCuriculum,
 } from "../../../hooks/useKelasKuliah";
 import { useJenisPertemuan } from "../../../hooks/admin-akademik/useJenisPertemuan";
+import {
+  DosenPengajarSection,
+  DosenItem,
+} from "../../../components/admin-academic/student-data/DosenPengajarSection";
 
 const CreateCollegeClass = () => {
   const navigate = useNavigate();
@@ -44,6 +48,8 @@ const CreateCollegeClass = () => {
   const [nameClass, setNameClass] = useState("");
   const [totalMeet, setTotalMeet] = useState("");
 
+  const [dosenList, setDosenList] = useState<DosenItem[]>([]);
+
   const { mutate } = useMutation({
     mutationFn: async (data: CreateCollegeClassPayload) => {
       const response = await Api.post("/akademik/kelas-kuliah", data);
@@ -53,8 +59,8 @@ const CreateCollegeClass = () => {
       alert("Kelas berhasil ditambahkan!");
       navigate(AdminAcademicRoute.collegeClass.class);
     },
-    onError: (err) => {
-      console.error("Terjadi kesalahan:", err);
+    onError: (err: any) => {
+      alert(err?.response?.data?.message || "Gagal menambahkan kelas.");
     },
   });
 
@@ -99,7 +105,8 @@ const CreateCollegeClass = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const payload = {
+
+    const payload: CreateCollegeClassPayload = {
       siakPeriodeAkademikId: academicPeriodId,
       sistemKuliah: systemType,
       siakProgramStudiId: programStudyId,
@@ -109,18 +116,9 @@ const CreateCollegeClass = () => {
       siakMataKuliahId: subject,
       nama: nameClass,
       jumlahPertemuan: parseInt(totalMeet),
-      jadwalKuliah: validSchedules.map((item) => ({
-        hari: item.day,
-        siakRuanganId: item.room,
-        siakDosenId: item.lecturer || null,
-        jamMulai: item.startTime + ":00",
-        jamSelesai: item.endTime + ":00",
-        jenisPertemuan: item.meetingType,
-        metodePembelajaran: item.learningMethod,
-      })),
+      dosenPengajar: dosenList.map((d) => ({ siakDosenId: d.id })),
     };
 
-    console.log("Payload ke mutate:", payload);
     mutate(payload);
   };
 
@@ -328,25 +326,9 @@ const CreateCollegeClass = () => {
                 label="Jumlah Pertemuan"
               />
             </div>
-          </div>
-          <div className="space-y-3">
-            <div>
-              <h1 className="font-bold text-2xl">Jadwal Mingguan</h1>
+            <div className="mt-8">
+              <DosenPengajarSection value={dosenList} onChange={setDosenList} />
             </div>
-            <CreateCollegeClassTable
-              setScheduleList={setScheduleList}
-              scheduleList={scheduleList}
-              listRooms={rooms}
-              listJenisPertemuan={jenisPertemuanList}
-              listSlotWaktu={slotWaktuList}
-              removeSchedule={removeSchedule}
-            />
-            <ButtonClick
-              icon={<Plus size={15} strokeWidth={3} />}
-              color="bg-primary-green"
-              text="Tambah Jadwal"
-              onClick={addNewSchedule}
-            />
           </div>
         </BorderedGreenContainer>
       </div>

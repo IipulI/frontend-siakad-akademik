@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { AdminAcademicRoute } from "../../../types/VarRoutes";
 import BorderedGreenContainer from "../../../components/BorderedGreenContainer";
 import { Pagination } from "../../../components/admin-academic/Pagination";
-import { getCollegeClass } from "../../../hooks/useKelasKuliah";
+ import { deleteCollegeClass, getCollegeClass } from "../../../hooks/useKelasKuliah";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   getAcademicPeriodeDropdown,
@@ -234,8 +234,25 @@ const CollegeClassTable = ({ data }) => {
     navigate(`${AdminAcademicRoute.collegeClass.detailClass}/${id}`);
   }
 
-  function Remove() {
-    alert("remove");
+  const { mutate: deleteClass, isPending, variables: deletingId } = deleteCollegeClass();
+  function Remove(item: any) {
+    if (item.peserta > 0) {
+      alert("Kelas tidak dapat dihapus karena sudah memiliki peserta.");
+      return;
+    }
+    if (!confirm(`Hapus kelas ${item.nama} - ${item.mataKuliah?.nama}?`)) return;
+
+    deleteClass(item.id, {
+      onSuccess: () => {
+        setSelectedItems((prev) => {
+          const { [item.id]: _, ...rest } = prev;
+          return rest;
+        });
+      },
+      onError: (err: any) => {
+        alert(err?.response?.data?.message || "Gagal menghapus kelas");
+      },
+    });
   }
 
   return (
@@ -252,7 +269,7 @@ const CollegeClassTable = ({ data }) => {
               />
             </th>
             <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
-              THN. KUR.
+              Periode
             </th>
             <th className="py-3 px-3 border-r border-white/20 text-center whitespace-nowrap">
               KODE
@@ -314,19 +331,21 @@ const CollegeClassTable = ({ data }) => {
                   {item.nama}
                 </td>
                 <td className="py-3 px-3 border-r border-slate-200 text-slate-700 text-center">
-                  {item.jadwalKuliah?.length > 0
-                    ? [
-                        ...new Set(
-                          item.jadwalKuliah
-                            .map((jadwal: any) => jadwal.dosen?.nama)
-                            .filter(Boolean)
-                        ),
-                      ].map((nama, i) => (
-                        <span key={i} className="block text-slate-800 font-medium">
-                          {String(nama)}
-                        </span>
-                      ))
-                    : "-"}
+                  {item.dosen?.length > 0
+                      ? (() => {
+                        const names = [
+                          ...new Set(
+                              item.dosen.map((dosen: any) => dosen?.nama).filter(Boolean)
+                          ),
+                        ];
+                        return names.map((nama, i) => (
+                            <span key={i} className="block text-slate-800 font-medium">
+                              {String(nama)}
+                              {i < names.length - 1 && ","}
+                            </span>
+                        ));
+                      })()
+                      : "-"}
                 </td>
                 {/*<td className="py-3 px-3 border-r border-slate-200 text-slate-700 text-center">*/}
                 {/*  {item.jadwalKuliah?.length > 0*/}
@@ -368,7 +387,8 @@ const CollegeClassTable = ({ data }) => {
                     </button>
                     <button
                       type="button"
-                      onClick={Remove}
+                      onClick={() => Remove(item)}
+                      disabled={isPending && deletingId === item.id}
                       className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded shadow-2xs transition-all active:scale-95 cursor-pointer"
                       title="Hapus Kelas"
                     >
