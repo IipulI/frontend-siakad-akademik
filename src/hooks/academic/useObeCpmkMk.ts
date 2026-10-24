@@ -45,7 +45,7 @@ export function getPemetaanCpmk(mataKuliahId: string) {
   return useQuery({
     queryKey: ["pemetaanCpmk", mataKuliahId],
     queryFn: async () => {
-      const response = await Api.get(`/akademik/obe/mata-kuliah/${mataKuliahId}/pemetaan-cpmk`);
+      const response = await Api.get(`/akademik/koordinator-mk/mata-kuliah/${mataKuliahId}/pemetaan-cpmk`);
       const data = response.data.data || {};
       return {
         cplHeaders: (data.cplHeaders || []) as ObeCplHeader[],
@@ -83,7 +83,7 @@ export function useSavePemetaanCpmk() {
       metodePembobotan: "Manual" | "Otomatis";
       cpmkList: SaveCpmkListItem[];
     }) => {
-      const response = await Api.post(`/akademik/obe/mata-kuliah/${mataKuliahId}/pemetaan-cpmk`, {
+      const response = await Api.post(`/akademik/koordinator-mk/mata-kuliah/${mataKuliahId}/pemetaan-cpmk`, {
         levelPemetaan,
         metodePembobotan,
         cpmkList,
